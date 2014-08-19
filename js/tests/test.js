@@ -34,6 +34,18 @@ define(["require", "exports"], function(require, exports) {
     }
     exports.assert = assert;
 
+    function assertThrows(action) {
+        var throwed = false;
+        try  {
+            action();
+        } catch (e) {
+            throwed = true;
+        }
+        if (!throwed)
+            throw new TestError("assertThrows");
+    }
+    exports.assertThrows = assertThrows;
+
     function getFnBody(fn) {
         var str = fn.toString();
         return str.substr(37, str.length - 52);

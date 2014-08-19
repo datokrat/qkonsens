@@ -55,6 +55,34 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../childarraysynchr
 
             var model = new Model();
             sync.removed(model);
+
+            test.assert(function () {
+                return model.vm == null;
+            });
+        };
+
+        Tests.prototype.testDoubleRegistering = function () {
+            var sync = this.synchronizerFactory.create();
+            sync.setViewModelInsertionHandler(function () {
+            });
+            sync.setViewModelRemovalHandler(function () {
+            });
+            var model = new Model();
+
+            test.assertThrows(function () {
+                sync.inserted(model);
+                sync.inserted(model);
+            });
+        };
+
+        Tests.prototype.testWithoutHandlers = function () {
+            var sync = this.synchronizerFactory.create();
+            sync.setViewModelInsertionHandler(null);
+            sync.setViewModelRemovalHandler(null);
+            var model = new Model();
+
+            sync.inserted(model);
+            sync.removed(model);
         };
         return Tests;
     })(unit.TestClass);
@@ -94,9 +122,14 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../childarraysynchr
 
     var Controller = (function () {
         function Controller(model, viewModel) {
+            this.args = arguments;
             model.vm = viewModel;
             viewModel.mdl = model;
         }
+        Controller.prototype.dispose = function () {
+            this.args[0].vm = null;
+            this.args[1].mdl = null;
+        };
         return Controller;
     })();
 });

@@ -34,6 +34,30 @@ export class Tests extends unit.TestClass {
 		
 		var model = new Model();
 		sync.removed(model);
+		
+		test.assert(() => model.vm == null);
+	}
+	
+	testDoubleRegistering() {
+		var sync = this.synchronizerFactory.create();
+		sync.setViewModelInsertionHandler(() => {});
+		sync.setViewModelRemovalHandler(() => {});
+		var model = new Model();
+		
+		test.assertThrows(() => {
+			sync.inserted(model);
+			sync.inserted(model);
+		});
+	}
+	
+	testWithoutHandlers() {
+		var sync = this.synchronizerFactory.create();
+		sync.setViewModelInsertionHandler(null);
+		sync.setViewModelRemovalHandler(null);
+		var model = new Model();
+		
+		sync.inserted(model);
+		sync.removed(model);
 	}
 }
 
@@ -59,8 +83,15 @@ class ViewModel {
 }
 
 class Controller {
+	private args;
 	constructor(model: Model, viewModel: ViewModel) {
+		this.args = arguments;
 		model.vm = viewModel;
 		viewModel.mdl = model;
+	}
+	
+	public dispose() {
+		this.args[0].vm = null;
+		this.args[1].mdl = null;
 	}
 }

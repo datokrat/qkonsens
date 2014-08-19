@@ -21,6 +21,18 @@ export function assert(condition: () => boolean) {
 	if(!condition()) throw new TestError("assert: " + getFnBody(condition));
 }
 
+export function assertThrows(action: () => void) {
+	var throwed = false;
+	try {
+		action();
+	}
+	catch(e) {
+		throwed = true;
+	}
+	if(!throwed)
+		throw new TestError("assertThrows");
+}
+
 function getFnBody(fn: () => boolean) {
 	var str = fn.toString();
 	return str.substr(37, str.length - 52) //.substr(21, str.length - 23)
