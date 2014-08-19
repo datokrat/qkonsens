@@ -1,0 +1,459 @@
+///<reference path="../typings/knockout.d.ts" />
+import model = require("index.model");
+import mediator = require("index.mediator");
+import eventmgr = require("eventmgr");
+import frame = require("frame");
+
+var idCtr = 0;
+
+export class Context {
+	public mdl: model.Model;
+	public emgr: eventmgr.EventMgr;
+	public vm: ViewModel;
+}
+
+export class ViewModel {
+	public id = idCtr++;
+	
+	public cxt: Context;
+	
+	public tabs = ko.observableArray<frame.Win>();
+	public selectedTab = ko.observable<frame.Win>();
+	
+	public userName: KnockoutObservable<string>;
+	
+	public startTab: StartTab;
+	public kkTab: KkTab;
+	public browseTab: BrowseTab;
+	public helpTab: HelpTab;
+	public newKkWin: NewKkWin;
+	
+	public center: frame.WinContainer;
+	public left: frame.WinContainer;
+	public right: frame.WinContainer;
+	
+	public isBusy = ko.observable<boolean>(false);
+	public isAdmin = ko.observable<boolean>(true);
+	
+	public onUserNameChanged() {
+		var oldKk = this.cxt.mdl.kk();
+		var newKk = new model.KonsenskisteImpl();
+		this.cxt.emgr.kkNeeded({ id: oldKk.id, out: newKk });
+		this.cxt.mdl.kk(newKk);
+	}
+	
+	constructor(mdl: model.Model, emgr: eventmgr.EventMgr) {
+		this.cxt = <Context>{ mdl: mdl, emgr: emgr, vm: this };
+		
+		this.userName = mdl.user;
+		this.userName.subscribe(() => this.onUserNameChanged());
+		
+		this.helpTab = new HelpTab();
+		this.startTab = new StartTab();
+		this.kkTab = new KkTab(mdl.kk, this.cxt);
+		this.browseTab = new BrowseTab(mdl.topic, this.cxt)
+		this.newKkWin = new NewKkWin(mdl.topic, this.cxt)
+		
+		this.tabs([this.startTab, this.kkTab, this.browseTab, this.helpTab]);
+		this.selectedTab(this.kkTab);
+		
+		this.center = new frame.WinContainer(this.kkTab);
+		this.left = new frame.WinContainer(this.startTab);
+		this.right = new frame.WinContainer(this.browseTab);
+	}
+}
+
+export class StartTab extends frame.Win {
+	constructor() {
+		super('start-win-template', null);
+		this.state('ok');
+	}
+}
+
+export class HelpTab extends frame.Win {
+	constructor() {
+		super('help-win-template', null)
+	}
+}
+
+export class KkTab extends frame.Win {
+	private _kk = ko.observable<KnockoutObservable<model.Konsenskiste>>();
+	public kk = ko.computed<model.Konsenskiste>(() => this._kk() ? this._kk()() : null);
+	public documentView = ko.observable<boolean>(false);
+	
+	public kkTitle = ko.computed<string>(() => this.kk() ? this.kk().title() : null);
+	public kkText = ko.computed<string>(() => this.kk() ? this.kk().text() : null);
+	
+	public kkView = ko.computed<KkView>(() => this.kk() ? new KkView(this.kk(), this.cxt) : null);
+	
+	private cxt: Context;
+	
+	constructor(_kk: KnockoutObservable<model.Konsenskiste>, cxt: Context) {
+		super('kk-win-template', null);
+		this.cxt = cxt;
+		this._kk(_kk);
+	}
+}
+
+export class BrowseTab extends frame.Win {
+	private _topic = ko.observable<KnockoutComputed<model.Topic>>();
+	public topic = ko.computed<model.Topic>(() => this._topic() ? this._topic()() : null);
+	
+	public parentTopicView = ko.computed<ParentTopicView>(() => this.topic() ? new ParentTopicView(this.topic(), this.cxt) : null);
+	
+	private cxt: Context;
+	
+	constructor(_topic: KnockoutComputed<model.Topic>, cxt: Context) {
+		super('browse-win-template', null);
+		this.cxt = cxt;
+		this.state('ok');
+		this._topic(_topic);
+	}
+}
+
+export class DiscussionWin extends frame.Win {
+	public parent = ko.observable<model.QkCommentable>();
+	public cmtView = (cmt: model.Kommentar) => new CmtView(cmt, this.cxt);
+	
+	public newCommentText = ko.observable<string>();
+	public newCommentDisabled = ko.observable<boolean>(false);
+	
+	public submitComment_onClick = () => {
+		console.log({ text: this.newCommentText(), parent: this.parent() })
+		this.cxt.emgr.cmtSubmitted({ text: this.newCommentText(), parent: this.parent() });
+		this.newCommentText('');
+	}
+	
+	private cxt: Context;
+	
+	constructor(parent: model.QkCommentable, cxt: Context) {
+		super('discussion-win-template', null);
+		this.cxt = cxt;
+		this.state('ok');
+		this.parent(parent);
+	}
+}
+
+export class NewKkWin extends frame.Win {
+	private cxt: Context
+	private parent: KnockoutComputed<model.Topic>
+	
+	public parentDescription: KnockoutComputed<string>
+	
+	public title = ko.observable<string>()
+	public text = ko.observable<string>()
+	
+	public submit_onClick = () => {
+		var kk = new model.KonsenskisteImpl();
+		this.cxt.emgr.kkSubmitted({ title: this.title(), text: this.text(), parent: this.parent(), out: kk });
+		this.cxt.mdl.kk(kk);
+		this.cxt.vm.selectedTab(this.cxt.vm.kkTab);
+	}
+	
+	constructor(parent: KnockoutComputed<model.Topic>, cxt: Context) {
+		super('newkk-win-template', null);
+		this.state('ok');
+		
+		this.parent = parent;
+		this.parentDescription = ko.computed(() => this.parent() ? (this.parent().title() || this.parent().text()) : 'null');
+		
+		this.cxt = cxt;
+	}
+}
+
+export class EditorWin extends frame.Win {
+	public element: KnockoutComputed<model.QkMainElement>;
+	public input: KnockoutComputed<{ text: KnockoutObservable<string>; title: KnockoutObservable<string>; context: KnockoutObservable<string> }>;
+	
+	public save_onClick = () => {
+		var inp = this.input();
+		this.cxt.emgr.mainElementUpdate({ element: this.element(), newText: inp.text(), newTitle: inp.title() });
+	}
+	
+	public saveContext_onClick = () => {
+		var inp = this.input();
+		this.cxt.emgr.contextUpdate({ element: this.element(), newContext: inp.context() });
+	}
+
+	private cxt: Context;
+	constructor(el: KnockoutComputed<model.QkMainElement>, cxt: Context) {
+		super('editor-win-template', null);
+		this.state('ok');
+		this.cxt = cxt;
+		
+		this.element = el;
+		this.input = ko.computed(() => {
+			return {
+				text: ko.observable<string>(this.element().text()),
+				title: ko.observable<string>(this.element().title()),
+				context: ko.observable<string>(this.element().context())
+			};
+		});
+	}
+}
+
+export class ParentTopicView {
+	private topic: model.Topic;
+
+	public title: KnockoutComputed<string>;
+	public text: KnockoutComputed<string>;
+	
+	public breadcrumb: KnockoutComputed<model.Topic[]>;
+	public children: KnockoutObservableArray<model.Topic>;
+	public kks: KnockoutObservableArray<model.Konsenskiste>;
+	
+	public childTopicView = (tpc: model.Topic) => new OverallTopicView(tpc, model.TopicRole.Child, this.cxt);
+	public breadcrumbTopicView = (tpc: model.Topic) => new OverallTopicView(tpc, model.TopicRole.Breadcrumb, this.cxt);
+	public kkView = (kk: model.Konsenskiste) => new TopicKkView(kk, this.cxt);
+	
+	public newKk = {
+		onClick: () => { var vm = this.cxt.vm; vm.right.win(vm.newKkWin) }
+	};
+	
+	private cxt: Context;
+	
+	constructor(topic: model.Topic, cxt: Context) {
+		this.cxt = cxt;
+		this.topic = topic;
+		this.title = ko.computed(() => this.topic.id
+			? ( this.topic.title() ? this.topic.title() : this.topic.text() )
+			: "[root]"
+		);
+		this.text = ko.computed(() => this.topic.title() ? this.topic.text() : null);
+		this.children = topic.children;
+		this.breadcrumb = ko.computed(() => cxt.mdl.topicBreadcrumb().slice(0,-1));
+		this.kks = topic.kks;
+	}
+}
+
+export class TopicKkView {
+	private kk: model.Konsenskiste;
+	public caption: KnockoutComputed<string>;
+	
+	public click = () => { this.cxt.mdl.kk(this.kk); this.cxt.emgr.kkNeeded({ id: this.kk.id, out: this.kk }); this.cxt.vm.selectedTab(this.cxt.vm.kkTab) };
+	
+	private cxt: Context;
+	
+	constructor(kk: model.Konsenskiste, cxt: Context) {
+		this.cxt = cxt;
+		this.kk = kk;
+		this.caption = ko.computed<string>(() => this.kk.title() ? this.kk.title() : this.kk.text());
+	}
+}
+
+export class OverallTopicView {
+	public topic: model.Topic;
+
+	public title: KnockoutObservable<string>;
+	public text: KnockoutObservable<string>;
+	public caption: KnockoutComputed<string>;
+	
+	public role: model.TopicRole;
+	
+	public click = () => {
+		this.cxt.mdl.selectTopic(this.topic, this.role);
+		this.cxt.emgr.topicNeeded({ id: this.topic.id, out: this.topic })
+	};
+	
+	private cxt: Context;
+	
+	constructor(topic: model.Topic, role: model.TopicRole, cxt: Context) {
+		this.cxt = cxt;
+		this.topic = topic;
+		this.role = role;
+		this.title = topic.title;
+		this.text = topic.text;
+		this.caption = ko.computed<string>(() => {
+			if(this.topic.id)
+				return this.title() + ': ' + this.text();
+			else
+				return "[root]";
+		});
+	}
+}
+
+export interface QkElementView {
+	id: number;
+	type: string;
+	title: KnockoutComputed<string>;
+	text: KnockoutComputed<string>;
+	
+	rating: KnockoutObservable<string>;
+	likeRating: KnockoutComputed<string>;
+	stronglikeSum: KnockoutObservable<number>;
+	likeSum: KnockoutObservable<number>;
+	neutralSum: KnockoutObservable<number>;
+	dislikeSum: KnockoutObservable<number>;
+	strongdislikeSum: KnockoutObservable<number>;
+}
+
+export class QkMainElementViewBase implements QkElementView {
+	public id = idCtr++;
+	public type = 'qk-none';
+	
+	public title: KnockoutComputed<string>;
+	public text: KnockoutComputed<string>;
+
+	public rating: KnockoutObservable<string>;
+	public likeRating: KnockoutComputed<string>;
+	
+	public stronglikeSum: KnockoutObservable<number>;
+	public likeSum: KnockoutObservable<number>;
+	public neutralSum: KnockoutObservable<number>;
+	public dislikeSum: KnockoutObservable<number>;
+	public strongdislikeSum: KnockoutObservable<number>;
+	
+	public comments: KnockoutObservableArray<model.QkComment>;
+	public showAllComments = ko.observable(false);
+	
+	public cmtView = (cmt: model.QkComment) => new CmtView(cmt, this._cxt);
+	public disabled = ko.observable<boolean>();
+	public newCommentText = ko.observable<string>();
+	
+	public clickRating = (elem: model.QkElement, rating: string) => setTimeout.bind(null, () => {
+		this._cxt.emgr.rated({ postId: this.qk.id, rating: rating, then: rating => { console.log(rating); this.qk.rating(rating) } });
+	}, 0);
+	
+	public submitComment_onClick = () => {
+		console.log({ text: this.newCommentText(), parent: this.qk })
+		this._cxt.emgr.cmtSubmitted({ text: this.newCommentText(), parent: this.qk });
+		this.newCommentText('');
+	}
+	
+	public discussion_onClick = () => {
+		var vm = this._cxt.vm;
+		vm.left.win(new DiscussionWin(this.qk, this._cxt));
+		
+		if(this.comments().length && !this.comments()[0].text())
+		this._cxt.emgr.commentsNeeded({ parent: this.qk });
+	}
+	
+	public edit_onClick = () => {
+		var vm = this._cxt.vm;
+		vm.left.win(new EditorWin( ko.computed(() => this.qk), this._cxt ));
+	}
+	
+	public context: KnockoutObservable<string>;
+	public showContext = ko.observable(false);
+	
+	private qk: model.QkMainElement;
+	private _cxt: Context;
+	
+	constructor(qk: model.QkMainElement, cxt: Context) {
+		this.qk = qk;
+		this._cxt = cxt;
+		
+		this.comments = qk.comments;
+		this.context = qk.context;
+		this.rating = qk.rating;
+		this.likeRating = qk.likeRating;
+		this.stronglikeSum = qk.stronglikeSum;
+		this.likeSum = qk.likeSum;
+		this.neutralSum = qk.neutralSum;
+		this.dislikeSum = qk.dislikeSum;
+		this.strongdislikeSum = qk.strongdislikeSum;
+		
+		this.showAllComments.subscribe(val => {
+			if(val) {
+				if(this.comments().length && !this.comments()[0].text())
+					cxt.emgr.commentsNeeded({ parent: this.qk });
+			}
+		});
+	}
+}
+
+export class KkView extends QkMainElementViewBase {
+	public type = 'kk';
+	
+	private kk = ko.observable<model.Konsenskiste>();
+	public title = ko.computed<string>(() => this.kk() ? this.kk().title() : null);
+	public text = ko.computed<string>(() => this.kk() ? this.kk().text() : null);
+	public children: KnockoutObservableArray<model.Kernaussage>;
+	
+	public kaView = (ka: model.Kernaussage) => new KaView(ka, this.cxt);
+	
+	public kaForm = {
+		isVisible: ko.observable<boolean>(false),
+		title: ko.observable<string>(),
+		text: ko.observable<string>(),
+		context: ko.observable<string>(),
+		onClick: () => { this.kaForm.isVisible(!this.kaForm.isVisible()) },
+		onSubmit: () => {
+			var ka = new model.KernaussageImpl();
+			this.cxt.emgr.kaSubmitted({ title: this.kaForm.title(), text: this.kaForm.text(), context: this.kaForm.context(), parent: this.kk(), out: ka });
+			this.kk().children.push(ka);
+		}
+	};
+	
+	private cxt: Context;
+	
+	constructor(kk: model.Konsenskiste, cxt: Context) {
+		super(kk, cxt);
+		this.cxt = cxt;
+		this.kk(kk);
+		this.children = kk.children;
+	}
+}
+
+export class KaView extends QkMainElementViewBase {
+	public type = 'ka';
+
+	private ka = ko.observable<model.Kernaussage>();
+	public title = ko.computed<string>(() => this.ka() ? this.ka().title() : null);
+	public text = ko.computed<string>(() => this.ka() ? this.ka().text() : null);
+	
+	public remove_onClick = () => {
+		if( confirm('Soll diese Kernaussage wirklich entfernt werden?') ) {
+			this.cxt.emgr.removeKa({ ka: this.ka() });
+		}
+	}
+	
+	private cxt: Context;
+	
+	constructor(ka: model.Kernaussage, cxt: Context) {
+		super(ka, cxt);
+		this.cxt = cxt;
+		this.ka(ka);
+	}
+}
+
+export class CmtView implements QkElementView {
+	public id = idCtr++;
+	public type = 'cmt';
+	
+	private cmt = ko.observable<model.QkComment>();
+	public title = ko.computed(() => this.cmt() ? this.cmt().title() : null);
+	public text = ko.computed(() => this.cmt() ? this.cmt().text() : null);
+	
+	public remove_onClick = () => {
+		if( confirm('Soll dieser Kommentar wirklich aus der Diskussion entfernt werden? (Er wird aber nicht gelöscht!)') ) {
+			this.cxt.emgr.removeCmt({ cmt: this.cmt() });
+		}
+	}
+	
+	public like_onClick = (newRating: string) => setTimeout.bind(null, () => {
+		this.cxt.emgr.rated({ postId: this.cmt().id, rating: newRating, then: rating =>  this.cmt().rating(rating) });
+	}, 0);
+	
+	public rating: KnockoutObservable<string>;
+	public likeRating: KnockoutComputed<string>;
+	public stronglikeSum: KnockoutObservable<number>;
+	public likeSum: KnockoutObservable<number>;
+	public neutralSum: KnockoutObservable<number>;
+	public dislikeSum: KnockoutObservable<number>;
+	public strongdislikeSum: KnockoutObservable<number>;
+	
+	private cxt: Context;
+	
+	constructor(cmt: model.QkComment, cxt: Context) {
+		this.cxt = cxt;
+		this.cmt(cmt);
+		this.rating = cmt.rating;
+		this.likeRating = cmt.likeRating;
+		this.stronglikeSum = cmt.stronglikeSum;
+		this.likeSum = cmt.likeSum;
+		this.neutralSum = cmt.neutralSum;
+		this.dislikeSum = cmt.dislikeSum;
+		this.strongdislikeSum = cmt.strongdislikeSum;
+	}
+}

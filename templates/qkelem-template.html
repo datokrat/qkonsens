@@ -1,0 +1,77 @@
+<div data-bind="attr: { class: type, id: id }">
+	<!-- ko if: $root.isAdmin() && (type == 'cmt' || type == 'ka') -->
+		<a class="clickable symbol" style="float: right" data-bind="click: remove_onClick">x</a>
+	<!-- /ko -->
+	<!-- ko if: $root.isAdmin() && (type == 'ka' || type == 'kk') -->
+		<a class="clickable symbol" style="float: right" data-bind="click: edit_onClick">bearbeiten</a>
+	<!-- /ko -->
+	<!-- ko if: title() && title().length -->
+		<h1 class="title" data-bind="text: title"></h1>
+	<!-- /ko -->
+	<p>
+		<span class="text" data-bind="text: text"></span>
+	</p>
+	<div data-bind="if: (type == 'kk' || type == 'ka') && context() && showContext()">
+		<!-- ko template: { name: 'context-template', data: context } --><!-- /ko -->
+	</div>
+	
+	<!-- ko if: type == 'kk' || type == 'ka' || type == 'cmt' -->
+		<!-- ko if: type == 'kk' -->
+			<!-- ko foreach: (children && children()) || [] -->
+				<!-- ko template: { name: 'qkelem-template', data: $parent.kaView($data) } --><!-- /ko -->
+			<!-- /ko -->
+			<div class="ka" data-bind="if: $root.isAdmin">
+				<a class="clickable control" data-bind="click: kaForm.onClick">+ Kernaussage</a>
+				<div data-bind="if: kaForm.isVisible">
+					<p><input type="text" placeholder="Kernaussagen-Titel" class="block" data-bind="value: kaForm.title"/></p>
+					<p><textarea placeholder="Kernaussagen-Text" data-bind="value: kaForm.text"></textarea></p>
+					<p><textarea placeholder="Klärtext" data-bind="value: kaForm.context"></textarea></p>
+					<button data-bind="click: kaForm.onSubmit">Kernaussage versenden</button>
+				</div>
+			</div>
+		<!-- /ko -->
+		<!-- ko if: type != 'cmt' && type != 'cxt' -->
+		<div class="controls">
+			<!-- ko if: context() -->
+				<a class="clickable control" data-bind="event: { click: showContext.bind($data, !showContext()) }">Klärtext an/aus</a>
+			<!-- /ko -->
+			<div class="select rating control">
+				<input type="radio" name="rating" value="stronglike" data-bind="checked: rating(), click: clickRating($data, 'stronglike'), attr: {name: id + '-rating', id: id + '-stronglike'}"/><label title="Ich bin dafür und das ist meine gefestigte Meinung!" data-bind="attr: {for: id + '-stronglike'}">++<span
+				 class="count" data-bind="text: stronglikeSum"></span></label><input
+				 type="radio" name="rating" value="like" data-bind="checked: rating(), click: clickRating($data, 'like'), attr: {name: id + '-rating', id: id + '-like'}"/><label title="Ich bin eher dafür!" data-bind="attr: {for: id + '-like'}">+<span
+				 class="count" data-bind="text: likeSum"></span></label><input
+				 type="radio" name="rating" value="neutral" data-bind="checked: rating(), click: clickRating($data, 'neutral'), attr: {name: id + '-rating', id: id + '-neutral'}"/><label title="Ich bin weder dafür noch dagegen." data-bind="attr: {for: id + '-neutral'}">0<span
+				 class="count" data-bind="text: neutralSum"></span></label><input
+				 type="radio" name="rating" value="dislike" data-bind="checked: rating(), click: clickRating($data, 'dislike'), attr: {name: id + '-rating', id: id + '-dislike'}"/><label title="Ich bin eher dagegen!" data-bind="attr: {for: id + '-dislike'}">-<span
+				 class="count" data-bind="text: dislikeSum"></span></label><input
+				 type="radio" name="rating" value="strongdislike" data-bind="checked: rating(), click: clickRating($data, 'strongdislike'), attr: {name: id + '-rating', id: id + '-strongdislike'}"/><label title="Ich bin dagegen und das ist meine gefestigte Meinung!" data-bind="attr: {for: id + '-strongdislike'}">--<span
+				 class="count" data-bind="text: strongdislikeSum"></span></label><input
+				 type="radio" name="rating" value="none" data-bind="checked: rating(), click: clickRating($data, 'none'), attr: {name: id + '-rating', id: id + '-none'}"/><label data-bind="attr: {for: id + '-none'}">?
+				 </label>
+			</div>
+			<a class="clickable control" data-bind="click: discussion_onClick, text: 'Diskussion (' + comments().length + ')'"></a>
+		</div>
+		<!-- /ko -->
+		<!-- ko if: type == 'cmt' -->
+			<div class="select rating control">
+				<input type="radio" name="rating" value="like" data-bind="checked: likeRating(), click: like_onClick('like'), attr: { name: id + '-rating', id: id + '-like' }" /><label
+				data-bind="attr: { for: id + '-like' }">+<span class="count" data-bind="text: likeSum() + stronglikeSum()"></span></label><input
+				type="radio" name="rating" value="dislike" data-bind="checked: likeRating(), click: like_onClick('dislike'), attr: { name: id + '-rating', id: id + '-dislike' }" /><label
+				data-bind="attr: { for: id + '-dislike' }">-<span class="count" data-bind="text: dislikeSum() + strongdislikeSum()"></span></label>
+			</div>
+		<!-- /ko -->
+		<div class="comments" data-bind="if: type == 'ka' || type == 'kk'">
+			<!-- ko if: showAllComments -->
+				<div data-bind="foreach: comments"><!-- ko with: $parent.cmtView($data) -->
+					<!-- ko template: { name: 'comment-template', data: $data } --><!-- /ko -->
+				<!-- /ko --></div>
+				<div class="cmt">
+					<form data-bind="event: { submit: function() { submitComment_onClick(); return false; } }">
+						<p><textarea maxlength="250" placeholder="Dein Beitrag" data-bind="value: newCommentText, attr: { disabled: disabled }"></textarea></p>
+						<input type="submit" value="Beitrag abschicken" data-bind="attr: { disabled: disabled }" />
+					</form>
+				</div>
+			<!-- /ko -->
+		</div>
+	<!-- /ko -->
+</div>
