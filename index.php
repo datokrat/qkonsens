@@ -13,34 +13,20 @@ $discoUri = isset($_GET['disco']) ? $_GET['disco'] : '//test.disco-network.org/a
 	<head>
 		<title>qKonsens - d!sco in action</title>
 		<link rel="shortcut icon" href="<?php echo $clientPath ?>qkonsens2.ico" />
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
 		<link rel="stylesheet" href="<?php echo $cssPath ?>reset.css" />
 		<link rel="stylesheet" href="<?php echo $cssPath ?>frame.css" />
 		<link rel="stylesheet" href="<?php echo $cssPath ?>style.css" />
 	</head>
 	<body>
-		<!--div id="wrapper">
-			<div id="usermgt">
-				<label for="username">Username: </label><input id="username" type="text" data-bind="value: userName" />
-			</div>
-			<div id="top">
-				<h1><span class="logo-q">q</span><span class="logo-consense">Konsens</span> <i>Proof-of-Concept</i></h1>
-				<ul id="nav" data-bind="foreach: tabs"><li>
-					<a data-bind="text: title, click: $parent.selectedTab.bind(null,$data), attr: { class: $data == $parent.selectedTab() ? 'selected tabitem' : 'tabitem' }"> </a>
-				</li></ul>
-			</div>
-			<input type="checkbox" id="modmode" data-bind="checked: isAdmin" /><label for="modmode">Moderationsmodus</label>
-			<div id="main" data-bind="with: selectedTab">
-				<div data-bind="template: { name: type + '-tab-template' }"></div>
-			</div>
-		</div-->
-		
 		<div id="page">
 			<div id="header">
 				<span class="logo-q">q</span><span class="logo-consense">Konsens</span> <i>Proof-of-Concept</i>
-				<span id="usermgt">
+				<!--span id="usermgt">
 					<label for="username">Username: </label><input id="username" type="text" data-bind="value: userName" />
 				</span>
-				<input type="checkbox" id="modmode" data-bind="checked: isAdmin" /><label for="modmode">Moderationsmodus</label>
+				<input type="checkbox" id="modmode" data-bind="checked: isAdmin" /><label for="modmode">Moderationsmodus</label-->
 			</div>
 			<div id="main">
 				<div       class="win" id="center" data-bind="with: center">
@@ -205,18 +191,9 @@ $discoUri = isset($_GET['disco']) ? $_GET['disco'] : '//test.disco-network.org/a
 			</div>
 		</script>
 		
-		<script type="text/javascript" src="<?php echo $generalJsPath ?>disco-0.2.1a/dev/disco.core.js"></script>
 		<script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
 		<script src="http://test.disco-network.org/discoarguments/Scripts/knockout-3.1.0.debug.js"></script>
 		<script src="<?php echo $jsPath ?>koExternalTemplateEngine_all.js"></script>
-		<script src="http://test.disco-network.org/discoarguments/Scripts/datajs-1.1.2.js"></script>
-		<script src="http://test.disco-network.org/discoarguments/Scripts/jaydata.js"></script>
-		<script src="http://test.disco-network.org/discoarguments/Scripts/jaydataproviders/oDataProvider.js"></script>
-		<script src="<?php echo $jsPath ?>disco.ontology.js"></script>
-		<script type="text/javascript">
-			var discoUri = '<?php echo $discoUri ?>', serviceUri = '<?php echo $clientPath ?>';
-			var knockoutUri = 'http://test.disco-network.org/discoarguments/Scripts/knockout-3.1.0.debug';
-		</script>
 		<script data-main="js/index" src="<?php echo $jsPath ?>require.js"></script>
 	</body>
 </html>

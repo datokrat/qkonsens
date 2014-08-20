@@ -1,7 +1,7 @@
-define(["require", "exports"], function(require, exports) {
+define(["require", "exports", 'contentmodel'], function(require, exports, Content) {
     var Model = (function () {
         function Model() {
-            this.title = ko.observable();
+            this.content = new Content.Model();
         }
         return Model;
     })();

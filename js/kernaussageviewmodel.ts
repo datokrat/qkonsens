@@ -1,4 +1,6 @@
+import Content = require('contentviewmodel')
+
 export class ViewModel {
-	public title: () => string;
+	public content = new Content.ViewModel();
 	public isActive: () => boolean;
 }

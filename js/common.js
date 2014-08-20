@@ -1,0 +1,89 @@
+define(["require", "exports"], function(require, exports) {
+    
+
+    var Coll = (function () {
+        function Coll() {
+        }
+        Coll.single = function (collection, predicate) {
+            for (var i = 0; i < collection.length; ++i) {
+                if (predicate(collection[i], i))
+                    return collection[i];
+            }
+            return undefined;
+        };
+
+        Coll.has = function (collection, predicate) {
+            return Coll.single(collection, predicate);
+        };
+
+        Coll.where = function (collection, predicate) {
+            var ret = [];
+            for (var i = 0; i < collection.length; ++i) {
+                if (predicate(collection[i], i))
+                    ret.push(collection[i]);
+            }
+            return ret;
+        };
+
+        Coll.count = function (collection, predicate) {
+            return Coll.where(collection, predicate).length;
+        };
+
+        Coll.koRemoveWhere = function (collection, predicate) {
+            var where = Coll.where(collection(), predicate);
+            if (where.length > 0)
+                collection.removeAll(where);
+            return where;
+        };
+        return Coll;
+    })();
+    exports.Coll = Coll;
+
+    var Comp = (function () {
+        function Comp() {
+        }
+        Comp.jsonEq = function (x, y) {
+            return JSON.stringify(x) == JSON.stringify(y);
+        };
+
+        Comp.genericEq = function (x, y) {
+            return x.eq(y);
+        };
+        return Comp;
+    })();
+    exports.Comp = Comp;
+
+    var Callbacks = (function () {
+        function Callbacks() {
+        }
+        Callbacks.atOnce = function (callbacks, onSuccess) {
+            var ctr = callbacks.length;
+
+            var onReady = function () {
+                --ctr;
+                if (ctr <= 0)
+                    onSuccess && onSuccess();
+            };
+            for (var i = 0; i < callbacks.length; ++i)
+                callbacks[i](onReady);
+        };
+
+        Callbacks.batch = function (callbacks, onSuccess) {
+            var func = function (i) {
+                if (i >= callbacks.length)
+                    onSuccess();
+                else if (i >= callbacks.length - 1)
+                    callbacks[i](onSuccess);
+                else
+                    callbacks[i](func.bind(null, i + 1));
+            };
+            func(0);
+        };
+        return Callbacks;
+    })();
+    exports.Callbacks = Callbacks;
+
+    ko.observable.fn.mapValue = function (map) {
+        this(map(this()));
+    };
+});

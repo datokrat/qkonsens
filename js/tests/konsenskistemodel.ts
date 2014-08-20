@@ -57,9 +57,10 @@ export class Tests extends unit.TestClass {
 }
 
 class KonsenskisteFactory {
-	public create(title: string) {
+	public create(title: string, text?: string) {
 		var konsenskiste = new koki.Model();
-		konsenskiste.title(title);
+		konsenskiste.content.title(title);
+		konsenskiste.content.text(text);
 		return konsenskiste;
 	}
 }
@@ -67,7 +68,7 @@ class KonsenskisteFactory {
 class KernaussageFactory {
 	public create(title: string) {
 		var kernaussage = new ka.Model();
-		kernaussage.title(title);
+		kernaussage.content.title(title);
 		return kernaussage;
 	}
 }

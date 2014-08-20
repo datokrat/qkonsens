@@ -1,3 +1,5 @@
+import Content = require('contentmodel')
+
 export class Model {
-	public title = ko.observable<string>();
+	public content = new Content.Model();
 }

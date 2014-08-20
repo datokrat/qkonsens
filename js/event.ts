@@ -3,13 +3,23 @@
 export interface Event<Args> {
 	subscribe(cb: (Args) => void);
 	unsubscribe(cb: (Args) => void);
-	raise(args: Args);
+	raise(args?: Args);
+}
+
+export interface Listener<Args> {
+	(Args): void;
+}
+
+export class Subscription {
+	undo: () => void;
 }
 
 export class EventImpl<Args> implements Event<Args> {
-	public subscribe(cb: (Args) => void) {
+	public subscribe(cb: (Args) => void): Subscription {
 		if(!this.isListener(cb))
 			this.listeners.push(cb);
+		
+		return { undo: () => this.unsubscribe(cb) };
 	}
 
 	public unsubscribe(cb: (Args) => void) {
@@ -29,3 +39,5 @@ export class EventImpl<Args> implements Event<Args> {
 
 	private listeners: Array<(Args) => void> = [];
 }
+
+export class Void {}

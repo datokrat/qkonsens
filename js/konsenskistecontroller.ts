@@ -1,3 +1,5 @@
+import evt = require('event')
+
 import mdl = require('konsenskistemodel')
 import vm = require('konsenskisteviewmodel')
 
@@ -5,6 +7,7 @@ import kernaussageMdl = require('kernaussagemodel')
 import kernaussageVm = require('kernaussageviewmodel')
 import kernaussageCtr = require('kernaussagecontroller')
 
+import content = require('contentcontroller')
 import synchronizer = require('childarraysynchronizer')
 
 export class Controller {
@@ -12,16 +15,30 @@ export class Controller {
 		this.model = model;
 		this.viewModel = viewModel;
 		
+		this.content = new content.Controller(model.content, viewModel.content);
+		
+		this.initChildKaSynchronizer();
+		this.initModelEvents();
+		this.initViewModel();
+	}
+	
+	private initChildKaSynchronizer() {
 		var sync = this.childKaArraySynchronizer;
 		sync.setViewModelFactory(new ViewModelFactory());
 		sync.setControllerFactory(new ControllerFactory());
 		sync.setViewModelInsertionHandler(vm => this.insertKaViewModel(vm));
 		sync.setViewModelRemovalHandler(vm => this.removeKaViewModel(vm));
-		
-		model.childKaInserted.subscribe( args => this.onChildKaInserted(args.childKa) );
-		model.childKaRemoved.subscribe( args => this.onChildKaRemoved(args.childKa) );
-		
-		viewModel.childKas = this.childKaViewModels;
+	}
+	
+	private initModelEvents() {
+		this.modelSubscriptions = [
+			this.model.childKaInserted.subscribe( args => this.onChildKaInserted(args.childKa) ),
+			this.model.childKaRemoved.subscribe( args => this.onChildKaRemoved(args.childKa) )
+		];
+	}
+	
+	private initViewModel() {
+		this.viewModel.childKas = this.childKaViewModels;
 	}
 	
 	private getChildKaArray() {
@@ -29,10 +46,6 @@ export class Controller {
 	}
 	
 	private onChildKaInserted(kaMdl: kernaussageMdl.Model) {
-		/*var kaVm = new kernaussageVm.ViewModel();
-		var kaCtr = new kernaussageCtr.Controller(kaMdl, kaVm);
-		
-		this.childKaViewModels.push(kaVm);*/
 		this.childKaArraySynchronizer.inserted(kaMdl);
 	}
 	
@@ -48,12 +61,23 @@ export class Controller {
 		this.childKaViewModels.remove(vm);
 	}
 	
+	public dispose() {
+		this.content.dispose();
+		this.modelSubscriptions.forEach( s => s.undo() );
+		
+		this.viewModel.childKas = null;
+	}
+	
 	private model: mdl.Model;
 	private viewModel: vm.ViewModel;
+	
+	private content: content.Controller;
 	
 	private childKaViewModels = ko.observableArray<kernaussageVm.ViewModel>();
 	private childKaArraySynchronizer = 
 		new synchronizer.ChildArraySynchronizer<kernaussageMdl.Model, kernaussageVm.ViewModel, kernaussageCtr.Controller>();
+	
+	private modelSubscriptions: evt.Subscription[];
 }
 
 class ViewModelFactory {

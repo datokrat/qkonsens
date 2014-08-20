@@ -2,13 +2,25 @@
 define(["require", "exports"], function(require, exports) {
     
 
+    var Subscription = (function () {
+        function Subscription() {
+        }
+        return Subscription;
+    })();
+    exports.Subscription = Subscription;
+
     var EventImpl = (function () {
         function EventImpl() {
             this.listeners = [];
         }
         EventImpl.prototype.subscribe = function (cb) {
+            var _this = this;
             if (!this.isListener(cb))
                 this.listeners.push(cb);
+
+            return { undo: function () {
+                    return _this.unsubscribe(cb);
+                } };
         };
 
         EventImpl.prototype.unsubscribe = function (cb) {
@@ -28,4 +40,11 @@ define(["require", "exports"], function(require, exports) {
         return EventImpl;
     })();
     exports.EventImpl = EventImpl;
+
+    var Void = (function () {
+        function Void() {
+        }
+        return Void;
+    })();
+    exports.Void = Void;
 });

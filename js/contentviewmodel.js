@@ -1,7 +1,6 @@
-define(["require", "exports", 'contentviewmodel'], function(require, exports, content) {
+define(["require", "exports"], function(require, exports) {
     var ViewModel = (function () {
         function ViewModel() {
-            this.content = new content.ViewModel();
         }
         return ViewModel;
     })();

@@ -81,9 +81,10 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../konsenskistemode
     var KonsenskisteFactory = (function () {
         function KonsenskisteFactory() {
         }
-        KonsenskisteFactory.prototype.create = function (title) {
+        KonsenskisteFactory.prototype.create = function (title, text) {
             var konsenskiste = new koki.Model();
-            konsenskiste.title(title);
+            konsenskiste.content.title(title);
+            konsenskiste.content.text(text);
             return konsenskiste;
         };
         return KonsenskisteFactory;
@@ -94,7 +95,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../konsenskistemode
         }
         KernaussageFactory.prototype.create = function (title) {
             var kernaussage = new ka.Model();
-            kernaussage.title(title);
+            kernaussage.content.title(title);
             return kernaussage;
         };
         return KernaussageFactory;
