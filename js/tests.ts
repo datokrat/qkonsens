@@ -8,6 +8,7 @@ import kaModel = require('tests/kernaussage')
 import kokiController = require('tests/konsenskistecontroller')
 import synchronizer = require('tests/childarraysynchronizer')
 import content = require('tests/content')
+import winKoki = require('tests/winkonsenskiste')
 
 var test = new unit.Test()
 
@@ -18,6 +19,9 @@ test.addTestClass(new kokiModel.Tests(), 'KonsenskisteModel')
 test.addTestClass(new kokiController.Tests(), 'KonsenskisteController')
 test.addTestClass(new topicNavigationModel.Tests(), 'TopicNavigationModelImpl')
 test.addTestClass(new topicNavigation.Tests(), 'TopicNavigation')
+
+test.addTestClass(new winKoki.Tests(), 'Window: Konsenskiste')
+
 test.addTestClass(new controller.Tests(), 'Controller')
 
 test.showResults(document.getElementById('tests'), test.run())

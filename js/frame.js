@@ -9,10 +9,9 @@ define(["require", "exports", 'common'], function(require, exports, cmn) {
             this.viewTemplate = viewTemplate;
             this.view = view;
         }
-        Win.prototype.goBack = function (container) {
-            container.goBack();
-        };
-
+        /*public goBack(container) {
+        container.goBack();
+        }*/
         Win.prototype.setState = function (newState) {
         };
         return Win;

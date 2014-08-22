@@ -1,7 +1,7 @@
 import cmn = require('common')
 
 export class Win {
-	constructor(viewTemplate, view) {
+	constructor(viewTemplate: string, view) {
 		this.viewTemplate = viewTemplate;
 		this.view = view;
 	}
@@ -10,9 +10,9 @@ export class Win {
 	public viewTemplate: any;
 	public state = ko.observable<any>();
 	
-	public goBack(container) {
+	/*public goBack(container) {
 		container.goBack();
-	}
+	}*/
 	
 	public setState(newState: any) {}
 	

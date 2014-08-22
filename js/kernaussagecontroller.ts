@@ -1,3 +1,5 @@
+import observable = require('observable')
+
 import mdl = require('kernaussagemodel')
 import vm = require('kernaussageviewmodel')
 
@@ -8,6 +10,10 @@ export class Controller {
 	private content: Content.Controller;
 
 	constructor(model: mdl.Model, viewModel: vm.ViewModel) {
+		this.init(model, viewModel);
+	}
+	
+	private init(model: mdl.Model, viewModel: vm.ViewModel) {
 		viewModel.isActive = ko.observable<boolean>();
 		this.viewModel = viewModel;
 		
@@ -15,8 +21,6 @@ export class Controller {
 	}
 	
 	public dispose() {
-		this.viewModel.isActive = null;
-		this.viewModel = null;
 		this.content.dispose();
 	}
 }

@@ -1,20 +1,25 @@
-define(["require", "exports", 'kernaussageviewmodel', 'kernaussagecontroller', 'contentcontroller', 'childarraysynchronizer'], function(require, exports, kernaussageVm, kernaussageCtr, content, synchronizer) {
-    var Controller = (function () {
-        function Controller(model, viewModel) {
+define(["require", "exports", 'kernaussageviewmodel', 'kernaussagecontroller', 'contentviewmodel', 'contentcontroller', 'childarraysynchronizer'], function(require, exports, kernaussageVm, kernaussageCtr, contentVm, content, synchronizer) {
+    var ControllerImpl = (function () {
+        function ControllerImpl(model, viewModel) {
             this.childKaViewModels = ko.observableArray();
             this.childKaArraySynchronizer = new synchronizer.ChildArraySynchronizer();
+            this.init(model, viewModel);
+        }
+        ControllerImpl.prototype.init = function (model, viewModel) {
             this.model = model;
             this.viewModel = viewModel;
-
-            this.content = new content.Controller(model.content, viewModel.content);
 
             this.initChildKaSynchronizer();
             this.initModelEvents();
             this.initViewModel();
-        }
-        Controller.prototype.initChildKaSynchronizer = function () {
+
+            this.content = new content.Controller(this.model.content, this.viewModel.content());
+        };
+
+        ControllerImpl.prototype.initChildKaSynchronizer = function () {
             var _this = this;
             var sync = this.childKaArraySynchronizer;
+
             sync.setViewModelFactory(new ViewModelFactory());
             sync.setControllerFactory(new ControllerFactory());
             sync.setViewModelInsertionHandler(function (vm) {
@@ -25,7 +30,7 @@ define(["require", "exports", 'kernaussageviewmodel', 'kernaussagecontroller', '
             });
         };
 
-        Controller.prototype.initModelEvents = function () {
+        ControllerImpl.prototype.initModelEvents = function () {
             var _this = this;
             this.modelSubscriptions = [
                 this.model.childKaInserted.subscribe(function (args) {
@@ -37,41 +42,40 @@ define(["require", "exports", 'kernaussageviewmodel', 'kernaussagecontroller', '
             ];
         };
 
-        Controller.prototype.initViewModel = function () {
+        ControllerImpl.prototype.initViewModel = function () {
+            this.viewModel.content = ko.observable(new contentVm.ViewModel);
             this.viewModel.childKas = this.childKaViewModels;
         };
 
-        Controller.prototype.getChildKaArray = function () {
+        ControllerImpl.prototype.getChildKaArray = function () {
             return this.model.getChildKaArray();
         };
 
-        Controller.prototype.onChildKaInserted = function (kaMdl) {
+        ControllerImpl.prototype.onChildKaInserted = function (kaMdl) {
             this.childKaArraySynchronizer.inserted(kaMdl);
         };
 
-        Controller.prototype.onChildKaRemoved = function (kaMdl) {
+        ControllerImpl.prototype.onChildKaRemoved = function (kaMdl) {
             this.childKaArraySynchronizer.removed(kaMdl);
         };
 
-        Controller.prototype.insertKaViewModel = function (vm) {
+        ControllerImpl.prototype.insertKaViewModel = function (vm) {
             this.childKaViewModels.push(vm);
         };
 
-        Controller.prototype.removeKaViewModel = function (vm) {
+        ControllerImpl.prototype.removeKaViewModel = function (vm) {
             this.childKaViewModels.remove(vm);
         };
 
-        Controller.prototype.dispose = function () {
+        ControllerImpl.prototype.dispose = function () {
             this.content.dispose();
             this.modelSubscriptions.forEach(function (s) {
                 return s.undo();
             });
-
-            this.viewModel.childKas = null;
         };
-        return Controller;
+        return ControllerImpl;
     })();
-    exports.Controller = Controller;
+    exports.ControllerImpl = ControllerImpl;
 
     var ViewModelFactory = (function () {
         function ViewModelFactory() {
@@ -90,4 +94,13 @@ define(["require", "exports", 'kernaussageviewmodel', 'kernaussagecontroller', '
         };
         return ControllerFactory;
     })();
+
+    var NullController = (function () {
+        function NullController(viewModel) {
+        }
+        NullController.prototype.dispose = function () {
+        };
+        return NullController;
+    })();
+    exports.NullController = NullController;
 });

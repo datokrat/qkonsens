@@ -1,0 +1,2 @@
+* teils ko.computed durch ko.function ersetzen
+* synchronizer disposable machen

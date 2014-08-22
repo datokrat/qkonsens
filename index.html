@@ -1,13 +1,3 @@
-﻿<?php
-$clientPath = './';
-$clientLibPath = '../js/disco-0.2.1a/inc/';
-$cssPath = $clientPath . 'css/';
-$jsPath = $clientPath . 'js/';
-$generalJsPath = '../js/';
-
-$discoUri = isset($_GET['disco']) ? $_GET['disco'] : '//test.disco-network.org/api/odata';
-?>
-
 <!doctype html>
 <html manifest="manifest.manifest">
 	<head>
@@ -15,18 +5,14 @@ $discoUri = isset($_GET['disco']) ? $_GET['disco'] : '//test.disco-network.org/a
 		<link rel="shortcut icon" href="<?php echo $clientPath ?>qkonsens2.ico" />
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width" />
-		<link rel="stylesheet" href="<?php echo $cssPath ?>reset.css" />
-		<link rel="stylesheet" href="<?php echo $cssPath ?>frame.css" />
-		<link rel="stylesheet" href="<?php echo $cssPath ?>style.css" />
+		<link rel="stylesheet" href="css/reset.css" />
+		<link rel="stylesheet" href="css/frame.css" />
+		<link rel="stylesheet" href="css/style.css" />
 	</head>
 	<body>
 		<div id="page">
 			<div id="header">
 				<span class="logo-q">q</span><span class="logo-consense">Konsens</span> <i>Proof-of-Concept</i>
-				<!--span id="usermgt">
-					<label for="username">Username: </label><input id="username" type="text" data-bind="value: userName" />
-				</span>
-				<input type="checkbox" id="modmode" data-bind="checked: isAdmin" /><label for="modmode">Moderationsmodus</label-->
 			</div>
 			<div id="main">
 				<div       class="win" id="center" data-bind="with: center">
@@ -51,7 +37,19 @@ $discoUri = isset($_GET['disco']) ? $_GET['disco'] : '//test.disco-network.org/a
 				<span class="description" data-bind="text: documentView() ? 'Dokumentansicht' : 'Detailansicht'"></span>
 				<a class="description" class="clickable" data-bind="click: function() { documentView.mapValue(function(x) { return !x }) }">wechseln</a>
 			</h1>
-			<div data-bind="template: { name: documentView() ? 'document-template' : 'qkelem-template', data: kkView }"></div>
+			<div data-bind="template: { name: documentView() ? 'document-template' : 'kk-template', data: kkView }"></div>
+		</script>
+		
+		<script type="text/html" id="kk-template">
+			<div class="kk">
+				<!-- ko with: content -->
+					<!-- ko if: title --><h1 class="title" data-bind="text: title"></h1><!-- /ko -->
+				<!-- /ko -->
+			</div>
+		</script>
+		
+		<script type="text/html" id="none-win-template">
+			<h1>(none)</h1>
 		</script>
 		
 		<script type="text/html" id="browse-win-template">
@@ -193,7 +191,7 @@ $discoUri = isset($_GET['disco']) ? $_GET['disco'] : '//test.disco-network.org/a
 		
 		<script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
 		<script src="http://test.disco-network.org/discoarguments/Scripts/knockout-3.1.0.debug.js"></script>
-		<script src="<?php echo $jsPath ?>koExternalTemplateEngine_all.js"></script>
-		<script data-main="js/index" src="<?php echo $jsPath ?>require.js"></script>
+		<script src="js/koExternalTemplateEngine_all.js"></script>
+		<script data-main="js/index" src="js/require.js"></script>
 	</body>
 </html>

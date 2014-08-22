@@ -7,23 +7,34 @@ import kernaussageMdl = require('kernaussagemodel')
 import kernaussageVm = require('kernaussageviewmodel')
 import kernaussageCtr = require('kernaussagecontroller')
 
+import contentVm = require('contentviewmodel');
+
 import content = require('contentcontroller')
 import synchronizer = require('childarraysynchronizer')
 
-export class Controller {
+export interface Controller {
+	dispose(): void;
+}
+
+export class ControllerImpl implements Controller {
 	constructor(model: mdl.Model, viewModel: vm.ViewModel) {
+		this.init(model, viewModel);
+	}
+	
+	private init(model: mdl.Model, viewModel: vm.ViewModel) {
 		this.model = model;
 		this.viewModel = viewModel;
-		
-		this.content = new content.Controller(model.content, viewModel.content);
 		
 		this.initChildKaSynchronizer();
 		this.initModelEvents();
 		this.initViewModel();
+		
+		this.content = new content.Controller(this.model.content, this.viewModel.content());
 	}
 	
 	private initChildKaSynchronizer() {
 		var sync = this.childKaArraySynchronizer;
+		
 		sync.setViewModelFactory(new ViewModelFactory());
 		sync.setControllerFactory(new ControllerFactory());
 		sync.setViewModelInsertionHandler(vm => this.insertKaViewModel(vm));
@@ -38,6 +49,7 @@ export class Controller {
 	}
 	
 	private initViewModel() {
+		this.viewModel.content = ko.observable( new contentVm.ViewModel );
 		this.viewModel.childKas = this.childKaViewModels;
 	}
 	
@@ -64,8 +76,6 @@ export class Controller {
 	public dispose() {
 		this.content.dispose();
 		this.modelSubscriptions.forEach( s => s.undo() );
-		
-		this.viewModel.childKas = null;
 	}
 	
 	private model: mdl.Model;
@@ -89,5 +99,13 @@ class ViewModelFactory {
 class ControllerFactory {
 	public create(model: kernaussageMdl.Model, viewModel: kernaussageVm.ViewModel) {
 		return new kernaussageCtr.Controller(model, viewModel);
+	}
+}
+
+export class NullController {
+	constructor(viewModel: vm.ViewModel) {
+	}
+	
+	public dispose() {
 	}
 }

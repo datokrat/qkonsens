@@ -15,20 +15,50 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenski
         Tests.prototype.testContent = function () {
             var model = this.kkModelFactory.create('Basisdemokratie', 'Beschreibung');
             var viewModel = new vm.ViewModel();
-            var controller = new ctr.Controller(model, viewModel);
+            var controller = new ctr.ControllerImpl(model, viewModel);
 
             test.assert(function () {
-                return viewModel.content.title() == 'Basisdemokratie';
+                return viewModel.content().title() == 'Basisdemokratie';
             });
             test.assert(function () {
-                return viewModel.content.text() == 'Beschreibung';
+                return viewModel.content().text() == 'Beschreibung';
+            });
+        };
+
+        Tests.prototype.testContentObservables = function () {
+            var model = this.kkModelFactory.create('Basisdemokratie', 'Beschreibung');
+            var viewModel = new vm.ViewModel();
+            var controller = new ctr.ControllerImpl(model, viewModel);
+            var titleTracker = [];
+            var textTracker = [];
+
+            viewModel.content().title.subscribe(function (newTitle) {
+                titleTracker.push(newTitle);
+            });
+            viewModel.content().text.subscribe(function (newText) {
+                textTracker.push(newText);
+            });
+            model.content.title('New Title');
+            model.content.text('New Text');
+
+            test.assert(function () {
+                return titleTracker.length == 1;
+            });
+            test.assert(function () {
+                return titleTracker[0] == 'New Title';
+            });
+            test.assert(function () {
+                return textTracker.length == 1;
+            });
+            test.assert(function () {
+                return textTracker[0] == 'New Text';
             });
         };
 
         Tests.prototype.testChildKas = function () {
             var model = this.kkModelFactory.create('Basisdemokratie (Konzept)', 'Beispiel-Konsenskiste');
             var viewModel = new vm.ViewModel();
-            var controller = new ctr.Controller(model, viewModel);
+            var controller = new ctr.ControllerImpl(model, viewModel);
 
             model.appendKa(this.kaModelFactory.create('Begriff Basisdemokratie'));
 
@@ -46,11 +76,11 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenski
         Tests.prototype.testRemoveChildKa = function () {
             var model = this.kkModelFactory.create('Basisdemokratie (Konzept)');
             var viewModel = new vm.ViewModel();
-            var controller = new ctr.Controller(model, viewModel);
+            var controller = new ctr.ControllerImpl(model, viewModel);
             var ka = this.kaModelFactory.create('Begriff Basisdemokratie');
 
-            model.appendKa(this.kaModelFactory.create('Begriff Basisdemokratie'));
-            model.removeKa(this.kaModelFactory.create('Begriff Basisdemokratie'));
+            model.appendKa(ka);
+            model.removeKa(ka);
 
             test.assert(function () {
                 return viewModel.childKas().length == 0;
@@ -60,28 +90,24 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenski
         Tests.prototype.testDispose = function () {
             var model = this.kkModelFactory.create('Basisdemokratie');
             var viewModel = new vm.ViewModel();
-            var controller = new ctr.Controller(model, viewModel);
+            var controller = new ctr.ControllerImpl(model, viewModel);
 
             controller.dispose();
 
-            test.assert(function () {
-                return viewModel.content.title == null;
-            });
-            test.assert(function () {
-                return viewModel.content.text == null;
-            });
-            test.assert(function () {
-                return viewModel.childKas == null;
-            });
-
             var inserted = model.childKaInserted;
             var removed = model.childKaRemoved;
+
+            model.appendKa(this.kaModelFactory.create('Test'));
 
             test.assert(function () {
                 return inserted.countListeners() == 0;
             });
             test.assert(function () {
                 return removed.countListeners() == 0;
+            });
+
+            test.assert(function () {
+                return viewModel.content().title() == 'Basisdemokratie';
             });
         };
         return Tests;

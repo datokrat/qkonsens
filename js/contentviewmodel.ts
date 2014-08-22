@@ -1,4 +1,6 @@
+import observable = require('observable')
+
 export class ViewModel {
-	public title: () => string;
-	public text: () => string;
+	public title: observable.Observable<string>;
+	public text: observable.Observable<string>;
 }

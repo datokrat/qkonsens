@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/tsunit', '../model', '../viewmodel', '../controller', '../topic'], function(require, exports, unit, mdl, vm, ctr, tpc) {
+define(["require", "exports", 'tests/tsunit', 'tests/test', '../model', '../viewmodel', '../controller', '../konsenskistemodel', '../topic', '../windows/konsenskiste'], function(require, exports, unit, test, mdl, vm, ctr, koki, tpc, kokiWin) {
     var Tests = (function (_super) {
         __extends(Tests, _super);
         function Tests() {
@@ -18,6 +18,32 @@ define(["require", "exports", 'tests/tsunit', '../model', '../viewmodel', '../co
             cxt.model.topicNavigation.appendChild(this.topicFactory.create('root'));
 
             this.areIdentical(cxt.viewModel.topicNavigation.breadcrumb()[0], 'root');
+        };
+
+        Tests.prototype.testLeftWinContainer = function () {
+            var cxt = this.factory.create();
+
+            test.assert(function () {
+                return cxt.viewModel.left != null;
+            });
+            test.assert(function () {
+                return cxt.viewModel.right != null;
+            });
+            test.assert(function () {
+                return cxt.viewModel.center.win() instanceof kokiWin.Win;
+            });
+        };
+
+        Tests.prototype.testKonsenskiste = function () {
+            var cxt = this.factory.create();
+
+            cxt.model.konsenskiste(new koki.Model());
+            cxt.model.konsenskiste().content.title('Hi!');
+
+            var konsenskisteWindow = cxt.viewModel.center.win();
+            test.assert(function () {
+                return konsenskisteWindow.kkView().content().title() == 'Hi!';
+            });
         };
         return Tests;
     })(unit.TestClass);
