@@ -103,7 +103,7 @@ div.kk>h1, div.qk-none>h1 {
 	border-bottom: 4px solid rgba(200,200,200,0.25);
 }
 
-div.ka>.controls {
+div.ka>.controls, div.kk>.controls {
 	background-color: rgba(200,200,200,0.5);
 	padding: 0.5em;
 }

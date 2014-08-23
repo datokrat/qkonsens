@@ -13,6 +13,7 @@ import winKoki = require('tests/winkonsenskiste')
 var test = new unit.Test()
 
 test.addTestClass(new content.Tests(), 'Content')
+test.addTestClass(new content.TestsWithContext(), 'ContentWithContext')
 test.addTestClass(new synchronizer.Tests(), 'ChildArraySynchronizer')
 test.addTestClass(new kaModel.Tests(), 'Kernaussage')
 test.addTestClass(new kokiModel.Tests(), 'KonsenskisteModel')

@@ -23,7 +23,56 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../factories/conten
                 return viewModel.text() == 'Text';
             });
         };
+
+        Tests.prototype.testDispose = function () {
+            var model = this.modelFactory.create('Text', 'Title');
+            var viewModel = new vm.ViewModel();
+            var controller = new ctr.Controller(model, viewModel);
+
+            controller.dispose();
+            model.title('New Title');
+            model.text('New Text');
+
+            test.assert(function () {
+                return viewModel.title() == 'Title';
+            });
+            test.assert(function () {
+                return viewModel.text() == 'Text';
+            });
+        };
         return Tests;
     })(unit.TestClass);
     exports.Tests = Tests;
+
+    var TestsWithContext = (function (_super) {
+        __extends(TestsWithContext, _super);
+        function TestsWithContext() {
+            _super.apply(this, arguments);
+            this.modelFactoryWithContext = new modelFactory.Factory();
+        }
+        TestsWithContext.prototype.testModelWithContext = function () {
+            var model = this.modelFactoryWithContext.createWithContext('Text', 'Title', 'Context');
+            var viewModel = new vm.WithContext();
+            var controller = new ctr.WithContext(model, viewModel);
+
+            test.assert(function () {
+                return viewModel.context() == 'Context';
+            });
+        };
+
+        TestsWithContext.prototype.testDisposeWithContext = function () {
+            var model = this.modelFactoryWithContext.createWithContext('Text', 'Title', 'Context');
+            var viewModel = new vm.WithContext();
+            var controller = new ctr.WithContext(model, viewModel);
+
+            controller.dispose();
+            model.context('New Context');
+
+            test.assert(function () {
+                return viewModel.context() == 'Context';
+            });
+        };
+        return TestsWithContext;
+    })(Tests);
+    exports.TestsWithContext = TestsWithContext;
 });

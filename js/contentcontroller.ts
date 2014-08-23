@@ -24,3 +24,23 @@ export class Controller {
 	private viewModel: vm.ViewModel;
 	private model: mdl.Model;
 }
+
+export class WithContext extends Controller {
+	constructor(model: mdl.WithContext, viewModel: vm.WithContext) {
+		super(model, viewModel);
+		this.initContext(model, viewModel);
+	}
+	
+	private initContext(model: mdl.WithContext, viewModel: vm.WithContext) {
+		this.viewModelWithContext = viewModel;
+		this.viewModelWithContext.context = ko.computed( () => model.context() );
+	}
+	
+	public dispose() {
+		Controller.prototype.dispose.apply(this, arguments);
+		
+		this.viewModelWithContext.context.dispose();
+	}
+	
+	private viewModelWithContext: vm.WithContext;
+}
