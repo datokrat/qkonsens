@@ -44,6 +44,19 @@
 			<div class="kk">
 				<!-- ko with: content -->
 					<!-- ko if: title --><h1 class="title" data-bind="text: title"></h1><!-- /ko -->
+					<!-- ko if: text --><span class="text" data-bind="text: text"></span><!-- /ko -->
+				<!-- /ko -->
+				
+				<!-- ko foreach: childKas -->
+					<!-- ko template: { name: 'ka-template' } --><!-- /ko -->
+				<!-- /ko -->
+			</div>
+		</script>
+		
+		<script type="text/html" id="ka-template">
+			<div class="ka">
+				<!-- ko with: content -->
+					<!-- ko if: title --><h1 class="title" data-bind="text: title"></h1><!-- /ko -->
 				<!-- /ko -->
 			</div>
 		</script>

@@ -27,6 +27,15 @@ export class Tests extends unit.TestClass {
 		test.assert(() => konsenskiste.getChildKaArray().length == 0);
 	}
 	
+	testRemoveKa2() {
+		var konsenskiste = this.factory.create( 'Basisdemokratie' );
+		
+		konsenskiste.appendKa( this.kaFactory.create( 'Begriff Basisdemokratie' ) );
+		konsenskiste.removeKa( this.kaFactory.create( 'Begriff Basisdemokratie' ) );
+		
+		test.assert(() => konsenskiste.getChildKaArray().length == 1);
+	}
+	
 	testKaEvents() {
 		var konsenskiste = this.factory.create( 'Basisdemokratie' );
 		var kernaussage = this.kaFactory.create( 'Begriff Basisdemokratie' );

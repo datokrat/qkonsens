@@ -35,6 +35,17 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../konsenskistemode
             });
         };
 
+        Tests.prototype.testRemoveKa2 = function () {
+            var konsenskiste = this.factory.create('Basisdemokratie');
+
+            konsenskiste.appendKa(this.kaFactory.create('Begriff Basisdemokratie'));
+            konsenskiste.removeKa(this.kaFactory.create('Begriff Basisdemokratie'));
+
+            test.assert(function () {
+                return konsenskiste.getChildKaArray().length == 1;
+            });
+        };
+
         Tests.prototype.testKaEvents = function () {
             var konsenskiste = this.factory.create('Basisdemokratie');
             var kernaussage = this.kaFactory.create('Begriff Basisdemokratie');

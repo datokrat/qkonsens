@@ -1,7 +1,10 @@
 ///<reference path="../typings/knockout.d.ts" />
 ///<reference path="../typings/jquery.d.ts" />
-define(["require", "exports", 'model', 'viewmodel', 'controller', 'konsenskistemodel'], function(require, exports, mdl, vm, ctr, koki) {
-    //import frontendTests = require('tests/frontend')
+define(["require", "exports", 'model', 'viewmodel', 'controller', 'konsenskistemodel', 'kernaussagemodel'], function(require, exports, mdl, vm, ctr, koki, ka) {
+    
+    ready = function () {
+    };
+
     var model = new mdl.ModelImpl();
     var viewModel = new vm.ViewModel();
     var controller = new ctr.Controller(model, viewModel);
@@ -9,9 +12,14 @@ define(["require", "exports", 'model', 'viewmodel', 'controller', 'konsenskistem
     var konsenskiste = new koki.Model();
     model.konsenskiste(konsenskiste);
 
-    /*var kernaussage = new kernaussage
-    model.appendChild()*/
+    var kernaussage = new ka.Model();
+    konsenskiste.appendKa(kernaussage);
+
     konsenskiste.content.title('Konsenskisten-Titel');
+    konsenskiste.content.text('Lorem ipsum dolor sit amet');
+    kernaussage.content.title('Kernaussagen-Titel');
 
     ko.applyBindings(viewModel);
+
+    ready();
 });

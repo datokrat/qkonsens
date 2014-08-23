@@ -1,13 +1,15 @@
 ///<reference path="../typings/knockout.d.ts" />
 ///<reference path="../typings/jquery.d.ts" />
 
+declare var ready: () => void;
+ready = () => {};
+
 import mdl = require('model')
 import vm = require('viewmodel')
 import ctr = require('controller')
 
 import koki = require('konsenskistemodel')
-
-//import frontendTests = require('tests/frontend')
+import ka = require('kernaussagemodel')
 
 var model = new mdl.ModelImpl();
 var viewModel = new vm.ViewModel();
@@ -16,9 +18,13 @@ var controller = new ctr.Controller(model, viewModel);
 var konsenskiste = new koki.Model();
 model.konsenskiste(konsenskiste);
 
-/*var kernaussage = new kernaussage
-model.appendChild()*/
+var kernaussage = new ka.Model();
+konsenskiste.appendKa(kernaussage);
 
 konsenskiste.content.title('Konsenskisten-Titel');
+konsenskiste.content.text('Lorem ipsum dolor sit amet');
+kernaussage.content.title('Kernaussagen-Titel');
 
 ko.applyBindings(viewModel);
+
+ready();
