@@ -29,5 +29,6 @@ export class Tests {
 	
 	testKaContent() {
 		test.assert( () => this.webot.query('h1').text('Kernaussagen-Titel').exists() );
+		test.assert( () => this.webot.query('*').text('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.').exists() );
 	}
 }

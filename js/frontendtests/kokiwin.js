@@ -46,6 +46,9 @@ define(["require", "exports", 'tests/test', 'frontendtests/webot'], function(req
             test.assert(function () {
                 return _this.webot.query('h1').text('Kernaussagen-Titel').exists();
             });
+            test.assert(function () {
+                return _this.webot.query('*').text('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.').exists();
+            });
         };
         return Tests;
     })();
