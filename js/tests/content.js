@@ -56,7 +56,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../factories/conten
             var controller = new ctr.WithContext(model, viewModel);
 
             test.assert(function () {
-                return viewModel.context() == 'Context';
+                return viewModel.context().text() == 'Context';
             });
         };
 
@@ -66,10 +66,10 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../factories/conten
             var controller = new ctr.WithContext(model, viewModel);
 
             controller.dispose();
-            model.context('New Context');
+            model.context().text('New Context');
 
             test.assert(function () {
-                return viewModel.context() == 'Context';
+                return viewModel.context().text() == 'Context';
             });
         };
         return TestsWithContext;

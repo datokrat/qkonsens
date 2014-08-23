@@ -17,11 +17,16 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenski
             var viewModel = new vm.ViewModel();
             var controller = new ctr.ControllerImpl(model, viewModel);
 
+            model.content.context().text('Der Klärtext');
+
             test.assert(function () {
                 return viewModel.content().title() == 'Basisdemokratie';
             });
             test.assert(function () {
                 return viewModel.content().text() == 'Beschreibung';
+            });
+            test.assert(function () {
+                return viewModel.content().context().text() == 'Der Klärtext';
             });
         };
 
@@ -63,7 +68,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenski
             model.appendKa(this.kaModelFactory.create('Begriff Basisdemokratie'));
 
             test.assert(function () {
-                return viewModel.childKas()[0].content.title() == 'Begriff Basisdemokratie';
+                return viewModel.childKas()[0].content().title() == 'Begriff Basisdemokratie';
             });
             test.assert(function () {
                 return viewModel.childKas().length == 1;

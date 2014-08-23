@@ -6,7 +6,7 @@ import Content = require('contentmodel')
 import EventFactory = require('factories/event')
 
 export class Model {
-	public content = new Content.Model();
+	public content = new Content.WithContext();
 	
 	public appendKa(ka: kernaussageModel.Model) {
 		this.kaArray.push(ka);

@@ -4,5 +4,7 @@ define(["require", "exports"], function(require, exports) {
         }
         return ViewModel;
     })();
-    exports.ViewModel = ViewModel;
+
+    
+    return ViewModel;
 });

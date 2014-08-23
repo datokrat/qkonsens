@@ -63,9 +63,11 @@ class TestEvent<Args> implements Event.Event<Args>, GenericTestEvent {
 }
 
 class TestEventFactory {
-	public create<Args>() {
+	public create<Args>(): TestEvent<Args> {
 		var ret = new TestEvent<Args>();
 		this.allEvents.push(ret);
+		
+		return ret;
 	}
 	
 	public reset() {

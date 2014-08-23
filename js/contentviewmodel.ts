@@ -1,10 +1,11 @@
-import observable = require('observable')
+import Observable = require('observable')
+import Context = require('contextviewmodel')
 
 export class ViewModel {
-	public title: observable.Observable<string>;
-	public text: observable.Observable<string>;
+	public title: Observable.Observable<string>;
+	public text: Observable.Observable<string>;
 }
 
 export class WithContext extends ViewModel {
-	public context: observable.Observable<string>;
+	public context: Observable.Observable<Context>;
 }

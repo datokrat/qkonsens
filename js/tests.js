@@ -1,8 +1,9 @@
-define(["require", "exports", 'tests/tsunit', 'tests/topicnavigationmodel', 'tests/topicnavigation', 'tests/controller', 'tests/konsenskistemodel', 'tests/kernaussage', 'tests/konsenskistecontroller', 'tests/childarraysynchronizer', 'tests/content', 'tests/winkonsenskiste'], function(require, exports, unit, topicNavigationModel, topicNavigation, controller, kokiModel, kaModel, kokiController, synchronizer, content, winKoki) {
+define(["require", "exports", 'tests/tsunit', 'tests/topicnavigationmodel', 'tests/topicnavigation', 'tests/controller', 'tests/konsenskistemodel', 'tests/kernaussage', 'tests/konsenskistecontroller', 'tests/childarraysynchronizer', 'tests/content', 'tests/context', 'tests/winkonsenskiste'], function(require, exports, unit, topicNavigationModel, topicNavigation, controller, kokiModel, kaModel, kokiController, synchronizer, content, context, winKoki) {
     var test = new unit.Test();
 
     test.addTestClass(new content.Tests(), 'Content');
     test.addTestClass(new content.TestsWithContext(), 'ContentWithContext');
+    test.addTestClass(new context.Tests(), 'Context');
     test.addTestClass(new synchronizer.Tests(), 'ChildArraySynchronizer');
     test.addTestClass(new kaModel.Tests(), 'Kernaussage');
     test.addTestClass(new kokiModel.Tests(), 'KonsenskisteModel');

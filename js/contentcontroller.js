@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports"], function(require, exports) {
+define(["require", "exports", 'contextviewmodel', 'contextcontroller'], function(require, exports, ContextViewModel, ContextController) {
     var Controller = (function () {
         function Controller(model, viewModel) {
             this.init(model, viewModel);
@@ -37,15 +37,21 @@ define(["require", "exports"], function(require, exports) {
         }
         WithContext.prototype.initContext = function (model, viewModel) {
             this.viewModelWithContext = viewModel;
-            this.viewModelWithContext.context = ko.computed(function () {
-                return model.context();
-            });
+            this.modelWithContext = model;
+
+            this.viewModelWithContext.context = ko.observable(new ContextViewModel);
+
+            var contextModel = this.modelWithContext.context();
+            var contextViewModel = this.viewModelWithContext.context();
+            var contextController = new ContextController(contextModel, contextViewModel);
+
+            this.context = contextController;
         };
 
         WithContext.prototype.dispose = function () {
             Controller.prototype.dispose.apply(this, arguments);
 
-            this.viewModelWithContext.context.dispose();
+            this.context.dispose();
         };
         return WithContext;
     })(Controller);

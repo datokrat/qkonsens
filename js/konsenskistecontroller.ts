@@ -29,7 +29,7 @@ export class ControllerImpl implements Controller {
 		this.initModelEvents();
 		this.initViewModel();
 		
-		this.content = new content.Controller(this.model.content, this.viewModel.content());
+		this.content = new content.WithContext(this.model.content, this.viewModel.content());
 	}
 	
 	private initChildKaSynchronizer() {
@@ -49,7 +49,7 @@ export class ControllerImpl implements Controller {
 	}
 	
 	private initViewModel() {
-		this.viewModel.content = ko.observable( new contentVm.ViewModel );
+		this.viewModel.content = ko.observable( new contentVm.WithContext );
 		this.viewModel.childKas = this.childKaViewModels;
 	}
 	
@@ -81,7 +81,7 @@ export class ControllerImpl implements Controller {
 	private model: mdl.Model;
 	private viewModel: vm.ViewModel;
 	
-	private content: content.Controller;
+	private content: content.WithContext;
 	
 	private childKaViewModels = ko.observableArray<kernaussageVm.ViewModel>();
 	private childKaArraySynchronizer = 

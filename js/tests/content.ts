@@ -40,7 +40,7 @@ export class TestsWithContext extends Tests {
 		var viewModel = new vm.WithContext();
 		var controller = new ctr.WithContext(model, viewModel);
 		
-		test.assert( () => viewModel.context() == 'Context' );
+		test.assert( () => viewModel.context().text() == 'Context' );
 	}
 	
 	testDisposeWithContext() {
@@ -49,8 +49,8 @@ export class TestsWithContext extends Tests {
 		var controller = new ctr.WithContext(model, viewModel);
 		
 		controller.dispose();
-		model.context('New Context');
+		model.context().text('New Context');
 		
-		test.assert( () => viewModel.context() == 'Context' );
+		test.assert( () => viewModel.context().text() == 'Context' );
 	}
 }

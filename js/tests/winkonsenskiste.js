@@ -71,10 +71,10 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../konsenskistemode
                 return window.kkView().childKas().length == 1;
             });
             test.assert(function () {
-                return window.kkView().childKas()[0].content.title() == 'Begriff Basisdemokratie';
+                return window.kkView().childKas()[0].content().title() == 'Begriff Basisdemokratie';
             });
             test.assert(function () {
-                return window.kkView().childKas()[0].content.text() == 'Blablablablub';
+                return window.kkView().childKas()[0].content().text() == 'Blablablablub';
             });
         };
         return Tests;

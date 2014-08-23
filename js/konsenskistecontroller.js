@@ -13,7 +13,7 @@ define(["require", "exports", 'kernaussageviewmodel', 'kernaussagecontroller', '
             this.initModelEvents();
             this.initViewModel();
 
-            this.content = new content.Controller(this.model.content, this.viewModel.content());
+            this.content = new content.WithContext(this.model.content, this.viewModel.content());
         };
 
         ControllerImpl.prototype.initChildKaSynchronizer = function () {
@@ -43,7 +43,7 @@ define(["require", "exports", 'kernaussageviewmodel', 'kernaussagecontroller', '
         };
 
         ControllerImpl.prototype.initViewModel = function () {
-            this.viewModel.content = ko.observable(new contentVm.ViewModel);
+            this.viewModel.content = ko.observable(new contentVm.WithContext);
             this.viewModel.childKas = this.childKaViewModels;
         };
 

@@ -3,6 +3,10 @@ import observable = require('observable')
 import mdl = require('contentmodel')
 import vm = require('contentviewmodel')
 
+import ContextViewModel = require('contextviewmodel')
+import ContextModel = require('contextmodel')
+import ContextController = require('contextcontroller')
+
 export class Controller {
 	constructor(model: mdl.Model, viewModel: vm.ViewModel) {
 		this.init(model, viewModel);
@@ -33,14 +37,25 @@ export class WithContext extends Controller {
 	
 	private initContext(model: mdl.WithContext, viewModel: vm.WithContext) {
 		this.viewModelWithContext = viewModel;
-		this.viewModelWithContext.context = ko.computed( () => model.context() );
+		this.modelWithContext = model;
+		
+		this.viewModelWithContext.context = ko.observable<ContextViewModel>( new ContextViewModel );
+		
+		var contextModel = this.modelWithContext.context();
+		var contextViewModel = this.viewModelWithContext.context();
+		var contextController = new ContextController( contextModel, contextViewModel );
+		
+		this.context = contextController;
 	}
 	
 	public dispose() {
 		Controller.prototype.dispose.apply(this, arguments);
 		
-		this.viewModelWithContext.context.dispose();
+		this.context.dispose();
 	}
 	
 	private viewModelWithContext: vm.WithContext;
+	private modelWithContext: mdl.WithContext;
+	
+	private context: ContextController;
 }

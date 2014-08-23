@@ -3,7 +3,8 @@ import observable = require('observable')
 import mdl = require('kernaussagemodel')
 import vm = require('kernaussageviewmodel')
 
-import Content = require('contentcontroller');
+import Content = require('contentcontroller')
+import ContentViewModel = require('contentviewmodel')
 
 export class Controller {
 	private viewModel: vm.ViewModel;
@@ -15,9 +16,10 @@ export class Controller {
 	
 	private init(model: mdl.Model, viewModel: vm.ViewModel) {
 		viewModel.isActive = ko.observable<boolean>();
+		viewModel.content = ko.observable( new ContentViewModel.WithContext );
 		this.viewModel = viewModel;
 		
-		this.content = new Content.Controller(model.content, viewModel.content);
+		this.content = new Content.WithContext(model.content, viewModel.content());
 	}
 	
 	public dispose() {

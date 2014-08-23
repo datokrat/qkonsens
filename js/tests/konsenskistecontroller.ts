@@ -20,8 +20,11 @@ export class Tests extends unit.TestClass {
 		var viewModel = new vm.ViewModel();
 		var controller = new ctr.ControllerImpl(model, viewModel);
 		
+		model.content.context().text('Der Klärtext');
+		
 		test.assert( () => viewModel.content().title() == 'Basisdemokratie' );
 		test.assert( () => viewModel.content().text() == 'Beschreibung' );
+		test.assert( () => viewModel.content().context().text() == 'Der Klärtext' );
 	}
 	
 	testContentObservables() {
@@ -53,7 +56,7 @@ export class Tests extends unit.TestClass {
 		
 		model.appendKa( this.kaModelFactory.create('Begriff Basisdemokratie') );
 		
-		test.assert(() => viewModel.childKas()[0].content.title() == 'Begriff Basisdemokratie');
+		test.assert(() => viewModel.childKas()[0].content().title() == 'Begriff Basisdemokratie');
 		test.assert(() => viewModel.childKas().length == 1);
 		test.assert(() => !viewModel.childKas()[0].isActive());
 	}

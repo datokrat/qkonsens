@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/tsunit', 'tests/test', '../kernaussagemodel', '../kernaussageviewmodel', '../kernaussagecontroller'], function(require, exports, unit, test, mdl, vm, ctr) {
+define(["require", "exports", 'tests/tsunit', 'tests/test', '../kernaussagemodel', '../kernaussageviewmodel', '../kernaussagecontroller'], function(require, exports, unit, test, Model, ViewModel, Controller) {
     var Tests = (function (_super) {
         __extends(Tests, _super);
         function Tests() {
@@ -12,12 +12,12 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../kernaussagemodel
             this.modelFactory = new ModelFactory();
         }
         Tests.prototype.test = function () {
-            var model = this.modelFactory.create('Begriff Basisdemokratie');
-            var viewModel = new vm.ViewModel();
-            var controller = new ctr.Controller(model, viewModel);
+            var model = this.modelFactory.create('Begriff Basisdemokratie', 'Basisdemokratie ist Demokratie, die aus der Basis kommt', 'Baduum-Disch!');
+            var viewModel = new ViewModel.ViewModel();
+            var controller = new Controller.Controller(model, viewModel);
 
             test.assert(function () {
-                return viewModel.content.title() == 'Begriff Basisdemokratie';
+                return viewModel.content().title() == 'Begriff Basisdemokratie';
             });
         };
         return Tests;
@@ -27,9 +27,11 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../kernaussagemodel
     var ModelFactory = (function () {
         function ModelFactory() {
         }
-        ModelFactory.prototype.create = function (title) {
-            var kernaussage = new mdl.Model();
+        ModelFactory.prototype.create = function (title, text, context) {
+            var kernaussage = new Model.Model();
             kernaussage.content.title(title);
+            kernaussage.content.text(text);
+            kernaussage.content.context().text(context);
             return kernaussage;
         };
         return ModelFactory;

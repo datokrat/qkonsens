@@ -1,10 +1,10 @@
 import observable = require('observable')
 
-import content = require('contentviewmodel')
-import ka = require('kernaussageviewmodel')
+import Content = require('contentviewmodel')
+import Kernaussage = require('kernaussageviewmodel')
 
 export class ViewModel {
-	public content: observable.Observable<content.ViewModel>;
+	public content: observable.Observable<Content.WithContext>;
 
-	public childKas: () => ka.ViewModel[];
+	public childKas: () => Kernaussage.ViewModel[]; //TODO: Make observable
 }

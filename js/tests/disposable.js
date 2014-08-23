@@ -9,9 +9,13 @@ define(["require", "exports", 'tests/tsunit', '../event'], function(require, exp
         __extends(Tests, _super);
         function Tests(factory) {
             _super.call(this);
+            this.eventFactory = new TestEventFactory();
             this.factory = factory;
+            this.factory.setEventFactory(this.eventFactory);
         }
         Tests.prototype.test = function () {
+            this.eventFactory.reset();
+            var disposable = this.factory.create();
         };
         return Tests;
     })(unit.TestClass);
@@ -53,6 +57,8 @@ define(["require", "exports", 'tests/tsunit', '../event'], function(require, exp
         TestEventFactory.prototype.create = function () {
             var ret = new TestEvent();
             this.allEvents.push(ret);
+
+            return ret;
         };
 
         TestEventFactory.prototype.reset = function () {

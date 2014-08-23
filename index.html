@@ -44,6 +44,8 @@
 			<div class="kk">
 				<!-- ko template: { name: 'content-template', data: content } --><!-- /ko -->
 				
+				<!-- ko template: { name: 'context-template', data: content().context } --><!-- /ko -->
+				
 				<div class="controls">Controls</div>
 				
 				<!-- ko foreach: childKas -->
@@ -55,6 +57,8 @@
 		<script type="text/html" id="ka-template">
 			<div class="ka">
 				<!-- ko template: { name: 'content-template', data: content } --><!-- /ko -->
+				
+				<!-- ko template: { name: 'context-template', data: content().context } --><!-- /ko -->
 				
 				<div class="controls">Controls</div>
 			</div>
@@ -202,7 +206,12 @@
 		
 		<script type="text/html" id="context-template">
 			<div class="cxt">
-				<p><span class="text" data-bind="text: $data"></span></p>
+				<!-- ko if: $data -->
+					<p data-bind="if: text">
+						<span>&#x25B2;</span> <span class="text" data-bind="text: text"></span>
+					</p>
+					<p data-bind="if: !text()" class="clickable">&#x25BC; Klärtext aufklappen</p>
+				<!-- /ko -->
 			</div>
 		</script>
 		

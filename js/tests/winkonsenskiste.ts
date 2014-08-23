@@ -54,7 +54,7 @@ export class Tests extends unit.TestClass {
 		
 		test.assert( () => window.kkView().content().title() == 'Basisdemokratie' );
 		test.assert( () => window.kkView().childKas().length == 1 );
-		test.assert( () => window.kkView().childKas()[0].content.title() == 'Begriff Basisdemokratie' );
-		test.assert( () => window.kkView().childKas()[0].content.text() == 'Blablablablub' );
+		test.assert( () => window.kkView().childKas()[0].content().title() == 'Begriff Basisdemokratie' );
+		test.assert( () => window.kkView().childKas()[0].content().text() == 'Blablablablub' );
 	}
 }

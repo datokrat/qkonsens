@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports"], function(require, exports) {
+define(["require", "exports", 'contextmodel'], function(require, exports, Context) {
     var Model = (function () {
         function Model() {
             this.title = ko.observable();
@@ -18,7 +18,7 @@ define(["require", "exports"], function(require, exports) {
         __extends(WithContext, _super);
         function WithContext() {
             _super.apply(this, arguments);
-            this.context = ko.observable();
+            this.context = ko.observable(new Context);
         }
         return WithContext;
     })(Model);

@@ -12,7 +12,7 @@ export class Factory {
 		var cnt = new content.WithContext();
 		this.create( text, title, cnt );
 		
-		cnt.context(context);
+		cnt.context().text(context);
 		return cnt;
 	}
 }
