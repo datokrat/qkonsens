@@ -1,3 +1,4 @@
+import Events = require('event')
 import Model = require('contextmodel')
 import ViewModel = require('contextviewmodel')
 
@@ -7,6 +8,14 @@ class Controller {
 		
 		this.viewModel.text = ko.computed( () => model.text() );
 		this.viewModel.isVisible = ko.observable<boolean>(false);
+		
+		this.viewModel.toggleVisibility = new Events.EventImpl<Events.Void>();
+		this.viewModel.toggleVisibility.subscribe( () => this.toggleVisibility() );
+	}
+	
+	private toggleVisibility() {
+		var isVisible = this.viewModel.isVisible();
+		this.viewModel.isVisible( !isVisible );
 	}
 	
 	public dispose() {

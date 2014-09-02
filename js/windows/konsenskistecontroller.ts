@@ -4,10 +4,12 @@ import winVm = require('windows/konsenskiste')
 import kokiMdl = require('../konsenskistemodel')
 import kokiVm = require('../konsenskisteviewmodel')
 import kokiCtr = require('../konsenskistecontroller')
+import Communicator = require('../communicator')
 
 export class Controller {
-		constructor(konsenskisteModel: kokiMdl.Model, windowViewModel: winVm.Win) {
+		constructor(konsenskisteModel: kokiMdl.Model, windowViewModel: winVm.Win, communicator: Communicator.Main) {
 		this.window = windowViewModel;
+		this.communicator = communicator;
 		this.window.kkView = ko.observable<kokiVm.ViewModel>();
 		this.initKonsenskiste(konsenskisteModel);
 	}
@@ -17,7 +19,7 @@ export class Controller {
 			this.konsenskisteController.dispose();
 			
 		var konsenskisteViewModel = new kokiVm.ViewModel;
-		this.konsenskisteController = this.konsenskisteControllerFactory.create(konsenskisteModel, konsenskisteViewModel);
+		this.konsenskisteController = this.konsenskisteControllerFactory.create(konsenskisteModel, konsenskisteViewModel, this.communicator);
 		
 		this.window.kkView(konsenskisteViewModel);
 	}
@@ -32,5 +34,6 @@ export class Controller {
 	
 	private window: winVm.Win;
 	private konsenskisteController: kokiCtr.Controller;
+	private communicator: Communicator.Main;
 	private konsenskisteControllerFactory = new KokiControllerFactory.Factory;
 }

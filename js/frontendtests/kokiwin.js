@@ -41,6 +41,32 @@ define(["require", "exports", 'tests/test', 'frontendtests/webot'], function(req
             });
         };
 
+        Tests.prototype.testKokiContext = function () {
+            var _this = this;
+            this.webot.queryContains('.kk', 'Konsenskisten-Titel').child('*').text('Klärtext aufklappen').click();
+            test.assert(function () {
+                return _this.webot.queryContains('.kk', 'Konsenskisten-Titel').child('*').text('ipsum (lat.): selbst').exists();
+            });
+
+            this.webot.queryContains('.kk', 'Konsenskisten-Titel').child('*').text('ipsum (lat.): selbst').click();
+            test.assert(function () {
+                return _this.webot.queryContains('.kk', 'Konsenskisten-Titel').child('*').text('ipsum (lat.): selbst').exists(false);
+            });
+        };
+
+        Tests.prototype.testKaContext = function () {
+            var _this = this;
+            this.webot.queryContains('.ka', 'Kernaussagen-Titel').child('*').text('Klärtext aufklappen').click();
+            test.assert(function () {
+                return _this.webot.queryContains('.ka', 'Kernaussagen-Titel').child('*').text('blablablablub').exists();
+            });
+
+            this.webot.queryContains('.ka', 'Kernaussagen-Titel').child('*').text('blablablablub').click();
+            test.assert(function () {
+                return _this.webot.queryContains('.ka', 'Kernaussagen-Titel').child('*').text('blablablablub').exists(false);
+            });
+        };
+
         Tests.prototype.testKaContent = function () {
             var _this = this;
             test.assert(function () {

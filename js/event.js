@@ -12,6 +12,7 @@ define(["require", "exports"], function(require, exports) {
     var EventImpl = (function () {
         function EventImpl() {
             this.listeners = [];
+            this.raiseThis = this.raise.bind(this);
         }
         EventImpl.prototype.subscribe = function (cb) {
             var _this = this;

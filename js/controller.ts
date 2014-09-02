@@ -6,13 +6,15 @@ import frame = require('frame')
 import noneWin = require('windows/none')
 import kokiWin = require('windows/konsenskiste')
 import kokiWinCtr = require('windows/konsenskistecontroller')
+import Communicator = require('communicator')
 
 export class Controller {
-	constructor(model: mdl.Model, viewModel: vm.ViewModel) {
+	constructor(model: mdl.Model, viewModel: vm.ViewModel, communicator: Communicator.Main) {
 		var topicNavigationController = new topicNavigationCtr.Controller(model.topicNavigation, viewModel.topicNavigation);
 		
 		this.kkWin = new kokiWin.Win;
-		this.kkWinController = new kokiWinCtr.Controller(model.konsenskiste(), this.kkWin);
+		this.kkWinController = new kokiWinCtr.Controller(model.konsenskiste(), this.kkWin, communicator);
+		this.communicator = communicator;
 		
 		model.konsenskiste.subscribe( newKoki => this.kkWinController.setKonsenskisteModel(newKoki) );
 		
@@ -23,4 +25,5 @@ export class Controller {
 	
 	private kkWin: kokiWin.Win;
 	private kkWinController: kokiWinCtr.Controller;
+	private communicator: Communicator.Main;
 }

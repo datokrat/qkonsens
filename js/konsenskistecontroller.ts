@@ -7,6 +7,8 @@ import kernaussageMdl = require('kernaussagemodel')
 import kernaussageVm = require('kernaussageviewmodel')
 import kernaussageCtr = require('kernaussagecontroller')
 
+import Communicator = require('communicator')
+
 import contentVm = require('contentviewmodel');
 
 import content = require('contentcontroller')
@@ -17,17 +19,19 @@ export interface Controller {
 }
 
 export class ControllerImpl implements Controller {
-	constructor(model: mdl.Model, viewModel: vm.ViewModel) {
-		this.init(model, viewModel);
+	constructor(model: mdl.Model, viewModel: vm.ViewModel, communicator: Communicator.Main) {
+		this.init(model, viewModel, communicator);
 	}
 	
-	private init(model: mdl.Model, viewModel: vm.ViewModel) {
+	private init(model: mdl.Model, viewModel: vm.ViewModel, communicator: Communicator.Main) {
 		this.model = model;
 		this.viewModel = viewModel;
+		this.communicator = communicator;
 		
 		this.initChildKaSynchronizer();
 		this.initModelEvents();
 		this.initViewModel();
+		this.initCommunicator();
 		
 		this.content = new content.WithContext(this.model.content, this.viewModel.content());
 	}
@@ -51,6 +55,15 @@ export class ControllerImpl implements Controller {
 	private initViewModel() {
 		this.viewModel.content = ko.observable( new contentVm.WithContext );
 		this.viewModel.childKas = this.childKaViewModels;
+	}
+	
+	private initCommunicator() {
+		this.communicator.contentRetrieved.subscribe((args: Communicator.ContentReceivedArgs) => {
+			if(args.id == this.model.id) {
+				this.model.content.title( args.content.title() );
+				this.model.content.text( args.content.text() );
+			}
+		})
 	}
 	
 	private getChildKaArray() {
@@ -80,6 +93,7 @@ export class ControllerImpl implements Controller {
 	
 	private model: mdl.Model;
 	private viewModel: vm.ViewModel;
+	private communicator: Communicator.Main;
 	
 	private content: content.WithContext;
 	

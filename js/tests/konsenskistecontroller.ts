@@ -7,6 +7,7 @@ import kaModelFty = require('factories/kernaussagemodel')
 import mdl = require('../konsenskistemodel')
 import vm = require('../konsenskisteviewmodel')
 import ctr = require('../konsenskistecontroller')
+import Communicator = require('tests/testcommunicator')
 
 import Event = require('../event')
 import EventFactory = require('../factories/event')
@@ -18,7 +19,7 @@ export class Tests extends unit.TestClass {
 	testContent() {
 		var model = this.kkModelFactory.create( 'Basisdemokratie', 'Beschreibung' );
 		var viewModel = new vm.ViewModel();
-		var controller = new ctr.ControllerImpl(model, viewModel);
+		var controller = new ctr.ControllerImpl(model, viewModel, new Communicator);
 		
 		model.content.context().text('Der Klärtext');
 		
@@ -30,7 +31,7 @@ export class Tests extends unit.TestClass {
 	testContentObservables() {
 		var model = this.kkModelFactory.create( 'Basisdemokratie', 'Beschreibung' );
 		var viewModel = new vm.ViewModel();
-		var controller = new ctr.ControllerImpl(model, viewModel);
+		var controller = new ctr.ControllerImpl(model, viewModel, new Communicator);
 		var titleTracker: string[] = [];
 		var textTracker: string[] = [];
 		
@@ -52,7 +53,7 @@ export class Tests extends unit.TestClass {
 	testChildKas() {
 		var model = this.kkModelFactory.create( 'Basisdemokratie (Konzept)', 'Beispiel-Konsenskiste' );
 		var viewModel = new vm.ViewModel();
-		var controller = new ctr.ControllerImpl(model, viewModel);
+		var controller = new ctr.ControllerImpl(model, viewModel, new Communicator);
 		
 		model.appendKa( this.kaModelFactory.create('Begriff Basisdemokratie') );
 		
@@ -64,7 +65,7 @@ export class Tests extends unit.TestClass {
 	testRemoveChildKa() {
 		var model = this.kkModelFactory.create( 'Basisdemokratie (Konzept)' );
 		var viewModel = new vm.ViewModel();
-		var controller = new ctr.ControllerImpl(model, viewModel);
+		var controller = new ctr.ControllerImpl(model, viewModel, new Communicator);
 		var ka = this.kaModelFactory.create('Begriff Basisdemokratie');
 		
 		model.appendKa( ka );
@@ -76,7 +77,7 @@ export class Tests extends unit.TestClass {
 	testDispose() {
 		var model = this.kkModelFactory.create( 'Basisdemokratie' );
 		var viewModel = new vm.ViewModel();
-		var controller = new ctr.ControllerImpl(model, viewModel);
+		var controller = new ctr.ControllerImpl(model, viewModel, new Communicator);
 		
 		controller.dispose();
 		
@@ -127,6 +128,10 @@ export class Tests extends unit.TestClass {
 class TestEvent<Args> implements Event.Event<Args> {
 	private event = new Event.EventImpl<Args>();
 	
+	constructor() {
+		this.raiseThis = this.raise.bind(this);
+	}
+	
 	public subscribe(cb: Event.Listener<Args>): Event.Subscription {
 		this.listenerCtr++;
 		this.event.subscribe(cb);
@@ -138,9 +143,11 @@ class TestEvent<Args> implements Event.Event<Args> {
 		this.event.unsubscribe(cb);
 	}
 	
-	public raise(args: Args) {
+	public raise(args?: Args) {
 		this.event.raise(args);
 	}
+	
+	public raiseThis: (args?: Args) => void;
 	
 	public countListeners(): number {
 		return this.listenerCtr;

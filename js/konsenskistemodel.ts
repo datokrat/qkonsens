@@ -6,6 +6,7 @@ import Content = require('contentmodel')
 import EventFactory = require('factories/event')
 
 export class Model {
+	public id: number;
 	public content = new Content.WithContext();
 	
 	public appendKa(ka: kernaussageModel.Model) {

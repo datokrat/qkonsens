@@ -10,6 +10,8 @@ import tpc = require('../topic')
 
 import kokiWin = require('../windows/konsenskiste')
 
+import TestCommunicator = require('tests/testcommunicator')
+
 export class Tests extends unit.TestClass {
 	private factory = new Factory();
 	private topicFactory = new TopicFactory();
@@ -39,15 +41,38 @@ export class Tests extends unit.TestClass {
 		var konsenskisteWindow = <kokiWin.Win>cxt.viewModel.center.win();
 		test.assert( () => konsenskisteWindow.kkView().content().title() == 'Hi!' )
 	}
+	
+	testCommunicatorConnection() {
+		var cxt = this.factory.create();
+		
+		var oldKoki = new koki.Model;
+		oldKoki.id = 1;
+		
+		cxt.model.konsenskiste(oldKoki);
+		
+		var newKoki = new koki.Model;
+		newKoki.content.title('hi');
+		newKoki.content.text('ho');
+		cxt.communicator.contentRetrieved.raise({ id: 1, content: newKoki.content });
+		
+		var konsenskisteWindow = <kokiWin.Win>cxt.viewModel.center.win();
+		test.assert( () => konsenskisteWindow.kkView().content().title() == 'hi' );
+		test.assert( () => konsenskisteWindow.kkView().content().text() == 'ho' );
+	}
+	
+	testCommunicatorDisposal() {
+		test.assert( () => !"not implemented" );
+	}
 }
 
 class Factory {
 	public create() {
 		var model: mdl.Model = new mdl.ModelImpl();
 		var viewModel = new vm.ViewModel();
-		var controller = new ctr.Controller(model, viewModel);
+		var communicator = new TestCommunicator();
+		var controller = new ctr.Controller(model, viewModel, communicator);
 		
-		return { model: model, viewModel: viewModel, controller: controller };
+		return { model: model, viewModel: viewModel, communicator: communicator, controller: controller };
 	}
 }
 

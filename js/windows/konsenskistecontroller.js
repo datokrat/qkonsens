@@ -1,8 +1,9 @@
 define(["require", "exports", 'factories/konsenskistecontroller', '../konsenskisteviewmodel'], function(require, exports, KokiControllerFactory, kokiVm) {
     var Controller = (function () {
-        function Controller(konsenskisteModel, windowViewModel) {
+        function Controller(konsenskisteModel, windowViewModel, communicator) {
             this.konsenskisteControllerFactory = new KokiControllerFactory.Factory;
             this.window = windowViewModel;
+            this.communicator = communicator;
             this.window.kkView = ko.observable();
             this.initKonsenskiste(konsenskisteModel);
         }
@@ -11,7 +12,7 @@ define(["require", "exports", 'factories/konsenskistecontroller', '../konsenskis
                 this.konsenskisteController.dispose();
 
             var konsenskisteViewModel = new kokiVm.ViewModel;
-            this.konsenskisteController = this.konsenskisteControllerFactory.create(konsenskisteModel, konsenskisteViewModel);
+            this.konsenskisteController = this.konsenskisteControllerFactory.create(konsenskisteModel, konsenskisteViewModel, this.communicator);
 
             this.window.kkView(konsenskisteViewModel);
         };

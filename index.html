@@ -207,10 +207,10 @@
 		<script type="text/html" id="context-template">
 			<div class="cxt">
 				<!-- ko if: $data -->
-					<p data-bind="if: text">
+					<p data-bind="if: isVisible, click: toggleVisibility.raiseThis" class="clickable">
 						<span>&#x25B2;</span> <span class="text" data-bind="text: text"></span>
 					</p>
-					<p data-bind="if: !text()" class="clickable">&#x25BC; Klärtext aufklappen</p>
+					<p data-bind="if: !isVisible(), click: toggleVisibility.raiseThis" class="clickable">&#x25BC; <span>Klärtext aufklappen</span></p>
 				<!-- /ko -->
 			</div>
 		</script>

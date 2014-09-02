@@ -4,6 +4,7 @@ export interface Event<Args> {
 	subscribe(cb: (Args) => void);
 	unsubscribe(cb: (Args) => void);
 	raise(args?: Args);
+	raiseThis(args?: Args);
 }
 
 export interface Listener<Args> {
@@ -15,6 +16,10 @@ export class Subscription {
 }
 
 export class EventImpl<Args> implements Event<Args> {
+	constructor() {
+		this.raiseThis = this.raise.bind(this);
+	}
+
 	public subscribe(cb: (Args) => void): Subscription {
 		if(!this.isListener(cb))
 			this.listeners.push(cb);
@@ -32,6 +37,8 @@ export class EventImpl<Args> implements Event<Args> {
 			l(args);
 		});
 	}
+	
+	public raiseThis: (args?: Args) => void;
 
 	private isListener(cb: (Args) => void) {
 		return this.listeners.indexOf(cb) != -1;

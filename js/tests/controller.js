@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/tsunit', 'tests/test', '../model', '../viewmodel', '../controller', '../konsenskistemodel', '../topic', '../windows/konsenskiste'], function(require, exports, unit, test, mdl, vm, ctr, koki, tpc, kokiWin) {
+define(["require", "exports", 'tests/tsunit', 'tests/test', '../model', '../viewmodel', '../controller', '../konsenskistemodel', '../topic', '../windows/konsenskiste', 'tests/testcommunicator'], function(require, exports, unit, test, mdl, vm, ctr, koki, tpc, kokiWin, TestCommunicator) {
     var Tests = (function (_super) {
         __extends(Tests, _super);
         function Tests() {
@@ -45,6 +45,34 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../model', '../view
                 return konsenskisteWindow.kkView().content().title() == 'Hi!';
             });
         };
+
+        Tests.prototype.testCommunicatorConnection = function () {
+            var cxt = this.factory.create();
+
+            var oldKoki = new koki.Model;
+            oldKoki.id = 1;
+
+            cxt.model.konsenskiste(oldKoki);
+
+            var newKoki = new koki.Model;
+            newKoki.content.title('hi');
+            newKoki.content.text('ho');
+            cxt.communicator.contentRetrieved.raise({ id: 1, content: newKoki.content });
+
+            var konsenskisteWindow = cxt.viewModel.center.win();
+            test.assert(function () {
+                return konsenskisteWindow.kkView().content().title() == 'hi';
+            });
+            test.assert(function () {
+                return konsenskisteWindow.kkView().content().text() == 'ho';
+            });
+        };
+
+        Tests.prototype.testCommunicatorDisposal = function () {
+            test.assert(function () {
+                return !"not implemented";
+            });
+        };
         return Tests;
     })(unit.TestClass);
     exports.Tests = Tests;
@@ -55,9 +83,10 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../model', '../view
         Factory.prototype.create = function () {
             var model = new mdl.ModelImpl();
             var viewModel = new vm.ViewModel();
-            var controller = new ctr.Controller(model, viewModel);
+            var communicator = new TestCommunicator();
+            var controller = new ctr.Controller(model, viewModel, communicator);
 
-            return { model: model, viewModel: viewModel, controller: controller };
+            return { model: model, viewModel: viewModel, communicator: communicator, controller: controller };
         };
         return Factory;
     })();

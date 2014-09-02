@@ -1,17 +1,19 @@
 define(["require", "exports", 'kernaussageviewmodel', 'kernaussagecontroller', 'contentviewmodel', 'contentcontroller', 'childarraysynchronizer'], function(require, exports, kernaussageVm, kernaussageCtr, contentVm, content, synchronizer) {
     var ControllerImpl = (function () {
-        function ControllerImpl(model, viewModel) {
+        function ControllerImpl(model, viewModel, communicator) {
             this.childKaViewModels = ko.observableArray();
             this.childKaArraySynchronizer = new synchronizer.ChildArraySynchronizer();
-            this.init(model, viewModel);
+            this.init(model, viewModel, communicator);
         }
-        ControllerImpl.prototype.init = function (model, viewModel) {
+        ControllerImpl.prototype.init = function (model, viewModel, communicator) {
             this.model = model;
             this.viewModel = viewModel;
+            this.communicator = communicator;
 
             this.initChildKaSynchronizer();
             this.initModelEvents();
             this.initViewModel();
+            this.initCommunicator();
 
             this.content = new content.WithContext(this.model.content, this.viewModel.content());
         };
@@ -45,6 +47,16 @@ define(["require", "exports", 'kernaussageviewmodel', 'kernaussagecontroller', '
         ControllerImpl.prototype.initViewModel = function () {
             this.viewModel.content = ko.observable(new contentVm.WithContext);
             this.viewModel.childKas = this.childKaViewModels;
+        };
+
+        ControllerImpl.prototype.initCommunicator = function () {
+            var _this = this;
+            this.communicator.contentRetrieved.subscribe(function (args) {
+                if (args.id == _this.model.id) {
+                    _this.model.content.title(args.content.title());
+                    _this.model.content.text(args.content.text());
+                }
+            });
         };
 
         ControllerImpl.prototype.getChildKaArray = function () {

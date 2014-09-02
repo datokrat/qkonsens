@@ -1,13 +1,14 @@
 ///<reference path="../typings/knockout.d.ts" />
 ///<reference path="../typings/jquery.d.ts" />
-define(["require", "exports", 'model', 'viewmodel', 'controller', 'konsenskistemodel', 'kernaussagemodel'], function(require, exports, mdl, vm, ctr, koki, ka) {
+define(["require", "exports", 'model', 'viewmodel', 'controller', 'konsenskistemodel', 'kernaussagemodel', 'tests/testcommunicator'], function(require, exports, mdl, vm, ctr, koki, ka, TestCommunicator) {
     
     ready = function () {
     };
 
     var model = new mdl.ModelImpl();
     var viewModel = new vm.ViewModel();
-    var controller = new ctr.Controller(model, viewModel);
+    var communicator = new TestCommunicator();
+    var controller = new ctr.Controller(model, viewModel, communicator);
 
     var konsenskiste = new koki.Model();
     model.konsenskiste(konsenskiste);
@@ -21,6 +22,7 @@ define(["require", "exports", 'model', 'viewmodel', 'controller', 'konsenskistem
 
     kernaussage.content.title('Kernaussagen-Titel');
     kernaussage.content.text('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.');
+    kernaussage.content.context().text('blablablablub');
 
     ko.applyBindings(viewModel);
 

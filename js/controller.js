@@ -1,11 +1,12 @@
 define(["require", "exports", 'topicnavigationcontroller', 'frame', 'windows/none', 'windows/konsenskiste', 'windows/konsenskistecontroller'], function(require, exports, topicNavigationCtr, frame, noneWin, kokiWin, kokiWinCtr) {
     var Controller = (function () {
-        function Controller(model, viewModel) {
+        function Controller(model, viewModel, communicator) {
             var _this = this;
             var topicNavigationController = new topicNavigationCtr.Controller(model.topicNavigation, viewModel.topicNavigation);
 
             this.kkWin = new kokiWin.Win;
-            this.kkWinController = new kokiWinCtr.Controller(model.konsenskiste(), this.kkWin);
+            this.kkWinController = new kokiWinCtr.Controller(model.konsenskiste(), this.kkWin, communicator);
+            this.communicator = communicator;
 
             model.konsenskiste.subscribe(function (newKoki) {
                 return _this.kkWinController.setKonsenskisteModel(newKoki);

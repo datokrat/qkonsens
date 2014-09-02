@@ -25,6 +25,7 @@ define(["require", "exports", 'tests/tsunit', '../event'], function(require, exp
         function TestEvent() {
             this.event = new Event.EventImpl();
             this.listenerCtr = 0;
+            this.raiseThis = this.raise.bind(this);
         }
         TestEvent.prototype.subscribe = function (cb) {
             var _this = this;

@@ -40,6 +40,10 @@ interface GenericTestEvent {
 class TestEvent<Args> implements Event.Event<Args>, GenericTestEvent {
 	private event = new Event.EventImpl<Args>();
 	
+	constructor() {
+		this.raiseThis = this.raise.bind(this);
+	}
+	
 	public subscribe(cb: Event.Listener<Args>): Event.Subscription {
 		this.listenerCtr++;
 		this.event.subscribe(cb);
@@ -54,6 +58,8 @@ class TestEvent<Args> implements Event.Event<Args>, GenericTestEvent {
 	public raise(args: Args) {
 		this.event.raise(args);
 	}
+	
+	public raiseThis: (args?: Args) => void;
 	
 	public countListeners(): number {
 		return this.listenerCtr;
