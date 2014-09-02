@@ -1,9 +1,8 @@
-import Events = require('../event')
 import Communicator = require('../communicator')
-import Model = require('../model')
+import TestKokiCommunicator = require('tests/testkonsenskistecommunicator')
 
 class TestCommunicator implements Communicator.Main {
-	public contentRetrieved = new Events.EventImpl<Communicator.ContentReceivedArgs>();
+	public konsenskiste = new TestKokiCommunicator;
 }
 
 export = TestCommunicator;

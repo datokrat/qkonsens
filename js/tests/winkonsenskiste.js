@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/tsunit', 'tests/test', '../konsenskistemodel', 'windows/konsenskiste', 'windows/konsenskistecontroller', 'tests/testcommunicator', '../kernaussagemodel'], function(require, exports, unit, test, kokiMdl, win, ctr, Communicator, kaMdl) {
+define(["require", "exports", 'tests/tsunit', 'tests/test', '../konsenskistemodel', 'windows/konsenskiste', 'windows/konsenskistecontroller', 'tests/testkonsenskistecommunicator', '../kernaussagemodel'], function(require, exports, unit, test, kokiMdl, win, ctr, KokiCommunicator, kaMdl) {
     var Tests = (function (_super) {
         __extends(Tests, _super);
         function Tests() {
@@ -13,7 +13,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../konsenskistemode
         Tests.prototype.testKkView = function () {
             var koki = new kokiMdl.Model;
             var window = new win.Win;
-            var controller = new ctr.Controller(koki, window, new Communicator);
+            var controller = new ctr.Controller(koki, window, new KokiCommunicator);
 
             koki.content.title('Title');
 
@@ -29,7 +29,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../konsenskistemode
             var modelOld = new kokiMdl.Model;
             var modelNew = new kokiMdl.Model;
             var window = new win.Win;
-            var controller = new ctr.Controller(modelOld, window, new Communicator);
+            var controller = new ctr.Controller(modelOld, window, new KokiCommunicator);
 
             var currentTitle = ko.computed(function () {
                 return window.kkView().content().title();
@@ -49,13 +49,13 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../konsenskistemode
 
         Tests.prototype.testNullModel = function () {
             var window = new win.Win;
-            var controller = new ctr.Controller(null, window, new Communicator);
+            var controller = new ctr.Controller(null, window, new KokiCommunicator);
         };
 
         Tests.prototype.testAComplexUseCase = function () {
             var koki = new kokiMdl.Model;
             var window = new win.Win;
-            var controller = new ctr.Controller(koki, window, new Communicator);
+            var controller = new ctr.Controller(koki, window, new KokiCommunicator);
 
             var ka = new kaMdl.Model();
             koki.appendKa(ka);

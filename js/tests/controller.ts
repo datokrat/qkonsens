@@ -53,7 +53,7 @@ export class Tests extends unit.TestClass {
 		var newKoki = new koki.Model;
 		newKoki.content.title('hi');
 		newKoki.content.text('ho');
-		cxt.communicator.contentRetrieved.raise({ id: 1, content: newKoki.content });
+		cxt.communicator.konsenskiste.content.retrieved.raise({ id: 1, content: newKoki.content });
 		
 		var konsenskisteWindow = <kokiWin.Win>cxt.viewModel.center.win();
 		test.assert( () => konsenskisteWindow.kkView().content().title() == 'hi' );

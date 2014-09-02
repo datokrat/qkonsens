@@ -1,7 +1,7 @@
-define(["require", "exports", '../event'], function(require, exports, Events) {
+define(["require", "exports", 'tests/testkonsenskistecommunicator'], function(require, exports, TestKokiCommunicator) {
     var TestCommunicator = (function () {
         function TestCommunicator() {
-            this.contentRetrieved = new Events.EventImpl();
+            this.konsenskiste = new TestKokiCommunicator;
         }
         return TestCommunicator;
     })();

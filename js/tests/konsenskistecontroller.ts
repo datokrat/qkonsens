@@ -7,7 +7,7 @@ import kaModelFty = require('factories/kernaussagemodel')
 import mdl = require('../konsenskistemodel')
 import vm = require('../konsenskisteviewmodel')
 import ctr = require('../konsenskistecontroller')
-import Communicator = require('tests/testcommunicator')
+import KokiCommunicator = require('tests/testkonsenskistecommunicator')
 
 import Event = require('../event')
 import EventFactory = require('../factories/event')
@@ -19,7 +19,7 @@ export class Tests extends unit.TestClass {
 	testContent() {
 		var model = this.kkModelFactory.create( 'Basisdemokratie', 'Beschreibung' );
 		var viewModel = new vm.ViewModel();
-		var controller = new ctr.ControllerImpl(model, viewModel, new Communicator);
+		var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator);
 		
 		model.content.context().text('Der Klärtext');
 		
@@ -31,7 +31,7 @@ export class Tests extends unit.TestClass {
 	testContentObservables() {
 		var model = this.kkModelFactory.create( 'Basisdemokratie', 'Beschreibung' );
 		var viewModel = new vm.ViewModel();
-		var controller = new ctr.ControllerImpl(model, viewModel, new Communicator);
+		var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator);
 		var titleTracker: string[] = [];
 		var textTracker: string[] = [];
 		
@@ -53,7 +53,7 @@ export class Tests extends unit.TestClass {
 	testChildKas() {
 		var model = this.kkModelFactory.create( 'Basisdemokratie (Konzept)', 'Beispiel-Konsenskiste' );
 		var viewModel = new vm.ViewModel();
-		var controller = new ctr.ControllerImpl(model, viewModel, new Communicator);
+		var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator);
 		
 		model.appendKa( this.kaModelFactory.create('Begriff Basisdemokratie') );
 		
@@ -65,7 +65,7 @@ export class Tests extends unit.TestClass {
 	testRemoveChildKa() {
 		var model = this.kkModelFactory.create( 'Basisdemokratie (Konzept)' );
 		var viewModel = new vm.ViewModel();
-		var controller = new ctr.ControllerImpl(model, viewModel, new Communicator);
+		var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator);
 		var ka = this.kaModelFactory.create('Begriff Basisdemokratie');
 		
 		model.appendKa( ka );
@@ -77,7 +77,7 @@ export class Tests extends unit.TestClass {
 	testDispose() {
 		var model = this.kkModelFactory.create( 'Basisdemokratie' );
 		var viewModel = new vm.ViewModel();
-		var controller = new ctr.ControllerImpl(model, viewModel, new Communicator);
+		var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator);
 		
 		controller.dispose();
 		

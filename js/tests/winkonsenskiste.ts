@@ -4,7 +4,7 @@ import test = require('tests/test')
 import kokiMdl = require('../konsenskistemodel')
 import win = require('windows/konsenskiste')
 import ctr = require('windows/konsenskistecontroller')
-import Communicator = require('tests/testcommunicator')
+import KokiCommunicator = require('tests/testkonsenskistecommunicator')
 
 import kaMdl = require('../kernaussagemodel')
 
@@ -12,7 +12,7 @@ export class Tests extends unit.TestClass {
 	testKkView() {
 		var koki = new kokiMdl.Model;
 		var window = new win.Win;
-		var controller = new ctr.Controller(koki, window, new Communicator);
+		var controller = new ctr.Controller(koki, window, new KokiCommunicator);
 		
 		koki.content.title('Title')
 		
@@ -24,7 +24,7 @@ export class Tests extends unit.TestClass {
 		var modelOld = new kokiMdl.Model;
 		var modelNew = new kokiMdl.Model;
 		var window = new win.Win;
-		var controller = new ctr.Controller(modelOld, window, new Communicator);
+		var controller = new ctr.Controller(modelOld, window, new KokiCommunicator);
 		
 		var currentTitle = ko.computed<string>( () => window.kkView().content().title() );
 		
@@ -38,13 +38,13 @@ export class Tests extends unit.TestClass {
 	
 	testNullModel() {
 		var window = new win.Win;
-		var controller = new ctr.Controller(null, window, new Communicator);
+		var controller = new ctr.Controller(null, window, new KokiCommunicator);
 	}
 	
 	testAComplexUseCase() {
 		var koki = new kokiMdl.Model;
 		var window = new win.Win;
-		var controller = new ctr.Controller(koki, window, new Communicator);
+		var controller = new ctr.Controller(koki, window, new KokiCommunicator);
 		
 		var ka = new kaMdl.Model();
 		koki.appendKa(ka);

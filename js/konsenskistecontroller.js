@@ -51,7 +51,7 @@ define(["require", "exports", 'kernaussageviewmodel', 'kernaussagecontroller', '
 
         ControllerImpl.prototype.initCommunicator = function () {
             var _this = this;
-            this.communicator.contentRetrieved.subscribe(function (args) {
+            this.communicator.content.retrieved.subscribe(function (args) {
                 if (args.id == _this.model.id) {
                     _this.model.content.title(args.content.title());
                     _this.model.content.text(args.content.text());

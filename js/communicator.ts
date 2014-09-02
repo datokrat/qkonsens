@@ -1,11 +1,5 @@
-import Events = require('event')
-import ContentModel = require('contentmodel')
+import KokiCommunicator = require('konsenskistecommunicator')
 
 export interface Main {
-	contentRetrieved: Events.Event<ContentReceivedArgs>;
-}
-
-export interface ContentReceivedArgs {
-	id: number;
-	content: ContentModel.Model;
+	konsenskiste: KokiCommunicator.Main;
 }

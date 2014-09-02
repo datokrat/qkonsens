@@ -13,7 +13,7 @@ export class Controller {
 		var topicNavigationController = new topicNavigationCtr.Controller(model.topicNavigation, viewModel.topicNavigation);
 		
 		this.kkWin = new kokiWin.Win;
-		this.kkWinController = new kokiWinCtr.Controller(model.konsenskiste(), this.kkWin, communicator);
+		this.kkWinController = new kokiWinCtr.Controller(model.konsenskiste(), this.kkWin, communicator.konsenskiste);
 		this.communicator = communicator;
 		
 		model.konsenskiste.subscribe( newKoki => this.kkWinController.setKonsenskisteModel(newKoki) );

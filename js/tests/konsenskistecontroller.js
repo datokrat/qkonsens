@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenskistemodel', 'factories/kernaussagemodel', '../konsenskisteviewmodel', '../konsenskistecontroller', 'tests/testcommunicator', '../event'], function(require, exports, unit, test, kkModelFty, kaModelFty, vm, ctr, Communicator, Event) {
+define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenskistemodel', 'factories/kernaussagemodel', '../konsenskisteviewmodel', '../konsenskistecontroller', 'tests/testkonsenskistecommunicator', '../event'], function(require, exports, unit, test, kkModelFty, kaModelFty, vm, ctr, KokiCommunicator, Event) {
     var Tests = (function (_super) {
         __extends(Tests, _super);
         function Tests() {
@@ -15,7 +15,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenski
         Tests.prototype.testContent = function () {
             var model = this.kkModelFactory.create('Basisdemokratie', 'Beschreibung');
             var viewModel = new vm.ViewModel();
-            var controller = new ctr.ControllerImpl(model, viewModel, new Communicator);
+            var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator);
 
             model.content.context().text('Der Klärtext');
 
@@ -33,7 +33,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenski
         Tests.prototype.testContentObservables = function () {
             var model = this.kkModelFactory.create('Basisdemokratie', 'Beschreibung');
             var viewModel = new vm.ViewModel();
-            var controller = new ctr.ControllerImpl(model, viewModel, new Communicator);
+            var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator);
             var titleTracker = [];
             var textTracker = [];
 
@@ -63,7 +63,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenski
         Tests.prototype.testChildKas = function () {
             var model = this.kkModelFactory.create('Basisdemokratie (Konzept)', 'Beispiel-Konsenskiste');
             var viewModel = new vm.ViewModel();
-            var controller = new ctr.ControllerImpl(model, viewModel, new Communicator);
+            var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator);
 
             model.appendKa(this.kaModelFactory.create('Begriff Basisdemokratie'));
 
@@ -81,7 +81,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenski
         Tests.prototype.testRemoveChildKa = function () {
             var model = this.kkModelFactory.create('Basisdemokratie (Konzept)');
             var viewModel = new vm.ViewModel();
-            var controller = new ctr.ControllerImpl(model, viewModel, new Communicator);
+            var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator);
             var ka = this.kaModelFactory.create('Begriff Basisdemokratie');
 
             model.appendKa(ka);
@@ -95,7 +95,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenski
         Tests.prototype.testDispose = function () {
             var model = this.kkModelFactory.create('Basisdemokratie');
             var viewModel = new vm.ViewModel();
-            var controller = new ctr.ControllerImpl(model, viewModel, new Communicator);
+            var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator);
 
             controller.dispose();
 

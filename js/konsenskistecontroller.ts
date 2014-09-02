@@ -7,7 +7,8 @@ import kernaussageMdl = require('kernaussagemodel')
 import kernaussageVm = require('kernaussageviewmodel')
 import kernaussageCtr = require('kernaussagecontroller')
 
-import Communicator = require('communicator')
+import KokiCommunicator = require('konsenskistecommunicator')
+import ContentCommunicator = require('contentcommunicator')
 
 import contentVm = require('contentviewmodel');
 
@@ -19,11 +20,11 @@ export interface Controller {
 }
 
 export class ControllerImpl implements Controller {
-	constructor(model: mdl.Model, viewModel: vm.ViewModel, communicator: Communicator.Main) {
+	constructor(model: mdl.Model, viewModel: vm.ViewModel, communicator: KokiCommunicator.Main) {
 		this.init(model, viewModel, communicator);
 	}
 	
-	private init(model: mdl.Model, viewModel: vm.ViewModel, communicator: Communicator.Main) {
+	private init(model: mdl.Model, viewModel: vm.ViewModel, communicator: KokiCommunicator.Main) {
 		this.model = model;
 		this.viewModel = viewModel;
 		this.communicator = communicator;
@@ -58,7 +59,7 @@ export class ControllerImpl implements Controller {
 	}
 	
 	private initCommunicator() {
-		this.communicator.contentRetrieved.subscribe((args: Communicator.ContentReceivedArgs) => {
+		this.communicator.content.retrieved.subscribe((args: ContentCommunicator.ReceivedArgs) => {
 			if(args.id == this.model.id) {
 				this.model.content.title( args.content.title() );
 				this.model.content.text( args.content.text() );
@@ -93,7 +94,7 @@ export class ControllerImpl implements Controller {
 	
 	private model: mdl.Model;
 	private viewModel: vm.ViewModel;
-	private communicator: Communicator.Main;
+	private communicator: KokiCommunicator.Main;
 	
 	private content: content.WithContext;
 	
