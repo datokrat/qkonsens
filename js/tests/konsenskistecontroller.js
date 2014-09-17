@@ -17,7 +17,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenski
             var viewModel = new vm.ViewModel();
             var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator);
 
-            model.content.context().text('Der Klärtext');
+            model.content().context().text('Der Klärtext');
 
             test.assert(function () {
                 return viewModel.content().title() == 'Basisdemokratie';
@@ -43,8 +43,8 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenski
             viewModel.content().text.subscribe(function (newText) {
                 textTracker.push(newText);
             });
-            model.content.title('New Title');
-            model.content.text('New Text');
+            model.content().title('New Title');
+            model.content().text('New Text');
 
             test.assert(function () {
                 return titleTracker.length == 1;

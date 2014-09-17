@@ -15,6 +15,12 @@ define(["require", "exports", 'topicnavigationcontroller', 'frame', 'windows/non
             viewModel.left = new frame.WinContainer(new noneWin.Win());
             viewModel.right = new frame.WinContainer(new noneWin.Win());
             viewModel.center = new frame.WinContainer(this.kkWin);
+
+            this.communicator.konsenskiste.received.subscribe(function (args) {
+                if (args.id == model.konsenskiste().id) {
+                    model.konsenskiste(args.konsenskiste);
+                }
+            });
         }
         return Controller;
     })();

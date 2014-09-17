@@ -24,9 +24,9 @@ model.konsenskiste(konsenskiste);
 var kernaussage = new ka.Model();
 konsenskiste.appendKa(kernaussage);
 
-konsenskiste.content.title('Konsenskisten-Titel');
-konsenskiste.content.text('Lorem ipsum dolor sit amet');
-konsenskiste.content.context().text('ipsum (lat.): selbst');
+konsenskiste.content().title('Konsenskisten-Titel');
+konsenskiste.content().text('Lorem ipsum dolor sit amet');
+konsenskiste.content().context().text('ipsum (lat.): selbst');
 
 kernaussage.content.title('Kernaussagen-Titel');
 kernaussage.content.text('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.');

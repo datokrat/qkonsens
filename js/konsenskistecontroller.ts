@@ -34,7 +34,7 @@ export class ControllerImpl implements Controller {
 		this.initViewModel();
 		this.initCommunicator();
 		
-		this.content = new content.WithContext(this.model.content, this.viewModel.content());
+		this.content = new content.WithContext(this.model.content(), this.viewModel.content());
 	}
 	
 	private initChildKaSynchronizer() {
@@ -61,8 +61,7 @@ export class ControllerImpl implements Controller {
 	private initCommunicator() {
 		this.communicator.content.retrieved.subscribe((args: ContentCommunicator.ReceivedArgs) => {
 			if(args.id == this.model.id) {
-				this.model.content.title( args.content.title() );
-				this.model.content.text( args.content.text() );
+				this.model.content().set( args.content );
 			}
 		})
 	}

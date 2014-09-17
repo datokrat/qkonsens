@@ -14,7 +14,7 @@ export class Tests extends unit.TestClass {
 		var window = new win.Win;
 		var controller = new ctr.Controller(koki, window, new KokiCommunicator);
 		
-		koki.content.title('Title')
+		koki.content().title('Title')
 		
 		test.assert( () => window.kkView().content().title() == 'Title' );
 		test.assert( () => window.kkView().childKas != null );
@@ -28,11 +28,11 @@ export class Tests extends unit.TestClass {
 		
 		var currentTitle = ko.computed<string>( () => window.kkView().content().title() );
 		
-		modelOld.content.title('Alt');
-		modelNew.content.title('Neu');
+		modelOld.content().title('Alt');
+		modelNew.content().title('Neu');
 		controller.setKonsenskisteModel(modelNew);
 		test.assert( () => currentTitle() == 'Neu' );
-		modelNew.content.title('Basisdemokratie');
+		modelNew.content().title('Basisdemokratie');
 		test.assert( () => currentTitle() == 'Basisdemokratie' );
 	}
 	
@@ -49,7 +49,7 @@ export class Tests extends unit.TestClass {
 		var ka = new kaMdl.Model();
 		koki.appendKa(ka);
 		
-		koki.content.title('Basisdemokratie');
+		koki.content().title('Basisdemokratie');
 		ka.content.title('Begriff Basisdemokratie');
 		ka.content.text('Blablablablub');
 		

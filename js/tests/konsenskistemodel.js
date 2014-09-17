@@ -94,8 +94,8 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../konsenskistemode
         }
         KonsenskisteFactory.prototype.create = function (title, text) {
             var konsenskiste = new koki.Model();
-            konsenskiste.content.title(title);
-            konsenskiste.content.text(text);
+            konsenskiste.content().title(title);
+            konsenskiste.content().text(text);
             return konsenskiste;
         };
         return KonsenskisteFactory;

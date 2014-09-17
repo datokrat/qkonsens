@@ -15,7 +15,7 @@ define(["require", "exports", 'kernaussageviewmodel', 'kernaussagecontroller', '
             this.initViewModel();
             this.initCommunicator();
 
-            this.content = new content.WithContext(this.model.content, this.viewModel.content());
+            this.content = new content.WithContext(this.model.content(), this.viewModel.content());
         };
 
         ControllerImpl.prototype.initChildKaSynchronizer = function () {
@@ -53,8 +53,7 @@ define(["require", "exports", 'kernaussageviewmodel', 'kernaussagecontroller', '
             var _this = this;
             this.communicator.content.retrieved.subscribe(function (args) {
                 if (args.id == _this.model.id) {
-                    _this.model.content.title(args.content.title());
-                    _this.model.content.text(args.content.text());
+                    _this.model.content().set(args.content);
                 }
             });
         };

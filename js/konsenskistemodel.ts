@@ -7,7 +7,7 @@ import EventFactory = require('factories/event')
 
 export class Model {
 	public id: number;
-	public content = new Content.WithContext();
+	public content = ko.observable<Content.WithContext>( new Content.WithContext() );
 	
 	public appendKa(ka: kernaussageModel.Model) {
 		this.kaArray.push(ka);

@@ -7,6 +7,7 @@ import noneWin = require('windows/none')
 import kokiWin = require('windows/konsenskiste')
 import kokiWinCtr = require('windows/konsenskistecontroller')
 import Communicator = require('communicator')
+import KokiCommunicator = require('konsenskistecommunicator')
 
 export class Controller {
 	constructor(model: mdl.Model, viewModel: vm.ViewModel, communicator: Communicator.Main) {
@@ -21,6 +22,12 @@ export class Controller {
 		viewModel.left = new frame.WinContainer( new noneWin.Win() );
 		viewModel.right = new frame.WinContainer( new noneWin.Win() );
 		viewModel.center = new frame.WinContainer( this.kkWin );
+		
+		this.communicator.konsenskiste.received.subscribe( (args: KokiCommunicator.ReceivedArgs) => {
+			if(args.id == model.konsenskiste().id) {
+				model.konsenskiste( args.konsenskiste );
+			}
+		} );
 	}
 	
 	private kkWin: kokiWin.Win;

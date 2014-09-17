@@ -38,7 +38,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../model', '../view
             var cxt = this.factory.create();
 
             cxt.model.konsenskiste(new koki.Model());
-            cxt.model.konsenskiste().content.title('Hi!');
+            cxt.model.konsenskiste().content().title('Hi!');
 
             var konsenskisteWindow = cxt.viewModel.center.win();
             test.assert(function () {
@@ -55,9 +55,9 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../model', '../view
             cxt.model.konsenskiste(oldKoki);
 
             var newKoki = new koki.Model;
-            newKoki.content.title('hi');
-            newKoki.content.text('ho');
-            cxt.communicator.konsenskiste.content.retrieved.raise({ id: 1, content: newKoki.content });
+            newKoki.content().title('hi');
+            newKoki.content().text('ho');
+            cxt.communicator.konsenskiste.content.retrieved.raise({ id: 1, content: newKoki.content() });
 
             var konsenskisteWindow = cxt.viewModel.center.win();
             test.assert(function () {
@@ -65,6 +65,24 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../model', '../view
             });
             test.assert(function () {
                 return konsenskisteWindow.kkView().content().text() == 'ho';
+            });
+        };
+
+        Tests.prototype.testLoadKonsenskiste = function () {
+            var cxt = this.factory.create();
+
+            var oldKoki = new koki.Model;
+            oldKoki.id = 1;
+            var newKoki = new koki.Model;
+            newKoki.id = 1;
+            newKoki.content().title('hi');
+            cxt.model.konsenskiste(oldKoki);
+
+            cxt.communicator.konsenskiste.received.raise({ id: 1, konsenskiste: newKoki });
+
+            var konsenskisteWindow = cxt.viewModel.center.win();
+            test.assert(function () {
+                return konsenskisteWindow.kkView().content().title() == 'hi';
             });
         };
 

@@ -10,9 +10,11 @@ import synchronizer = require('tests/childarraysynchronizer')
 import content = require('tests/content')
 import context = require('tests/context')
 import winKoki = require('tests/winkonsenskiste')
+import ContentModelTests = require('tests/contentmodel')
 
 var test = new unit.Test()
 
+test.addTestClass(new ContentModelTests(), 'ContentModel')
 test.addTestClass(new content.Tests(), 'Content')
 test.addTestClass(new content.TestsWithContext(), 'ContentWithContext')
 test.addTestClass(new context.Tests(), 'Context')

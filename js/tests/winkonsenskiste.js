@@ -15,7 +15,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../konsenskistemode
             var window = new win.Win;
             var controller = new ctr.Controller(koki, window, new KokiCommunicator);
 
-            koki.content.title('Title');
+            koki.content().title('Title');
 
             test.assert(function () {
                 return window.kkView().content().title() == 'Title';
@@ -35,13 +35,13 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../konsenskistemode
                 return window.kkView().content().title();
             });
 
-            modelOld.content.title('Alt');
-            modelNew.content.title('Neu');
+            modelOld.content().title('Alt');
+            modelNew.content().title('Neu');
             controller.setKonsenskisteModel(modelNew);
             test.assert(function () {
                 return currentTitle() == 'Neu';
             });
-            modelNew.content.title('Basisdemokratie');
+            modelNew.content().title('Basisdemokratie');
             test.assert(function () {
                 return currentTitle() == 'Basisdemokratie';
             });
@@ -60,7 +60,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../konsenskistemode
             var ka = new kaMdl.Model();
             koki.appendKa(ka);
 
-            koki.content.title('Basisdemokratie');
+            koki.content().title('Basisdemokratie');
             ka.content.title('Begriff Basisdemokratie');
             ka.content.text('Blablablablub');
 

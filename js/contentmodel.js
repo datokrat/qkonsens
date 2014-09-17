@@ -10,6 +10,10 @@ define(["require", "exports", 'contextmodel'], function(require, exports, Contex
             this.title = ko.observable();
             this.text = ko.observable();
         }
+        Model.prototype.set = function (content) {
+            this.title(content.title());
+            this.text(content.text());
+        };
         return Model;
     })();
     exports.Model = Model;
@@ -20,6 +24,14 @@ define(["require", "exports", 'contextmodel'], function(require, exports, Contex
             _super.apply(this, arguments);
             this.context = ko.observable(new Context);
         }
+        WithContext.prototype.set = function (content) {
+            Model.prototype.set.call(this, content);
+
+            if (content instanceof WithContext) {
+                var withContext = content;
+                this.context(withContext.context());
+            }
+        };
         return WithContext;
     })(Model);
     exports.WithContext = WithContext;

@@ -68,8 +68,8 @@ export class Tests extends unit.TestClass {
 class KonsenskisteFactory {
 	public create(title: string, text?: string) {
 		var konsenskiste = new koki.Model();
-		konsenskiste.content.title(title);
-		konsenskiste.content.text(text);
+		konsenskiste.content().title(title);
+		konsenskiste.content().text(text);
 		return konsenskiste;
 	}
 }

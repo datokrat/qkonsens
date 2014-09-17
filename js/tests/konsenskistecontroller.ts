@@ -21,7 +21,7 @@ export class Tests extends unit.TestClass {
 		var viewModel = new vm.ViewModel();
 		var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator);
 		
-		model.content.context().text('Der Klärtext');
+		model.content().context().text('Der Klärtext');
 		
 		test.assert( () => viewModel.content().title() == 'Basisdemokratie' );
 		test.assert( () => viewModel.content().text() == 'Beschreibung' );
@@ -41,8 +41,8 @@ export class Tests extends unit.TestClass {
 		viewModel.content().text.subscribe( newText => {
 			textTracker.push(newText);
 		} );
-		model.content.title('New Title');
-		model.content.text('New Text');
+		model.content().title('New Title');
+		model.content().text('New Text');
 		
 		test.assert( () => titleTracker.length == 1 );
 		test.assert( () => titleTracker[0] == 'New Title' );
