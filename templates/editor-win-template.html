@@ -1,0 +1,16 @@
+<span data-bind="text: console.log($data, $parent)"></span>
+<h1>
+	<span data-bind="template: { name: 'historybar-template' }"></span>
+	Bearbeiten
+</h1>
+<div>
+	<p>
+		<input class="block" type="text" placeholder="Titel" data-bind="value: input().title" />
+		<textarea class="block" placeholder="Text" data-bind="value: input().text"></textarea>
+		<button data-bind="click: save_onClick">Titel und Text speichern</button>
+	</p>
+	<p>
+		<textarea class="block" placeholder="Klärtext" data-bind="value: input().context"></textarea>
+		<button data-bind="click: saveContext_onClick">Klärtext speichern</button>
+	</p>
+</div>

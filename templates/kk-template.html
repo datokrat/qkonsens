@@ -1,0 +1,11 @@
+<div class="kk">
+	<!-- ko template: { name: 'content-template', data: content } --><!-- /ko -->
+	
+	<!-- ko template: { name: 'context-template', data: content().context } --><!-- /ko -->
+	
+	<div class="controls">Controls</div>
+	
+	<!-- ko foreach: childKas -->
+		<!-- ko template: { name: 'ka-template' } --><!-- /ko -->
+	<!-- /ko -->
+</div>

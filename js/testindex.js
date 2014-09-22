@@ -2,6 +2,9 @@
 ///<reference path="../typings/jquery.d.ts" />
 define(["require", "exports", 'model', 'viewmodel', 'controller', 'konsenskistemodel', 'kernaussagemodel', 'tests/testcommunicator'], function(require, exports, mdl, vm, ctr, koki, ka, TestCommunicator) {
     
+    ready = function () {
+    };
+
     infuser.defaults.templateUrl = "templates";
 
     var model = new mdl.ModelImpl();
@@ -24,4 +27,6 @@ define(["require", "exports", 'model', 'viewmodel', 'controller', 'konsenskistem
     kernaussage.content.context().text('blablablablub');
 
     ko.applyBindings(viewModel);
+
+    ready();
 });

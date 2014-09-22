@@ -10,12 +10,14 @@
 		<link rel="stylesheet" href="css/style.css" />
 	</head>
 	<body>
-		<div id="page" data-bind="template: { name: 'page-template' }">
+		<!-- ko if: page -->
+		<div id="page" data-bind="template: { name: 'page-template', data: page }">
 		</div>
+		<!-- /ko -->
 		
 		<script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
 		<script src="http://test.disco-network.org/discoarguments/Scripts/knockout-3.1.0.debug.js"></script>
 		<script src="js/koExternalTemplateEngine_all.js"></script>
-		<script data-main="js/index" src="js/require.js"></script>
+		<!--script data-main="js/testindex" src="js/require.js"--></script>
 	</body>
 </html>

@@ -1,0 +1,8 @@
+<h1>
+	<span data-bind="template: { name: 'historybar-template' }"></span>
+	Neue Konsenskiste <span class="description">in <span data-bind="text: parentDescription"></span></span></h1>
+<div>
+	<p><input class="block" type="text" placeholder="Titel" data-bind="value: title" /></p>
+	<p><textarea class="block" placeholder="Kurzbeschreibung" data-bind="value: text"></textarea></p>
+	<button data-bind="click: submit_onClick">Los</button>
+</div>

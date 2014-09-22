@@ -1,0 +1,6 @@
+<div class="select rating control">
+	<input type="radio" name="rating" value="like" data-bind="checked: likeRating(), click: like_onClick('like'), attr: { name: id + '-rating', id: id + '-like' }" /><label
+	data-bind="attr: { for: id + '-like' }">+<span class="count" data-bind="text: likeSum() + stronglikeSum()"></span></label><input
+	type="radio" name="rating" value="dislike" data-bind="checked: likeRating(), click: like_onClick('dislike'), attr: { name: id + '-rating', id: id + '-dislike' }" /><label
+	data-bind="attr: { for: id + '-dislike' }">-<span class="count" data-bind="text: dislikeSum() + strongdislikeSum()"></span></label>
+</div>

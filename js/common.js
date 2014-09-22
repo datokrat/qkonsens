@@ -68,20 +68,48 @@ define(["require", "exports"], function(require, exports) {
                 callbacks[i](onReady);
         };
 
-        Callbacks.batch = function (callbacks, onSuccess) {
+        Callbacks.batch = function (callbacks, then) {
+            var createHandler = function (handler) {
+                return function (err) {
+                    if (!err)
+                        handler();
+                    else
+                        then(err);
+                };
+            };
             var func = function (i) {
                 if (i >= callbacks.length)
-                    onSuccess();
-                else if (i >= callbacks.length - 1)
-                    callbacks[i](onSuccess);
-                else
-                    callbacks[i](func.bind(null, i + 1));
+                    then();
+                else {
+                    try  {
+                        if (i >= callbacks.length - 1)
+                            callbacks[i](createHandler(then));
+                        else
+                            callbacks[i](createHandler(func.bind(null, i + 1)));
+                    } catch (e) {
+                        then(e);
+                    }
+                }
             };
             func(0);
         };
         return Callbacks;
     })();
     exports.Callbacks = Callbacks;
+
+    var Obj = (function () {
+        function Obj() {
+        }
+        Obj.props = function (obj) {
+            var ret = [];
+            for (var prop in obj) {
+                ret.push(prop);
+            }
+            return ret;
+        };
+        return Obj;
+    })();
+    exports.Obj = Obj;
 
     ko.observable.fn.mapValue = function (map) {
         this(map(this()));

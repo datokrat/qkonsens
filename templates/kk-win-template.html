@@ -1,0 +1,6 @@
+<h1>
+	Konsenskiste
+	<span class="description" data-bind="text: documentView() ? 'Dokumentansicht' : 'Detailansicht'"></span>
+	<a class="clickable description" data-bind="click: function() { var d = documentView(); documentView(!d) }">wechseln</a>
+</h1>
+<div data-bind="template: { name: documentView() ? 'document-template' : 'kk-template', data: kkView }"></div>

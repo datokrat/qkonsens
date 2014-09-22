@@ -57,13 +57,32 @@ export class Callbacks {
 		for(var i = 0; i < callbacks.length; ++i) callbacks[i](onReady);
 	}
 	
-	public static batch(callbacks: any[], onSuccess?: () => void) {
+	public static batch(callbacks: any[], then: (err?: any) => void) {
+		var createHandler = (handler: () => void) => (err?: any) => {
+			if(!err) handler();
+			else then(err);
+		};
 		var func = (i: number) => {
-			if(i >= callbacks.length) onSuccess();
-			else if(i >= callbacks.length-1) callbacks[i](onSuccess);
-			else callbacks[i](func.bind(null, i+1));
+			if(i >= callbacks.length) then();
+			else {
+				try {
+					if(i >= callbacks.length-1) callbacks[i]( createHandler(then) );
+					else callbacks[i]( createHandler(func.bind(null, i+1)) );
+				}
+				catch(e) {
+					then(e);
+				}
+			}
 		};
 		func(0);
+	}
+}
+
+export class Obj {
+	public static props(obj: any): string[] {
+		var ret: string[] = [];
+		for(var prop in obj) { ret.push(prop) }
+		return ret;
 	}
 }
 

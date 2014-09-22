@@ -1,6 +1,9 @@
 ///<reference path="../typings/knockout.d.ts" />
 ///<reference path="../typings/jquery.d.ts" />
 
+declare var ready: () => void;
+ready = () => {};
+
 declare var infuser;
 infuser.defaults.templateUrl = "templates";
 
@@ -33,3 +36,5 @@ kernaussage.content.text('Lorem ipsum dolor sit amet, consetetur sadipscing elit
 kernaussage.content.context().text('blablablablub');
 
 ko.applyBindings(viewModel);
+
+ready();

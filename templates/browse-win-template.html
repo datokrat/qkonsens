@@ -1,0 +1,27 @@
+<h1>Themen</h1>
+<!-- ko with: parentTopicView -->
+<div>
+	<ul data-bind="foreach: breadcrumb"><!-- ko with: $parent.breadcrumbTopicView($data) -->
+		<li class="clickable" data-bind="text: caption, click: click"></li>
+	<!-- /ko --></ul>
+	
+	<b data-bind="text: title"></b>
+	<p data-bind="text: text"></p>
+	
+	<ul data-bind="foreach: children"><!-- ko with: $parent.childTopicView($data) -->
+		<li class="clickable" data-bind="text: caption, click: click"></li>
+	<!-- /ko --></ul>
+</div>
+<h1>Konsenskisten zum Thema</h1>
+<div>
+		<ul data-bind="">
+			<!-- ko foreach: kks --><!-- ko with: $parent.kkView($data) -->
+				<li class="clickable" data-bind="text: caption, click: click"></li>
+			<!-- /ko --><!-- /ko -->
+			<li data-bind="if: $root.isAdmin">
+				<a data-bind="click: newKk.onClick">Neu</a>
+			</li>
+		</ul>
+	</div>
+</div>
+<!-- /ko -->
