@@ -1,4 +1,5 @@
 import unit = require('tests/tsunit')
+import asyncunit = require('tests/asyncunit')
 
 import topicNavigationModel = require('tests/topicnavigationmodel')
 import topicNavigation = require('tests/topicnavigation')
@@ -10,10 +11,15 @@ import synchronizer = require('tests/childarraysynchronizer')
 import content = require('tests/content')
 import context = require('tests/context')
 import winKoki = require('tests/winkonsenskiste')
+import ContentCommunicator = require('tests/contentcommunicator')
+import KokiCommunicator = require('tests/konsenskistecommunicator')
 import ContentModelTests = require('tests/contentmodel')
 
 var test = new unit.Test()
+var asyncTest = new asyncunit.Test();
 
+asyncTest.addTestClass(new ContentCommunicator(), 'ContentCommunicator');
+asyncTest.addTestClass(new KokiCommunicator(), 'KonsenskisteCommunicator');
 test.addTestClass(new ContentModelTests(), 'ContentModel')
 test.addTestClass(new content.Tests(), 'Content')
 test.addTestClass(new content.TestsWithContext(), 'ContentWithContext')
@@ -30,3 +36,4 @@ test.addTestClass(new winKoki.Tests(), 'Window: Konsenskiste')
 test.addTestClass(new controller.Tests(), 'Controller')
 
 test.showResults(document.getElementById('tests'), test.run())
+asyncTest.run( result => asyncTest.showResults(document.getElementById('asynctests'), result) )

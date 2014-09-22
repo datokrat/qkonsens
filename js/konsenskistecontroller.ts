@@ -34,14 +34,14 @@ export class ControllerImpl implements Controller {
 		this.initViewModel();
 		this.initCommunicator();
 		
-		this.content = new content.WithContext(this.model.content(), this.viewModel.content());
+		this.content = new content.WithContext(this.model.content(), this.viewModel.content(), communicator.content);
 	}
 	
 	private initChildKaSynchronizer() {
 		var sync = this.childKaArraySynchronizer;
 		
 		sync.setViewModelFactory(new ViewModelFactory());
-		sync.setControllerFactory(new ControllerFactory());
+		sync.setControllerFactory(new ControllerFactory(this.communicator.content));
 		sync.setViewModelInsertionHandler(vm => this.insertKaViewModel(vm));
 		sync.setViewModelRemovalHandler(vm => this.removeKaViewModel(vm));
 	}
@@ -64,6 +64,12 @@ export class ControllerImpl implements Controller {
 				this.model.content().set( args.content );
 			}
 		})
+		this.communicator.received.subscribe(this.onKokiRetrieved);
+	}
+	
+	private onKokiRetrieved = (args: KokiCommunicator.ReceivedArgs) => {
+		if(this.model.id == args.konsenskiste.id)
+			this.model.content().set( args.konsenskiste.content() );
 	}
 	
 	private getChildKaArray() {
@@ -88,6 +94,7 @@ export class ControllerImpl implements Controller {
 	
 	public dispose() {
 		this.content.dispose();
+		this.communicator.received.unsubscribe(this.onKokiRetrieved);
 		this.modelSubscriptions.forEach( s => s.undo() );
 	}
 	
@@ -111,8 +118,11 @@ class ViewModelFactory {
 }
 
 class ControllerFactory {
+	constructor( private communicator: ContentCommunicator.Main ) {
+	}
+	
 	public create(model: kernaussageMdl.Model, viewModel: kernaussageVm.ViewModel) {
-		return new kernaussageCtr.Controller(model, viewModel);
+		return new kernaussageCtr.Controller(model, viewModel, this.communicator);
 	}
 }
 

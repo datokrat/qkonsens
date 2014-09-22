@@ -3,6 +3,8 @@ import ContentModel = require('contentmodel')
 
 export interface Main {
 	retrieved: Events.Event<ReceivedArgs>;
+	
+	queryContent(id: number);
 }
 
 export interface ReceivedArgs {

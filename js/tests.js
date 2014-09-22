@@ -1,6 +1,9 @@
-define(["require", "exports", 'tests/tsunit', 'tests/topicnavigationmodel', 'tests/topicnavigation', 'tests/controller', 'tests/konsenskistemodel', 'tests/kernaussage', 'tests/konsenskistecontroller', 'tests/childarraysynchronizer', 'tests/content', 'tests/context', 'tests/winkonsenskiste', 'tests/contentmodel'], function(require, exports, unit, topicNavigationModel, topicNavigation, controller, kokiModel, kaModel, kokiController, synchronizer, content, context, winKoki, ContentModelTests) {
+define(["require", "exports", 'tests/tsunit', 'tests/asyncunit', 'tests/topicnavigationmodel', 'tests/topicnavigation', 'tests/controller', 'tests/konsenskistemodel', 'tests/kernaussage', 'tests/konsenskistecontroller', 'tests/childarraysynchronizer', 'tests/content', 'tests/context', 'tests/winkonsenskiste', 'tests/contentcommunicator', 'tests/konsenskistecommunicator', 'tests/contentmodel'], function(require, exports, unit, asyncunit, topicNavigationModel, topicNavigation, controller, kokiModel, kaModel, kokiController, synchronizer, content, context, winKoki, ContentCommunicator, KokiCommunicator, ContentModelTests) {
     var test = new unit.Test();
+    var asyncTest = new asyncunit.Test();
 
+    asyncTest.addTestClass(new ContentCommunicator(), 'ContentCommunicator');
+    asyncTest.addTestClass(new KokiCommunicator(), 'KonsenskisteCommunicator');
     test.addTestClass(new ContentModelTests(), 'ContentModel');
     test.addTestClass(new content.Tests(), 'Content');
     test.addTestClass(new content.TestsWithContext(), 'ContentWithContext');
@@ -17,4 +20,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/topicnavigationmodel', 'tes
     test.addTestClass(new controller.Tests(), 'Controller');
 
     test.showResults(document.getElementById('tests'), test.run());
+    asyncTest.run(function (result) {
+        return asyncTest.showResults(document.getElementById('asynctests'), result);
+    });
 });

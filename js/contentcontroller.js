@@ -6,12 +6,18 @@ var __extends = this.__extends || function (d, b) {
 };
 define(["require", "exports", 'contextviewmodel', 'contextcontroller'], function(require, exports, ContextViewModel, ContextController) {
     var Controller = (function () {
-        function Controller(model, viewModel) {
-            this.init(model, viewModel);
+        function Controller(model, viewModel, communicator) {
+            var _this = this;
+            this.onContentRetrieved = function (args) {
+                if (_this.model.id == args.content.id)
+                    _this.model.set(args.content);
+            };
+            this.init(model, viewModel, communicator);
         }
-        Controller.prototype.init = function (model, viewModel) {
+        Controller.prototype.init = function (model, viewModel, communicator) {
             this.viewModel = viewModel;
             this.model = model;
+            this.communicator = communicator;
 
             this.viewModel.title = ko.computed(function () {
                 return model.title();
@@ -19,11 +25,14 @@ define(["require", "exports", 'contextviewmodel', 'contextcontroller'], function
             this.viewModel.text = ko.computed(function () {
                 return model.text();
             });
+
+            this.communicator.retrieved.subscribe(this.onContentRetrieved);
         };
 
         Controller.prototype.dispose = function () {
             this.viewModel.title.dispose();
             this.viewModel.text.dispose();
+            this.communicator.retrieved.unsubscribe(this.onContentRetrieved);
         };
         return Controller;
     })();
@@ -31,8 +40,8 @@ define(["require", "exports", 'contextviewmodel', 'contextcontroller'], function
 
     var WithContext = (function (_super) {
         __extends(WithContext, _super);
-        function WithContext(model, viewModel) {
-            _super.call(this, model, viewModel);
+        function WithContext(model, viewModel, communicator) {
+            _super.call(this, model, viewModel, communicator);
             this.initContext(model, viewModel);
         }
         WithContext.prototype.initContext = function (model, viewModel) {

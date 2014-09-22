@@ -1,6 +1,11 @@
 define(["require", "exports", 'kernaussageviewmodel', 'kernaussagecontroller', 'contentviewmodel', 'contentcontroller', 'childarraysynchronizer'], function(require, exports, kernaussageVm, kernaussageCtr, contentVm, content, synchronizer) {
     var ControllerImpl = (function () {
         function ControllerImpl(model, viewModel, communicator) {
+            var _this = this;
+            this.onKokiRetrieved = function (args) {
+                if (_this.model.id == args.konsenskiste.id)
+                    _this.model.content().set(args.konsenskiste.content());
+            };
             this.childKaViewModels = ko.observableArray();
             this.childKaArraySynchronizer = new synchronizer.ChildArraySynchronizer();
             this.init(model, viewModel, communicator);
@@ -15,7 +20,7 @@ define(["require", "exports", 'kernaussageviewmodel', 'kernaussagecontroller', '
             this.initViewModel();
             this.initCommunicator();
 
-            this.content = new content.WithContext(this.model.content(), this.viewModel.content());
+            this.content = new content.WithContext(this.model.content(), this.viewModel.content(), communicator.content);
         };
 
         ControllerImpl.prototype.initChildKaSynchronizer = function () {
@@ -23,7 +28,7 @@ define(["require", "exports", 'kernaussageviewmodel', 'kernaussagecontroller', '
             var sync = this.childKaArraySynchronizer;
 
             sync.setViewModelFactory(new ViewModelFactory());
-            sync.setControllerFactory(new ControllerFactory());
+            sync.setControllerFactory(new ControllerFactory(this.communicator.content));
             sync.setViewModelInsertionHandler(function (vm) {
                 return _this.insertKaViewModel(vm);
             });
@@ -56,6 +61,7 @@ define(["require", "exports", 'kernaussageviewmodel', 'kernaussagecontroller', '
                     _this.model.content().set(args.content);
                 }
             });
+            this.communicator.received.subscribe(this.onKokiRetrieved);
         };
 
         ControllerImpl.prototype.getChildKaArray = function () {
@@ -80,6 +86,7 @@ define(["require", "exports", 'kernaussageviewmodel', 'kernaussagecontroller', '
 
         ControllerImpl.prototype.dispose = function () {
             this.content.dispose();
+            this.communicator.received.unsubscribe(this.onKokiRetrieved);
             this.modelSubscriptions.forEach(function (s) {
                 return s.undo();
             });
@@ -98,10 +105,11 @@ define(["require", "exports", 'kernaussageviewmodel', 'kernaussagecontroller', '
     })();
 
     var ControllerFactory = (function () {
-        function ControllerFactory() {
+        function ControllerFactory(communicator) {
+            this.communicator = communicator;
         }
         ControllerFactory.prototype.create = function (model, viewModel) {
-            return new kernaussageCtr.Controller(model, viewModel);
+            return new kernaussageCtr.Controller(model, viewModel, this.communicator);
         };
         return ControllerFactory;
     })();

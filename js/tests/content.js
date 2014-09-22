@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/tsunit', 'tests/test', '../factories/contentmodel', '../contentviewmodel', '../contentcontroller'], function(require, exports, unit, test, modelFactory, vm, ctr) {
+define(["require", "exports", 'tests/tsunit', 'tests/test', '../factories/contentmodel', '../contentviewmodel', '../contentcontroller', 'tests/testcontentcommunicator'], function(require, exports, unit, test, modelFactory, vm, ctr, ContentCommunicator) {
     var Tests = (function (_super) {
         __extends(Tests, _super);
         function Tests() {
@@ -14,7 +14,8 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../factories/conten
         Tests.prototype.test = function () {
             var model = this.modelFactory.create('Text', 'Title');
             var viewModel = new vm.ViewModel();
-            var controller = new ctr.Controller(model, viewModel);
+            var communicator = new ContentCommunicator();
+            var controller = new ctr.Controller(model, viewModel, communicator);
 
             test.assert(function () {
                 return viewModel.title() == 'Title';
@@ -27,7 +28,8 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../factories/conten
         Tests.prototype.testDispose = function () {
             var model = this.modelFactory.create('Text', 'Title');
             var viewModel = new vm.ViewModel();
-            var controller = new ctr.Controller(model, viewModel);
+            var communicator = new ContentCommunicator();
+            var controller = new ctr.Controller(model, viewModel, communicator);
 
             controller.dispose();
             model.title('New Title');
@@ -53,7 +55,8 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../factories/conten
         TestsWithContext.prototype.testModelWithContext = function () {
             var model = this.modelFactoryWithContext.createWithContext('Text', 'Title', 'Context');
             var viewModel = new vm.WithContext();
-            var controller = new ctr.WithContext(model, viewModel);
+            var communicator = new ContentCommunicator();
+            var controller = new ctr.WithContext(model, viewModel, communicator);
 
             test.assert(function () {
                 return viewModel.context().text() == 'Context';
@@ -63,7 +66,8 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../factories/conten
         TestsWithContext.prototype.testDisposeWithContext = function () {
             var model = this.modelFactoryWithContext.createWithContext('Text', 'Title', 'Context');
             var viewModel = new vm.WithContext();
-            var controller = new ctr.WithContext(model, viewModel);
+            var communicator = new ContentCommunicator();
+            var controller = new ctr.WithContext(model, viewModel, communicator);
 
             controller.dispose();
             model.context().text('New Context');

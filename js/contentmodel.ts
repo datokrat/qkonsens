@@ -1,6 +1,7 @@
 import Context = require('contextmodel')
 
 export class Model {
+	public id: number;
 	public title = ko.observable<string>();
 	public text = ko.observable<string>();
 	
