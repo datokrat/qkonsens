@@ -1,14 +1,14 @@
 import unit = require('tests/tsunit')
 import test = require('tests/test')
 
-import modelFactory = require('../factories/contentmodel')
+import ModelFactory = require('../factories/contentmodel')
 import mdl = require('../model')
 import vm = require('../contentviewmodel')
 import ctr = require('../contentcontroller')
 import ContentCommunicator = require('tests/testcontentcommunicator')
 
 export class Tests extends unit.TestClass {
-	private modelFactory = new modelFactory.Factory();
+	public modelFactory = new ModelFactory;
 	
 	test() {
 		var model = this.modelFactory.create('Text', 'Title');
@@ -36,10 +36,9 @@ export class Tests extends unit.TestClass {
 }
 
 export class TestsWithContext extends Tests {
-	private modelFactoryWithContext = new modelFactory.Factory();
 
 	testModelWithContext() {
-		var model = this.modelFactoryWithContext.createWithContext('Text', 'Title', 'Context');
+		var model = this.modelFactory.createWithContext('Text', 'Title', 'Context');
 		var viewModel = new vm.WithContext();
 		var communicator = new ContentCommunicator();
 		var controller = new ctr.WithContext(model, viewModel, communicator);
@@ -48,7 +47,7 @@ export class TestsWithContext extends Tests {
 	}
 	
 	testDisposeWithContext() {
-		var model = this.modelFactoryWithContext.createWithContext('Text', 'Title', 'Context');
+		var model = this.modelFactory.createWithContext('Text', 'Title', 'Context');
 		var viewModel = new vm.WithContext();
 		var communicator = new ContentCommunicator();
 		var controller = new ctr.WithContext(model, viewModel, communicator);

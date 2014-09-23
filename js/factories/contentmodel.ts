@@ -1,6 +1,6 @@
 import content = require('../contentmodel')
 
-export class Factory {
+class Factory {
 	public create(text: string, title?: string, out?: content.Model): content.Model {
 		var cnt = out || new content.Model();
 		cnt.title(title);
@@ -16,3 +16,5 @@ export class Factory {
 		return cnt;
 	}
 }
+
+export = Factory;

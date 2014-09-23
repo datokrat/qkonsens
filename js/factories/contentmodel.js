@@ -18,5 +18,7 @@ define(["require", "exports", '../contentmodel'], function(require, exports, con
         };
         return Factory;
     })();
-    exports.Factory = Factory;
+
+    
+    return Factory;
 });

@@ -4,12 +4,12 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/tsunit', 'tests/test', '../factories/contentmodel', '../contentviewmodel', '../contentcontroller', 'tests/testcontentcommunicator'], function(require, exports, unit, test, modelFactory, vm, ctr, ContentCommunicator) {
+define(["require", "exports", 'tests/tsunit', 'tests/test', '../factories/contentmodel', '../contentviewmodel', '../contentcontroller', 'tests/testcontentcommunicator'], function(require, exports, unit, test, ModelFactory, vm, ctr, ContentCommunicator) {
     var Tests = (function (_super) {
         __extends(Tests, _super);
         function Tests() {
             _super.apply(this, arguments);
-            this.modelFactory = new modelFactory.Factory();
+            this.modelFactory = new ModelFactory;
         }
         Tests.prototype.test = function () {
             var model = this.modelFactory.create('Text', 'Title');
@@ -50,10 +50,9 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../factories/conten
         __extends(TestsWithContext, _super);
         function TestsWithContext() {
             _super.apply(this, arguments);
-            this.modelFactoryWithContext = new modelFactory.Factory();
         }
         TestsWithContext.prototype.testModelWithContext = function () {
-            var model = this.modelFactoryWithContext.createWithContext('Text', 'Title', 'Context');
+            var model = this.modelFactory.createWithContext('Text', 'Title', 'Context');
             var viewModel = new vm.WithContext();
             var communicator = new ContentCommunicator();
             var controller = new ctr.WithContext(model, viewModel, communicator);
@@ -64,7 +63,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../factories/conten
         };
 
         TestsWithContext.prototype.testDisposeWithContext = function () {
-            var model = this.modelFactoryWithContext.createWithContext('Text', 'Title', 'Context');
+            var model = this.modelFactory.createWithContext('Text', 'Title', 'Context');
             var viewModel = new vm.WithContext();
             var communicator = new ContentCommunicator();
             var controller = new ctr.WithContext(model, viewModel, communicator);

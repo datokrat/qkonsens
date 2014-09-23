@@ -10,41 +10,46 @@ import ContentModel = require('../contentmodel')
 import ContentViewModel = require('../contentviewmodel')
 import ContentController = require('../contentcontroller')
 
+import ContentModelFactory = require('factories/contentmodel')
+
 class TestClass extends unit.TestClass {
+	private contentModelFactory = new ContentModelFactory;
+	
 	private com: TestContentCommunicator;
-	private mdl: ContentModel.Model;
+	private mdl: ContentModel.WithContext;
 	private vm: ContentViewModel.ViewModel;
 	private ctr: ContentController.Controller;
+	
+	private content1: ContentModel.WithContext;
+	private content2: ContentModel.Model;
 
 	setUp(r) {
 		this.com = new TestContentCommunicator;
-		this.mdl = new ContentModel.Model;
+		this.mdl = new ContentModel.WithContext;
 		this.vm = new ContentViewModel.ViewModel;
 		this.ctr = new ContentController.Controller( this.mdl, this.vm, this.com );
+		
+		this.content1 = this.contentModelFactory.createWithContext('Text #1', 'Title #1');
+		this.content1.id = 1;
+		this.content1.context().text('Context #1');
+		this.content2 = this.contentModelFactory.create('Text #2', 'Title #2');
+		this.content2.id = 2;
+		
+		this.com.setTestContent(this.content1);
+		this.com.setTestContent(this.content2);
 		r();
 	}
 	
 	queryContent(cxt, r) {
 		common.Callbacks.batch([
 			r => {
-				var content1 = new ContentModel.Model;
-				content1.id = 1;
-				content1.title('Title #1');
-				content1.text('Text #1');
-				
-				var content2 = new ContentModel.Model;
-				content2.id = 2;
-				content2.title('Title #2');
-				content2.text('Text #2');
-				
 				this.mdl.id = 1;
-				
-				this.com.setTestContent(content1);
-				this.com.setTestContent(content2);
 				this.com.queryContent(1);
+				setTimeout(r);
+			},
+			r => {
 				this.com.queryContent(2);
-				
-				setTimeout(r, 0);
+				setTimeout(r);
 			},
 			r => {
 				test.assert( () => this.mdl.title() == 'Title #1' );
