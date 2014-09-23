@@ -2,12 +2,18 @@ import Events = require('event')
 import ContentModel = require('contentmodel')
 
 export interface Main {
-	retrieved: Events.Event<ReceivedArgs>;
+	generalContentRetrieved: Events.Event<GeneralContentRetrievedArgs>;
+	contextRetrieved: Events.Event<ContextRetrievedArgs>;
 	
-	queryContent(id: number);
+	queryGeneral(id: number);
+	queryContext(id: number);
+	query(id: number);
 }
 
-export interface ReceivedArgs {
-	id: number;
-	content: ContentModel.Model;
+export interface GeneralContentRetrievedArgs {
+	general: ContentModel.General;
+}
+
+export interface ContextRetrievedArgs {
+	context: ContentModel.Context;
 }

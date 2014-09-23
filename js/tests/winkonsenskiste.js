@@ -15,10 +15,10 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../konsenskistemode
             var window = new win.Win;
             var controller = new ctr.Controller(koki, window, new KokiCommunicator);
 
-            koki.content().title('Title');
+            koki.general().title('Title');
 
             test.assert(function () {
-                return window.kkView().content().title() == 'Title';
+                return window.kkView().general().title() == 'Title';
             });
             test.assert(function () {
                 return window.kkView().childKas != null;
@@ -32,16 +32,16 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../konsenskistemode
             var controller = new ctr.Controller(modelOld, window, new KokiCommunicator);
 
             var currentTitle = ko.computed(function () {
-                return window.kkView().content().title();
+                return window.kkView().general().title();
             });
 
-            modelOld.content().title('Alt');
-            modelNew.content().title('Neu');
+            modelOld.general().title('Alt');
+            modelNew.general().title('Neu');
             controller.setKonsenskisteModel(modelNew);
             test.assert(function () {
                 return currentTitle() == 'Neu';
             });
-            modelNew.content().title('Basisdemokratie');
+            modelNew.general().title('Basisdemokratie');
             test.assert(function () {
                 return currentTitle() == 'Basisdemokratie';
             });
@@ -60,21 +60,21 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../konsenskistemode
             var ka = new kaMdl.Model();
             koki.appendKa(ka);
 
-            koki.content().title('Basisdemokratie');
-            ka.content.title('Begriff Basisdemokratie');
-            ka.content.text('Blablablablub');
+            koki.general().title('Basisdemokratie');
+            ka.general().title('Begriff Basisdemokratie');
+            ka.general().text('Blablablablub');
 
             test.assert(function () {
-                return window.kkView().content().title() == 'Basisdemokratie';
+                return window.kkView().general().title() == 'Basisdemokratie';
             });
             test.assert(function () {
                 return window.kkView().childKas().length == 1;
             });
             test.assert(function () {
-                return window.kkView().childKas()[0].content().title() == 'Begriff Basisdemokratie';
+                return window.kkView().childKas()[0].general().title() == 'Begriff Basisdemokratie';
             });
             test.assert(function () {
-                return window.kkView().childKas()[0].content().text() == 'Blablablablub';
+                return window.kkView().childKas()[0].general().text() == 'Blablablablub';
             });
         };
         return Tests;

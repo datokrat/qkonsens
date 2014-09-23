@@ -4,7 +4,7 @@ define(["require", "exports", '../kernaussagemodel'], function(require, exports,
         }
         Factory.prototype.create = function (title) {
             var kernaussage = new ka.Model();
-            kernaussage.content.title(title);
+            kernaussage.general().title(title);
             return kernaussage;
         };
         return Factory;

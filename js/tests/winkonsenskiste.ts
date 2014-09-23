@@ -14,9 +14,9 @@ export class Tests extends unit.TestClass {
 		var window = new win.Win;
 		var controller = new ctr.Controller(koki, window, new KokiCommunicator);
 		
-		koki.content().title('Title')
+		koki.general().title('Title')
 		
-		test.assert( () => window.kkView().content().title() == 'Title' );
+		test.assert( () => window.kkView().general().title() == 'Title' );
 		test.assert( () => window.kkView().childKas != null );
 	}
 	
@@ -26,13 +26,13 @@ export class Tests extends unit.TestClass {
 		var window = new win.Win;
 		var controller = new ctr.Controller(modelOld, window, new KokiCommunicator);
 		
-		var currentTitle = ko.computed<string>( () => window.kkView().content().title() );
+		var currentTitle = ko.computed<string>( () => window.kkView().general().title() );
 		
-		modelOld.content().title('Alt');
-		modelNew.content().title('Neu');
+		modelOld.general().title('Alt');
+		modelNew.general().title('Neu');
 		controller.setKonsenskisteModel(modelNew);
 		test.assert( () => currentTitle() == 'Neu' );
-		modelNew.content().title('Basisdemokratie');
+		modelNew.general().title('Basisdemokratie');
 		test.assert( () => currentTitle() == 'Basisdemokratie' );
 	}
 	
@@ -49,13 +49,13 @@ export class Tests extends unit.TestClass {
 		var ka = new kaMdl.Model();
 		koki.appendKa(ka);
 		
-		koki.content().title('Basisdemokratie');
-		ka.content.title('Begriff Basisdemokratie');
-		ka.content.text('Blablablablub');
+		koki.general().title('Basisdemokratie');
+		ka.general().title('Begriff Basisdemokratie');
+		ka.general().text('Blablablablub');
 		
-		test.assert( () => window.kkView().content().title() == 'Basisdemokratie' );
+		test.assert( () => window.kkView().general().title() == 'Basisdemokratie' );
 		test.assert( () => window.kkView().childKas().length == 1 );
-		test.assert( () => window.kkView().childKas()[0].content().title() == 'Begriff Basisdemokratie' );
-		test.assert( () => window.kkView().childKas()[0].content().text() == 'Blablablablub' );
+		test.assert( () => window.kkView().childKas()[0].general().title() == 'Begriff Basisdemokratie' );
+		test.assert( () => window.kkView().childKas()[0].general().text() == 'Blablablablub' );
 	}
 }

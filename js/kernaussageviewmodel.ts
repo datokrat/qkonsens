@@ -2,6 +2,8 @@ import Content = require('contentviewmodel')
 import Observable = require('observable')
 
 export class ViewModel {
-	public content: Observable.Observable<Content.WithContext>;
+	public general: Observable.Observable<Content.General>;
+	public context: Observable.Observable<Content.Context>;
+	
 	public isActive: () => boolean;
 }

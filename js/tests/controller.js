@@ -38,11 +38,11 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../model', '../view
             var cxt = this.factory.create();
 
             cxt.model.konsenskiste(new koki.Model());
-            cxt.model.konsenskiste().content().title('Hi!');
+            cxt.model.konsenskiste().general().title('Hi!');
 
             var konsenskisteWindow = cxt.viewModel.center.win();
             test.assert(function () {
-                return konsenskisteWindow.kkView().content().title() == 'Hi!';
+                return konsenskisteWindow.kkView().general().title() == 'Hi!';
             });
         };
 
@@ -55,16 +55,16 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../model', '../view
             cxt.model.konsenskiste(oldKoki);
 
             var newKoki = new koki.Model;
-            newKoki.content().title('hi');
-            newKoki.content().text('ho');
-            cxt.communicator.konsenskiste.content.retrieved.raise({ id: 1, content: newKoki.content() });
+            newKoki.general().title('hi');
+            newKoki.general().text('ho');
+            cxt.communicator.konsenskiste.content.generalContentRetrieved.raise({ general: newKoki.general() });
 
             var konsenskisteWindow = cxt.viewModel.center.win();
             test.assert(function () {
-                return konsenskisteWindow.kkView().content().title() == 'hi';
+                return konsenskisteWindow.kkView().general().title() == 'hi';
             });
             test.assert(function () {
-                return konsenskisteWindow.kkView().content().text() == 'ho';
+                return konsenskisteWindow.kkView().general().text() == 'ho';
             });
         };
 
@@ -75,14 +75,14 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../model', '../view
             oldKoki.id = 1;
             var newKoki = new koki.Model;
             newKoki.id = 1;
-            newKoki.content().title('hi');
+            newKoki.general().title('hi');
             cxt.model.konsenskiste(oldKoki);
 
             cxt.communicator.konsenskiste.received.raise({ id: 1, konsenskiste: newKoki });
 
             var konsenskisteWindow = cxt.viewModel.center.win();
             test.assert(function () {
-                return konsenskisteWindow.kkView().content().title() == 'hi';
+                return konsenskisteWindow.kkView().general().title() == 'hi';
             });
         };
 

@@ -1,20 +1,18 @@
-define(["require", "exports", '../contentmodel'], function(require, exports, content) {
+define(["require", "exports", '../contentmodel'], function(require, exports, ContentModel) {
     var Factory = (function () {
         function Factory() {
         }
-        Factory.prototype.create = function (text, title, out) {
-            var cnt = out || new content.Model();
+        Factory.prototype.createGeneralContent = function (text, title, out) {
+            var cnt = out || new ContentModel.General();
             cnt.title(title);
             cnt.text(text);
             return cnt;
         };
 
-        Factory.prototype.createWithContext = function (text, title, context) {
-            var cnt = new content.WithContext();
-            this.create(text, title, cnt);
-
-            cnt.context().text(context);
-            return cnt;
+        Factory.prototype.createContext = function (text) {
+            var cxt = new ContentModel.Context();
+            cxt.text(text);
+            return cxt;
         };
         return Factory;
     })();

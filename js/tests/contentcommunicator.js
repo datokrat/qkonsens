@@ -13,18 +13,17 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', '../common', 'tes
         }
         TestClass.prototype.setUp = function (r) {
             this.com = new TestContentCommunicator;
-            this.mdl = new ContentModel.WithContext;
-            this.vm = new ContentViewModel.ViewModel;
-            this.ctr = new ContentController.Controller(this.mdl, this.vm, this.com);
+            this.mdl = new ContentModel.General;
+            this.vm = new ContentViewModel.General;
+            this.ctr = new ContentController.General(this.mdl, this.vm, this.com);
 
-            this.content1 = this.contentModelFactory.createWithContext('Text #1', 'Title #1');
+            this.content1 = this.contentModelFactory.createGeneralContent('Text #1', 'Title #1');
             this.content1.id = 1;
-            this.content1.context().text('Context #1');
-            this.content2 = this.contentModelFactory.create('Text #2', 'Title #2');
+            this.content2 = this.contentModelFactory.createGeneralContent('Text #2', 'Title #2');
             this.content2.id = 2;
 
-            this.com.setTestContent(this.content1);
-            this.com.setTestContent(this.content2);
+            this.com.setGeneralTestContent(this.content1);
+            this.com.setGeneralTestContent(this.content2);
             r();
         };
 
@@ -33,11 +32,11 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', '../common', 'tes
             common.Callbacks.batch([
                 function (r) {
                     _this.mdl.id = 1;
-                    _this.com.queryContent(1);
+                    _this.com.queryGeneral(1);
                     setTimeout(r);
                 },
                 function (r) {
-                    _this.com.queryContent(2);
+                    _this.com.queryGeneral(2);
                     setTimeout(r);
                 },
                 function (r) {

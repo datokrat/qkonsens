@@ -7,7 +7,7 @@ ready = () => {};
 declare var infuser;
 infuser.defaults.templateUrl = "templates";
 
-import mdl = require('model')
+/*import mdl = require('model')
 import vm = require('viewmodel')
 import ctr = require('controller')
 
@@ -35,6 +35,6 @@ kernaussage.content.title('Kernaussagen-Titel');
 kernaussage.content.text('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.');
 kernaussage.content.context().text('blablablablub');
 
-ko.applyBindings(viewModel);
+ko.applyBindings(viewModel);*/
 
 ready();

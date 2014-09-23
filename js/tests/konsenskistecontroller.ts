@@ -21,11 +21,11 @@ export class Tests extends unit.TestClass {
 		var viewModel = new vm.ViewModel();
 		var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator);
 		
-		model.content().context().text('Der Klärtext');
+		model.context().text('Der Klärtext');
 		
-		test.assert( () => viewModel.content().title() == 'Basisdemokratie' );
-		test.assert( () => viewModel.content().text() == 'Beschreibung' );
-		test.assert( () => viewModel.content().context().text() == 'Der Klärtext' );
+		test.assert( () => viewModel.general().title() == 'Basisdemokratie' );
+		test.assert( () => viewModel.general().text() == 'Beschreibung' );
+		test.assert( () => viewModel.context().text() == 'Der Klärtext' );
 	}
 	
 	testContentObservables() {
@@ -35,14 +35,14 @@ export class Tests extends unit.TestClass {
 		var titleTracker: string[] = [];
 		var textTracker: string[] = [];
 		
-		viewModel.content().title.subscribe( newTitle => {
+		viewModel.general().title.subscribe( newTitle => {
 			titleTracker.push(newTitle);
 		} );
-		viewModel.content().text.subscribe( newText => {
+		viewModel.general().text.subscribe( newText => {
 			textTracker.push(newText);
 		} );
-		model.content().title('New Title');
-		model.content().text('New Text');
+		model.general().title('New Title');
+		model.general().text('New Text');
 		
 		test.assert( () => titleTracker.length == 1 );
 		test.assert( () => titleTracker[0] == 'New Title' );
@@ -57,7 +57,7 @@ export class Tests extends unit.TestClass {
 		
 		model.appendKa( this.kaModelFactory.create('Begriff Basisdemokratie') );
 		
-		test.assert(() => viewModel.childKas()[0].content().title() == 'Begriff Basisdemokratie');
+		test.assert(() => viewModel.childKas()[0].general().title() == 'Begriff Basisdemokratie');
 		test.assert(() => viewModel.childKas().length == 1);
 		test.assert(() => !viewModel.childKas()[0].isActive());
 	}
@@ -89,7 +89,7 @@ export class Tests extends unit.TestClass {
 		test.assert( () => inserted.countListeners() == 0 );
 		test.assert( () => removed.countListeners() == 0 );
 		
-		test.assert( () => viewModel.content().title() == 'Basisdemokratie' );
+		test.assert( () => viewModel.general().title() == 'Basisdemokratie' );
 	}
 	
 	/* testSetModel() {

@@ -34,7 +34,8 @@ export class ControllerImpl implements Controller {
 		this.initViewModel();
 		this.initCommunicator();
 		
-		this.content = new content.WithContext(this.model.content(), this.viewModel.content(), communicator.content);
+		this.generalContent = new content.General(this.model.general(), this.viewModel.general(), communicator.content);
+		this.context = new content.Context(this.model.context(), this.viewModel.context());
 	}
 	
 	private initChildKaSynchronizer() {
@@ -54,22 +55,28 @@ export class ControllerImpl implements Controller {
 	}
 	
 	private initViewModel() {
-		this.viewModel.content = ko.observable( new contentVm.WithContext );
+		this.viewModel.general = ko.observable( new contentVm.General );
+		this.viewModel.context = ko.observable( new contentVm.Context );
 		this.viewModel.childKas = this.childKaViewModels;
 	}
 	
 	private initCommunicator() {
-		this.communicator.content.retrieved.subscribe((args: ContentCommunicator.ReceivedArgs) => {
-			if(args.id == this.model.id) {
-				this.model.content().set( args.content );
-			}
-		})
-		this.communicator.received.subscribe(this.onKokiRetrieved);
+		this.communicatorSubscriptions = ([
+			this.communicator.content.generalContentRetrieved.subscribe((args: ContentCommunicator.GeneralContentRetrievedArgs) => {
+				if(args.general.id == this.model.general().id)
+					this.model.general().set( args.general );
+			}),
+			this.communicator.content.contextRetrieved.subscribe((args: ContentCommunicator.ContextRetrievedArgs) => {
+				if(args.context.id == this.model.context().id)
+					this.model.context().set( args.context );
+			}),
+			this.communicator.received.subscribe(this.onKokiRetrieved)
+		]);
 	}
 	
 	private onKokiRetrieved = (args: KokiCommunicator.ReceivedArgs) => {
 		if(this.model.id == args.konsenskiste.id)
-			this.model.content().set( args.konsenskiste.content() );
+			this.model.set( args.konsenskiste );
 	}
 	
 	private getChildKaArray() {
@@ -93,22 +100,26 @@ export class ControllerImpl implements Controller {
 	}
 	
 	public dispose() {
-		this.content.dispose();
-		this.communicator.received.unsubscribe(this.onKokiRetrieved);
+		this.generalContent.dispose();
+		this.context.dispose();
+		
 		this.modelSubscriptions.forEach( s => s.undo() );
+		this.communicatorSubscriptions.forEach( s => s.undo() );
 	}
 	
 	private model: mdl.Model;
 	private viewModel: vm.ViewModel;
 	private communicator: KokiCommunicator.Main;
 	
-	private content: content.WithContext;
+	private generalContent: content.General;
+	private context: content.Context;
 	
 	private childKaViewModels = ko.observableArray<kernaussageVm.ViewModel>();
 	private childKaArraySynchronizer = 
 		new synchronizer.ChildArraySynchronizer<kernaussageMdl.Model, kernaussageVm.ViewModel, kernaussageCtr.Controller>();
 	
 	private modelSubscriptions: evt.Subscription[];
+	private communicatorSubscriptions: evt.Subscription[];
 }
 
 class ViewModelFactory {

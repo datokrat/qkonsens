@@ -1,19 +1,17 @@
-import content = require('../contentmodel')
+import ContentModel = require('../contentmodel')
 
 class Factory {
-	public create(text: string, title?: string, out?: content.Model): content.Model {
-		var cnt = out || new content.Model();
+	public createGeneralContent(text: string, title?: string, out?: ContentModel.General): ContentModel.General {
+		var cnt = out || new ContentModel.General();
 		cnt.title(title);
 		cnt.text(text);
 		return cnt;
 	}
 	
-	public createWithContext(text: string, title?: string, context?: string): content.WithContext {
-		var cnt = new content.WithContext();
-		this.create( text, title, cnt );
-		
-		cnt.context().text(context);
-		return cnt;
+	public createContext(text: string): ContentModel.Context {
+		var cxt = new ContentModel.Context();
+		cxt.text(text);
+		return cxt;
 	}
 }
 

@@ -12,17 +12,17 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
             var communicator = reloader.communicator();
 
             var konsenskiste = new koki.Model;
-            konsenskiste.content().title('Konsenskisten-Titel');
-            konsenskiste.content().text('Lorem ipsum dolor sit amet');
-            konsenskiste.content().context().text('ipsum (lat.): selbst');
+            konsenskiste.general().title('Konsenskisten-Titel');
+            konsenskiste.general().text('Lorem ipsum dolor sit amet');
+            konsenskiste.context().text('ipsum (lat.): selbst');
             model.konsenskiste(konsenskiste);
 
             var kernaussage = new ka.Model();
             konsenskiste.appendKa(kernaussage);
 
-            kernaussage.content.title('Kernaussagen-Titel');
-            kernaussage.content.text('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.');
-            kernaussage.content.context().text('blablablablub');
+            kernaussage.general().title('Kernaussagen-Titel');
+            kernaussage.general().text('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.');
+            kernaussage.context().text('blablablablub');
             setTimeout(r, 0);
         };
 
@@ -146,8 +146,8 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
 
                     var newKoki = new koki.Model;
                     newKoki.id = 15;
-                    newKoki.content().title('New Title');
-                    newKoki.content().text('New Text');
+                    newKoki.general().title('New Title');
+                    newKoki.general().text('New Text');
 
                     var com = reloader.communicator();
                     com.konsenskiste.received.raise({ id: 15, konsenskiste: newKoki });

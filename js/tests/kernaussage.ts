@@ -15,16 +15,16 @@ export class Tests extends unit.TestClass {
 		var communicator = new ContentCommunicator();
 		var controller = new Controller.Controller(model, viewModel, communicator);
 		
-		test.assert( () => viewModel.content().title() == 'Begriff Basisdemokratie' );
+		test.assert( () => viewModel.general().title() == 'Begriff Basisdemokratie' );
 	}
 }
 
 class ModelFactory {
 	public create(title: string, text: string, context?: string) {
 		var kernaussage = new Model.Model();
-		kernaussage.content.title(title);
-		kernaussage.content.text(text);
-		kernaussage.content.context().text(context);
+		kernaussage.general().title(title);
+		kernaussage.general().text(text);
+		kernaussage.context().text(context);
 		return kernaussage;
 	}
 }

@@ -1,25 +1,22 @@
-import Context = require('contextmodel')
+import Observable = require('observable');
 
-export class Model {
+export class Context {
 	public id: number;
-	public title = ko.observable<string>();
-	public text = ko.observable<string>();
+	public text: Observable.Observable<string> = ko.observable<string>();
 	
-	public set( content: Model ) {
-		this.title( content.title() );
-		this.text( content.text() );
+	public set(context: Context) {
+		this.id = context.id;
+		this.text(context.text());
 	}
 }
 
-export class WithContext extends Model {
-	public context = ko.observable<Context>( new Context );
+export class General {
+	public id: number;
+	public title: Observable.Observable<string> = ko.observable<string>();
+	public text: Observable.Observable<string> = ko.observable<string>();
 	
-	public set( content: Model ) {
-		Model.prototype.set.call( this, content );
-		
-		if(content instanceof WithContext) {
-			var withContext = <WithContext>content;
-			this.context( withContext.context() );
-		}
+	public set( content: General ) {
+		this.title( content.title() );
+		this.text( content.text() );
 	}
 }

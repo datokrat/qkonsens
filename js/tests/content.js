@@ -5,17 +5,17 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 define(["require", "exports", 'tests/tsunit', 'tests/test', '../factories/contentmodel', '../contentviewmodel', '../contentcontroller', 'tests/testcontentcommunicator'], function(require, exports, unit, test, ModelFactory, vm, ctr, ContentCommunicator) {
-    var Tests = (function (_super) {
-        __extends(Tests, _super);
-        function Tests() {
+    var General = (function (_super) {
+        __extends(General, _super);
+        function General() {
             _super.apply(this, arguments);
             this.modelFactory = new ModelFactory;
         }
-        Tests.prototype.test = function () {
-            var model = this.modelFactory.create('Text', 'Title');
-            var viewModel = new vm.ViewModel();
+        General.prototype.test = function () {
+            var model = this.modelFactory.createGeneralContent('Text', 'Title');
+            var viewModel = new vm.General();
             var communicator = new ContentCommunicator();
-            var controller = new ctr.Controller(model, viewModel, communicator);
+            var controller = new ctr.General(model, viewModel, communicator);
 
             test.assert(function () {
                 return viewModel.title() == 'Title';
@@ -25,11 +25,11 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../factories/conten
             });
         };
 
-        Tests.prototype.testDispose = function () {
-            var model = this.modelFactory.create('Text', 'Title');
-            var viewModel = new vm.ViewModel();
+        General.prototype.testDispose = function () {
+            var model = this.modelFactory.createGeneralContent('Text', 'Title');
+            var viewModel = new vm.General();
             var communicator = new ContentCommunicator();
-            var controller = new ctr.Controller(model, viewModel, communicator);
+            var controller = new ctr.General(model, viewModel, communicator);
 
             controller.dispose();
             model.title('New Title');
@@ -42,40 +42,37 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../factories/conten
                 return viewModel.text() == 'Text';
             });
         };
-        return Tests;
+        return General;
     })(unit.TestClass);
-    exports.Tests = Tests;
+    exports.General = General;
 
-    var TestsWithContext = (function (_super) {
-        __extends(TestsWithContext, _super);
-        function TestsWithContext() {
-            _super.apply(this, arguments);
+    var Context = (function () {
+        function Context() {
+            this.modelFactory = new ModelFactory;
         }
-        TestsWithContext.prototype.testModelWithContext = function () {
-            var model = this.modelFactory.createWithContext('Text', 'Title', 'Context');
-            var viewModel = new vm.WithContext();
-            var communicator = new ContentCommunicator();
-            var controller = new ctr.WithContext(model, viewModel, communicator);
+        Context.prototype.testModelWithContext = function () {
+            var model = this.modelFactory.createContext('Context');
+            var viewModel = new vm.Context();
+            var controller = new ctr.Context(model, viewModel);
 
             test.assert(function () {
-                return viewModel.context().text() == 'Context';
+                return viewModel.text() == 'Context';
             });
         };
 
-        TestsWithContext.prototype.testDisposeWithContext = function () {
-            var model = this.modelFactory.createWithContext('Text', 'Title', 'Context');
-            var viewModel = new vm.WithContext();
-            var communicator = new ContentCommunicator();
-            var controller = new ctr.WithContext(model, viewModel, communicator);
+        Context.prototype.testDisposeWithContext = function () {
+            var model = this.modelFactory.createContext('Context');
+            var viewModel = new vm.Context();
+            var controller = new ctr.Context(model, viewModel);
 
             controller.dispose();
-            model.context().text('New Context');
+            model.text('New Context');
 
             test.assert(function () {
-                return viewModel.context().text() == 'Context';
+                return viewModel.text() == 'Context';
             });
         };
-        return TestsWithContext;
-    })(Tests);
-    exports.TestsWithContext = TestsWithContext;
+        return Context;
+    })();
+    exports.Context = Context;
 });

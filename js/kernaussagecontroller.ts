@@ -4,12 +4,13 @@ import mdl = require('kernaussagemodel')
 import vm = require('kernaussageviewmodel')
 import com = require('contentcommunicator')
 
-import Content = require('contentcontroller')
+import ContentController = require('contentcontroller')
 import ContentViewModel = require('contentviewmodel')
 
 export class Controller {
 	private viewModel: vm.ViewModel;
-	private content: Content.Controller;
+	private generalContent: ContentController.General;
+	private context: ContentController.Context;
 
 	constructor(model: mdl.Model, viewModel: vm.ViewModel, communicator: com.Main) {
 		this.init(model, viewModel, communicator);
@@ -17,13 +18,16 @@ export class Controller {
 	
 	private init(model: mdl.Model, viewModel: vm.ViewModel, communicator: com.Main) {
 		viewModel.isActive = ko.observable<boolean>();
-		viewModel.content = ko.observable( new ContentViewModel.WithContext );
+		viewModel.general = ko.observable( new ContentViewModel.General );
+		viewModel.context = ko.observable( new ContentViewModel.Context );
 		this.viewModel = viewModel;
 		
-		this.content = new Content.WithContext(model.content, viewModel.content(), communicator);
+		this.generalContent = new ContentController.General(model.general(), viewModel.general(), communicator);
+		this.context = new ContentController.Context(model.context(), viewModel.context());
 	}
 	
 	public dispose() {
-		this.content.dispose();
+		this.generalContent.dispose();
+		this.context.dispose();
 	}
 }

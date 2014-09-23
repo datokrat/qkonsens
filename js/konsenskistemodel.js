@@ -2,11 +2,18 @@ define(["require", "exports", 'contentmodel', 'factories/event'], function(requi
     var Model = (function () {
         function Model(context) {
             if (typeof context === "undefined") { context = new ModelContext; }
-            this.content = ko.observable(new Content.WithContext());
+            this.general = ko.observable(new Content.General);
+            this.context = ko.observable(new Content.Context);
             this.kaArray = ko.observableArray();
             this.childKaInserted = context.eventFactory.create();
             this.childKaRemoved = context.eventFactory.create();
         }
+        Model.prototype.set = function (model) {
+            this.id = model.id;
+            this.general().set(model.general());
+            this.context().set(model.context());
+        };
+
         Model.prototype.appendKa = function (ka) {
             this.kaArray.push(ka);
 

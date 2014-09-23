@@ -27,13 +27,13 @@ class TestClass extends unit.TestClass {
 			r => {
 				var koki1 = new KokiModel.Model;
 				koki1.id = 1;
-				koki1.content().title('Title #1');
-				koki1.content().text('Text #1');
+				koki1.general().title('Title #1');
+				koki1.general().text('Text #1');
 				
 				var koki2 = new KokiModel.Model;
 				koki2.id = 2;
-				koki2.content().title('Title #2');
-				koki2.content().text('Text #2');
+				koki2.general().title('Title #2');
+				koki2.general().text('Text #2');
 				
 				this.mdl.id = 1;
 				
@@ -45,8 +45,8 @@ class TestClass extends unit.TestClass {
 				setTimeout(r, 0);
 			},
 			r => {
-				test.assert( () => this.mdl.content().title() == 'Title #1' );
-				test.assert( () => this.mdl.content().text() == 'Text #1' );
+				test.assert( () => this.mdl.general().title() == 'Title #1' );
+				test.assert( () => this.mdl.general().text() == 'Text #1' );
 				r();
 			},
 		], r);

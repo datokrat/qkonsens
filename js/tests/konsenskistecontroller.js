@@ -17,16 +17,16 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenski
             var viewModel = new vm.ViewModel();
             var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator);
 
-            model.content().context().text('Der Klärtext');
+            model.context().text('Der Klärtext');
 
             test.assert(function () {
-                return viewModel.content().title() == 'Basisdemokratie';
+                return viewModel.general().title() == 'Basisdemokratie';
             });
             test.assert(function () {
-                return viewModel.content().text() == 'Beschreibung';
+                return viewModel.general().text() == 'Beschreibung';
             });
             test.assert(function () {
-                return viewModel.content().context().text() == 'Der Klärtext';
+                return viewModel.context().text() == 'Der Klärtext';
             });
         };
 
@@ -37,14 +37,14 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenski
             var titleTracker = [];
             var textTracker = [];
 
-            viewModel.content().title.subscribe(function (newTitle) {
+            viewModel.general().title.subscribe(function (newTitle) {
                 titleTracker.push(newTitle);
             });
-            viewModel.content().text.subscribe(function (newText) {
+            viewModel.general().text.subscribe(function (newText) {
                 textTracker.push(newText);
             });
-            model.content().title('New Title');
-            model.content().text('New Text');
+            model.general().title('New Title');
+            model.general().text('New Text');
 
             test.assert(function () {
                 return titleTracker.length == 1;
@@ -68,7 +68,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenski
             model.appendKa(this.kaModelFactory.create('Begriff Basisdemokratie'));
 
             test.assert(function () {
-                return viewModel.childKas()[0].content().title() == 'Begriff Basisdemokratie';
+                return viewModel.childKas()[0].general().title() == 'Begriff Basisdemokratie';
             });
             test.assert(function () {
                 return viewModel.childKas().length == 1;
@@ -112,7 +112,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenski
             });
 
             test.assert(function () {
-                return viewModel.content().title() == 'Basisdemokratie';
+                return viewModel.general().title() == 'Basisdemokratie';
             });
         };
         return Tests;

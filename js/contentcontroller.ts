@@ -1,19 +1,20 @@
 import observable = require('observable')
+import Events = require('event')
 
-import mdl = require('contentmodel')
-import vm = require('contentviewmodel')
-import com = require('contentcommunicator')
+import Model = require('contentmodel')
+import ViewModel = require('contentviewmodel')
+import Communicator = require('contentcommunicator')
 
 import ContextViewModel = require('contextviewmodel')
 import ContextModel = require('contextmodel')
 import ContextController = require('contextcontroller')
 
-export class Controller {
-	constructor(model: mdl.Model, viewModel: vm.ViewModel, communicator: com.Main) {
+export class General {
+	constructor(model: Model.General, viewModel: ViewModel.General, communicator: Communicator.Main) {
 		this.init(model, viewModel, communicator);
 	}
 	
-	private init(model: mdl.Model, viewModel: vm.ViewModel, communicator: com.Main) {
+	private init(model: Model.General, viewModel: ViewModel.General, communicator: Communicator.Main) {
 		this.viewModel = viewModel;
 		this.model = model;
 		this.communicator = communicator;
@@ -21,27 +22,50 @@ export class Controller {
 		this.viewModel.title = ko.computed( () => model.title() );
 		this.viewModel.text = ko.computed( () => model.text() );
 		
-		this.communicator.retrieved.subscribe(this.onContentRetrieved);
+		this.communicator.generalContentRetrieved.subscribe(this.onContentRetrieved);
 	}
 	
-	private onContentRetrieved = (args: com.ReceivedArgs) => {
-		if(this.model.id == args.content.id)
-			this.model.set(args.content);
+	private onContentRetrieved = (args: Communicator.GeneralContentRetrievedArgs) => {
+		if(this.model.id == args.general.id)
+			this.model.set(args.general);
 	}
 	
 	public dispose() {
 		this.viewModel.title.dispose();
 		this.viewModel.text.dispose();
-		this.communicator.retrieved.unsubscribe(this.onContentRetrieved);
+		this.communicator.generalContentRetrieved.unsubscribe(this.onContentRetrieved);
 	}
 	
-	private viewModel: vm.ViewModel;
-	private model: mdl.Model;
-	private communicator: com.Main;
+	private viewModel: ViewModel.General;
+	private model: Model.General;
+	private communicator: Communicator.Main;
 }
 
-export class WithContext extends Controller {
-	constructor(model: mdl.WithContext, viewModel: vm.WithContext, communicator: com.Main) {
+export class Context {
+	constructor( model: Model.Context, viewModel: ViewModel.Context ) {
+		this.viewModel = viewModel;
+		
+		this.viewModel.text = ko.computed( () => model.text() );
+		this.viewModel.isVisible = ko.observable<boolean>(false);
+		
+		this.viewModel.toggleVisibility = new Events.EventImpl<Events.Void>();
+		this.viewModel.toggleVisibility.subscribe( () => this.toggleVisibility() );
+	}
+	
+	private toggleVisibility() {
+		var isVisible = this.viewModel.isVisible();
+		this.viewModel.isVisible( !isVisible );
+	}
+	
+	public dispose() {
+		this.viewModel.text.dispose();
+	}
+	
+	private viewModel: ViewModel.Context;
+}
+
+/*export class WithContext extends Controller {
+	constructor(model: mdl.WithContext, viewModel: vm.WithContext, communicator: Communicator.Main) {
 		super(model, viewModel, communicator);
 		this.initContext(model, viewModel);
 	}
@@ -69,4 +93,4 @@ export class WithContext extends Controller {
 	private modelWithContext: mdl.WithContext;
 	
 	private context: ContextController;
-}
+}*/

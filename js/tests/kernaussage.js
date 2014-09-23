@@ -18,7 +18,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../kernaussagemodel
             var controller = new Controller.Controller(model, viewModel, communicator);
 
             test.assert(function () {
-                return viewModel.content().title() == 'Begriff Basisdemokratie';
+                return viewModel.general().title() == 'Begriff Basisdemokratie';
             });
         };
         return Tests;
@@ -30,9 +30,9 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../kernaussagemodel
         }
         ModelFactory.prototype.create = function (title, text, context) {
             var kernaussage = new Model.Model();
-            kernaussage.content.title(title);
-            kernaussage.content.text(text);
-            kernaussage.content.context().text(context);
+            kernaussage.general().title(title);
+            kernaussage.general().text(text);
+            kernaussage.context().text(context);
             return kernaussage;
         };
         return ModelFactory;

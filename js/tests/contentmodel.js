@@ -11,11 +11,11 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../contentmodel'], 
             _super.apply(this, arguments);
         }
         Main.prototype.testSetModel = function () {
-            var m1 = new ContentModel.Model();
+            var m1 = new ContentModel.General();
             m1.title('title1');
             m1.text('text1');
 
-            var m2 = new ContentModel.Model();
+            var m2 = new ContentModel.General();
             m2.title('title2');
             m2.text('text2');
 

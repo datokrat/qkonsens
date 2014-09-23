@@ -7,24 +7,24 @@ import vm = require('../contentviewmodel')
 import ctr = require('../contentcontroller')
 import ContentCommunicator = require('tests/testcontentcommunicator')
 
-export class Tests extends unit.TestClass {
+export class General extends unit.TestClass {
 	public modelFactory = new ModelFactory;
 	
 	test() {
-		var model = this.modelFactory.create('Text', 'Title');
-		var viewModel = new vm.ViewModel();
+		var model = this.modelFactory.createGeneralContent('Text', 'Title');
+		var viewModel = new vm.General();
 		var communicator = new ContentCommunicator();
-		var controller = new ctr.Controller(model, viewModel, communicator);
+		var controller = new ctr.General(model, viewModel, communicator);
 		
 		test.assert( () => viewModel.title() == 'Title' );
 		test.assert( () => viewModel.text() == 'Text' );
 	}
 	
 	testDispose() {
-		var model = this.modelFactory.create('Text', 'Title');
-		var viewModel = new vm.ViewModel();
+		var model = this.modelFactory.createGeneralContent('Text', 'Title');
+		var viewModel = new vm.General();
 		var communicator = new ContentCommunicator();
-		var controller = new ctr.Controller(model, viewModel, communicator);
+		var controller = new ctr.General(model, viewModel, communicator);
 		
 		controller.dispose();
 		model.title('New Title');
@@ -35,26 +35,25 @@ export class Tests extends unit.TestClass {
 	}
 }
 
-export class TestsWithContext extends Tests {
+export class Context {
+	modelFactory = new ModelFactory;
 
 	testModelWithContext() {
-		var model = this.modelFactory.createWithContext('Text', 'Title', 'Context');
-		var viewModel = new vm.WithContext();
-		var communicator = new ContentCommunicator();
-		var controller = new ctr.WithContext(model, viewModel, communicator);
+		var model = this.modelFactory.createContext('Context');
+		var viewModel = new vm.Context();
+		var controller = new ctr.Context(model, viewModel);
 		
-		test.assert( () => viewModel.context().text() == 'Context' );
+		test.assert( () => viewModel.text() == 'Context' );
 	}
 	
 	testDisposeWithContext() {
-		var model = this.modelFactory.createWithContext('Text', 'Title', 'Context');
-		var viewModel = new vm.WithContext();
-		var communicator = new ContentCommunicator();
-		var controller = new ctr.WithContext(model, viewModel, communicator);
+		var model = this.modelFactory.createContext('Context');
+		var viewModel = new vm.Context();
+		var controller = new ctr.Context(model, viewModel);
 		
 		controller.dispose();
-		model.context().text('New Context');
+		model.text('New Context');
 		
-		test.assert( () => viewModel.context().text() == 'Context' );
+		test.assert( () => viewModel.text() == 'Context' );
 	}
 }

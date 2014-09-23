@@ -4,10 +4,18 @@ import kernaussageModel = require('kernaussagemodel')
 import Content = require('contentmodel')
 
 import EventFactory = require('factories/event')
+import Observable = require('observable')
 
 export class Model {
 	public id: number;
-	public content = ko.observable<Content.WithContext>( new Content.WithContext() );
+	public general: Observable.Observable<Content.General> = ko.observable<Content.General>( new Content.General );
+	public context: Observable.Observable<Content.Context> = ko.observable<Content.Context>( new Content.Context );
+	
+	public set(model: Model) {
+		this.id = model.id;
+		this.general().set(model.general());
+		this.context().set(model.context());
+	}
 	
 	public appendKa(ka: kernaussageModel.Model) {
 		this.kaArray.push(ka);

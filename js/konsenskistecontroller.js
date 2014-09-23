@@ -4,7 +4,7 @@ define(["require", "exports", 'kernaussageviewmodel', 'kernaussagecontroller', '
             var _this = this;
             this.onKokiRetrieved = function (args) {
                 if (_this.model.id == args.konsenskiste.id)
-                    _this.model.content().set(args.konsenskiste.content());
+                    _this.model.set(args.konsenskiste);
             };
             this.childKaViewModels = ko.observableArray();
             this.childKaArraySynchronizer = new synchronizer.ChildArraySynchronizer();
@@ -20,7 +20,8 @@ define(["require", "exports", 'kernaussageviewmodel', 'kernaussagecontroller', '
             this.initViewModel();
             this.initCommunicator();
 
-            this.content = new content.WithContext(this.model.content(), this.viewModel.content(), communicator.content);
+            this.generalContent = new content.General(this.model.general(), this.viewModel.general(), communicator.content);
+            this.context = new content.Context(this.model.context(), this.viewModel.context());
         };
 
         ControllerImpl.prototype.initChildKaSynchronizer = function () {
@@ -50,18 +51,24 @@ define(["require", "exports", 'kernaussageviewmodel', 'kernaussagecontroller', '
         };
 
         ControllerImpl.prototype.initViewModel = function () {
-            this.viewModel.content = ko.observable(new contentVm.WithContext);
+            this.viewModel.general = ko.observable(new contentVm.General);
+            this.viewModel.context = ko.observable(new contentVm.Context);
             this.viewModel.childKas = this.childKaViewModels;
         };
 
         ControllerImpl.prototype.initCommunicator = function () {
             var _this = this;
-            this.communicator.content.retrieved.subscribe(function (args) {
-                if (args.id == _this.model.id) {
-                    _this.model.content().set(args.content);
-                }
-            });
-            this.communicator.received.subscribe(this.onKokiRetrieved);
+            this.communicatorSubscriptions = ([
+                this.communicator.content.generalContentRetrieved.subscribe(function (args) {
+                    if (args.general.id == _this.model.general().id)
+                        _this.model.general().set(args.general);
+                }),
+                this.communicator.content.contextRetrieved.subscribe(function (args) {
+                    if (args.context.id == _this.model.context().id)
+                        _this.model.context().set(args.context);
+                }),
+                this.communicator.received.subscribe(this.onKokiRetrieved)
+            ]);
         };
 
         ControllerImpl.prototype.getChildKaArray = function () {
@@ -85,9 +92,13 @@ define(["require", "exports", 'kernaussageviewmodel', 'kernaussagecontroller', '
         };
 
         ControllerImpl.prototype.dispose = function () {
-            this.content.dispose();
-            this.communicator.received.unsubscribe(this.onKokiRetrieved);
+            this.generalContent.dispose();
+            this.context.dispose();
+
             this.modelSubscriptions.forEach(function (s) {
+                return s.undo();
+            });
+            this.communicatorSubscriptions.forEach(function (s) {
                 return s.undo();
             });
         };

@@ -36,10 +36,10 @@ export class Tests extends unit.TestClass {
 		var cxt = this.factory.create();
 		
 		cxt.model.konsenskiste(new koki.Model());
-		cxt.model.konsenskiste().content().title('Hi!');
+		cxt.model.konsenskiste().general().title('Hi!');
 		
 		var konsenskisteWindow = <kokiWin.Win>cxt.viewModel.center.win();
-		test.assert( () => konsenskisteWindow.kkView().content().title() == 'Hi!' )
+		test.assert( () => konsenskisteWindow.kkView().general().title() == 'Hi!' )
 	}
 	
 	testCommunicatorConnection() {
@@ -51,13 +51,13 @@ export class Tests extends unit.TestClass {
 		cxt.model.konsenskiste(oldKoki);
 		
 		var newKoki = new koki.Model;
-		newKoki.content().title('hi');
-		newKoki.content().text('ho');
-		cxt.communicator.konsenskiste.content.retrieved.raise({ id: 1, content: newKoki.content() });
+		newKoki.general().title('hi');
+		newKoki.general().text('ho');
+		cxt.communicator.konsenskiste.content.generalContentRetrieved.raise({ general: newKoki.general() });
 		
 		var konsenskisteWindow = <kokiWin.Win>cxt.viewModel.center.win();
-		test.assert( () => konsenskisteWindow.kkView().content().title() == 'hi' );
-		test.assert( () => konsenskisteWindow.kkView().content().text() == 'ho' );
+		test.assert( () => konsenskisteWindow.kkView().general().title() == 'hi' );
+		test.assert( () => konsenskisteWindow.kkView().general().text() == 'ho' );
 	}
 	
 	testLoadKonsenskiste() {
@@ -67,13 +67,13 @@ export class Tests extends unit.TestClass {
 		oldKoki.id = 1;
 		var newKoki = new koki.Model;
 		newKoki.id = 1;
-		newKoki.content().title('hi');
+		newKoki.general().title('hi');
 		cxt.model.konsenskiste(oldKoki);
 		
 		cxt.communicator.konsenskiste.received.raise({ id: 1, konsenskiste: newKoki });
 		
 		var konsenskisteWindow = <kokiWin.Win>cxt.viewModel.center.win();
-		test.assert( () => konsenskisteWindow.kkView().content().title() == 'hi' );
+		test.assert( () => konsenskisteWindow.kkView().general().title() == 'hi' );
 	}
 	
 	testCommunicatorDisposal() {

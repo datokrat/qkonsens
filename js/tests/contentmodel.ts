@@ -5,11 +5,11 @@ import ContentModel = require('../contentmodel')
 
 class Main extends unit.TestClass {
 	testSetModel() {
-		var m1 = new ContentModel.Model();
+		var m1 = new ContentModel.General();
 		m1.title('title1');
 		m1.text('text1');
 		
-		var m2 = new ContentModel.Model();
+		var m2 = new ContentModel.General();
 		m2.title('title2');
 		m2.text('text2');
 		

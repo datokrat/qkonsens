@@ -94,8 +94,8 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../konsenskistemode
         }
         KonsenskisteFactory.prototype.create = function (title, text) {
             var konsenskiste = new koki.Model();
-            konsenskiste.content().title(title);
-            konsenskiste.content().text(text);
+            konsenskiste.general().title(title);
+            konsenskiste.general().text(text);
             return konsenskiste;
         };
         return KonsenskisteFactory;
@@ -106,7 +106,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../konsenskistemode
         }
         KernaussageFactory.prototype.create = function (title) {
             var kernaussage = new ka.Model();
-            kernaussage.content.title(title);
+            kernaussage.general().title(title);
             return kernaussage;
         };
         return KernaussageFactory;

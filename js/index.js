@@ -15,13 +15,13 @@ define(["require", "exports", 'model', 'viewmodel', 'controller', 'konsenskistem
     var kernaussage = new ka.Model();
     konsenskiste.appendKa(kernaussage);
 
-    konsenskiste.content().title('Konsenskisten-Titel');
-    konsenskiste.content().text('Lorem ipsum dolor sit amet');
-    konsenskiste.content().context().text('ipsum (lat.): selbst');
+    konsenskiste.general().title('Konsenskisten-Titel');
+    konsenskiste.general().text('Lorem ipsum dolor sit amet');
+    konsenskiste.context().text('ipsum (lat.): selbst');
 
-    kernaussage.content.title('Kernaussagen-Titel');
-    kernaussage.content.text('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.');
-    kernaussage.content.context().text('blablablablub');
+    kernaussage.general().title('Kernaussagen-Titel');
+    kernaussage.general().text('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.');
+    kernaussage.context().text('blablablablub');
 
     ko.applyBindings(viewModel);
 });

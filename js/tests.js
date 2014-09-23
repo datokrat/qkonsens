@@ -5,8 +5,8 @@ define(["require", "exports", 'tests/tsunit', 'tests/asyncunit', 'tests/topicnav
     asyncTest.addTestClass(new ContentCommunicator(), 'ContentCommunicator');
     asyncTest.addTestClass(new KokiCommunicator(), 'KonsenskisteCommunicator');
     test.addTestClass(new ContentModelTests(), 'ContentModel');
-    test.addTestClass(new content.Tests(), 'Content');
-    test.addTestClass(new content.TestsWithContext(), 'ContentWithContext');
+    test.addTestClass(new content.General(), 'General Content');
+    test.addTestClass(new content.Context(), 'Context');
     test.addTestClass(new context.Tests(), 'Context');
     test.addTestClass(new synchronizer.Tests(), 'ChildArraySynchronizer');
     test.addTestClass(new kaModel.Tests(), 'Kernaussage');
