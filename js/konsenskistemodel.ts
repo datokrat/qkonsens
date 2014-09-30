@@ -2,6 +2,7 @@ import evt = require('event')
 
 import kernaussageModel = require('kernaussagemodel')
 import Content = require('contentmodel')
+import Rating = require('rating')
 
 import EventFactory = require('factories/event')
 import Observable = require('observable')
@@ -10,6 +11,8 @@ export class Model {
 	public id: number;
 	public general: Observable.Observable<Content.General> = ko.observable<Content.General>( new Content.General );
 	public context: Observable.Observable<Content.Context> = ko.observable<Content.Context>( new Content.Context );
+	public rating: Observable.Observable<Rating.Model> = ko.observable<Rating.Model>( new Rating.Model );
+	public childKas: Observable.ObservableArray<kernaussageModel.Model> = ko.observableArray<kernaussageModel.Model>();
 	
 	public set(model: Model) {
 		this.id = model.id;
@@ -18,19 +21,19 @@ export class Model {
 	}
 	
 	public appendKa(ka: kernaussageModel.Model) {
-		this.kaArray.push(ka);
+		this.childKas.push(ka);
 		
 		this.childKaInserted.raise({ childKa: ka });
 	}
 	
 	public removeKa(ka: kernaussageModel.Model) {
-		this.kaArray.remove(ka);
+		this.childKas.remove(ka);
 		
 		this.childKaRemoved.raise({ childKa: ka });
 	}
 	
 	public getChildKaArray(): kernaussageModel.Model[] {
-		return this.kaArray();
+		return this.childKas();
 	}
 	
 	constructor(context: ModelContext = new ModelContext) {
@@ -41,7 +44,7 @@ export class Model {
 	public childKaInserted: evt.Event<ChildKaEventArgs>;
 	public childKaRemoved: evt.Event<ChildKaEventArgs>;
 	
-	private kaArray = ko.observableArray<kernaussageModel.Model>();
+	//private kaArray = ko.observableArray<kernaussageModel.Model>();
 }
 
 export class ChildKaEventArgs {

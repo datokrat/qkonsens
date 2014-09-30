@@ -4,8 +4,9 @@ import KonsenskisteModel = require('konsenskistemodel')
 
 export interface Main {
 	content: ContentCommunicator.Main;
-	
 	received: Events.Event<ReceivedArgs>;
+	
+	queryKoki(id: number);
 }
 
 export interface ReceivedArgs {

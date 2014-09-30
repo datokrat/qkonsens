@@ -1,4 +1,5 @@
 import evt = require('event')
+import ConstructorBasedFactory = require('factories/constructorbased')
 
 import mdl = require('konsenskistemodel')
 import vm = require('konsenskisteviewmodel')
@@ -6,14 +7,20 @@ import vm = require('konsenskisteviewmodel')
 import kernaussageMdl = require('kernaussagemodel')
 import kernaussageVm = require('kernaussageviewmodel')
 import kernaussageCtr = require('kernaussagecontroller')
-
 import KokiCommunicator = require('konsenskistecommunicator')
+
+import ContentModel = require('contentmodel')
+import ContentViewModel = require('contentviewmodel')
 import ContentCommunicator = require('contentcommunicator')
+import ContentController = require('contentcontroller')
+
+import Rating = require('rating')
 
 import contentVm = require('contentviewmodel');
 
 import content = require('contentcontroller')
-import synchronizer = require('childarraysynchronizer')
+import arraySynchronizer = require('childarraysynchronizer')
+import synchronizer = require('childsynchronizer')
 
 export interface Controller {
 	dispose(): void;
@@ -34,8 +41,17 @@ export class ControllerImpl implements Controller {
 		this.initViewModel();
 		this.initCommunicator();
 		
-		this.generalContent = new content.General(this.model.general(), this.viewModel.general(), communicator.content);
+		this.initKas();
+		
+		this.generalContentSynchronizer
+			.setViewModelFactory( new ConstructorBasedFactory.Factory(ContentViewModel.General) )
+			.setControllerFactory( new ConstructorBasedFactory.ControllerFactoryEx(ContentController.General, communicator.content) )
+			.setViewModelChangedHandler( value => this.viewModel.general(value) )
+			.setModelObservable(this.model.general);
+			
+		//this.generalContent = new content.General(this.model.general(), this.viewModel.general(), communicator.content);
 		this.context = new content.Context(this.model.context(), this.viewModel.context());
+		this.rating = new Rating.Controller(model.rating(), viewModel.rating());
 	}
 	
 	private initChildKaSynchronizer() {
@@ -50,13 +66,19 @@ export class ControllerImpl implements Controller {
 	private initModelEvents() {
 		this.modelSubscriptions = [
 			this.model.childKaInserted.subscribe( args => this.onChildKaInserted(args.childKa) ),
-			this.model.childKaRemoved.subscribe( args => this.onChildKaRemoved(args.childKa) )
+			this.model.childKaRemoved.subscribe( args => this.onChildKaRemoved(args.childKa) ),
+			
+			//evt.Subscription.fromDisposable(this.model.general.subscribe( () => this.onGeneralContentChanged() )),
+			//evt.Subscription.fromDisposable(this.model.general.subscribe( cnt => this.generalContentSynchronizer.modelChanged(cnt) )),
+			evt.Subscription.fromDisposable(this.model.context.subscribe( () => this.onContextChanged() ))
 		];
 	}
 	
 	private initViewModel() {
 		this.viewModel.general = ko.observable( new contentVm.General );
 		this.viewModel.context = ko.observable( new contentVm.Context );
+		this.viewModel.rating = ko.observable( new Rating.ViewModel );
+		
 		this.viewModel.childKas = this.childKaViewModels;
 	}
 	
@@ -72,6 +94,20 @@ export class ControllerImpl implements Controller {
 			}),
 			this.communicator.received.subscribe(this.onKokiRetrieved)
 		]);
+	}
+	
+	private initKas() {
+		this.model.childKas().forEach(this.onChildKaInserted.bind(this));
+	}
+	
+	private onGeneralContentChanged = () => {
+		this.generalContent.dispose();
+		this.generalContent = new content.General( this.model.general(), this.viewModel.general(), this.communicator.content );
+	}
+	
+	private onContextChanged = () => {
+		this.context.dispose();
+		this.context = new content.Context( this.model.context(), this.viewModel.context() );
 	}
 	
 	private onKokiRetrieved = (args: KokiCommunicator.ReceivedArgs) => {
@@ -100,7 +136,7 @@ export class ControllerImpl implements Controller {
 	}
 	
 	public dispose() {
-		this.generalContent.dispose();
+		this.generalContentSynchronizer.dispose();
 		this.context.dispose();
 		
 		this.modelSubscriptions.forEach( s => s.undo() );
@@ -113,14 +149,23 @@ export class ControllerImpl implements Controller {
 	
 	private generalContent: content.General;
 	private context: content.Context;
+	private rating: Rating.Controller;
 	
 	private childKaViewModels = ko.observableArray<kernaussageVm.ViewModel>();
 	private childKaArraySynchronizer = 
-		new synchronizer.ChildArraySynchronizer<kernaussageMdl.Model, kernaussageVm.ViewModel, kernaussageCtr.Controller>();
+		new arraySynchronizer.ChildArraySynchronizer<kernaussageMdl.Model, kernaussageVm.ViewModel, kernaussageCtr.Controller>();
+	private generalContentSynchronizer = 
+		new GeneralContentSynchronizer();
 	
 	private modelSubscriptions: evt.Subscription[];
 	private communicatorSubscriptions: evt.Subscription[];
 }
+
+class GeneralContentSynchronizer 
+	extends synchronizer.ChildSynchronizer<ContentModel.General, ContentViewModel.General, ContentController.General> {}
+
+class GeneralContentControllerFactory
+	extends ConstructorBasedFactory.ControllerFactoryEx<ContentModel.General, ContentViewModel.General, ContentCommunicator.Main, ContentController.General> {}
 
 class ViewModelFactory {
 	public create() {

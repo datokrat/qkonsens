@@ -59,6 +59,17 @@ export class Tests extends unit.TestClass {
 		sync.inserted(model);
 		sync.removed(model);
 	}
+	
+	testManyInsertions() {
+		var sync = this.synchronizerFactory.create();
+		sync.setViewModelInsertionHandler(null);
+		sync.setViewModelRemovalHandler(null);
+		var model1 = new Model;
+		var model2 = new Model;
+		
+		sync.inserted(model1);
+		sync.inserted(model2);
+	}
 }
 
 class SynchronizerFactory {

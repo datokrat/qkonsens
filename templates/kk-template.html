@@ -3,7 +3,22 @@
 	
 	<!-- ko template: { name: 'context-template', data: context } --><!-- /ko -->
 	
-	<div class="controls">Controls</div>
+	<div class="controls">
+		<div class="select rating control">
+				<input type="radio" name="rating" value="stronglike" data-bind="checked: rating(), click: clickRating($data, 'stronglike'), attr: {name: id + '-rating', id: id + '-stronglike'}"/><label title="Ich bin dafür und das ist meine gefestigte Meinung!" data-bind="attr: {for: id + '-stronglike'}">++<span
+				 class="count" data-bind="text: stronglikeSum"></span></label><input
+				 type="radio" name="rating" value="like" data-bind="checked: rating(), click: clickRating($data, 'like'), attr: {name: id + '-rating', id: id + '-like'}"/><label title="Ich bin eher dafür!" data-bind="attr: {for: id + '-like'}">+<span
+				 class="count" data-bind="text: likeSum"></span></label><input
+				 type="radio" name="rating" value="neutral" data-bind="checked: rating(), click: clickRating($data, 'neutral'), attr: {name: id + '-rating', id: id + '-neutral'}"/><label title="Ich bin weder dafür noch dagegen." data-bind="attr: {for: id + '-neutral'}">0<span
+				 class="count" data-bind="text: neutralSum"></span></label><input
+				 type="radio" name="rating" value="dislike" data-bind="checked: rating(), click: clickRating($data, 'dislike'), attr: {name: id + '-rating', id: id + '-dislike'}"/><label title="Ich bin eher dagegen!" data-bind="attr: {for: id + '-dislike'}">-<span
+				 class="count" data-bind="text: dislikeSum"></span></label><input
+				 type="radio" name="rating" value="strongdislike" data-bind="checked: rating(), click: clickRating($data, 'strongdislike'), attr: {name: id + '-rating', id: id + '-strongdislike'}"/><label title="Ich bin dagegen und das ist meine gefestigte Meinung!" data-bind="attr: {for: id + '-strongdislike'}">--<span
+				 class="count" data-bind="text: strongdislikeSum"></span></label><input
+				 type="radio" name="rating" value="none" data-bind="checked: rating(), click: clickRating($data, 'none'), attr: {name: id + '-rating', id: id + '-none'}"/><label data-bind="attr: {for: id + '-none'}">?
+				 </label>
+			</div>
+	</div>
 	
 	<!-- ko foreach: childKas -->
 		<!-- ko template: { name: 'ka-template' } --><!-- /ko -->

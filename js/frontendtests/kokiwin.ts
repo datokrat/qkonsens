@@ -31,10 +31,11 @@ export class Tests {
 		konsenskiste.general().title('Konsenskisten-Titel');
 		konsenskiste.general().text('Lorem ipsum dolor sit amet');
 		konsenskiste.context().text('ipsum (lat.): selbst');
-		model.konsenskiste(konsenskiste);
 		
 		var kernaussage = new ka.Model();
 		konsenskiste.appendKa(kernaussage);
+		
+		model.konsenskiste(konsenskiste);
 		
 		kernaussage.general().title('Kernaussagen-Titel');
 		kernaussage.general().text('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.');

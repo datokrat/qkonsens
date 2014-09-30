@@ -1,10 +1,11 @@
-define(["require", "exports", 'contentmodel', 'factories/event'], function(require, exports, Content, EventFactory) {
+define(["require", "exports", 'contentmodel', 'rating', 'factories/event'], function(require, exports, Content, Rating, EventFactory) {
     var Model = (function () {
         function Model(context) {
             if (typeof context === "undefined") { context = new ModelContext; }
             this.general = ko.observable(new Content.General);
             this.context = ko.observable(new Content.Context);
-            this.kaArray = ko.observableArray();
+            this.rating = ko.observable(new Rating.Model);
+            this.childKas = ko.observableArray();
             this.childKaInserted = context.eventFactory.create();
             this.childKaRemoved = context.eventFactory.create();
         }
@@ -15,19 +16,19 @@ define(["require", "exports", 'contentmodel', 'factories/event'], function(requi
         };
 
         Model.prototype.appendKa = function (ka) {
-            this.kaArray.push(ka);
+            this.childKas.push(ka);
 
             this.childKaInserted.raise({ childKa: ka });
         };
 
         Model.prototype.removeKa = function (ka) {
-            this.kaArray.remove(ka);
+            this.childKas.remove(ka);
 
             this.childKaRemoved.raise({ childKa: ka });
         };
 
         Model.prototype.getChildKaArray = function () {
-            return this.kaArray();
+            return this.childKas();
         };
         return Model;
     })();

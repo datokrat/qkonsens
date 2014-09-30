@@ -11,25 +11,17 @@ import ctr = require('controller')
 import koki = require('konsenskistemodel')
 import ka = require('kernaussagemodel')
 
-import TestCommunicator = require('tests/testcommunicator')
+import CommunicatorImpl = require('communicatorimpl')
 
 var model = new mdl.ModelImpl();
 var viewModel = new vm.ViewModel();
-var communicator = new TestCommunicator();
+var communicator = new CommunicatorImpl;
 var controller = new ctr.Controller(model, viewModel, communicator);
 
-var konsenskiste = new koki.Model();
+var konsenskiste = new koki.Model;
+konsenskiste.id = 12;
 model.konsenskiste(konsenskiste);
 
-var kernaussage = new ka.Model();
-konsenskiste.appendKa(kernaussage);
-
-konsenskiste.general().title('Konsenskisten-Titel');
-konsenskiste.general().text('Lorem ipsum dolor sit amet');
-konsenskiste.context().text('ipsum (lat.): selbst');
-
-kernaussage.general().title('Kernaussagen-Titel');
-kernaussage.general().text('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.');
-kernaussage.context().text('blablablablub');
+communicator.konsenskiste.queryKoki(12);
 
 ko.applyBindings(viewModel);

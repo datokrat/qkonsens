@@ -7,6 +7,7 @@ import kaModelFty = require('factories/kernaussagemodel')
 import mdl = require('../konsenskistemodel')
 import vm = require('../konsenskisteviewmodel')
 import ctr = require('../konsenskistecontroller')
+import ContentModel = require('../contentmodel')
 import KokiCommunicator = require('tests/testkonsenskistecommunicator')
 
 import Event = require('../event')
@@ -92,37 +93,30 @@ export class Tests extends unit.TestClass {
 		test.assert( () => viewModel.general().title() == 'Basisdemokratie' );
 	}
 	
-	/* testSetModel() {
-		var oldModel = this.kkModelFactory.create( 'Old' );
-		var newModel = this.kkModelFactory.create( 'New' );
-		var viewModel = new vm.ViewModel();
-		var controller = new ctr.Controller(oldModel, viewModel);
+	testRating() {
+		var model = this.kkModelFactory.create('Basisdemokratie');
+		var viewModel = new vm.ViewModel;
+		var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator);
 		
-		controller.setModel(newModel);
+		model.rating().personalRating('like');
 		
-		test.assert( () => viewModel.content().title() == 'New' );
-		newModel.content.title( 'Basisdemokratie' );
-		test.assert( () => viewModel.content().title() == 'Basisdemokratie' );
-	} */
+		test.assert( () => viewModel.rating().personalRating() == 'like' );
+	}
 	
-	/* testContentAfterSetModel() {
-		var oldModel = this.kkModelFactory.create( 'Old' );
-		var newModel = this.kkModelFactory.create( 'New' );
+	testChangingFields() {
+		var model = this.kkModelFactory.create('Basisdemokratie');
 		var viewModel = new vm.ViewModel();
-		var controller = new ctr.Controller(oldModel, viewModel);
-		var contentVm = viewModel.content;
+		var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator);
 		
-		controller.setModel(newModel);
+		model.general().title('title');
+		model.general(new ContentModel.General);
 		
-		test.assert( () => contentVm().title() == 'New' );
-	} */
-	
-	/*testNullModel() {
-		var viewModel = new vm.ViewModel();
+		model.context().text('context');
+		model.context(new ContentModel.Context);
 		
-		var controller = new ctr.Controller(null, viewModel);
-		controller.dispose();
-	}*/
+		test.assert( () => viewModel.general().title() != 'title' );
+		test.assert( () => viewModel.context().text() != 'context' );
+	}
 }
 
 class TestEvent<Args> implements Event.Event<Args> {

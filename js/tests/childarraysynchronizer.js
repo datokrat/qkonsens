@@ -84,6 +84,17 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../childarraysynchr
             sync.inserted(model);
             sync.removed(model);
         };
+
+        Tests.prototype.testManyInsertions = function () {
+            var sync = this.synchronizerFactory.create();
+            sync.setViewModelInsertionHandler(null);
+            sync.setViewModelRemovalHandler(null);
+            var model1 = new Model;
+            var model2 = new Model;
+
+            sync.inserted(model1);
+            sync.inserted(model2);
+        };
         return Tests;
     })(unit.TestClass);
     exports.Tests = Tests;

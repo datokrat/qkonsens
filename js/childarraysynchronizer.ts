@@ -16,11 +16,12 @@ export class ChildArraySynchronizer<Model, ViewModel, Controller extends { dispo
 	}	
 	
 	public inserted( m: Model ) {
-		if(!this.modelResolverMap[m]) {
+		if(this.entryKeys.indexOf(m) == -1) {
 			var v = this.viewModelFactory.create();
 			var c = this.controllerFactory.create(m, v);
 			
-			this.modelResolverMap[m] = { model: m, viewModel: v, controller: c };
+			this.entryKeys.push(m);
+			this.entryValues.push({ model: m, viewModel: v, controller: c });
 			this.viewModelInsertionHandler(v);
 		}
 		else
@@ -28,13 +29,14 @@ export class ChildArraySynchronizer<Model, ViewModel, Controller extends { dispo
 	}
 	
 	public removed( m: Model ) {
-		var mvc = this.modelResolverMap[m];
-		this.modelResolverMap[m];
+		var index = this.entryKeys.indexOf(m);
+		var mvc = this.entryValues[index];
 		
 		if(mvc) {
 			this.viewModelRemovalHandler(mvc.viewModel);
 			
-			delete this.modelResolverMap[m];
+			this.entryKeys.splice(index, 1);
+			this.entryValues.splice(index, 1);
 			mvc.controller.dispose();
 		}
 	}
@@ -45,6 +47,8 @@ export class ChildArraySynchronizer<Model, ViewModel, Controller extends { dispo
 	private viewModelInsertionHandler: (v: ViewModel) => void;
 	private viewModelRemovalHandler: (v: ViewModel) => void;
 	
+	private entryKeys: Model[] = [];
+	private entryValues: { model: Model; viewModel: ViewModel; controller: Controller }[] = [];
 	private modelResolverMap: any = {};
 }
 
@@ -57,4 +61,7 @@ export interface ControllerFactory<Model, ViewModel, Controller> {
 }
 
 export class DuplicateInsertionException {
+	public toString(): string {
+		return "DuplicateInsertionException";
+	}
 }

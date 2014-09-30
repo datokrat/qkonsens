@@ -5,6 +5,13 @@ define(["require", "exports"], function(require, exports) {
     var Subscription = (function () {
         function Subscription() {
         }
+        Subscription.fromDisposable = function (disposable) {
+            var s = new Subscription();
+            s.undo = function () {
+                return disposable.dispose();
+            };
+            return s;
+        };
         return Subscription;
     })();
     exports.Subscription = Subscription;

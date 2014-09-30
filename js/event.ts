@@ -13,6 +13,12 @@ export interface Listener<Args> {
 
 export class Subscription {
 	undo: () => void;
+	
+	public static fromDisposable(disposable: { dispose: () => void }): Subscription {
+		var s = new Subscription();
+		s.undo = () => disposable.dispose();
+		return s;
+	}
 }
 
 export class EventImpl<Args> implements Event<Args> {

@@ -35,7 +35,7 @@
 			<!-- ko if: context() -->
 				<a class="clickable control" data-bind="event: { click: showContext.bind($data, !showContext()) }">Klärtext an/aus</a>
 			<!-- /ko -->
-			<div class="select rating control">
+			<div class="select rating control" data-bind="with: rating">
 				<input type="radio" name="rating" value="stronglike" data-bind="checked: rating(), click: clickRating($data, 'stronglike'), attr: {name: id + '-rating', id: id + '-stronglike'}"/><label title="Ich bin dafür und das ist meine gefestigte Meinung!" data-bind="attr: {for: id + '-stronglike'}">++<span
 				 class="count" data-bind="text: stronglikeSum"></span></label><input
 				 type="radio" name="rating" value="like" data-bind="checked: rating(), click: clickRating($data, 'like'), attr: {name: id + '-rating', id: id + '-like'}"/><label title="Ich bin eher dafür!" data-bind="attr: {for: id + '-like'}">+<span

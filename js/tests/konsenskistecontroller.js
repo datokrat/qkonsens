@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenskistemodel', 'factories/kernaussagemodel', '../konsenskisteviewmodel', '../konsenskistecontroller', 'tests/testkonsenskistecommunicator', '../event'], function(require, exports, unit, test, kkModelFty, kaModelFty, vm, ctr, KokiCommunicator, Event) {
+define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenskistemodel', 'factories/kernaussagemodel', '../konsenskisteviewmodel', '../konsenskistecontroller', '../contentmodel', 'tests/testkonsenskistecommunicator', '../event'], function(require, exports, unit, test, kkModelFty, kaModelFty, vm, ctr, ContentModel, KokiCommunicator, Event) {
     var Tests = (function (_super) {
         __extends(Tests, _super);
         function Tests() {
@@ -113,6 +113,37 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenski
 
             test.assert(function () {
                 return viewModel.general().title() == 'Basisdemokratie';
+            });
+        };
+
+        Tests.prototype.testRating = function () {
+            var model = this.kkModelFactory.create('Basisdemokratie');
+            var viewModel = new vm.ViewModel;
+            var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator);
+
+            model.rating().personalRating('like');
+
+            test.assert(function () {
+                return viewModel.rating().personalRating() == 'like';
+            });
+        };
+
+        Tests.prototype.testChangingFields = function () {
+            var model = this.kkModelFactory.create('Basisdemokratie');
+            var viewModel = new vm.ViewModel();
+            var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator);
+
+            model.general().title('title');
+            model.general(new ContentModel.General);
+
+            model.context().text('context');
+            model.context(new ContentModel.Context);
+
+            test.assert(function () {
+                return viewModel.general().title() != 'title';
+            });
+            test.assert(function () {
+                return viewModel.context().text() != 'context';
             });
         };
         return Tests;
