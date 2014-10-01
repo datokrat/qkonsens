@@ -1,18 +1,22 @@
 export class ChildArraySynchronizer<Model, ViewModel, Controller extends { dispose: () => void }> {
 	public setViewModelFactory(fty: Factory<ViewModel>) {
 		this.viewModelFactory = fty;
+		return this;
 	}
 	
 	public setControllerFactory(fty: ControllerFactory<Model, ViewModel, Controller>) {
 		this.controllerFactory = fty;
+		return this;
 	}
 	
 	public setViewModelInsertionHandler( handler: (v: ViewModel) => void ) {
 		this.viewModelInsertionHandler = handler || (v => {});
+		return this;
 	}
 	
 	public setViewModelRemovalHandler( handler: (v: ViewModel) => void ) {
 		this.viewModelRemovalHandler = handler || (v => {});
+		return this;
 	}	
 	
 	public inserted( m: Model ) {
@@ -38,6 +42,13 @@ export class ChildArraySynchronizer<Model, ViewModel, Controller extends { dispo
 			this.entryKeys.splice(index, 1);
 			this.entryValues.splice(index, 1);
 			mvc.controller.dispose();
+		}
+	}
+	
+	public dispose() {
+		while(this.entryKeys.length > 0) {
+			var key = this.entryKeys[this.entryKeys.length-1];
+			this.removed(key);
 		}
 	}
 	

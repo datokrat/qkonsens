@@ -7,20 +7,24 @@ define(["require", "exports"], function(require, exports) {
         }
         ChildArraySynchronizer.prototype.setViewModelFactory = function (fty) {
             this.viewModelFactory = fty;
+            return this;
         };
 
         ChildArraySynchronizer.prototype.setControllerFactory = function (fty) {
             this.controllerFactory = fty;
+            return this;
         };
 
         ChildArraySynchronizer.prototype.setViewModelInsertionHandler = function (handler) {
             this.viewModelInsertionHandler = handler || (function (v) {
             });
+            return this;
         };
 
         ChildArraySynchronizer.prototype.setViewModelRemovalHandler = function (handler) {
             this.viewModelRemovalHandler = handler || (function (v) {
             });
+            return this;
         };
 
         ChildArraySynchronizer.prototype.inserted = function (m) {
@@ -45,6 +49,13 @@ define(["require", "exports"], function(require, exports) {
                 this.entryKeys.splice(index, 1);
                 this.entryValues.splice(index, 1);
                 mvc.controller.dispose();
+            }
+        };
+
+        ChildArraySynchronizer.prototype.dispose = function () {
+            while (this.entryKeys.length > 0) {
+                var key = this.entryKeys[this.entryKeys.length - 1];
+                this.removed(key);
             }
         };
         return ChildArraySynchronizer;

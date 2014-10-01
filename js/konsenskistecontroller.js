@@ -1,4 +1,4 @@
-define(["require", "exports", 'kernaussageviewmodel', 'kernaussagecontroller', 'synchronizers/childarraysynchronizer', 'synchronizers/ksynchronizers'], function(require, exports, kernaussageVm, kernaussageCtr, arraySynchronizer, KSync) {
+define(["require", "exports", 'kernaussageviewmodel', 'kernaussagecontroller', 'synchronizers/ksynchronizers', 'synchronizers/kokisynchronizers'], function(require, exports, kernaussageVm, kernaussageCtr, KSync, KokiSync) {
     var ControllerImpl = (function () {
         function ControllerImpl(model, viewModel, communicator) {
             var _this = this;
@@ -7,7 +7,6 @@ define(["require", "exports", 'kernaussageviewmodel', 'kernaussagecontroller', '
                     _this.model.set(args.konsenskiste);
             };
             this.childKaViewModels = ko.observableArray();
-            this.childKaArraySynchronizer = new arraySynchronizer.ChildArraySynchronizer();
             this.init(model, viewModel, communicator);
         }
         ControllerImpl.prototype.init = function (model, viewModel, communicator) {
@@ -38,10 +37,11 @@ define(["require", "exports", 'kernaussageviewmodel', 'kernaussagecontroller', '
 
         ControllerImpl.prototype.initChildKaSynchronizer = function () {
             var _this = this;
-            var sync = this.childKaArraySynchronizer;
+            var sync = this.childKaArraySynchronizer = new KokiSync.KaSynchronizer(this.communicator.content);
+            ;
 
-            sync.setViewModelFactory(new ViewModelFactory());
-            sync.setControllerFactory(new ControllerFactory(this.communicator.content));
+            //sync.setViewModelFactory(new ViewModelFactory());
+            //sync.setControllerFactory(new ControllerFactory(this.communicator.content));
             sync.setViewModelInsertionHandler(function (vm) {
                 return _this.insertKaViewModel(vm);
             });

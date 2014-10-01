@@ -22,6 +22,7 @@ import content = require('contentcontroller')
 import arraySynchronizer = require('synchronizers/childarraysynchronizer')
 //import synchronizer = require('synchronizers/childsynchronizer')
 import KSync = require('synchronizers/ksynchronizers')
+import KokiSync = require('synchronizers/kokisynchronizers')
 
 export interface Controller {
 	dispose(): void;
@@ -58,10 +59,8 @@ export class ControllerImpl implements Controller {
 	}
 	
 	private initChildKaSynchronizer() {
-		var sync = this.childKaArraySynchronizer;
+		var sync = this.childKaArraySynchronizer = new KokiSync.KaSynchronizer(this.communicator.content);;
 		
-		sync.setViewModelFactory(new ViewModelFactory());
-		sync.setControllerFactory(new ControllerFactory(this.communicator.content));
 		sync.setViewModelInsertionHandler(vm => this.insertKaViewModel(vm));
 		sync.setViewModelRemovalHandler(vm => this.removeKaViewModel(vm));
 	}
@@ -138,8 +137,8 @@ export class ControllerImpl implements Controller {
 	private communicator: KokiCommunicator.Main;
 	
 	private childKaViewModels = ko.observableArray<kernaussageVm.ViewModel>();
-	private childKaArraySynchronizer = 
-		new arraySynchronizer.ChildArraySynchronizer<kernaussageMdl.Model, kernaussageVm.ViewModel, kernaussageCtr.Controller>();
+	private childKaArraySynchronizer: KokiSync.KaSynchronizer;
+		//new arraySynchronizer.ChildArraySynchronizer<kernaussageMdl.Model, kernaussageVm.ViewModel, kernaussageCtr.Controller>();
 		
 	private generalContentSynchronizer: KSync.GeneralContentSynchronizer;
 	private contextSynchronizer: KSync.ContextSynchronizer;
