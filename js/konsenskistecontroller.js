@@ -35,7 +35,7 @@ define(["require", "exports", 'factories/constructorbased', 'kernaussageviewmode
                 return _this.viewModel.general(value);
             }).setModelObservable(this.model.general);
 
-            this.contextSynchronizer.setViewModelFactory(new ConstructorBasedFactory.Factory(ContentViewModel.Context)).setControllerFactory(new ConstructorBasedFactory.ControllerFactoryEx(ContentController.Context, communicator.content)).setViewModelChangedHandler(function (value) {
+            this.contextSynchronizer = new ContextSynchronizer().setViewModelChangedHandler(function (value) {
                 return _this.viewModel.context(value);
             }).setModelObservable(this.model.context);
 
@@ -137,7 +137,6 @@ define(["require", "exports", 'factories/constructorbased', 'kernaussageviewmode
         __extends(GeneralContentSynchronizer, _super);
         function GeneralContentSynchronizer(communicator) {
             _super.call(this);
-
             this.setViewModelFactory(new ConstructorBasedFactory.Factory(ContentViewModel.General));
             this.setControllerFactory(new ConstructorBasedFactory.ControllerFactoryEx(ContentController.General, communicator));
         }
@@ -147,7 +146,9 @@ define(["require", "exports", 'factories/constructorbased', 'kernaussageviewmode
     var ContextSynchronizer = (function (_super) {
         __extends(ContextSynchronizer, _super);
         function ContextSynchronizer() {
-            _super.apply(this, arguments);
+            _super.call(this);
+            this.setViewModelFactory(new ConstructorBasedFactory.Factory(ContentViewModel.Context));
+            this.setControllerFactory(new ConstructorBasedFactory.ControllerFactory(ContentController.Context));
         }
         return ContextSynchronizer;
     })(synchronizer.ChildSynchronizer);

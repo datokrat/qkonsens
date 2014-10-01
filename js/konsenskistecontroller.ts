@@ -47,9 +47,7 @@ export class ControllerImpl implements Controller {
 			.setViewModelChangedHandler( value => this.viewModel.general(value) )
 			.setModelObservable(this.model.general);
 			
-		this.contextSynchronizer
-			.setViewModelFactory( new ConstructorBasedFactory.Factory(ContentViewModel.Context) )
-			.setControllerFactory( new ConstructorBasedFactory.ControllerFactoryEx(ContentController.Context, communicator.content) )
+		this.contextSynchronizer = new ContextSynchronizer()
 			.setViewModelChangedHandler( value => this.viewModel.context(value) )
 			.setModelObservable(this.model.context);
 			
@@ -157,14 +155,20 @@ class GeneralContentSynchronizer
 {
 	constructor(communicator: ContentCommunicator.Main) {
 		super();
-		
 		this.setViewModelFactory( new ConstructorBasedFactory.Factory(ContentViewModel.General) );
 		this.setControllerFactory( new ConstructorBasedFactory.ControllerFactoryEx(ContentController.General, communicator) );
 	}
 }
 
 class ContextSynchronizer 
-	extends synchronizer.ChildSynchronizer<ContentModel.Context, ContentViewModel.Context, ContentController.Context> {}
+	extends synchronizer.ChildSynchronizer<ContentModel.Context, ContentViewModel.Context, ContentController.Context>
+{
+	constructor() {
+		super();
+		this.setViewModelFactory( new ConstructorBasedFactory.Factory(ContentViewModel.Context) )
+		this.setControllerFactory( new ConstructorBasedFactory.ControllerFactory(ContentController.Context) )
+	}
+}
 
 class RatingSynchronizer
 	extends synchronizer.ChildSynchronizer<Rating.Model, Rating.ViewModel, Rating.Controller> {}
