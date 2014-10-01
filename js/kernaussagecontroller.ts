@@ -4,12 +4,14 @@ import mdl = require('kernaussagemodel')
 import vm = require('kernaussageviewmodel')
 import com = require('contentcommunicator')
 
+import KSync = require('synchronizers/ksynchronizers')
+
 import ContentController = require('contentcontroller')
 import ContentViewModel = require('contentviewmodel')
 
 export class Controller {
 	private viewModel: vm.ViewModel;
-	private generalContent: ContentController.General;
+	private generalContentSynchronizer: KSync.GeneralContentSynchronizer;
 	private context: ContentController.Context;
 
 	constructor(model: mdl.Model, viewModel: vm.ViewModel, communicator: com.Main) {
@@ -22,12 +24,15 @@ export class Controller {
 		viewModel.context = ko.observable( new ContentViewModel.Context );
 		this.viewModel = viewModel;
 		
-		this.generalContent = new ContentController.General(model.general(), viewModel.general(), communicator);
+		this.generalContentSynchronizer = new KSync.GeneralContentSynchronizer(communicator)
+			.setViewModelChangedHandler( general => this.viewModel.general(general) )
+			.setModelObservable(model.general);
+
 		this.context = new ContentController.Context(model.context(), viewModel.context());
 	}
 	
 	public dispose() {
-		this.generalContent.dispose();
+		this.generalContentSynchronizer.dispose();
 		this.context.dispose();
 	}
 }
