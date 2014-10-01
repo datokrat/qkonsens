@@ -1,7 +1,7 @@
 import unit = require('tests/tsunit')
 import test = require('tests/test')
 
-import synchronizer = require('../childarraysynchronizer')
+import synchronizer = require('synchronizers/childarraysynchronizer')
 
 export class Tests extends unit.TestClass {
 	private synchronizerFactory = new SynchronizerFactory();

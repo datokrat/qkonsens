@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/tsunit', 'tests/test', '../childarraysynchronizer'], function(require, exports, unit, test, synchronizer) {
+define(["require", "exports", 'tests/tsunit', 'tests/test', 'synchronizers/childarraysynchronizer'], function(require, exports, unit, test, synchronizer) {
     var Tests = (function (_super) {
         __extends(Tests, _super);
         function Tests() {

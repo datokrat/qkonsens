@@ -19,8 +19,9 @@ import Rating = require('rating')
 import contentVm = require('contentviewmodel');
 
 import content = require('contentcontroller')
-import arraySynchronizer = require('childarraysynchronizer')
-import synchronizer = require('childsynchronizer')
+import arraySynchronizer = require('synchronizers/childarraysynchronizer')
+//import synchronizer = require('synchronizers/childsynchronizer')
+import KSync = require('synchronizers/ksynchronizers')
 
 export interface Controller {
 	dispose(): void;
@@ -43,17 +44,15 @@ export class ControllerImpl implements Controller {
 		
 		this.initKas();
 		
-		this.generalContentSynchronizer = new GeneralContentSynchronizer(communicator.content)
+		this.generalContentSynchronizer = new KSync.GeneralContentSynchronizer(communicator.content)
 			.setViewModelChangedHandler( value => this.viewModel.general(value) )
 			.setModelObservable(this.model.general);
 			
-		this.contextSynchronizer = new ContextSynchronizer()
+		this.contextSynchronizer = new KSync.ContextSynchronizer()
 			.setViewModelChangedHandler( value => this.viewModel.context(value) )
 			.setModelObservable(this.model.context);
 			
-		this.ratingSynchronizer
-			.setViewModelFactory( new ConstructorBasedFactory.Factory(Rating.ViewModel) )
-			.setControllerFactory( new ConstructorBasedFactory.ControllerFactory(Rating.Controller) )
+		this.ratingSynchronizer = new KSync.RatingSynchronizer()
 			.setViewModelChangedHandler( value => this.viewModel.rating(value) )
 			.setModelObservable(this.model.rating);
 	}
@@ -75,9 +74,9 @@ export class ControllerImpl implements Controller {
 	}
 	
 	private initViewModel() {
-		this.viewModel.general = ko.observable( new contentVm.General );
-		this.viewModel.context = ko.observable( new contentVm.Context );
-		this.viewModel.rating = ko.observable( new Rating.ViewModel );
+		this.viewModel.general = ko.observable<ContentViewModel.General>();
+		this.viewModel.context = ko.observable<ContentViewModel.Context>();
+		this.viewModel.rating = ko.observable<Rating.ViewModel>();
 		
 		this.viewModel.childKas = this.childKaViewModels;
 	}
@@ -142,36 +141,13 @@ export class ControllerImpl implements Controller {
 	private childKaArraySynchronizer = 
 		new arraySynchronizer.ChildArraySynchronizer<kernaussageMdl.Model, kernaussageVm.ViewModel, kernaussageCtr.Controller>();
 		
-	private generalContentSynchronizer: GeneralContentSynchronizer;
-	private contextSynchronizer = new ContextSynchronizer();
-	private ratingSynchronizer = new RatingSynchronizer();
+	private generalContentSynchronizer: KSync.GeneralContentSynchronizer;
+	private contextSynchronizer: KSync.ContextSynchronizer;
+	private ratingSynchronizer: KSync.RatingSynchronizer;
 	
 	private modelSubscriptions: evt.Subscription[];
 	private communicatorSubscriptions: evt.Subscription[];
 }
-
-class GeneralContentSynchronizer 
-	extends synchronizer.ChildSynchronizer<ContentModel.General, ContentViewModel.General, ContentController.General>
-{
-	constructor(communicator: ContentCommunicator.Main) {
-		super();
-		this.setViewModelFactory( new ConstructorBasedFactory.Factory(ContentViewModel.General) );
-		this.setControllerFactory( new ConstructorBasedFactory.ControllerFactoryEx(ContentController.General, communicator) );
-	}
-}
-
-class ContextSynchronizer 
-	extends synchronizer.ChildSynchronizer<ContentModel.Context, ContentViewModel.Context, ContentController.Context>
-{
-	constructor() {
-		super();
-		this.setViewModelFactory( new ConstructorBasedFactory.Factory(ContentViewModel.Context) )
-		this.setControllerFactory( new ConstructorBasedFactory.ControllerFactory(ContentController.Context) )
-	}
-}
-
-class RatingSynchronizer
-	extends synchronizer.ChildSynchronizer<Rating.Model, Rating.ViewModel, Rating.Controller> {}
 	
 class ViewModelFactory {
 	public create() {
