@@ -7,7 +7,7 @@ import Rating = require('rating')
 export class ViewModel {
 	public general: observable.Observable<Content.General>;
 	public context: observable.Observable<Content.Context>;
-	public rating: observable.Observable<Rating.Model>;
+	public rating: observable.Observable<Rating.ViewModel>;
 
 	public childKas: () => Kernaussage.ViewModel[]; //TODO: Make observable
 }

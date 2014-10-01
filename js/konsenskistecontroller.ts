@@ -49,7 +49,6 @@ export class ControllerImpl implements Controller {
 			.setViewModelChangedHandler( value => this.viewModel.general(value) )
 			.setModelObservable(this.model.general);
 			
-		//this.generalContent = new content.General(this.model.general(), this.viewModel.general(), communicator.content);
 		this.context = new content.Context(this.model.context(), this.viewModel.context());
 		this.rating = new Rating.Controller(model.rating(), viewModel.rating());
 	}

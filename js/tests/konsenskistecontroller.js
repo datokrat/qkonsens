@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenskistemodel', 'factories/kernaussagemodel', '../konsenskisteviewmodel', '../konsenskistecontroller', '../contentmodel', 'tests/testkonsenskistecommunicator', '../event'], function(require, exports, unit, test, kkModelFty, kaModelFty, vm, ctr, ContentModel, KokiCommunicator, Event) {
+define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenskistemodel', 'factories/kernaussagemodel', '../konsenskisteviewmodel', '../konsenskistecontroller', '../contentmodel', '../rating', 'tests/testkonsenskistecommunicator', '../event'], function(require, exports, unit, test, kkModelFty, kaModelFty, vm, ctr, ContentModel, Rating, KokiCommunicator, Event) {
     var Tests = (function (_super) {
         __extends(Tests, _super);
         function Tests() {
@@ -139,11 +139,17 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenski
             model.context().text('context');
             model.context(new ContentModel.Context);
 
+            model.rating().personalRating('like');
+            model.rating(new Rating.Model);
+
             test.assert(function () {
                 return viewModel.general().title() != 'title';
             });
             test.assert(function () {
                 return viewModel.context().text() != 'context';
+            });
+            test.assert(function () {
+                return viewModel.rating().personalRating() != 'like';
             });
         };
         return Tests;

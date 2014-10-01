@@ -8,6 +8,7 @@ import mdl = require('../konsenskistemodel')
 import vm = require('../konsenskisteviewmodel')
 import ctr = require('../konsenskistecontroller')
 import ContentModel = require('../contentmodel')
+import Rating = require('../rating')
 import KokiCommunicator = require('tests/testkonsenskistecommunicator')
 
 import Event = require('../event')
@@ -114,8 +115,12 @@ export class Tests extends unit.TestClass {
 		model.context().text('context');
 		model.context(new ContentModel.Context);
 		
+		model.rating().personalRating('like');
+		model.rating(new Rating.Model);
+		
 		test.assert( () => viewModel.general().title() != 'title' );
 		test.assert( () => viewModel.context().text() != 'context' );
+		test.assert( () => viewModel.rating().personalRating() != 'like');
 	}
 }
 
