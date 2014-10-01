@@ -43,9 +43,7 @@ export class ControllerImpl implements Controller {
 		
 		this.initKas();
 		
-		this.generalContentSynchronizer
-			.setViewModelFactory( new ConstructorBasedFactory.Factory(ContentViewModel.General) )
-			.setControllerFactory( new ConstructorBasedFactory.ControllerFactoryEx(ContentController.General, communicator.content) )
+		this.generalContentSynchronizer = new GeneralContentSynchronizer(communicator.content)
 			.setViewModelChangedHandler( value => this.viewModel.general(value) )
 			.setModelObservable(this.model.general);
 			
@@ -146,7 +144,7 @@ export class ControllerImpl implements Controller {
 	private childKaArraySynchronizer = 
 		new arraySynchronizer.ChildArraySynchronizer<kernaussageMdl.Model, kernaussageVm.ViewModel, kernaussageCtr.Controller>();
 		
-	private generalContentSynchronizer = new GeneralContentSynchronizer();
+	private generalContentSynchronizer: GeneralContentSynchronizer;
 	private contextSynchronizer = new ContextSynchronizer();
 	private ratingSynchronizer = new RatingSynchronizer();
 	
@@ -155,7 +153,15 @@ export class ControllerImpl implements Controller {
 }
 
 class GeneralContentSynchronizer 
-	extends synchronizer.ChildSynchronizer<ContentModel.General, ContentViewModel.General, ContentController.General> {}
+	extends synchronizer.ChildSynchronizer<ContentModel.General, ContentViewModel.General, ContentController.General>
+{
+	constructor(communicator: ContentCommunicator.Main) {
+		super();
+		
+		this.setViewModelFactory( new ConstructorBasedFactory.Factory(ContentViewModel.General) );
+		this.setControllerFactory( new ConstructorBasedFactory.ControllerFactoryEx(ContentController.General, communicator) );
+	}
+}
 
 class ContextSynchronizer 
 	extends synchronizer.ChildSynchronizer<ContentModel.Context, ContentViewModel.Context, ContentController.Context> {}

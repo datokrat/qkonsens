@@ -20,6 +20,7 @@ export class ChildSynchronizer<Model, ViewModel, Controller extends { dispose():
 		this.model = m;
 		this.model.subscribe(this.modelChanged.bind(this));
 		this.modelChanged();
+		return this;
 	}
 	
 	private modelChanged() {

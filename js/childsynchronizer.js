@@ -21,6 +21,7 @@ define(["require", "exports"], function(require, exports) {
             this.model = m;
             this.model.subscribe(this.modelChanged.bind(this));
             this.modelChanged();
+            return this;
         };
 
         ChildSynchronizer.prototype.modelChanged = function () {

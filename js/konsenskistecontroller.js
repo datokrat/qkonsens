@@ -14,7 +14,6 @@ define(["require", "exports", 'factories/constructorbased', 'kernaussageviewmode
             };
             this.childKaViewModels = ko.observableArray();
             this.childKaArraySynchronizer = new arraySynchronizer.ChildArraySynchronizer();
-            this.generalContentSynchronizer = new GeneralContentSynchronizer();
             this.contextSynchronizer = new ContextSynchronizer();
             this.ratingSynchronizer = new RatingSynchronizer();
             this.init(model, viewModel, communicator);
@@ -32,7 +31,7 @@ define(["require", "exports", 'factories/constructorbased', 'kernaussageviewmode
 
             this.initKas();
 
-            this.generalContentSynchronizer.setViewModelFactory(new ConstructorBasedFactory.Factory(ContentViewModel.General)).setControllerFactory(new ConstructorBasedFactory.ControllerFactoryEx(ContentController.General, communicator.content)).setViewModelChangedHandler(function (value) {
+            this.generalContentSynchronizer = new GeneralContentSynchronizer(communicator.content).setViewModelChangedHandler(function (value) {
                 return _this.viewModel.general(value);
             }).setModelObservable(this.model.general);
 
@@ -136,8 +135,11 @@ define(["require", "exports", 'factories/constructorbased', 'kernaussageviewmode
 
     var GeneralContentSynchronizer = (function (_super) {
         __extends(GeneralContentSynchronizer, _super);
-        function GeneralContentSynchronizer() {
-            _super.apply(this, arguments);
+        function GeneralContentSynchronizer(communicator) {
+            _super.call(this);
+
+            this.setViewModelFactory(new ConstructorBasedFactory.Factory(ContentViewModel.General));
+            this.setControllerFactory(new ConstructorBasedFactory.ControllerFactoryEx(ContentController.General, communicator));
         }
         return GeneralContentSynchronizer;
     })(synchronizer.ChildSynchronizer);
