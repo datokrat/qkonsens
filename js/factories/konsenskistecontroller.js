@@ -6,9 +6,17 @@ define(["require", "exports", '../konsenskistecontroller'], function(require, ex
             if (model)
                 return new ctr.ControllerImpl(model, viewModel, communicator);
             else
-                return new ctr.NullController(viewModel);
+                return new NullController();
         };
         return Factory;
     })();
     exports.Factory = Factory;
+
+    var NullController = (function () {
+        function NullController() {
+        }
+        NullController.prototype.dispose = function () {
+        };
+        return NullController;
+    })();
 });

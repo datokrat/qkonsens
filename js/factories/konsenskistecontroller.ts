@@ -8,6 +8,10 @@ export class Factory {
 		if(model)
 			return new ctr.ControllerImpl(model, viewModel, communicator);
 		else
-			return new ctr.NullController(viewModel);
+			return new NullController();
 	}
+}
+
+class NullController implements ctr.Controller {
+	dispose() {}
 }

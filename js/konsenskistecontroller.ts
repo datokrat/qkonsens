@@ -19,8 +19,6 @@ import Rating = require('rating')
 import contentVm = require('contentviewmodel');
 
 import content = require('contentcontroller')
-import arraySynchronizer = require('synchronizers/childarraysynchronizer')
-//import synchronizer = require('synchronizers/childsynchronizer')
 import KSync = require('synchronizers/ksynchronizers')
 import KokiSync = require('synchronizers/kokisynchronizers')
 
@@ -138,7 +136,6 @@ export class ControllerImpl implements Controller {
 	
 	private childKaViewModels = ko.observableArray<kernaussageVm.ViewModel>();
 	private childKaArraySynchronizer: KokiSync.KaSynchronizer;
-		//new arraySynchronizer.ChildArraySynchronizer<kernaussageMdl.Model, kernaussageVm.ViewModel, kernaussageCtr.Controller>();
 		
 	private generalContentSynchronizer: KSync.GeneralContentSynchronizer;
 	private contextSynchronizer: KSync.ContextSynchronizer;
@@ -146,27 +143,4 @@ export class ControllerImpl implements Controller {
 	
 	private modelSubscriptions: evt.Subscription[];
 	private communicatorSubscriptions: evt.Subscription[];
-}
-	
-class ViewModelFactory {
-	public create() {
-		return new kernaussageVm.ViewModel();
-	}
-}
-
-class ControllerFactory {
-	constructor( private communicator: ContentCommunicator.Main ) {
-	}
-	
-	public create(model: kernaussageMdl.Model, viewModel: kernaussageVm.ViewModel) {
-		return new kernaussageCtr.Controller(model, viewModel, this.communicator);
-	}
-}
-
-export class NullController {
-	constructor(viewModel: vm.ViewModel) {
-	}
-	
-	public dispose() {
-	}
 }

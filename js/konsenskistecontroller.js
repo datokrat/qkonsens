@@ -1,4 +1,4 @@
-define(["require", "exports", 'kernaussageviewmodel', 'kernaussagecontroller', 'synchronizers/ksynchronizers', 'synchronizers/kokisynchronizers'], function(require, exports, kernaussageVm, kernaussageCtr, KSync, KokiSync) {
+define(["require", "exports", 'synchronizers/ksynchronizers', 'synchronizers/kokisynchronizers'], function(require, exports, KSync, KokiSync) {
     var ControllerImpl = (function () {
         function ControllerImpl(model, viewModel, communicator) {
             var _this = this;
@@ -40,8 +40,6 @@ define(["require", "exports", 'kernaussageviewmodel', 'kernaussagecontroller', '
             var sync = this.childKaArraySynchronizer = new KokiSync.KaSynchronizer(this.communicator.content);
             ;
 
-            //sync.setViewModelFactory(new ViewModelFactory());
-            //sync.setControllerFactory(new ControllerFactory(this.communicator.content));
             sync.setViewModelInsertionHandler(function (vm) {
                 return _this.insertKaViewModel(vm);
             });
@@ -124,32 +122,4 @@ define(["require", "exports", 'kernaussageviewmodel', 'kernaussagecontroller', '
         return ControllerImpl;
     })();
     exports.ControllerImpl = ControllerImpl;
-
-    var ViewModelFactory = (function () {
-        function ViewModelFactory() {
-        }
-        ViewModelFactory.prototype.create = function () {
-            return new kernaussageVm.ViewModel();
-        };
-        return ViewModelFactory;
-    })();
-
-    var ControllerFactory = (function () {
-        function ControllerFactory(communicator) {
-            this.communicator = communicator;
-        }
-        ControllerFactory.prototype.create = function (model, viewModel) {
-            return new kernaussageCtr.Controller(model, viewModel, this.communicator);
-        };
-        return ControllerFactory;
-    })();
-
-    var NullController = (function () {
-        function NullController(viewModel) {
-        }
-        NullController.prototype.dispose = function () {
-        };
-        return NullController;
-    })();
-    exports.NullController = NullController;
 });
