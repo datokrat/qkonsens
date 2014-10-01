@@ -8,10 +8,6 @@ define(["require", "exports", 'event', 'factories/constructorbased', 'kernaussag
     var ControllerImpl = (function () {
         function ControllerImpl(model, viewModel, communicator) {
             var _this = this;
-            this.onGeneralContentChanged = function () {
-                _this.generalContent.dispose();
-                _this.generalContent = new content.General(_this.model.general(), _this.viewModel.general(), _this.communicator.content);
-            };
             this.onContextChanged = function () {
                 _this.context.dispose();
                 _this.context = new content.Context(_this.model.context(), _this.viewModel.context());
@@ -20,9 +16,11 @@ define(["require", "exports", 'event', 'factories/constructorbased', 'kernaussag
                 if (_this.model.id == args.konsenskiste.id)
                     _this.model.set(args.konsenskiste);
             };
+            //private rating: Rating.Controller;
             this.childKaViewModels = ko.observableArray();
             this.childKaArraySynchronizer = new arraySynchronizer.ChildArraySynchronizer();
             this.generalContentSynchronizer = new GeneralContentSynchronizer();
+            this.ratingSynchronizer = new RatingSynchronizer();
             this.init(model, viewModel, communicator);
         }
         ControllerImpl.prototype.init = function (model, viewModel, communicator) {
@@ -42,9 +40,12 @@ define(["require", "exports", 'event', 'factories/constructorbased', 'kernaussag
                 return _this.viewModel.general(value);
             }).setModelObservable(this.model.general);
 
-            //this.generalContent = new content.General(this.model.general(), this.viewModel.general(), communicator.content);
+            this.ratingSynchronizer.setViewModelFactory(new ConstructorBasedFactory.Factory(Rating.ViewModel)).setControllerFactory(new ConstructorBasedFactory.ControllerFactory(Rating.Controller)).setViewModelChangedHandler(function (value) {
+                return _this.viewModel.rating(value);
+            }).setModelObservable(this.model.rating);
+
             this.context = new content.Context(this.model.context(), this.viewModel.context());
-            this.rating = new Rating.Controller(model.rating(), viewModel.rating());
+            //this.rating = new Rating.Controller(model.rating(), viewModel.rating());
         };
 
         ControllerImpl.prototype.initChildKaSynchronizer = function () {
@@ -125,6 +126,7 @@ define(["require", "exports", 'event', 'factories/constructorbased', 'kernaussag
 
         ControllerImpl.prototype.dispose = function () {
             this.generalContentSynchronizer.dispose();
+            this.ratingSynchronizer.dispose();
             this.context.dispose();
 
             this.modelSubscriptions.forEach(function (s) {
@@ -153,6 +155,22 @@ define(["require", "exports", 'event', 'factories/constructorbased', 'kernaussag
         }
         return GeneralContentControllerFactory;
     })(ConstructorBasedFactory.ControllerFactoryEx);
+
+    var RatingSynchronizer = (function (_super) {
+        __extends(RatingSynchronizer, _super);
+        function RatingSynchronizer() {
+            _super.apply(this, arguments);
+        }
+        return RatingSynchronizer;
+    })(synchronizer.ChildSynchronizer);
+
+    var RatingControllerFactory = (function (_super) {
+        __extends(RatingControllerFactory, _super);
+        function RatingControllerFactory() {
+            _super.apply(this, arguments);
+        }
+        return RatingControllerFactory;
+    })(ConstructorBasedFactory.ControllerFactory);
 
     var ViewModelFactory = (function () {
         function ViewModelFactory() {

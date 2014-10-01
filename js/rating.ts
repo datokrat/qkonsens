@@ -26,6 +26,9 @@ export class Controller {
 		
 		viewModel.select = (rating: string) => () => viewModel.personalRating(rating);
 	}
+	
+	public dispose() {
+	}
 }
 
 export class SummarizedRatingCollection {

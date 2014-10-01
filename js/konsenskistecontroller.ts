@@ -49,8 +49,14 @@ export class ControllerImpl implements Controller {
 			.setViewModelChangedHandler( value => this.viewModel.general(value) )
 			.setModelObservable(this.model.general);
 			
+		this.ratingSynchronizer
+			.setViewModelFactory( new ConstructorBasedFactory.Factory(Rating.ViewModel) )
+			.setControllerFactory( new ConstructorBasedFactory.ControllerFactory(Rating.Controller) )
+			.setViewModelChangedHandler( value => this.viewModel.rating(value) )
+			.setModelObservable(this.model.rating);
+			
 		this.context = new content.Context(this.model.context(), this.viewModel.context());
-		this.rating = new Rating.Controller(model.rating(), viewModel.rating());
+		//this.rating = new Rating.Controller(model.rating(), viewModel.rating());
 	}
 	
 	private initChildKaSynchronizer() {
@@ -67,8 +73,6 @@ export class ControllerImpl implements Controller {
 			this.model.childKaInserted.subscribe( args => this.onChildKaInserted(args.childKa) ),
 			this.model.childKaRemoved.subscribe( args => this.onChildKaRemoved(args.childKa) ),
 			
-			//evt.Subscription.fromDisposable(this.model.general.subscribe( () => this.onGeneralContentChanged() )),
-			//evt.Subscription.fromDisposable(this.model.general.subscribe( cnt => this.generalContentSynchronizer.modelChanged(cnt) )),
 			evt.Subscription.fromDisposable(this.model.context.subscribe( () => this.onContextChanged() ))
 		];
 	}
@@ -97,11 +101,6 @@ export class ControllerImpl implements Controller {
 	
 	private initKas() {
 		this.model.childKas().forEach(this.onChildKaInserted.bind(this));
-	}
-	
-	private onGeneralContentChanged = () => {
-		this.generalContent.dispose();
-		this.generalContent = new content.General( this.model.general(), this.viewModel.general(), this.communicator.content );
 	}
 	
 	private onContextChanged = () => {
@@ -136,6 +135,7 @@ export class ControllerImpl implements Controller {
 	
 	public dispose() {
 		this.generalContentSynchronizer.dispose();
+		this.ratingSynchronizer.dispose();
 		this.context.dispose();
 		
 		this.modelSubscriptions.forEach( s => s.undo() );
@@ -146,15 +146,16 @@ export class ControllerImpl implements Controller {
 	private viewModel: vm.ViewModel;
 	private communicator: KokiCommunicator.Main;
 	
-	private generalContent: content.General;
+	//private generalContent: content.General;
 	private context: content.Context;
-	private rating: Rating.Controller;
+	//private rating: Rating.Controller;
 	
 	private childKaViewModels = ko.observableArray<kernaussageVm.ViewModel>();
 	private childKaArraySynchronizer = 
 		new arraySynchronizer.ChildArraySynchronizer<kernaussageMdl.Model, kernaussageVm.ViewModel, kernaussageCtr.Controller>();
-	private generalContentSynchronizer = 
-		new GeneralContentSynchronizer();
+		
+	private generalContentSynchronizer = new GeneralContentSynchronizer();
+	private ratingSynchronizer = new RatingSynchronizer();
 	
 	private modelSubscriptions: evt.Subscription[];
 	private communicatorSubscriptions: evt.Subscription[];
@@ -165,6 +166,12 @@ class GeneralContentSynchronizer
 
 class GeneralContentControllerFactory
 	extends ConstructorBasedFactory.ControllerFactoryEx<ContentModel.General, ContentViewModel.General, ContentCommunicator.Main, ContentController.General> {}
+
+class RatingSynchronizer
+	extends synchronizer.ChildSynchronizer<Rating.Model, Rating.ViewModel, Rating.Controller> {}
+	
+class RatingControllerFactory
+	extends ConstructorBasedFactory.ControllerFactory<Rating.Model, Rating.ViewModel, Rating.Controller> {}
 
 class ViewModelFactory {
 	public create() {

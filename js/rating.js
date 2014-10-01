@@ -18,6 +18,7 @@ define(["require", "exports"], function(require, exports) {
         function Controller(model, viewModel) {
             viewModel.id = Controller.idCtr++;
             viewModel.personalRating = model.personalRating;
+
             viewModel.summarizedRatings = ko.observable({
                 stronglike: ko.observable(0), like: ko.observable(0), neutral: ko.observable(0),
                 dislike: ko.observable(0), strongdislike: ko.observable(0)
@@ -29,6 +30,8 @@ define(["require", "exports"], function(require, exports) {
                 };
             };
         }
+        Controller.prototype.dispose = function () {
+        };
         Controller.idCtr = 0;
         return Controller;
     })();
