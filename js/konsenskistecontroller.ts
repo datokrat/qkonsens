@@ -93,7 +93,7 @@ export class ControllerImpl implements Controller {
 	}
 	
 	private initKas() {
-		this.model.childKas().forEach(this.onChildKaInserted.bind(this));
+		this.childKaArraySynchronizer.setInitialState(this.model.childKas());
 	}
 	
 	private onKokiRetrieved = (args: KokiCommunicator.ReceivedArgs) => {

@@ -17,7 +17,11 @@ export class ChildArraySynchronizer<Model, ViewModel, Controller extends { dispo
 	public setViewModelRemovalHandler( handler: (v: ViewModel) => void ) {
 		this.viewModelRemovalHandler = handler || (v => {});
 		return this;
-	}	
+	}
+	
+	public setInitialState( models: Model[] ) {
+		models.forEach(this.inserted.bind(this));
+	}
 	
 	public inserted( m: Model ) {
 		if(this.entryKeys.indexOf(m) == -1) {

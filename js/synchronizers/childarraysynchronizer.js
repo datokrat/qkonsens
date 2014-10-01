@@ -27,6 +27,10 @@ define(["require", "exports"], function(require, exports) {
             return this;
         };
 
+        ChildArraySynchronizer.prototype.setInitialState = function (models) {
+            models.forEach(this.inserted.bind(this));
+        };
+
         ChildArraySynchronizer.prototype.inserted = function (m) {
             if (this.entryKeys.indexOf(m) == -1) {
                 var v = this.viewModelFactory.create();

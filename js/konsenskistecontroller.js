@@ -84,7 +84,8 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'synchronizers/kok
         };
 
         ControllerImpl.prototype.initKas = function () {
-            this.model.childKas().forEach(this.onChildKaInserted.bind(this));
+            this.childKaArraySynchronizer.setInitialState(this.model.childKas());
+            //this.model.childKas().forEach(this.onChildKaInserted.bind(this));
         };
 
         ControllerImpl.prototype.getChildKaArray = function () {
