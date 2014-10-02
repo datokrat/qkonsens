@@ -65,7 +65,7 @@ class KonsenskisteCommunicator implements ICommunicator.Main {
 		
 		rawKoki.ReferredFrom.forEach(reference => {
 			if(reference.ReferenceType.Description.Name == 'Part') {
-				koki.appendKa( this.parseKa(reference.Referrer) );
+				koki.childKas.push( this.parseKa(reference.Referrer) );
 			}
 		});
 		

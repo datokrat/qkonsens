@@ -33,7 +33,7 @@ export class Tests {
 		konsenskiste.context().text('ipsum (lat.): selbst');
 		
 		var kernaussage = new ka.Model();
-		konsenskiste.appendKa(kernaussage);
+		konsenskiste.childKas.push(kernaussage);
 		
 		model.konsenskiste(konsenskiste);
 		

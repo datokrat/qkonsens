@@ -33,7 +33,7 @@ define(["require", "exports", '../event'], function(require, exports, Events) {
             if (typeof context !== 'undefined')
                 this.contextRetrieved.raise({ context: context });
             else
-                throw new Error('TestContentCommunicator.queryGeneralContent: id not found');
+                throw new Error('TestContentCommunicator.queryContext: id not found');
         };
 
         TestCommunicator.prototype.query = function (id) {

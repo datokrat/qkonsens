@@ -12,28 +12,28 @@ export class Tests extends unit.TestClass {
 		var konsenskiste = this.factory.create( 'Basisdemokratie (Konzept)' );
 		var kernaussage = this.kaFactory.create( 'Begriff Basisdemokratie' );
 		
-		konsenskiste.appendKa(kernaussage);
+		konsenskiste.childKas.push(kernaussage);
 		
-		test.assert(() => konsenskiste.getChildKaArray()[0] == kernaussage);
+		test.assert(() => konsenskiste.childKas.get()[0] == kernaussage);
 	}
 	
 	testRemoveKa() {
 		var konsenskiste = this.factory.create( 'Basisdemokratie' );
 		var kernaussage = this.kaFactory.create( 'Begriff Basisdemokratie' );
 		
-		konsenskiste.appendKa(kernaussage);
-		konsenskiste.removeKa(kernaussage);
+		konsenskiste.childKas.push(kernaussage);
+		konsenskiste.childKas.remove(kernaussage);
 		
-		test.assert(() => konsenskiste.getChildKaArray().length == 0);
+		test.assert(() => konsenskiste.childKas.get().length == 0);
 	}
 	
 	testRemoveKa2() {
 		var konsenskiste = this.factory.create( 'Basisdemokratie' );
 		
-		konsenskiste.appendKa( this.kaFactory.create( 'Begriff Basisdemokratie' ) );
-		konsenskiste.removeKa( this.kaFactory.create( 'Begriff Basisdemokratie' ) );
+		konsenskiste.childKas.push( this.kaFactory.create( 'Begriff Basisdemokratie' ) );
+		konsenskiste.childKas.remove( this.kaFactory.create( 'Begriff Basisdemokratie' ) );
 		
-		test.assert(() => konsenskiste.getChildKaArray().length == 1);
+		test.assert(() => konsenskiste.childKas.get().length == 1);
 	}
 	
 	testKaEvents() {
@@ -41,27 +41,31 @@ export class Tests extends unit.TestClass {
 		var kernaussage = this.kaFactory.create( 'Begriff Basisdemokratie' );
 		
 		var insertionCtr = 0;
-		var insertionListener = args => {
-			test.assert(() => args.childKa == kernaussage);
+		var insertionListener = ka => {
+			test.assert(() => ka == kernaussage);
 			++insertionCtr;
 		};
 		
 		var removalCtr = 0;
-		var removalListener = args => {
-			test.assert(() => args.childKa == kernaussage);
+		var removalListener = ka => {
+			test.assert(() => ka == kernaussage);
 			++removalCtr;
 		};
 		
-		konsenskiste.childKaInserted.subscribe(insertionListener);
-		konsenskiste.childKaRemoved.subscribe(removalListener);
+		konsenskiste.childKas.pushed.subscribe(insertionListener);
+		konsenskiste.childKas.removed.subscribe(removalListener);
 		
-		konsenskiste.appendKa(kernaussage);
+		konsenskiste.childKas.push(kernaussage);
+		test.assert(() => konsenskiste.childKas.get().length == 1);
+		test.assert(() => konsenskiste.childKas.get()[0] == kernaussage);
 		test.assert(() => insertionCtr == 1);
 		test.assert(() => removalCtr == 0);
 		
-		konsenskiste.removeKa(kernaussage);
+		konsenskiste.childKas.remove(kernaussage);
+		test.assert(() => konsenskiste.childKas.get().length == 0);
 		test.assert(() => insertionCtr == 1);
 		test.assert(() => removalCtr == 1);
+		
 	}
 }
 

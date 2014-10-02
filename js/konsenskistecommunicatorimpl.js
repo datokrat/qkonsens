@@ -37,7 +37,7 @@ define(["require", "exports", 'event', 'discocontext', 'contentcommunicatorimpl'
             });*/
             rawKoki.ReferredFrom.forEach(function (reference) {
                 if (reference.ReferenceType.Description.Name == 'Part') {
-                    koki.appendKa(_this.parseKa(reference.Referrer));
+                    koki.childKas.push(_this.parseKa(reference.Referrer));
                 }
             });
 

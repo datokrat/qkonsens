@@ -16,10 +16,10 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../konsenskistemode
             var konsenskiste = this.factory.create('Basisdemokratie (Konzept)');
             var kernaussage = this.kaFactory.create('Begriff Basisdemokratie');
 
-            konsenskiste.appendKa(kernaussage);
+            konsenskiste.childKas.push(kernaussage);
 
             test.assert(function () {
-                return konsenskiste.getChildKaArray()[0] == kernaussage;
+                return konsenskiste.childKas.get()[0] == kernaussage;
             });
         };
 
@@ -27,22 +27,22 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../konsenskistemode
             var konsenskiste = this.factory.create('Basisdemokratie');
             var kernaussage = this.kaFactory.create('Begriff Basisdemokratie');
 
-            konsenskiste.appendKa(kernaussage);
-            konsenskiste.removeKa(kernaussage);
+            konsenskiste.childKas.push(kernaussage);
+            konsenskiste.childKas.remove(kernaussage);
 
             test.assert(function () {
-                return konsenskiste.getChildKaArray().length == 0;
+                return konsenskiste.childKas.get().length == 0;
             });
         };
 
         Tests.prototype.testRemoveKa2 = function () {
             var konsenskiste = this.factory.create('Basisdemokratie');
 
-            konsenskiste.appendKa(this.kaFactory.create('Begriff Basisdemokratie'));
-            konsenskiste.removeKa(this.kaFactory.create('Begriff Basisdemokratie'));
+            konsenskiste.childKas.push(this.kaFactory.create('Begriff Basisdemokratie'));
+            konsenskiste.childKas.remove(this.kaFactory.create('Begriff Basisdemokratie'));
 
             test.assert(function () {
-                return konsenskiste.getChildKaArray().length == 1;
+                return konsenskiste.childKas.get().length == 1;
             });
         };
 
@@ -51,25 +51,31 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../konsenskistemode
             var kernaussage = this.kaFactory.create('Begriff Basisdemokratie');
 
             var insertionCtr = 0;
-            var insertionListener = function (args) {
+            var insertionListener = function (ka) {
                 test.assert(function () {
-                    return args.childKa == kernaussage;
+                    return ka == kernaussage;
                 });
                 ++insertionCtr;
             };
 
             var removalCtr = 0;
-            var removalListener = function (args) {
+            var removalListener = function (ka) {
                 test.assert(function () {
-                    return args.childKa == kernaussage;
+                    return ka == kernaussage;
                 });
                 ++removalCtr;
             };
 
-            konsenskiste.childKaInserted.subscribe(insertionListener);
-            konsenskiste.childKaRemoved.subscribe(removalListener);
+            konsenskiste.childKas.pushed.subscribe(insertionListener);
+            konsenskiste.childKas.removed.subscribe(removalListener);
 
-            konsenskiste.appendKa(kernaussage);
+            konsenskiste.childKas.push(kernaussage);
+            test.assert(function () {
+                return konsenskiste.childKas.get().length == 1;
+            });
+            test.assert(function () {
+                return konsenskiste.childKas.get()[0] == kernaussage;
+            });
             test.assert(function () {
                 return insertionCtr == 1;
             });
@@ -77,7 +83,10 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../konsenskistemode
                 return removalCtr == 0;
             });
 
-            konsenskiste.removeKa(kernaussage);
+            konsenskiste.childKas.remove(kernaussage);
+            test.assert(function () {
+                return konsenskiste.childKas.get().length == 0;
+            });
             test.assert(function () {
                 return insertionCtr == 1;
             });

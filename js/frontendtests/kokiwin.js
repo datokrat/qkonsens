@@ -17,7 +17,7 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
             konsenskiste.context().text('ipsum (lat.): selbst');
 
             var kernaussage = new ka.Model();
-            konsenskiste.appendKa(kernaussage);
+            konsenskiste.childKas.push(kernaussage);
 
             model.konsenskiste(konsenskiste);
 

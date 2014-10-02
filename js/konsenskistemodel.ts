@@ -24,29 +24,11 @@ export class Model {
 		this.context().set(model.context());
 	}
 	
-	public appendKa(ka: kernaussageModel.Model) {
-		this.childKas.push(ka);
-		
-		this.childKaInserted.raise({ childKa: ka });
-	}
-	
-	public removeKa(ka: kernaussageModel.Model) {
-		this.childKas.remove(ka);
-		
-		this.childKaRemoved.raise({ childKa: ka });
-	}
-	
-	public getChildKaArray(): kernaussageModel.Model[] {
-		return this.childKas.get();
-	}
-	
 	constructor(context: ModelContext = new ModelContext) {
-		this.childKaInserted = context.eventFactory.create<ChildKaEventArgs>();
-		this.childKaRemoved = context.eventFactory.create<ChildKaEventArgs>();
+		this.factoryContext = context;
 	}
 	
-	public childKaInserted: evt.Event<ChildKaEventArgs>;
-	public childKaRemoved: evt.Event<ChildKaEventArgs>;
+	private factoryContext: ModelContext;
 }
 
 export class ChildKaEventArgs {

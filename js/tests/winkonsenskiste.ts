@@ -47,7 +47,7 @@ export class Tests extends unit.TestClass {
 		var controller = new ctr.Controller(koki, window, new KokiCommunicator);
 		
 		var ka = new kaMdl.Model();
-		koki.appendKa(ka);
+		koki.childKas.push(ka);
 		
 		koki.general().title('Basisdemokratie');
 		ka.general().title('Begriff Basisdemokratie');
