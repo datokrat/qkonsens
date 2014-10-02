@@ -57,15 +57,6 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'synchronizers/kok
                 }),
                 this.model.childKaRemoved.subscribe(function (args) {
                     return _this.onChildKaRemoved(args.childKa);
-                }),
-                this.model.comments.pushed.subscribe(function (comment) {
-                    return _this.commentSynchronizer.inserted(comment);
-                }),
-                this.model.comments.removed.subscribe(function (comment) {
-                    return _this.commentSynchronizer.removed(comment);
-                }),
-                this.model.comments.changed.subscribe(function (old) {
-                    return _this.commentSynchronizer.setInitialState(_this.model.comments.get());
                 })
             ];
         };
@@ -102,14 +93,15 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'synchronizers/kok
             var _this = this;
             var sync = this.commentSynchronizer = new CommentSynchronizer(this.communicator.content);
 
+            sync.setModelObservable(this.model.comments);
+
             sync.setViewModelInsertionHandler(function (vm) {
                 return _this.insertCommentViewModel(vm);
             });
             sync.setViewModelRemovalHandler(function (vm) {
                 return _this.removeCommentViewModel(vm);
             });
-
-            sync.setInitialState(this.model.comments.get());
+            //sync.setInitialState(this.model.comments.get());
         };
 
         ControllerImpl.prototype.getChildKaArray = function () {
@@ -132,14 +124,13 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'synchronizers/kok
             this.childKaViewModels.remove(vm);
         };
 
-        ControllerImpl.prototype.onCommentModelInserted = function (comment) {
-            this.commentSynchronizer.inserted(comment);
-        };
-
-        ControllerImpl.prototype.onCommentModelRemoved = function (comment) {
-            this.commentSynchronizer.removed(comment);
-        };
-
+        /*private onCommentModelInserted(comment: Comment.Model) {
+        this.commentSynchronizer.inserted(comment);
+        }
+        
+        private onCommentModelRemoved(comment: Comment.Model) {
+        this.commentSynchronizer.removed(comment);
+        }*/
         ControllerImpl.prototype.insertCommentViewModel = function (comment) {
             this.viewModel.comments.push(comment);
         };
@@ -152,6 +143,7 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'synchronizers/kok
             this.generalContentSynchronizer.dispose();
             this.contextSynchronizer.dispose();
             this.ratingSynchronizer.dispose();
+            this.commentSynchronizer.dispose();
 
             this.modelSubscriptions.forEach(function (s) {
                 return s.undo();

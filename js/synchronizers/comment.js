@@ -9,11 +9,11 @@ define(["require", "exports", 'synchronizers/childarraysynchronizer', 'factories
         __extends(Synchronizer, _super);
         function Synchronizer(communicator) {
             _super.call(this);
-            this.setViewModelFactory(new Factories.Factory(Comment.ViewModel));
-            this.setControllerFactory(new Factories.ControllerFactoryEx(Comment.Controller, communicator));
+            this.innerSync.setViewModelFactory(new Factories.Factory(Comment.ViewModel));
+            this.innerSync.setControllerFactory(new Factories.ControllerFactoryEx(Comment.Controller, communicator));
         }
         return Synchronizer;
-    })(Base.ChildArraySynchronizer);
+    })(Base.ObservingChildArraySynchronizer);
 
     
     return Synchronizer;

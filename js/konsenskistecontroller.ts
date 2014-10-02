@@ -1,5 +1,6 @@
 import evt = require('event')
 import ConstructorBasedFactory = require('factories/constructorbased')
+import Obs = require('observable')
 
 import mdl = require('konsenskistemodel')
 import vm = require('konsenskisteviewmodel')
@@ -71,9 +72,9 @@ export class ControllerImpl implements Controller {
 			this.model.childKaInserted.subscribe( args => this.onChildKaInserted(args.childKa) ),
 			this.model.childKaRemoved.subscribe( args => this.onChildKaRemoved(args.childKa) ),
 			
-			this.model.comments.pushed.subscribe( comment => this.commentSynchronizer.inserted(comment) ),
+			/*this.model.comments.pushed.subscribe( comment => this.commentSynchronizer.inserted(comment) ),
 			this.model.comments.removed.subscribe( comment => this.commentSynchronizer.removed(comment) ),
-			this.model.comments.changed.subscribe( old => this.commentSynchronizer.setInitialState(this.model.comments.get()) )
+			this.model.comments.changed.subscribe( old => this.commentSynchronizer.setInitialState(this.model.comments.get()) )*/
 		];
 	}
 	
@@ -107,10 +108,12 @@ export class ControllerImpl implements Controller {
 	private initComments() {
 		var sync = this.commentSynchronizer = new CommentSynchronizer(this.communicator.content);
 		
+		sync.setModelObservable(this.model.comments);
+		
 		sync.setViewModelInsertionHandler(vm => this.insertCommentViewModel(vm));
 		sync.setViewModelRemovalHandler(vm => this.removeCommentViewModel(vm));
 		
-		sync.setInitialState(this.model.comments.get());
+		//sync.setInitialState(this.model.comments.get());
 	}
 	
 	private onKokiRetrieved = (args: KokiCommunicator.ReceivedArgs) => {
@@ -138,13 +141,13 @@ export class ControllerImpl implements Controller {
 		this.childKaViewModels.remove(vm);
 	}
 	
-	private onCommentModelInserted(comment: Comment.Model) {
+	/*private onCommentModelInserted(comment: Comment.Model) {
 		this.commentSynchronizer.inserted(comment);
 	}
 	
 	private onCommentModelRemoved(comment: Comment.Model) {
 		this.commentSynchronizer.removed(comment);
-	}
+	}*/
 	
 	private insertCommentViewModel(comment: Comment.ViewModel) {
 		this.viewModel.comments.push(comment);
@@ -158,6 +161,7 @@ export class ControllerImpl implements Controller {
 		this.generalContentSynchronizer.dispose();
 		this.contextSynchronizer.dispose();
 		this.ratingSynchronizer.dispose();
+		this.commentSynchronizer.dispose();
 		
 		this.modelSubscriptions.forEach( s => s.undo() );
 		this.communicatorSubscriptions.forEach( s => s.undo() );

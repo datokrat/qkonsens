@@ -37,6 +37,7 @@
                              testResult.passes.push(new TestDescription(testName, prop, 'OK'));
                          } catch (err) {
                              testResult.errors.push(new TestDescription(testName, prop, err.toString()));
+                             console.log('tsUnit', err);
                          }
                          if (typeof testClass['tearDown'] === 'function') {
                              testClass['tearDown']();

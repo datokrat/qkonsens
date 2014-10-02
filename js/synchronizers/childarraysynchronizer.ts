@@ -1,3 +1,55 @@
+import Obs = require('../observable')
+import Events = require('../event')
+
+export class ObservingChildArraySynchronizer<Model, ViewModel, Controller extends { dispose: () => void }> {
+	constructor() {
+		this.innerSync = new ChildArraySynchronizer<Model, ViewModel, Controller>();
+	}
+	
+	public setViewModelFactory(fty: Factory<ViewModel>) {
+		this.innerSync.setViewModelFactory(fty);
+	}
+	
+	public setControllerFactory(fty: ControllerFactory<Model, ViewModel, Controller>) {
+		this.innerSync.setControllerFactory(fty);
+	}
+	
+	public setModelObservable(model: Obs.ObservableArrayEx<Model>) {
+		this.disposeModel();
+		
+		this.modelSubscriptions = [
+			model.pushed.subscribe( m => this.innerSync.inserted(m) ),
+			model.removed.subscribe( m => this.innerSync.removed(m) ),
+			model.changed.subscribe( old => this.innerSync.setInitialState(model.get()) ),
+		];
+		model.changed.raise();
+		return this;
+	}
+	
+	public setViewModelInsertionHandler(handler: (vm: ViewModel) => void) {
+		this.innerSync.setViewModelInsertionHandler(handler);
+		return this;
+	}
+	
+	public setViewModelRemovalHandler(handler: (vm: ViewModel) => void) {
+		this.innerSync.setViewModelRemovalHandler(handler);
+		return this;
+	}
+	
+	private disposeModel() {
+		this.modelSubscriptions.forEach(s => s.undo());
+		this.modelSubscriptions = [];
+	}
+	
+	public dispose() {
+		this.disposeModel();
+		this.innerSync.dispose();
+	}
+	
+	public modelSubscriptions: Events.Subscription[] = [];
+	public innerSync: ChildArraySynchronizer<Model, ViewModel, Controller>;
+}
+
 export class ChildArraySynchronizer<Model, ViewModel, Controller extends { dispose: () => void }> {
 	public setViewModelFactory(fty: Factory<ViewModel>) {
 		this.viewModelFactory = fty;

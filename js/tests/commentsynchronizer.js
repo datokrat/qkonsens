@@ -4,14 +4,14 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/tsunit', 'tests/test', '../comment', '../contentcommunicatorimpl', 'synchronizers/comment'], function(require, exports, unit, test, Comment, ContentCommunicatorImpl, CommentSynchronizer) {
+define(["require", "exports", 'tests/tsunit', 'tests/test', '../observable', '../comment', '../contentcommunicatorimpl', 'synchronizers/comment'], function(require, exports, unit, test, Obs, Comment, ContentCommunicatorImpl, CommentSynchronizer) {
     var Tests = (function (_super) {
         __extends(Tests, _super);
         function Tests() {
             _super.apply(this, arguments);
         }
         Tests.prototype.test = function () {
-            var model = new Comment.Model();
+            var models = new Obs.ObservableArrayExtender(ko.observableArray());
             var insertionCtr = 0;
             var inserted = function (viewModel) {
                 test.assert(function () {
@@ -19,8 +19,9 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../comment', '../co
                 });
             };
 
-            var sync = new CommentSynchronizer(new ContentCommunicatorImpl).setViewModelInsertionHandler(inserted);
-            sync.inserted(model);
+            var sync = new CommentSynchronizer(new ContentCommunicatorImpl).setViewModelInsertionHandler(inserted).setModelObservable(models);
+
+            models.push(new Comment.Model);
 
             test.assert(function () {
                 return insertionCtr == 1;

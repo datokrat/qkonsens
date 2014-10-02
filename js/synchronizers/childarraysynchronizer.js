@@ -1,4 +1,61 @@
 define(["require", "exports"], function(require, exports) {
+    var ObservingChildArraySynchronizer = (function () {
+        function ObservingChildArraySynchronizer() {
+            this.modelSubscriptions = [];
+            this.innerSync = new ChildArraySynchronizer();
+        }
+        ObservingChildArraySynchronizer.prototype.setViewModelFactory = function (fty) {
+            this.innerSync.setViewModelFactory(fty);
+        };
+
+        ObservingChildArraySynchronizer.prototype.setControllerFactory = function (fty) {
+            this.innerSync.setControllerFactory(fty);
+        };
+
+        ObservingChildArraySynchronizer.prototype.setModelObservable = function (model) {
+            var _this = this;
+            this.disposeModel();
+
+            this.modelSubscriptions = [
+                model.pushed.subscribe(function (m) {
+                    return _this.innerSync.inserted(m);
+                }),
+                model.removed.subscribe(function (m) {
+                    return _this.innerSync.removed(m);
+                }),
+                model.changed.subscribe(function (old) {
+                    return _this.innerSync.setInitialState(model.get());
+                })
+            ];
+            model.changed.raise();
+            return this;
+        };
+
+        ObservingChildArraySynchronizer.prototype.setViewModelInsertionHandler = function (handler) {
+            this.innerSync.setViewModelInsertionHandler(handler);
+            return this;
+        };
+
+        ObservingChildArraySynchronizer.prototype.setViewModelRemovalHandler = function (handler) {
+            this.innerSync.setViewModelRemovalHandler(handler);
+            return this;
+        };
+
+        ObservingChildArraySynchronizer.prototype.disposeModel = function () {
+            this.modelSubscriptions.forEach(function (s) {
+                return s.undo();
+            });
+            this.modelSubscriptions = [];
+        };
+
+        ObservingChildArraySynchronizer.prototype.dispose = function () {
+            this.disposeModel();
+            this.innerSync.dispose();
+        };
+        return ObservingChildArraySynchronizer;
+    })();
+    exports.ObservingChildArraySynchronizer = ObservingChildArraySynchronizer;
+
     var ChildArraySynchronizer = (function () {
         function ChildArraySynchronizer() {
             this.entryKeys = [];
