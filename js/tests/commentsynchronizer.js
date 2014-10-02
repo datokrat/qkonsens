@@ -22,6 +22,19 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../observable', '..
                 return viewModels().length == 1;
             });
         };
+
+        Tests.prototype.setViewModelTwice = function () {
+            var models = new Obs.ObservableArrayExtender(ko.observableArray());
+            models.push(new Comment.Model);
+            var viewModels = ko.observableArray();
+            var viewModels2 = ko.observableArray();
+
+            var sync = new CommentSynchronizer(new ContentCommunicatorImpl).setViewModelObservable(viewModels).setModelObservable(models).setViewModelObservable(viewModels2);
+
+            test.assert(function () {
+                return viewModels2().length == 1;
+            });
+        };
         return Tests;
     })(unit.TestClass);
     exports.Tests = Tests;

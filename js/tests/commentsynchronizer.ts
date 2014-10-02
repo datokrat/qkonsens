@@ -19,4 +19,18 @@ export class Tests extends unit.TestClass {
 		
 		test.assert( () => viewModels().length == 1 );
 	}
+	
+	setViewModelTwice() {
+		var models = new Obs.ObservableArrayExtender<Comment.Model>(ko.observableArray<Comment.Model>());
+		models.push(new Comment.Model);
+		var viewModels = ko.observableArray<Comment.ViewModel>();
+		var viewModels2 = ko.observableArray<Comment.ViewModel>();
+		
+		var sync = new CommentSynchronizer(new ContentCommunicatorImpl)
+			.setViewModelObservable(viewModels)
+			.setModelObservable(models)
+			.setViewModelObservable(viewModels2);
+			
+		test.assert( () => viewModels2().length == 1);
+	}
 }
