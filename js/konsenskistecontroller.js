@@ -66,10 +66,6 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'synchronizers/kok
         ControllerImpl.prototype.initCommunicator = function () {
             var _this = this;
             this.communicatorSubscriptions = ([
-                this.communicator.content.generalContentRetrieved.subscribe(function (args) {
-                    if (args.general.id == _this.model.general().id)
-                        _this.model.general().set(args.general);
-                }),
                 this.communicator.content.contextRetrieved.subscribe(function (args) {
                     if (args.context.id == _this.model.context().id)
                         _this.model.context().set(args.context);

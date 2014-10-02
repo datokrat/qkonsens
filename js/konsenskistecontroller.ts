@@ -52,8 +52,6 @@ export class ControllerImpl implements Controller {
 		this.viewModel.childKas = ko.observableArray<kernaussageVm.ViewModel>();
 		
 		this.kaSynchronizer = new KokiSync.KaSynchronizer(this.communicator.content)
-			/*.setViewModelInsertionHandler(vm => this.viewModel.childKas.push(vm))
-			.setViewModelRemovalHandler(vm => this.viewModel.childKas.remove(vm))*/
 			.setViewModelObservable(this.viewModel.childKas)
 			.setModelObservable(this.model.childKas);
 	}
@@ -62,8 +60,6 @@ export class ControllerImpl implements Controller {
 		this.viewModel.comments = ko.observableArray<Comment.ViewModel>();
 		
 		this.commentSynchronizer = new CommentSynchronizer(this.communicator.content)
-			/*.setViewModelInsertionHandler(vm => this.viewModel.comments.push(vm))
-			.setViewModelRemovalHandler(vm => this.viewModel.comments.remove(vm))*/
 			.setViewModelObservable(this.viewModel.comments)
 			.setModelObservable(this.model.comments);
 	}
@@ -94,10 +90,6 @@ export class ControllerImpl implements Controller {
 	
 	private initCommunicator() {
 		this.communicatorSubscriptions = ([
-			this.communicator.content.generalContentRetrieved.subscribe((args: ContentCommunicator.GeneralContentRetrievedArgs) => {
-				if(args.general.id == this.model.general().id)
-					this.model.general().set( args.general );
-			}),
 			this.communicator.content.contextRetrieved.subscribe((args: ContentCommunicator.ContextRetrievedArgs) => {
 				if(args.context.id == this.model.context().id)
 					this.model.context().set( args.context );
