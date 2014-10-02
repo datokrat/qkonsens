@@ -52,8 +52,9 @@ export class ControllerImpl implements Controller {
 		this.viewModel.childKas = ko.observableArray<kernaussageVm.ViewModel>();
 		
 		this.kaSynchronizer = new KokiSync.KaSynchronizer(this.communicator.content)
-			.setViewModelInsertionHandler(vm => this.viewModel.childKas.push(vm))
-			.setViewModelRemovalHandler(vm => this.viewModel.childKas.remove(vm))
+			/*.setViewModelInsertionHandler(vm => this.viewModel.childKas.push(vm))
+			.setViewModelRemovalHandler(vm => this.viewModel.childKas.remove(vm))*/
+			.setViewModelObservable(this.viewModel.childKas)
 			.setModelObservable(this.model.childKas);
 	}
 	
@@ -61,8 +62,9 @@ export class ControllerImpl implements Controller {
 		this.viewModel.comments = ko.observableArray<Comment.ViewModel>();
 		
 		this.commentSynchronizer = new CommentSynchronizer(this.communicator.content)
-			.setViewModelInsertionHandler(vm => this.viewModel.comments.push(vm))
-			.setViewModelRemovalHandler(vm => this.viewModel.comments.remove(vm))
+			/*.setViewModelInsertionHandler(vm => this.viewModel.comments.push(vm))
+			.setViewModelRemovalHandler(vm => this.viewModel.comments.remove(vm))*/
+			.setViewModelObservable(this.viewModel.comments)
 			.setModelObservable(this.model.comments);
 	}
 	

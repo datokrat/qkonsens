@@ -12,19 +12,14 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../observable', '..
         }
         Tests.prototype.test = function () {
             var models = new Obs.ObservableArrayExtender(ko.observableArray());
-            var insertionCtr = 0;
-            var inserted = function (viewModel) {
-                test.assert(function () {
-                    return insertionCtr++ == 0;
-                });
-            };
+            var viewModels = ko.observableArray();
 
-            var sync = new CommentSynchronizer(new ContentCommunicatorImpl).setViewModelInsertionHandler(inserted).setModelObservable(models);
+            var sync = new CommentSynchronizer(new ContentCommunicatorImpl).setViewModelObservable(viewModels).setModelObservable(models);
 
             models.push(new Comment.Model);
 
             test.assert(function () {
-                return insertionCtr == 1;
+                return viewModels().length == 1;
             });
         };
         return Tests;

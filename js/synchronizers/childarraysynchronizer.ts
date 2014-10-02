@@ -16,38 +16,44 @@ export class ObservingChildArraySynchronizer<Model, ViewModel, Controller extend
 		return this;
 	}
 	
-	public setModelObservable(model: Obs.ObservableArrayEx<Model>) {
-		this.disposeModel();
+	public setModelObservable(models: Obs.ObservableArrayEx<Model>) {
+		this.models = models;
+		this.disposeModelSubscriptions();
 		
 		this.modelSubscriptions = [
-			model.pushed.subscribe( m => this.innerSync.inserted(m) ),
-			model.removed.subscribe( m => this.innerSync.removed(m) ),
-			model.changed.subscribe( old => this.innerSync.setInitialState(model.get()) ),
+			models.pushed.subscribe( m => this.innerSync.inserted(m) ),
+			models.removed.subscribe( m => this.innerSync.removed(m) ),
+			models.changed.subscribe( this.initState.bind(this) ),
 		];
-		model.changed.raise();
+		this.initState();
 		return this;
 	}
 	
-	public setViewModelInsertionHandler(handler: (vm: ViewModel) => void) {
-		this.innerSync.setViewModelInsertionHandler(handler);
+	public setViewModelObservable(viewModels: Obs.ObservableArray<ViewModel>) {
+		this.viewModels = viewModels;
+		this.innerSync.setViewModelInsertionHandler(vm => viewModels.push(vm));
+		this.innerSync.setViewModelRemovalHandler(vm => viewModels.remove(vm));
+		this.initState();
 		return this;
 	}
 	
-	public setViewModelRemovalHandler(handler: (vm: ViewModel) => void) {
-		this.innerSync.setViewModelRemovalHandler(handler);
-		return this;
+	public initState() {
+		if(this.models && this.viewModels)
+			this.innerSync.setInitialState(this.models.get());
 	}
 	
-	private disposeModel() {
+	private disposeModelSubscriptions() {
 		this.modelSubscriptions.forEach(s => s.undo());
 		this.modelSubscriptions = [];
 	}
 	
 	public dispose() {
-		this.disposeModel();
+		this.disposeModelSubscriptions();
 		this.innerSync.dispose();
 	}
 	
+	public models: Obs.ObservableArrayEx<Model>;
+	public viewModels: Obs.ObservableArray<ViewModel>;
 	public modelSubscriptions: Events.Subscription[] = [];
 	public innerSync: ChildArraySynchronizer<Model, ViewModel, Controller>;
 }

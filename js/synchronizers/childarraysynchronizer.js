@@ -14,36 +14,42 @@ define(["require", "exports"], function(require, exports) {
             return this;
         };
 
-        ObservingChildArraySynchronizer.prototype.setModelObservable = function (model) {
+        ObservingChildArraySynchronizer.prototype.setModelObservable = function (models) {
             var _this = this;
-            this.disposeModel();
+            this.models = models;
+            this.disposeModelSubscriptions();
 
             this.modelSubscriptions = [
-                model.pushed.subscribe(function (m) {
+                models.pushed.subscribe(function (m) {
                     return _this.innerSync.inserted(m);
                 }),
-                model.removed.subscribe(function (m) {
+                models.removed.subscribe(function (m) {
                     return _this.innerSync.removed(m);
                 }),
-                model.changed.subscribe(function (old) {
-                    return _this.innerSync.setInitialState(model.get());
-                })
+                models.changed.subscribe(this.initState.bind(this))
             ];
-            model.changed.raise();
+            this.initState();
             return this;
         };
 
-        ObservingChildArraySynchronizer.prototype.setViewModelInsertionHandler = function (handler) {
-            this.innerSync.setViewModelInsertionHandler(handler);
+        ObservingChildArraySynchronizer.prototype.setViewModelObservable = function (viewModels) {
+            this.viewModels = viewModels;
+            this.innerSync.setViewModelInsertionHandler(function (vm) {
+                return viewModels.push(vm);
+            });
+            this.innerSync.setViewModelRemovalHandler(function (vm) {
+                return viewModels.remove(vm);
+            });
+            this.initState();
             return this;
         };
 
-        ObservingChildArraySynchronizer.prototype.setViewModelRemovalHandler = function (handler) {
-            this.innerSync.setViewModelRemovalHandler(handler);
-            return this;
+        ObservingChildArraySynchronizer.prototype.initState = function () {
+            if (this.models && this.viewModels)
+                this.innerSync.setInitialState(this.models.get());
         };
 
-        ObservingChildArraySynchronizer.prototype.disposeModel = function () {
+        ObservingChildArraySynchronizer.prototype.disposeModelSubscriptions = function () {
             this.modelSubscriptions.forEach(function (s) {
                 return s.undo();
             });
@@ -51,7 +57,7 @@ define(["require", "exports"], function(require, exports) {
         };
 
         ObservingChildArraySynchronizer.prototype.dispose = function () {
-            this.disposeModel();
+            this.disposeModelSubscriptions();
             this.innerSync.dispose();
         };
         return ObservingChildArraySynchronizer;

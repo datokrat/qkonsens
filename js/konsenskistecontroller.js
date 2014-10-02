@@ -25,25 +25,15 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'synchronizers/kok
         };
 
         ControllerImpl.prototype.initKas = function () {
-            var _this = this;
             this.viewModel.childKas = ko.observableArray();
 
-            this.kaSynchronizer = new KokiSync.KaSynchronizer(this.communicator.content).setViewModelInsertionHandler(function (vm) {
-                return _this.viewModel.childKas.push(vm);
-            }).setViewModelRemovalHandler(function (vm) {
-                return _this.viewModel.childKas.remove(vm);
-            }).setModelObservable(this.model.childKas);
+            this.kaSynchronizer = new KokiSync.KaSynchronizer(this.communicator.content).setViewModelObservable(this.viewModel.childKas).setModelObservable(this.model.childKas);
         };
 
         ControllerImpl.prototype.initComments = function () {
-            var _this = this;
             this.viewModel.comments = ko.observableArray();
 
-            this.commentSynchronizer = new CommentSynchronizer(this.communicator.content).setViewModelInsertionHandler(function (vm) {
-                return _this.viewModel.comments.push(vm);
-            }).setViewModelRemovalHandler(function (vm) {
-                return _this.viewModel.comments.remove(vm);
-            }).setModelObservable(this.model.comments);
+            this.commentSynchronizer = new CommentSynchronizer(this.communicator.content).setViewModelObservable(this.viewModel.comments).setModelObservable(this.model.comments);
         };
 
         ControllerImpl.prototype.initGeneralContent = function () {
