@@ -39,7 +39,10 @@ import common = require('common')
          				r => {
          					testClass[prop](testContext, err => {
          						if(!err) testResult.passes.push( new TestDescription(testName, prop, 'OK') );
-         						else testResult.errors.push( new TestDescription(testName, prop, err.toString()) );
+         						else {
+         							testResult.errors.push( new TestDescription(testName, prop, err.toString()) );
+         							console.log('asyncunit', err);
+         						}
          						r();
          					});
          				},
@@ -48,7 +51,10 @@ import common = require('common')
          					else r();
          				}
          			], err => {
-         				if(err) testResult.errors.push( new TestDescription(testName, prop, err.toString()) );
+         				if(err) {
+         					testResult.errors.push( new TestDescription(testName, prop, err.toString()) );
+         					console.log('asyncunit', err);
+         				}
          				r();
          			});
          		}

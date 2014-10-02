@@ -48,8 +48,10 @@ define(["require", "exports", 'common'], function(require, exports, common) {
                                         testClass[prop](testContext, function (err) {
                                             if (!err)
                                                 testResult.passes.push(new TestDescription(testName, prop, 'OK'));
-                                            else
+                                            else {
                                                 testResult.errors.push(new TestDescription(testName, prop, err.toString()));
+                                                console.log('asyncunit', err);
+                                            }
                                             r();
                                         });
                                     },
@@ -60,8 +62,10 @@ define(["require", "exports", 'common'], function(require, exports, common) {
                                             r();
                                     }
                                 ], function (err) {
-                                    if (err)
+                                    if (err) {
                                         testResult.errors.push(new TestDescription(testName, prop, err.toString()));
+                                        console.log('asyncunit', err);
+                                    }
                                     r();
                                 });
                             } else

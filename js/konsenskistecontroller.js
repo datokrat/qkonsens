@@ -6,68 +6,71 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'synchronizers/kok
                 if (_this.model.id == args.konsenskiste.id)
                     _this.model.set(args.konsenskiste);
             };
-            this.childKaViewModels = ko.observableArray();
+            this.modelSubscriptions = [];
+            this.communicatorSubscriptions = [];
             this.init(model, viewModel, communicator);
         }
         ControllerImpl.prototype.init = function (model, viewModel, communicator) {
-            var _this = this;
             this.model = model;
             this.viewModel = viewModel;
             this.communicator = communicator;
 
-            this.initChildKaSynchronizer();
-            this.initModelEvents();
-            this.initViewModel();
             this.initCommunicator();
 
             this.initKas();
             this.initComments();
+            this.initGeneralContent();
+            this.initContext();
+            this.initRating();
+        };
 
-            this.generalContentSynchronizer = new KSync.GeneralContentSynchronizer(communicator.content).setViewModelChangedHandler(function (value) {
+        ControllerImpl.prototype.initKas = function () {
+            var _this = this;
+            this.viewModel.childKas = ko.observableArray();
+
+            this.kaSynchronizer = new KokiSync.KaSynchronizer(this.communicator.content).setViewModelInsertionHandler(function (vm) {
+                return _this.viewModel.childKas.push(vm);
+            }).setViewModelRemovalHandler(function (vm) {
+                return _this.viewModel.childKas.remove(vm);
+            }).setModelObservable(this.model.childKas);
+        };
+
+        ControllerImpl.prototype.initComments = function () {
+            var _this = this;
+            this.viewModel.comments = ko.observableArray();
+
+            this.commentSynchronizer = new CommentSynchronizer(this.communicator.content).setViewModelInsertionHandler(function (vm) {
+                return _this.viewModel.comments.push(vm);
+            }).setViewModelRemovalHandler(function (vm) {
+                return _this.viewModel.comments.remove(vm);
+            }).setModelObservable(this.model.comments);
+        };
+
+        ControllerImpl.prototype.initGeneralContent = function () {
+            var _this = this;
+            this.viewModel.general = ko.observable();
+
+            this.generalContentSynchronizer = new KSync.GeneralContentSynchronizer(this.communicator.content).setViewModelChangedHandler(function (value) {
                 return _this.viewModel.general(value);
             }).setModelObservable(this.model.general);
+        };
+
+        ControllerImpl.prototype.initContext = function () {
+            var _this = this;
+            this.viewModel.context = ko.observable();
 
             this.contextSynchronizer = new KSync.ContextSynchronizer().setViewModelChangedHandler(function (value) {
                 return _this.viewModel.context(value);
             }).setModelObservable(this.model.context);
+        };
+
+        ControllerImpl.prototype.initRating = function () {
+            var _this = this;
+            this.viewModel.rating = ko.observable();
 
             this.ratingSynchronizer = new KSync.RatingSynchronizer().setViewModelChangedHandler(function (value) {
                 return _this.viewModel.rating(value);
             }).setModelObservable(this.model.rating);
-        };
-
-        ControllerImpl.prototype.initChildKaSynchronizer = function () {
-            var _this = this;
-            var sync = this.childKaArraySynchronizer = new KokiSync.KaSynchronizer(this.communicator.content);
-            ;
-
-            sync.setViewModelInsertionHandler(function (vm) {
-                return _this.insertKaViewModel(vm);
-            });
-            sync.setViewModelRemovalHandler(function (vm) {
-                return _this.removeKaViewModel(vm);
-            });
-        };
-
-        ControllerImpl.prototype.initModelEvents = function () {
-            var _this = this;
-            this.modelSubscriptions = [
-                this.model.childKaInserted.subscribe(function (args) {
-                    return _this.onChildKaInserted(args.childKa);
-                }),
-                this.model.childKaRemoved.subscribe(function (args) {
-                    return _this.onChildKaRemoved(args.childKa);
-                })
-            ];
-        };
-
-        ControllerImpl.prototype.initViewModel = function () {
-            this.viewModel.general = ko.observable();
-            this.viewModel.context = ko.observable();
-            this.viewModel.rating = ko.observable();
-            this.viewModel.comments = ko.observableArray();
-
-            this.viewModel.childKas = this.childKaViewModels;
         };
 
         ControllerImpl.prototype.initCommunicator = function () {
@@ -83,60 +86,6 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'synchronizers/kok
                 }),
                 this.communicator.received.subscribe(this.onKokiRetrieved)
             ]);
-        };
-
-        ControllerImpl.prototype.initKas = function () {
-            this.childKaArraySynchronizer.setInitialState(this.model.childKas());
-        };
-
-        ControllerImpl.prototype.initComments = function () {
-            var _this = this;
-            var sync = this.commentSynchronizer = new CommentSynchronizer(this.communicator.content);
-
-            sync.setModelObservable(this.model.comments);
-
-            sync.setViewModelInsertionHandler(function (vm) {
-                return _this.insertCommentViewModel(vm);
-            });
-            sync.setViewModelRemovalHandler(function (vm) {
-                return _this.removeCommentViewModel(vm);
-            });
-            //sync.setInitialState(this.model.comments.get());
-        };
-
-        ControllerImpl.prototype.getChildKaArray = function () {
-            return this.model.getChildKaArray();
-        };
-
-        ControllerImpl.prototype.onChildKaInserted = function (kaMdl) {
-            this.childKaArraySynchronizer.inserted(kaMdl);
-        };
-
-        ControllerImpl.prototype.onChildKaRemoved = function (kaMdl) {
-            this.childKaArraySynchronizer.removed(kaMdl);
-        };
-
-        ControllerImpl.prototype.insertKaViewModel = function (vm) {
-            this.childKaViewModels.push(vm);
-        };
-
-        ControllerImpl.prototype.removeKaViewModel = function (vm) {
-            this.childKaViewModels.remove(vm);
-        };
-
-        /*private onCommentModelInserted(comment: Comment.Model) {
-        this.commentSynchronizer.inserted(comment);
-        }
-        
-        private onCommentModelRemoved(comment: Comment.Model) {
-        this.commentSynchronizer.removed(comment);
-        }*/
-        ControllerImpl.prototype.insertCommentViewModel = function (comment) {
-            this.viewModel.comments.push(comment);
-        };
-
-        ControllerImpl.prototype.removeCommentViewModel = function (comment) {
-            this.viewModel.comments.remove(comment);
         };
 
         ControllerImpl.prototype.dispose = function () {

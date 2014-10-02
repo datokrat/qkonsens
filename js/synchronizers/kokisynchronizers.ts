@@ -5,7 +5,7 @@ import KaViewModel = require('../kernaussageviewmodel')
 import KaController = require('../kernaussagecontroller')
 import ContentCommunicator = require('../contentcommunicator')
 
-export class KaSynchronizer extends Base.ChildArraySynchronizer<KaModel.Model, KaViewModel.ViewModel, KaController.Controller> {
+export class KaSynchronizer extends Base.ObservingChildArraySynchronizer<KaModel.Model, KaViewModel.ViewModel, KaController.Controller> {
 	constructor(communicator: ContentCommunicator.Main) {
 		super();
 		this.setViewModelFactory( new Factories.Factory(KaViewModel.ViewModel) );

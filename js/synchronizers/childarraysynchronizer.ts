@@ -8,10 +8,12 @@ export class ObservingChildArraySynchronizer<Model, ViewModel, Controller extend
 	
 	public setViewModelFactory(fty: Factory<ViewModel>) {
 		this.innerSync.setViewModelFactory(fty);
+		return this;
 	}
 	
 	public setControllerFactory(fty: ControllerFactory<Model, ViewModel, Controller>) {
 		this.innerSync.setControllerFactory(fty);
+		return this;
 	}
 	
 	public setModelObservable(model: Obs.ObservableArrayEx<Model>) {

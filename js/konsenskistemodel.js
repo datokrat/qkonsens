@@ -5,7 +5,7 @@ define(["require", "exports", 'contentmodel', 'rating', 'factories/event', 'obse
             this.general = ko.observable(new Content.General);
             this.context = ko.observable(new Content.Context);
             this.rating = ko.observable(new Rating.Model);
-            this.childKas = ko.observableArray();
+            this.childKas = new Observable.ObservableArrayExtender(ko.observableArray());
             this.comments = new Observable.ObservableArrayExtender(ko.observableArray());
             this.childKaInserted = context.eventFactory.create();
             this.childKaRemoved = context.eventFactory.create();
@@ -29,7 +29,7 @@ define(["require", "exports", 'contentmodel', 'rating', 'factories/event', 'obse
         };
 
         Model.prototype.getChildKaArray = function () {
-            return this.childKas();
+            return this.childKas.get();
         };
         return Model;
     })();

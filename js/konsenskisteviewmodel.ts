@@ -10,6 +10,6 @@ export class ViewModel {
 	public context: observable.Observable<Content.Context>;
 	public rating: observable.Observable<Rating.ViewModel>;
 	
-	public childKas: () => Kernaussage.ViewModel[]; //TODO: Make observable
+	public childKas: observable.ObservableArray<Kernaussage.ViewModel>; //() => Kernaussage.ViewModel[]; //TODO: Make observable
 	public comments: observable.ObservableArray<Comment.ViewModel>;
 }

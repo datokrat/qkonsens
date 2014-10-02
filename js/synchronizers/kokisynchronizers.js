@@ -13,6 +13,6 @@ define(["require", "exports", 'synchronizers/childarraysynchronizer', 'factories
             this.setControllerFactory(new Factories.ControllerFactoryEx(KaController.Controller, communicator));
         }
         return KaSynchronizer;
-    })(Base.ChildArraySynchronizer);
+    })(Base.ObservingChildArraySynchronizer);
     exports.KaSynchronizer = KaSynchronizer;
 });

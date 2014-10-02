@@ -6,10 +6,12 @@ define(["require", "exports"], function(require, exports) {
         }
         ObservingChildArraySynchronizer.prototype.setViewModelFactory = function (fty) {
             this.innerSync.setViewModelFactory(fty);
+            return this;
         };
 
         ObservingChildArraySynchronizer.prototype.setControllerFactory = function (fty) {
             this.innerSync.setControllerFactory(fty);
+            return this;
         };
 
         ObservingChildArraySynchronizer.prototype.setModelObservable = function (model) {
