@@ -1,4 +1,4 @@
-define(["require", "exports", 'contentmodel', 'rating', 'factories/event'], function(require, exports, Content, Rating, EventFactory) {
+define(["require", "exports", 'contentmodel', 'rating', 'factories/event', 'observable'], function(require, exports, Content, Rating, EventFactory, Observable) {
     var Model = (function () {
         function Model(context) {
             if (typeof context === "undefined") { context = new ModelContext; }
@@ -6,6 +6,7 @@ define(["require", "exports", 'contentmodel', 'rating', 'factories/event'], func
             this.context = ko.observable(new Content.Context);
             this.rating = ko.observable(new Rating.Model);
             this.childKas = ko.observableArray();
+            this.comments = new Observable.ObservableArrayExtender(ko.observableArray());
             this.childKaInserted = context.eventFactory.create();
             this.childKaRemoved = context.eventFactory.create();
         }

@@ -8,6 +8,8 @@ import kokiModel = require('tests/konsenskistemodel')
 import kaModel = require('tests/kernaussage')
 import kokiController = require('tests/konsenskistecontroller')
 import synchronizer = require('tests/childarraysynchronizer')
+import commentSynchronizer = require('tests/commentsynchronizer')
+import observable = require('tests/observable')
 import content = require('tests/content')
 import context = require('tests/context')
 import winKoki = require('tests/winkonsenskiste')
@@ -20,11 +22,14 @@ var asyncTest = new asyncunit.Test();
 
 asyncTest.addTestClass(new ContentCommunicator(), 'ContentCommunicator');
 asyncTest.addTestClass(new KokiCommunicator(), 'KonsenskisteCommunicator');
+
+test.addTestClass(new observable.Tests, 'Observable')
 test.addTestClass(new ContentModelTests(), 'ContentModel')
 test.addTestClass(new content.General(), 'General Content')
 test.addTestClass(new content.Context(), 'Context')
 test.addTestClass(new context.Tests(), 'Context')
 test.addTestClass(new synchronizer.Tests(), 'ChildArraySynchronizer')
+test.addTestClass(new commentSynchronizer.Tests, 'CommentSynchronizer')
 test.addTestClass(new kaModel.Tests(), 'Kernaussage')
 test.addTestClass(new kokiModel.Tests(), 'KonsenskisteModel')
 test.addTestClass(new kokiController.Tests(), 'KonsenskisteController')

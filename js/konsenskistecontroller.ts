@@ -15,12 +15,14 @@ import ContentCommunicator = require('contentcommunicator')
 import ContentController = require('contentcontroller')
 
 import Rating = require('rating')
+import Comment = require('comment')
 
 import contentVm = require('contentviewmodel');
 
 import content = require('contentcontroller')
 import KSync = require('synchronizers/ksynchronizers')
 import KokiSync = require('synchronizers/kokisynchronizers')
+import CommentSynchronizer = require('synchronizers/comment')
 
 export interface Controller {
 	dispose(): void;
@@ -42,6 +44,7 @@ export class ControllerImpl implements Controller {
 		this.initCommunicator();
 		
 		this.initKas();
+		this.initComments();
 		
 		this.generalContentSynchronizer = new KSync.GeneralContentSynchronizer(communicator.content)
 			.setViewModelChangedHandler( value => this.viewModel.general(value) )
@@ -67,6 +70,10 @@ export class ControllerImpl implements Controller {
 		this.modelSubscriptions = [
 			this.model.childKaInserted.subscribe( args => this.onChildKaInserted(args.childKa) ),
 			this.model.childKaRemoved.subscribe( args => this.onChildKaRemoved(args.childKa) ),
+			
+			this.model.comments.pushed.subscribe( comment => this.commentSynchronizer.inserted(comment) ),
+			this.model.comments.removed.subscribe( comment => this.commentSynchronizer.removed(comment) ),
+			this.model.comments.changed.subscribe( old => this.commentSynchronizer.setInitialState(this.model.comments.get()) )
 		];
 	}
 	
@@ -74,6 +81,7 @@ export class ControllerImpl implements Controller {
 		this.viewModel.general = ko.observable<ContentViewModel.General>();
 		this.viewModel.context = ko.observable<ContentViewModel.Context>();
 		this.viewModel.rating = ko.observable<Rating.ViewModel>();
+		this.viewModel.comments = ko.observableArray<Comment.ViewModel>();
 		
 		this.viewModel.childKas = this.childKaViewModels;
 	}
@@ -94,6 +102,15 @@ export class ControllerImpl implements Controller {
 	
 	private initKas() {
 		this.childKaArraySynchronizer.setInitialState(this.model.childKas());
+	}
+	
+	private initComments() {
+		var sync = this.commentSynchronizer = new CommentSynchronizer(this.communicator.content);
+		
+		sync.setViewModelInsertionHandler(vm => this.insertCommentViewModel(vm));
+		sync.setViewModelRemovalHandler(vm => this.removeCommentViewModel(vm));
+		
+		sync.setInitialState(this.model.comments.get());
 	}
 	
 	private onKokiRetrieved = (args: KokiCommunicator.ReceivedArgs) => {
@@ -121,6 +138,22 @@ export class ControllerImpl implements Controller {
 		this.childKaViewModels.remove(vm);
 	}
 	
+	private onCommentModelInserted(comment: Comment.Model) {
+		this.commentSynchronizer.inserted(comment);
+	}
+	
+	private onCommentModelRemoved(comment: Comment.Model) {
+		this.commentSynchronizer.removed(comment);
+	}
+	
+	private insertCommentViewModel(comment: Comment.ViewModel) {
+		this.viewModel.comments.push(comment);
+	}
+	
+	private removeCommentViewModel(comment: Comment.ViewModel) {
+		this.viewModel.comments.remove(comment);
+	}
+	
 	public dispose() {
 		this.generalContentSynchronizer.dispose();
 		this.contextSynchronizer.dispose();
@@ -136,6 +169,7 @@ export class ControllerImpl implements Controller {
 	
 	private childKaViewModels = ko.observableArray<kernaussageVm.ViewModel>();
 	private childKaArraySynchronizer: KokiSync.KaSynchronizer;
+	private commentSynchronizer: CommentSynchronizer;
 		
 	private generalContentSynchronizer: KSync.GeneralContentSynchronizer;
 	private contextSynchronizer: KSync.ContextSynchronizer;

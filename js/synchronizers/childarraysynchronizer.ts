@@ -20,10 +20,12 @@ export class ChildArraySynchronizer<Model, ViewModel, Controller extends { dispo
 	}
 	
 	public setInitialState( models: Model[] ) {
+		this.clear();
 		models.forEach(this.inserted.bind(this));
 	}
 	
 	public inserted( m: Model ) {
+		console.log(m);
 		if(this.entryKeys.indexOf(m) == -1) {
 			var v = this.viewModelFactory.create();
 			var c = this.controllerFactory.create(m, v);
@@ -49,11 +51,15 @@ export class ChildArraySynchronizer<Model, ViewModel, Controller extends { dispo
 		}
 	}
 	
-	public dispose() {
+	public clear() {
 		while(this.entryKeys.length > 0) {
 			var key = this.entryKeys[this.entryKeys.length-1];
 			this.removed(key);
 		}
+	}
+	
+	public dispose() {
+		this.clear();
 	}
 	
 	private viewModelFactory: Factory<ViewModel>;

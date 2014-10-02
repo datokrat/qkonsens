@@ -9,6 +9,7 @@ import vm = require('../konsenskisteviewmodel')
 import ctr = require('../konsenskistecontroller')
 import ContentModel = require('../contentmodel')
 import Rating = require('../rating')
+import Comment = require('../comment')
 import KokiCommunicator = require('tests/testkonsenskistecommunicator')
 
 import Event = require('../event')
@@ -121,6 +122,19 @@ export class Tests extends unit.TestClass {
 		test.assert( () => viewModel.general().title() != 'title' );
 		test.assert( () => viewModel.context().text() != 'context' );
 		test.assert( () => viewModel.rating().personalRating() != 'like');
+	}
+	
+	testComments() {
+		var model = this.kkModelFactory.create('Basisdemokratie');
+		var viewModel = new vm.ViewModel();
+		var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator);
+		
+		var comment = new Comment.Model();
+		comment.content().text('A Comment');
+		model.comments.push(comment);
+		
+		test.assert( () => viewModel.comments().length == 1 );
+		test.assert( () => viewModel.comments()[0].content().text() == 'A Comment' );
 	}
 }
 

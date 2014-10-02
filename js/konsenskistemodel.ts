@@ -3,6 +3,7 @@ import evt = require('event')
 import kernaussageModel = require('kernaussagemodel')
 import Content = require('contentmodel')
 import Rating = require('rating')
+import Comment = require('comment')
 
 import EventFactory = require('factories/event')
 import Observable = require('observable')
@@ -13,6 +14,8 @@ export class Model {
 	public context: Observable.Observable<Content.Context> = ko.observable<Content.Context>( new Content.Context );
 	public rating: Observable.Observable<Rating.Model> = ko.observable<Rating.Model>( new Rating.Model );
 	public childKas: Observable.ObservableArray<kernaussageModel.Model> = ko.observableArray<kernaussageModel.Model>();
+	public comments: Observable.ObservableArrayEx<Comment.Model> 
+		= new Observable.ObservableArrayExtender(ko.observableArray<Comment.Model>());
 	
 	public set(model: Model) {
 		this.id = model.id;

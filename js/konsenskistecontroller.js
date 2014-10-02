@@ -1,4 +1,4 @@
-define(["require", "exports", 'synchronizers/ksynchronizers', 'synchronizers/kokisynchronizers'], function(require, exports, KSync, KokiSync) {
+define(["require", "exports", 'synchronizers/ksynchronizers', 'synchronizers/kokisynchronizers', 'synchronizers/comment'], function(require, exports, KSync, KokiSync, CommentSynchronizer) {
     var ControllerImpl = (function () {
         function ControllerImpl(model, viewModel, communicator) {
             var _this = this;
@@ -21,6 +21,7 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'synchronizers/kok
             this.initCommunicator();
 
             this.initKas();
+            this.initComments();
 
             this.generalContentSynchronizer = new KSync.GeneralContentSynchronizer(communicator.content).setViewModelChangedHandler(function (value) {
                 return _this.viewModel.general(value);
@@ -56,6 +57,15 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'synchronizers/kok
                 }),
                 this.model.childKaRemoved.subscribe(function (args) {
                     return _this.onChildKaRemoved(args.childKa);
+                }),
+                this.model.comments.pushed.subscribe(function (comment) {
+                    return _this.commentSynchronizer.inserted(comment);
+                }),
+                this.model.comments.removed.subscribe(function (comment) {
+                    return _this.commentSynchronizer.removed(comment);
+                }),
+                this.model.comments.changed.subscribe(function (old) {
+                    return _this.commentSynchronizer.setInitialState(_this.model.comments.get());
                 })
             ];
         };
@@ -64,6 +74,7 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'synchronizers/kok
             this.viewModel.general = ko.observable();
             this.viewModel.context = ko.observable();
             this.viewModel.rating = ko.observable();
+            this.viewModel.comments = ko.observableArray();
 
             this.viewModel.childKas = this.childKaViewModels;
         };
@@ -87,6 +98,20 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'synchronizers/kok
             this.childKaArraySynchronizer.setInitialState(this.model.childKas());
         };
 
+        ControllerImpl.prototype.initComments = function () {
+            var _this = this;
+            var sync = this.commentSynchronizer = new CommentSynchronizer(this.communicator.content);
+
+            sync.setViewModelInsertionHandler(function (vm) {
+                return _this.insertCommentViewModel(vm);
+            });
+            sync.setViewModelRemovalHandler(function (vm) {
+                return _this.removeCommentViewModel(vm);
+            });
+
+            sync.setInitialState(this.model.comments.get());
+        };
+
         ControllerImpl.prototype.getChildKaArray = function () {
             return this.model.getChildKaArray();
         };
@@ -105,6 +130,22 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'synchronizers/kok
 
         ControllerImpl.prototype.removeKaViewModel = function (vm) {
             this.childKaViewModels.remove(vm);
+        };
+
+        ControllerImpl.prototype.onCommentModelInserted = function (comment) {
+            this.commentSynchronizer.inserted(comment);
+        };
+
+        ControllerImpl.prototype.onCommentModelRemoved = function (comment) {
+            this.commentSynchronizer.removed(comment);
+        };
+
+        ControllerImpl.prototype.insertCommentViewModel = function (comment) {
+            this.viewModel.comments.push(comment);
+        };
+
+        ControllerImpl.prototype.removeCommentViewModel = function (comment) {
+            this.viewModel.comments.remove(comment);
         };
 
         ControllerImpl.prototype.dispose = function () {

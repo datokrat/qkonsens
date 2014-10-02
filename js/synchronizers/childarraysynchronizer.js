@@ -28,10 +28,12 @@ define(["require", "exports"], function(require, exports) {
         };
 
         ChildArraySynchronizer.prototype.setInitialState = function (models) {
+            this.clear();
             models.forEach(this.inserted.bind(this));
         };
 
         ChildArraySynchronizer.prototype.inserted = function (m) {
+            console.log(m);
             if (this.entryKeys.indexOf(m) == -1) {
                 var v = this.viewModelFactory.create();
                 var c = this.controllerFactory.create(m, v);
@@ -56,11 +58,15 @@ define(["require", "exports"], function(require, exports) {
             }
         };
 
-        ChildArraySynchronizer.prototype.dispose = function () {
+        ChildArraySynchronizer.prototype.clear = function () {
             while (this.entryKeys.length > 0) {
                 var key = this.entryKeys[this.entryKeys.length - 1];
                 this.removed(key);
             }
+        };
+
+        ChildArraySynchronizer.prototype.dispose = function () {
+            this.clear();
         };
         return ChildArraySynchronizer;
     })();
