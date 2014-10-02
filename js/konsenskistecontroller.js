@@ -49,7 +49,7 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'synchronizers/kok
             var _this = this;
             this.viewModel.context = ko.observable();
 
-            this.contextSynchronizer = new KSync.ContextSynchronizer().setViewModelChangedHandler(function (value) {
+            this.contextSynchronizer = new KSync.ContextSynchronizer(this.communicator.content).setViewModelChangedHandler(function (value) {
                 return _this.viewModel.context(value);
             }).setModelObservable(this.model.context);
         };
@@ -64,12 +64,7 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'synchronizers/kok
         };
 
         ControllerImpl.prototype.initCommunicator = function () {
-            var _this = this;
             this.communicatorSubscriptions = ([
-                this.communicator.content.contextRetrieved.subscribe(function (args) {
-                    if (args.context.id == _this.model.context().id)
-                        _this.model.context().set(args.context);
-                }),
                 this.communicator.received.subscribe(this.onKokiRetrieved)
             ]);
         };

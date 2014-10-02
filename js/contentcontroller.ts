@@ -42,7 +42,8 @@ export class General {
 }
 
 export class Context {
-	constructor( model: Model.Context, viewModel: ViewModel.Context ) {
+	constructor( model: Model.Context, viewModel: ViewModel.Context, communicator: Communicator.Main ) {
+		this.model = model;
 		this.viewModel = viewModel;
 		
 		this.viewModel.text = ko.computed( () => model.text() );
@@ -50,6 +51,14 @@ export class Context {
 		
 		this.viewModel.toggleVisibility = new Events.EventImpl<Events.Void>();
 		this.viewModel.toggleVisibility.subscribe( () => this.toggleVisibility() );
+		
+		this.communicator = communicator;
+		this.communicator.contextRetrieved.subscribe(this.onUpdateRetrieved);
+	}
+	
+	private onUpdateRetrieved = (args: Communicator.ContextRetrievedArgs) => {
+		if(this.model.id == args.context.id)
+			this.model.set(args.context);
 	}
 	
 	private toggleVisibility() {
@@ -59,38 +68,10 @@ export class Context {
 	
 	public dispose() {
 		this.viewModel.text.dispose();
+		this.communicator.contextRetrieved.unsubscribe(this.onUpdateRetrieved);
 	}
 	
+	private model: Model.Context;
 	private viewModel: ViewModel.Context;
+	private communicator: Communicator.Main;
 }
-
-/*export class WithContext extends Controller {
-	constructor(model: mdl.WithContext, viewModel: vm.WithContext, communicator: Communicator.Main) {
-		super(model, viewModel, communicator);
-		this.initContext(model, viewModel);
-	}
-	
-	private initContext(model: mdl.WithContext, viewModel: vm.WithContext) {
-		this.viewModelWithContext = viewModel;
-		this.modelWithContext = model;
-		
-		this.viewModelWithContext.context = ko.observable<ContextViewModel>( new ContextViewModel );
-		
-		var contextModel = this.modelWithContext.context();
-		var contextViewModel = this.viewModelWithContext.context();
-		var contextController = new ContextController( contextModel, contextViewModel );
-		
-		this.context = contextController;
-	}
-	
-	public dispose() {
-		Controller.prototype.dispose.apply(this, arguments);
-		
-		this.context.dispose();
-	}
-	
-	private viewModelWithContext: vm.WithContext;
-	private modelWithContext: mdl.WithContext;
-	
-	private context: ContextController;
-}*/

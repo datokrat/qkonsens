@@ -19,10 +19,10 @@ export class GeneralContentSynchronizer
 export class ContextSynchronizer 
 	extends Base.ChildSynchronizer<ContentModel.Context, ContentViewModel.Context, ContentController.Context>
 {
-	constructor() {
+	constructor(communicator: ContentCommunicator.Main) {
 		super();
 		this.setViewModelFactory( new Factories.Factory(ContentViewModel.Context) );
-		this.setControllerFactory( new Factories.ControllerFactory(ContentController.Context) );
+		this.setControllerFactory( new Factories.ControllerFactoryEx(ContentController.Context, communicator) );
 	}
 }
 

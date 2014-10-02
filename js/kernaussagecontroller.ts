@@ -28,7 +28,7 @@ export class Controller {
 			.setViewModelChangedHandler( general => this.viewModel.general(general) )
 			.setModelObservable(model.general);
 
-		this.context = new ContentController.Context(model.context(), viewModel.context());
+		this.context = new ContentController.Context(model.context(), viewModel.context(), communicator);
 	}
 	
 	public dispose() {

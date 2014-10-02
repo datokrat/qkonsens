@@ -33,8 +33,13 @@ define(["require", "exports", 'event'], function(require, exports, Events) {
     exports.General = General;
 
     var Context = (function () {
-        function Context(model, viewModel) {
+        function Context(model, viewModel, communicator) {
             var _this = this;
+            this.onUpdateRetrieved = function (args) {
+                if (_this.model.id == args.context.id)
+                    _this.model.set(args.context);
+            };
+            this.model = model;
             this.viewModel = viewModel;
 
             this.viewModel.text = ko.computed(function () {
@@ -46,6 +51,9 @@ define(["require", "exports", 'event'], function(require, exports, Events) {
             this.viewModel.toggleVisibility.subscribe(function () {
                 return _this.toggleVisibility();
             });
+
+            this.communicator = communicator;
+            this.communicator.contextRetrieved.subscribe(this.onUpdateRetrieved);
         }
         Context.prototype.toggleVisibility = function () {
             var isVisible = this.viewModel.isVisible();
@@ -54,30 +62,9 @@ define(["require", "exports", 'event'], function(require, exports, Events) {
 
         Context.prototype.dispose = function () {
             this.viewModel.text.dispose();
+            this.communicator.contextRetrieved.unsubscribe(this.onUpdateRetrieved);
         };
         return Context;
     })();
     exports.Context = Context;
 });
-/*export class WithContext extends Controller {
-constructor(model: mdl.WithContext, viewModel: vm.WithContext, communicator: Communicator.Main) {
-super(model, viewModel, communicator);
-this.initContext(model, viewModel);
-}
-private initContext(model: mdl.WithContext, viewModel: vm.WithContext) {
-this.viewModelWithContext = viewModel;
-this.modelWithContext = model;
-this.viewModelWithContext.context = ko.observable<ContextViewModel>( new ContextViewModel );
-var contextModel = this.modelWithContext.context();
-var contextViewModel = this.viewModelWithContext.context();
-var contextController = new ContextController( contextModel, contextViewModel );
-this.context = contextController;
-}
-public dispose() {
-Controller.prototype.dispose.apply(this, arguments);
-this.context.dispose();
-}
-private viewModelWithContext: vm.WithContext;
-private modelWithContext: mdl.WithContext;
-private context: ContextController;
-}*/

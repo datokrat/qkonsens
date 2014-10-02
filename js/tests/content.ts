@@ -41,7 +41,7 @@ export class Context {
 	testModelWithContext() {
 		var model = this.modelFactory.createContext('Context');
 		var viewModel = new vm.Context();
-		var controller = new ctr.Context(model, viewModel);
+		var controller = new ctr.Context(model, viewModel, new ContentCommunicator);
 		
 		test.assert( () => viewModel.text() == 'Context' );
 	}
@@ -49,7 +49,7 @@ export class Context {
 	testDisposeWithContext() {
 		var model = this.modelFactory.createContext('Context');
 		var viewModel = new vm.Context();
-		var controller = new ctr.Context(model, viewModel);
+		var controller = new ctr.Context(model, viewModel, new ContentCommunicator);
 		
 		controller.dispose();
 		model.text('New Context');

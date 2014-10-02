@@ -18,10 +18,10 @@ define(["require", "exports", 'synchronizers/childsynchronizer', 'factories/cons
 
     var ContextSynchronizer = (function (_super) {
         __extends(ContextSynchronizer, _super);
-        function ContextSynchronizer() {
+        function ContextSynchronizer(communicator) {
             _super.call(this);
             this.setViewModelFactory(new Factories.Factory(ContentViewModel.Context));
-            this.setControllerFactory(new Factories.ControllerFactory(ContentController.Context));
+            this.setControllerFactory(new Factories.ControllerFactoryEx(ContentController.Context, communicator));
         }
         return ContextSynchronizer;
     })(Base.ChildSynchronizer);

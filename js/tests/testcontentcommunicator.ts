@@ -6,12 +6,18 @@ class TestCommunicator implements Interface.Main {
 	public generalContentRetrieved = new Events.EventImpl<Interface.GeneralContentRetrievedArgs>();
 	public contextRetrieved = new Events.EventImpl<Interface.ContextRetrievedArgs>();
 	private generalTestContent: any = {};
+	private testContext: any = {};
 	
 	public setGeneralTestContent(generalContent: ContentModel.General) {
-		if(typeof generalContent.id === 'number') {
+		if(typeof generalContent.id === 'number')
 			this.generalTestContent[generalContent.id] = generalContent;
-		}
 		else throw new Error('TestContentCommunicator.setGeneralTestContent: generalContent.id is not a number');
+	}
+	
+	public setTestContext(context: ContentModel.Context) {
+		if(typeof context.id === 'number')
+			this.testContext[context.id] = context;
+		else throw new Error('TestContentCommunicator.setTestContext: context.id is not a number');
 	}
 	
 	public queryGeneral(id: number) {
@@ -23,6 +29,10 @@ class TestCommunicator implements Interface.Main {
 	}
 	
 	public queryContext(id: number) {
+		var context = this.testContext[id];
+		if(typeof context !== 'undefined')
+			this.contextRetrieved.raise({ context: context });
+		else throw new Error('TestContentCommunicator.queryContext: id not found');
 	}
 	
 	public query(id: number) {

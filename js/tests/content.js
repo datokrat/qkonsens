@@ -53,7 +53,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../factories/conten
         Context.prototype.testModelWithContext = function () {
             var model = this.modelFactory.createContext('Context');
             var viewModel = new vm.Context();
-            var controller = new ctr.Context(model, viewModel);
+            var controller = new ctr.Context(model, viewModel, new ContentCommunicator);
 
             test.assert(function () {
                 return viewModel.text() == 'Context';
@@ -63,7 +63,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../factories/conten
         Context.prototype.testDisposeWithContext = function () {
             var model = this.modelFactory.createContext('Context');
             var viewModel = new vm.Context();
-            var controller = new ctr.Context(model, viewModel);
+            var controller = new ctr.Context(model, viewModel, new ContentCommunicator);
 
             controller.dispose();
             model.text('New Context');

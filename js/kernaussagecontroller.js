@@ -14,7 +14,7 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'contentcontroller
                 return _this.viewModel.general(general);
             }).setModelObservable(model.general);
 
-            this.context = new ContentController.Context(model.context(), viewModel.context());
+            this.context = new ContentController.Context(model.context(), viewModel.context(), communicator);
         };
 
         Controller.prototype.dispose = function () {

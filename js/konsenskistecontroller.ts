@@ -75,7 +75,7 @@ export class ControllerImpl implements Controller {
 	private initContext() {
 		this.viewModel.context = ko.observable<ContentViewModel.Context>();
 		
-		this.contextSynchronizer = new KSync.ContextSynchronizer()
+		this.contextSynchronizer = new KSync.ContextSynchronizer(this.communicator.content)
 			.setViewModelChangedHandler( value => this.viewModel.context(value) )
 			.setModelObservable(this.model.context);
 	}
@@ -90,10 +90,6 @@ export class ControllerImpl implements Controller {
 	
 	private initCommunicator() {
 		this.communicatorSubscriptions = ([
-			this.communicator.content.contextRetrieved.subscribe((args: ContentCommunicator.ContextRetrievedArgs) => {
-				if(args.context.id == this.model.context().id)
-					this.model.context().set( args.context );
-			}),
 			this.communicator.received.subscribe(this.onKokiRetrieved)
 		]);
 	}
