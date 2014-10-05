@@ -3,6 +3,7 @@ define(["require", "exports", 'event', 'tests/testcontentcommunicator'], functio
         function TestKokiCommunicator() {
             this.content = new TestContentCommunicator;
             this.received = new Events.EventImpl();
+            this.commentsReceived = new Events.EventImpl();
             this.testKokis = {};
         }
         TestKokiCommunicator.prototype.setTestKoki = function (koki) {
@@ -18,6 +19,14 @@ define(["require", "exports", 'event', 'tests/testcontentcommunicator'], functio
                 this.received.raise({ id: id, konsenskiste: koki });
             } else
                 throw new Error('TestKokiCommunicator.queryKoki: id not found');
+        };
+
+        TestKokiCommunicator.prototype.queryComments = function (id) {
+            var koki = this.testKokis[id];
+            if (typeof koki !== 'undefined')
+                this.commentsReceived.raise({ id: id, comments: koki.comments.get() });
+            else
+                throw new Error('TestKokiCommunicator.queryComments: id not found');
         };
         return TestKokiCommunicator;
     })();

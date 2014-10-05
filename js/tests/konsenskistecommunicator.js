@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/asyncunit', 'tests/test', '../common', 'tests/testkonsenskistecommunicator', '../konsenskistemodel', '../konsenskisteviewmodel', '../konsenskistecontroller'], function(require, exports, unit, test, common, TestKokiCommunicator, KokiModel, KokiViewModel, KokiController) {
+define(["require", "exports", 'tests/asyncunit', 'tests/test', '../common', 'tests/testkonsenskistecommunicator', '../konsenskistemodel', '../konsenskisteviewmodel', '../konsenskistecontroller', 'comment'], function(require, exports, unit, test, common, TestKokiCommunicator, KokiModel, KokiViewModel, KokiController, Comment) {
     var TestClass = (function (_super) {
         __extends(TestClass, _super);
         function TestClass() {
@@ -47,6 +47,29 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', '../common', 'tes
                     });
                     test.assert(function () {
                         return _this.mdl.general().text() == 'Text #1';
+                    });
+                    r();
+                }
+            ], r);
+        };
+
+        TestClass.prototype.queryComments = function (cxt, r) {
+            var _this = this;
+            common.Callbacks.batch([
+                function (r) {
+                    _this.mdl.id = 1;
+                    var koki = new KokiModel.Model();
+                    koki.id = 1;
+                    koki.comments.set([new Comment.Model]);
+
+                    _this.com.setTestKoki(koki);
+                    _this.com.queryComments(1);
+
+                    setTimeout(r);
+                },
+                function (r) {
+                    test.assert(function () {
+                        return _this.mdl.comments.get().length == 1;
                     });
                     r();
                 }

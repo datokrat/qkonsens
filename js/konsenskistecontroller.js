@@ -2,9 +2,13 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'synchronizers/kok
     var ControllerImpl = (function () {
         function ControllerImpl(model, viewModel, communicator) {
             var _this = this;
-            this.onKokiRetrieved = function (args) {
+            this.onKokiReceived = function (args) {
                 if (_this.model.id == args.konsenskiste.id)
                     _this.model.set(args.konsenskiste);
+            };
+            this.onCommentsReceived = function (args) {
+                if (_this.model.id == args.id)
+                    _this.model.comments.set(args.comments);
             };
             this.modelSubscriptions = [];
             this.communicatorSubscriptions = [];
@@ -15,8 +19,8 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'synchronizers/kok
             this.viewModel = viewModel;
             this.communicator = communicator;
 
-            this.initViewModel();
             this.initCommunicator();
+            this.initViewModel();
 
             this.initKas();
             this.initComments();
@@ -34,6 +38,7 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'synchronizers/kok
             var _this = this;
             this.viewModel.discussionClick = function () {
                 if (_this.cxt) {
+                    _this.communicator.queryComments(_this.model.id);
                     _this.cxt.discussionWindow.discussable(_this.viewModel);
                     _this.cxt.setLeftWindow(_this.cxt.discussionWindow);
                 }
@@ -81,7 +86,8 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'synchronizers/kok
 
         ControllerImpl.prototype.initCommunicator = function () {
             this.communicatorSubscriptions = ([
-                this.communicator.received.subscribe(this.onKokiRetrieved)
+                this.communicator.received.subscribe(this.onKokiReceived),
+                this.communicator.commentsReceived.subscribe(this.onCommentsReceived)
             ]);
         };
 

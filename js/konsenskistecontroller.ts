@@ -41,8 +41,8 @@ export class ControllerImpl implements Controller {
 		this.viewModel = viewModel;
 		this.communicator = communicator;
 		
-		this.initViewModel();
 		this.initCommunicator();
+		this.initViewModel();
 		
 		this.initKas();
 		this.initComments();
@@ -59,6 +59,7 @@ export class ControllerImpl implements Controller {
 	private initViewModel() {
 		this.viewModel.discussionClick = () => {
 			if(this.cxt) {
+				this.communicator.queryComments(this.model.id);
 				this.cxt.discussionWindow.discussable(this.viewModel);
 				this.cxt.setLeftWindow(this.cxt.discussionWindow);
 			}
@@ -107,13 +108,19 @@ export class ControllerImpl implements Controller {
 	
 	private initCommunicator() {
 		this.communicatorSubscriptions = ([
-			this.communicator.received.subscribe(this.onKokiRetrieved)
+			this.communicator.received.subscribe(this.onKokiReceived),
+			this.communicator.commentsReceived.subscribe(this.onCommentsReceived),
 		]);
 	}
 	
-	private onKokiRetrieved = (args: KokiCommunicator.ReceivedArgs) => {
+	private onKokiReceived = (args: KokiCommunicator.ReceivedArgs) => {
 		if(this.model.id == args.konsenskiste.id)
 			this.model.set( args.konsenskiste );
+	}
+	
+	private onCommentsReceived = (args: KokiCommunicator.CommentsReceivedArgs) => {
+		if(this.model.id == args.id)
+			this.model.comments.set(args.comments);
 	}
 	
 	public dispose() {

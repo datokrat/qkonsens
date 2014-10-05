@@ -12,6 +12,7 @@ import ContentModel = require('contentmodel')
 class KonsenskisteCommunicator implements ICommunicator.Main {
 	public content: IContentCommunicator.Main;
 	public received = new Events.EventImpl<ICommunicator.ReceivedArgs>();
+	public commentsReceived = new Events.EventImpl<ICommunicator.CommentsReceivedArgs>();
 	
 	constructor() {
 		this.content = new ContentCommunicator;
@@ -27,6 +28,9 @@ class KonsenskisteCommunicator implements ICommunicator.Main {
 			var parsedKoki = this.parse(rawKokis[0]);
 			this.received.raise({ id: id, konsenskiste: parsedKoki });
 		});
+	}
+	
+	public queryComments(id: number) {
 	}
 	
 	private queryRaw(id: number) {

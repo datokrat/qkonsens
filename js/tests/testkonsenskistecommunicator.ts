@@ -10,6 +10,7 @@ class TestKokiCommunicator implements KokiCommunicator.Main {
 	public content = new TestContentCommunicator;
 	
 	public received = new Events.EventImpl<KokiCommunicator.ReceivedArgs>();
+	public commentsReceived = new Events.EventImpl<KokiCommunicator.CommentsReceivedArgs>();
 	
 	private testKokis: any = {};
 	
@@ -26,6 +27,14 @@ class TestKokiCommunicator implements KokiCommunicator.Main {
 			this.received.raise({ id: id, konsenskiste: koki });
 		}
 		else throw new Error('TestKokiCommunicator.queryKoki: id not found');
+	}
+	
+	public queryComments(id: number) {
+		var koki = this.testKokis[id];
+		if(typeof koki !== 'undefined')
+			this.commentsReceived.raise({ id: id, comments: koki.comments.get() });
+		else
+			throw new Error('TestKokiCommunicator.queryComments: id not found');
 	}
 }
 

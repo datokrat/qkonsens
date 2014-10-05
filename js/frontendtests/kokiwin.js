@@ -12,6 +12,7 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
             var communicator = reloader.communicator();
 
             var konsenskiste = new koki.Model;
+            konsenskiste.id = 1;
             konsenskiste.general().title('Konsenskisten-Titel');
             konsenskiste.general().text('Lorem ipsum dolor sit amet');
             konsenskiste.context().text('ipsum (lat.): selbst');
@@ -169,20 +170,18 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
             ], r);
         };
 
-        Tests.prototype.testComments = function (cxt, r) {
+        Tests.prototype.commentsByCommunicator = function (cxt, r) {
             var _this = this;
             common.Callbacks.batch([
                 function (r) {
                     var model = reloader.model();
-                    var kokiModel = new koki.Model();
-                    kokiModel.id = 15;
-                    kokiModel.general().title('hi');
-
-                    kokiModel.comments.push(new Comment.Model);
-                    kokiModel.comments.get()[0].content().title('Ein Titel');
-                    kokiModel.comments.get()[0].content().text('!@?');
-
-                    model.konsenskiste(kokiModel);
+                    var communicator = reloader.communicator();
+                    var serverModel = new koki.Model();
+                    serverModel.id = 1;
+                    var comment = new Comment.Model();
+                    comment.content().text('Comment');
+                    serverModel.comments.set([comment]);
+                    communicator.konsenskiste.setTestKoki(serverModel);
                     setTimeout(r, 0);
                 },
                 function (r) {
@@ -191,7 +190,7 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
                 },
                 function (r) {
                     test.assert(function () {
-                        return _this.webot.query('.cmt').child('*').text('!@?').exists();
+                        return _this.webot.query('.cmt').child('*').text('Comment').exists();
                     });
                     r();
                 }

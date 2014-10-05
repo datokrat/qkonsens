@@ -2,6 +2,7 @@ define(["require", "exports", 'event', 'discocontext', 'contentcommunicatorimpl'
     var KonsenskisteCommunicator = (function () {
         function KonsenskisteCommunicator() {
             this.received = new Events.EventImpl();
+            this.commentsReceived = new Events.EventImpl();
             this.content = new ContentCommunicator;
         }
         KonsenskisteCommunicator.prototype.queryKoki = function (id, err) {
@@ -15,6 +16,9 @@ define(["require", "exports", 'event', 'discocontext', 'contentcommunicatorimpl'
                 var parsedKoki = _this.parse(rawKokis[0]);
                 _this.received.raise({ id: id, konsenskiste: parsedKoki });
             });
+        };
+
+        KonsenskisteCommunicator.prototype.queryComments = function (id) {
         };
 
         KonsenskisteCommunicator.prototype.queryRaw = function (id) {

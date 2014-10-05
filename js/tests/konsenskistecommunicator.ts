@@ -7,6 +7,7 @@ import TestKokiCommunicator = require('tests/testkonsenskistecommunicator')
 import KokiModel = require('../konsenskistemodel')
 import KokiViewModel = require('../konsenskisteviewmodel')
 import KokiController = require('../konsenskistecontroller')
+import Comment = require('comment')
 
 class TestClass extends unit.TestClass {
 	private com: TestKokiCommunicator;
@@ -49,6 +50,26 @@ class TestClass extends unit.TestClass {
 				test.assert( () => this.mdl.general().text() == 'Text #1' );
 				r();
 			},
+		], r);
+	}
+	
+	queryComments(cxt, r) {
+		common.Callbacks.batch([
+			r => {
+				this.mdl.id = 1;
+				var koki = new KokiModel.Model();
+				koki.id = 1;
+				koki.comments.set([new Comment.Model]);
+				
+				this.com.setTestKoki(koki);
+				this.com.queryComments(1);
+				
+				setTimeout(r);
+			},
+			r => {
+				test.assert( () => this.mdl.comments.get().length == 1 );
+				r();
+			}
 		], r);
 	}
 }
