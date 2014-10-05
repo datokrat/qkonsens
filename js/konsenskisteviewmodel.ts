@@ -12,4 +12,6 @@ export class ViewModel {
 	
 	public childKas: observable.ObservableArray<Kernaussage.ViewModel>; //() => Kernaussage.ViewModel[]; //TODO: Make observable
 	public comments: observable.ObservableArray<Comment.ViewModel>;
+	
+	public discussionClick: () => void;
 }

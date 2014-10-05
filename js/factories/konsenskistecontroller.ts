@@ -14,4 +14,5 @@ export class Factory {
 
 class NullController implements ctr.Controller {
 	dispose() {}
+	setContext() {}
 }

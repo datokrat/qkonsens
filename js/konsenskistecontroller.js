@@ -15,6 +15,7 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'synchronizers/kok
             this.viewModel = viewModel;
             this.communicator = communicator;
 
+            this.initViewModel();
             this.initCommunicator();
 
             this.initKas();
@@ -22,6 +23,21 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'synchronizers/kok
             this.initGeneralContent();
             this.initContext();
             this.initRating();
+        };
+
+        ControllerImpl.prototype.setContext = function (cxt) {
+            this.cxt = cxt;
+            return this;
+        };
+
+        ControllerImpl.prototype.initViewModel = function () {
+            var _this = this;
+            this.viewModel.discussionClick = function () {
+                if (_this.cxt) {
+                    _this.cxt.discussionWindow.discussable(_this.viewModel);
+                    _this.cxt.setLeftWindow(_this.cxt.discussionWindow);
+                }
+            };
         };
 
         ControllerImpl.prototype.initKas = function () {

@@ -9,8 +9,8 @@ import mdl = require('model')
 import vm = require('viewmodel')
 import ctr = require('controller')
 
+import Comment = require('comment')
 import koki = require('konsenskistemodel')
-
 import ka = require('kernaussagemodel')
 
 import TestCommunicator = require('tests/testcommunicator')
@@ -138,6 +138,32 @@ export class Tests {
 				test.assert( () => this.webot.query('h1').text('New Title').exists() );
 				test.assert( () => this.webot.query('*').text('New Text').exists() );
 				test.assert( () => this.webot.query('*').text('Klärtext aufklappen').exists(false) );
+				r();
+			}
+		], r);
+	}
+	
+	testComments(cxt, r) {
+		common.Callbacks.batch([
+			r => {
+				var model = reloader.model();
+				var kokiModel = new koki.Model();
+				kokiModel.id = 15;
+				kokiModel.general().title('hi');
+				
+				kokiModel.comments.push(new Comment.Model);
+				kokiModel.comments.get()[0].content().title('Ein Titel');
+				kokiModel.comments.get()[0].content().text('!@?');
+				
+				model.konsenskiste(kokiModel);
+				setTimeout(r, 0);
+			},
+			r => {
+				this.webot.query('.kk .controls').child('*').contains('Diskussion').click();
+				setTimeout(r, 100);
+			},
+			r => {
+				test.assert( () => this.webot.query('.cmt').child('*').text('!@?').exists() );
 				r();
 			}
 		], r);

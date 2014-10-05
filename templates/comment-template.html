@@ -2,9 +2,9 @@
 	<!-- ko if: $root.isAdmin -->
 		<a class="clickable symbol" style="float: right" data-bind="click: remove_onClick">x</a>
 	<!-- /ko -->
-	<!-- ko if: title() && title().length -->
-		<h1 class="title" data-bind="text: title"></h1>
+	<!-- ko if: content().title() && content().title().length -->
+		<h1 class="title" data-bind="text: content().title"></h1>
 	<!-- /ko -->
-	<p><span class="text" data-bind="text: text"></span></p>
+	<p><span class="text" data-bind="text: content().text"></span></p>
 	<!-- ko template: { name: 'likerating-template' } --><!-- /ko -->
 </div>

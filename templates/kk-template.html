@@ -18,6 +18,8 @@
 				 type="radio" name="rating" value="none" data-bind="checked: personalRating(), click: select('none'), attr: {name: id + '-rating', id: id + '-none'}"/><label data-bind="attr: {for: id + '-none'}">?
 				 </label>
 			</div>
+			<a data-bind="click: discussionClick">Diskussion</a>
+			<!--a class="clickable" data-bind="click: openCommentWindow"></a-->
 	</div>
 	
 	<!-- ko foreach: childKas -->

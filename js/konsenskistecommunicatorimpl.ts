@@ -57,15 +57,10 @@ class KonsenskisteCommunicator implements ICommunicator.Main {
 		this.parseGeneralContent(rawKoki, koki.general());
 		this.parseContext(rawKoki, koki.context());
 		
-		/*rawKoki.RefersTo.forEach(reference => {
-			if(reference.ReferenceType.Description.Name == 'Context') {
-				koki.context().text(reference.Referree.Content.Text);
-			}
-		});*/
-		
 		rawKoki.ReferredFrom.forEach(reference => {
 			if(reference.ReferenceType.Description.Name == 'Part') {
-				koki.childKas.push( this.parseKa(reference.Referrer) );
+				var ka = this.parseKa(reference.Referrer);
+				koki.childKas.push(ka);
 			}
 		});
 		

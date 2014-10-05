@@ -17,8 +17,15 @@ define(["require", "exports", 'factories/konsenskistecontroller', '../konsenskis
             this.window.kkView(konsenskisteViewModel);
         };
 
+        Controller.prototype.setContext = function (cxt) {
+            this.cxt = cxt;
+            this.konsenskisteController.setContext(cxt);
+            return this;
+        };
+
         Controller.prototype.setKonsenskisteModel = function (konsenskisteModel) {
             this.initKonsenskiste(konsenskisteModel);
+            this.setContext(this.cxt);
         };
 
         Controller.prototype.dispose = function () {

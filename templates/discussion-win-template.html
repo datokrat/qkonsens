@@ -2,15 +2,15 @@
 	<span data-bind="template: { name: 'historybar-template' }"></span>
 	Diskussion
 </h1>
-<h2 data-bind="text: parent().title()"></h2>
-<p data-bind="text: parent().text()"></p>
-<!-- ko foreach: parent().comments -->
-<div data-bind="template: { name: 'comment-template', data: $parent.cmtView($data) }"></div>
+<h2 data-bind="text: discussable().general().title"></h2>
+<p data-bind="text: discussable().general().text"></p>
+<!-- ko foreach: discussable().comments -->
+<div data-bind="template: { name: 'comment-template' }"></div>
 <!-- /ko -->
 
-<div class="cmt">
+<!--div class="cmt">
 	<form data-bind="event: { submit: function() { submitComment_onClick(); return false; } }">
 		<p><textarea maxlength="250" placeholder="Dein Beitrag" data-bind="value: newCommentText, attr: { disabled: newCommentDisabled }"></textarea></p>
 		<input type="submit" value="Beitrag abschicken" data-bind="attr: { disabled: newCommentDisabled }" />
 	</form>
-</div>
+</div-->

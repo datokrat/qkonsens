@@ -1,4 +1,4 @@
-define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendtests/webot', '../common', 'konsenskistemodel', 'kernaussagemodel'], function(require, exports, test, reloader, webot, common, koki, ka) {
+define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendtests/webot', '../common', 'comment', 'konsenskistemodel', 'kernaussagemodel'], function(require, exports, test, reloader, webot, common, Comment, koki, ka) {
     ko = top.frames[2].ko;
 
     var Tests = (function () {
@@ -163,6 +163,35 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
                     });
                     test.assert(function () {
                         return _this.webot.query('*').text('Klärtext aufklappen').exists(false);
+                    });
+                    r();
+                }
+            ], r);
+        };
+
+        Tests.prototype.testComments = function (cxt, r) {
+            var _this = this;
+            common.Callbacks.batch([
+                function (r) {
+                    var model = reloader.model();
+                    var kokiModel = new koki.Model();
+                    kokiModel.id = 15;
+                    kokiModel.general().title('hi');
+
+                    kokiModel.comments.push(new Comment.Model);
+                    kokiModel.comments.get()[0].content().title('Ein Titel');
+                    kokiModel.comments.get()[0].content().text('!@?');
+
+                    model.konsenskiste(kokiModel);
+                    setTimeout(r, 0);
+                },
+                function (r) {
+                    _this.webot.query('.kk .controls').child('*').contains('Diskussion').click();
+                    setTimeout(r, 100);
+                },
+                function (r) {
+                    test.assert(function () {
+                        return _this.webot.query('.cmt').child('*').text('!@?').exists();
                     });
                     r();
                 }

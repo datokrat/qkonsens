@@ -4,6 +4,7 @@ import Obs = require('observable')
 
 import mdl = require('konsenskistemodel')
 import vm = require('konsenskisteviewmodel')
+import ViewModelContext = require('viewmodelcontext')
 
 import kernaussageMdl = require('kernaussagemodel')
 import kernaussageVm = require('kernaussageviewmodel')
@@ -27,6 +28,7 @@ import CommentSynchronizer = require('synchronizers/comment')
 
 export interface Controller {
 	dispose(): void;
+	setContext(cxt: ViewModelContext): void;
 }
 
 export class ControllerImpl implements Controller {
@@ -39,6 +41,7 @@ export class ControllerImpl implements Controller {
 		this.viewModel = viewModel;
 		this.communicator = communicator;
 		
+		this.initViewModel();
 		this.initCommunicator();
 		
 		this.initKas();
@@ -46,6 +49,20 @@ export class ControllerImpl implements Controller {
 		this.initGeneralContent();
 		this.initContext();
 		this.initRating();
+	}
+	
+	public setContext(cxt: ViewModelContext) {
+		this.cxt = cxt;
+		return this;
+	}
+	
+	private initViewModel() {
+		this.viewModel.discussionClick = () => {
+			if(this.cxt) {
+				this.cxt.discussionWindow.discussable(this.viewModel);
+				this.cxt.setLeftWindow(this.cxt.discussionWindow);
+			}
+		}
 	}
 	
 	private initKas() {
@@ -112,7 +129,7 @@ export class ControllerImpl implements Controller {
 	private model: mdl.Model;
 	private viewModel: vm.ViewModel;
 	private communicator: KokiCommunicator.Main;
-	
+	private cxt: ViewModelContext;
 		
 	private generalContentSynchronizer: KSync.GeneralContentSynchronizer;
 	private contextSynchronizer: KSync.ContextSynchronizer;

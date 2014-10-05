@@ -5,6 +5,7 @@ import kokiMdl = require('../konsenskistemodel')
 import kokiVm = require('../konsenskisteviewmodel')
 import kokiCtr = require('../konsenskistecontroller')
 import KokiCommunicator = require('../konsenskistecommunicator')
+import ViewModelContext = require('viewmodelcontext')
 
 export class Controller {
 		constructor(konsenskisteModel: kokiMdl.Model, windowViewModel: winVm.Win, communicator: KokiCommunicator.Main) {
@@ -24,13 +25,22 @@ export class Controller {
 		this.window.kkView(konsenskisteViewModel);
 	}
 	
+	public setContext(cxt: ViewModelContext) {
+		this.cxt = cxt;
+		this.konsenskisteController.setContext(cxt);
+		return this;
+	}
+	
 	public setKonsenskisteModel(konsenskisteModel: kokiMdl.Model) {
 		this.initKonsenskiste(konsenskisteModel);
+		this.setContext(this.cxt);
 	}
 	
 	public dispose() {
 		this.konsenskisteController.dispose();
 	}
+	
+	private cxt: ViewModelContext;
 	
 	private window: winVm.Win;
 	private konsenskisteController: kokiCtr.Controller;

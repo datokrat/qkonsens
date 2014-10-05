@@ -30,14 +30,10 @@ define(["require", "exports", 'event', 'discocontext', 'contentcommunicatorimpl'
             this.parseGeneralContent(rawKoki, koki.general());
             this.parseContext(rawKoki, koki.context());
 
-            /*rawKoki.RefersTo.forEach(reference => {
-            if(reference.ReferenceType.Description.Name == 'Context') {
-            koki.context().text(reference.Referree.Content.Text);
-            }
-            });*/
             rawKoki.ReferredFrom.forEach(function (reference) {
                 if (reference.ReferenceType.Description.Name == 'Part') {
-                    koki.childKas.push(_this.parseKa(reference.Referrer));
+                    var ka = _this.parseKa(reference.Referrer);
+                    koki.childKas.push(ka);
                 }
             });
 

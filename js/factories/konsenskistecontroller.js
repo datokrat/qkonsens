@@ -17,6 +17,8 @@ define(["require", "exports", '../konsenskistecontroller'], function(require, ex
         }
         NullController.prototype.dispose = function () {
         };
+        NullController.prototype.setContext = function () {
+        };
         return NullController;
     })();
 });
