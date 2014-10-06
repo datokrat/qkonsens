@@ -3,6 +3,7 @@ import discoContext = require('discocontext')
 
 import IKonsenskisteCommunicator = require('konsenskistecommunicator')
 import ContentCommunicator = require('contentcommunicatorimpl')
+import KernaussageCommunicator = require('kernaussagecommunicatorimpl')
 import DiscussableCommunicator = require('discussablecommunicator')
 import IContentCommunicator = require('contentcommunicator')
 import IKernaussageCommunicator = require('kernaussagecommunicator')
@@ -19,7 +20,7 @@ class KonsenskisteCommunicator extends DiscussableCommunicator.Main implements I
 	constructor() {
 		super();
 		this.content = new ContentCommunicator;
-		this.kernaussage = null; //TODO!!!
+		this.kernaussage = new KernaussageCommunicator({ content: this.content });
 	}
 	
 	public queryKoki(id: number, err?: (error) => void) {

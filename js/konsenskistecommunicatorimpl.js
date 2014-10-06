@@ -4,14 +4,14 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'event', 'discocontext', 'contentcommunicatorimpl', 'discussablecommunicator', 'konsenskistemodel', 'kernaussagemodel', 'contentmodel'], function(require, exports, Events, discoContext, ContentCommunicator, DiscussableCommunicator, KonsenskisteModel, KernaussageModel, ContentModel) {
+define(["require", "exports", 'event', 'discocontext', 'contentcommunicatorimpl', 'kernaussagecommunicatorimpl', 'discussablecommunicator', 'konsenskistemodel', 'kernaussagemodel', 'contentmodel'], function(require, exports, Events, discoContext, ContentCommunicator, KernaussageCommunicator, DiscussableCommunicator, KonsenskisteModel, KernaussageModel, ContentModel) {
     var KonsenskisteCommunicator = (function (_super) {
         __extends(KonsenskisteCommunicator, _super);
         function KonsenskisteCommunicator() {
             _super.call(this);
             this.received = new Events.EventImpl();
             this.content = new ContentCommunicator;
-            this.kernaussage = null; //TODO!!!
+            this.kernaussage = new KernaussageCommunicator({ content: this.content });
         }
         KonsenskisteCommunicator.prototype.queryKoki = function (id, err) {
             var _this = this;
