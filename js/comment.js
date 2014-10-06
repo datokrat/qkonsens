@@ -7,8 +7,10 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'contentmodel'], f
     })();
     exports.Model = Model;
 
+    var idCtr = 0;
     var ViewModel = (function () {
         function ViewModel() {
+            this.id = idCtr++;
         }
         return ViewModel;
     })();

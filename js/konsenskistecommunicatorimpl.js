@@ -18,7 +18,7 @@ define(["require", "exports", 'event', 'discocontext', 'contentcommunicatorimpl'
             this.queryRaw(id).then(function (rawKokis) {
                 if (rawKokis.length != 1) {
                     var error = new Error('KonsenskisteCommunicatorImpl.query: a single koki could not be found for this id.');
-                    err(error);
+                    err && err(error);
                     throw error;
                 }
                 var parsedKoki = _this.parse(rawKokis[0]);

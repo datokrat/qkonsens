@@ -1,10 +1,48 @@
 import Events = require('event')
 import Comment = require('comment')
+//import DiscussableParser = require('discoparsers/discussable')
 
-export class Main {
+import discoContext = require('discocontext')
+
+export interface Base {
+	commentsReceived: Events.Event<ReceivedArgs>;
+	queryCommentsOf(discussableId: number, err?: (error) => void): void;
+}
+
+export class Main implements Base {
 	public commentsReceived: Events.Event<ReceivedArgs> = new Events.EventImpl<ReceivedArgs>();
-	public queryCommentsOf(discussableId: number): void {
-		throw new Error('not implemented');
+	public queryCommentsOf(discussableId: number, err?: (error) => void): void {
+		this.queryRawCommentsOf(discussableId).then(comments => {
+			var parsed = this.parseComments(comments);
+			this.commentsReceived.raise({ id: discussableId, comments: parsed });
+		});
+	}
+	
+	private queryRawCommentsOf(discussableId: number) {
+		return discoContext.PostReferences.filter(
+			'it.ReferenceType.Description.Name != "Part" \
+			&& it.ReferenceType.Description.Name != "Child" \
+			&& it.ReferenceType.Description.Name != "Context" \
+			&& it.Referree.Id == this.Id', { Id: discussableId })
+		.include('Referrer.Content')
+		.toArray();
+	}
+	
+	private parseComments(rawComments: Disco.Ontology.PostReference[]) {
+		var comments: Comment.Model[] = [];
+		rawComments.forEach(reference => {
+			var comment = this.parseComment(reference.Referrer);
+			comments.push(comment);
+		});
+		return comments;
+	}
+	
+	private parseComment(comment: Disco.Ontology.Post) {
+		var ret = new Comment.Model();
+		ret.id = parseInt(comment.Id);
+		ret.content().title(comment.Content.Title);
+		ret.content().text(comment.Content.Text);
+		return ret;
 	}
 }
 

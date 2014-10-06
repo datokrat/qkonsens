@@ -6,10 +6,13 @@ import ContentController = require('contentcontroller')
 import ContentCommunicator = require('contentcommunicator')
 
 export class Model {
+	public id: number;
 	public content: Obs.Observable<ContentModel.General> = ko.observable( new ContentModel.General );
 }
 
+var idCtr = 0;
 export class ViewModel {
+	public id = idCtr++;
 	public content: Obs.Observable<ContentViewModel.General>;
 }
 

@@ -4,7 +4,7 @@ import Comment = require('comment')
 
 import DiscussableCommunicator = require('discussablecommunicator')
 
-class TestDiscussableCommunicator implements DiscussableCommunicator.Main {
+class TestDiscussableCommunicator implements DiscussableCommunicator.Base {
 	public commentsReceived = new Events.EventImpl<DiscussableCommunicator.ReceivedArgs>();
 	
 	public testItems: any = {};
