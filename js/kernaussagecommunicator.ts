@@ -2,18 +2,21 @@ import Events = require('event')
 import ContentCommunicator = require('contentcommunicator')
 import KernaussageCommunicator = require('kernaussagecommunicator')
 import DiscussableCommunicator = require('discussablecommunicator')
-import KonsenskisteModel = require('konsenskistemodel')
+import KernaussageModel = require('kernaussagemodel')
 import Comment = require('comment')
 
 export interface Main extends DiscussableCommunicator.Main {
 	content: ContentCommunicator.Main;
-	kernaussage: KernaussageCommunicator.Main;
 	received: Events.Event<ReceivedArgs>;
 	
-	queryKoki(id: number);
+	query(id: number);
 }
 
 export interface ReceivedArgs {
+	konsenskiste: KernaussageModel.Model;
+}
+
+export interface CommentsReceivedArgs {
 	id: number;
-	konsenskiste: KonsenskisteModel.Model;
+	comments: Comment.Model[];
 }

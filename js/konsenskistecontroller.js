@@ -38,7 +38,7 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'synchronizers/kok
             var _this = this;
             this.viewModel.discussionClick = function () {
                 if (_this.cxt) {
-                    _this.communicator.queryComments(_this.model.id);
+                    _this.communicator.queryCommentsOf(_this.model.id);
                     _this.cxt.discussionWindow.discussable(_this.viewModel);
                     _this.cxt.setLeftWindow(_this.cxt.discussionWindow);
                 }
@@ -48,7 +48,7 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'synchronizers/kok
         ControllerImpl.prototype.initKas = function () {
             this.viewModel.childKas = ko.observableArray();
 
-            this.kaSynchronizer = new KokiSync.KaSynchronizer(this.communicator.content).setViewModelObservable(this.viewModel.childKas).setModelObservable(this.model.childKas);
+            this.kaSynchronizer = new KokiSync.KaSynchronizer(this.communicator.kernaussage).setViewModelObservable(this.viewModel.childKas).setModelObservable(this.model.childKas);
         };
 
         ControllerImpl.prototype.initComments = function () {

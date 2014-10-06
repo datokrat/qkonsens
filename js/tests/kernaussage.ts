@@ -4,7 +4,7 @@ import test = require('tests/test')
 import Model = require('../kernaussagemodel')
 import ViewModel = require('../kernaussageviewmodel')
 import Controller = require('../kernaussagecontroller')
-import ContentCommunicator = require('tests/testcontentcommunicator')
+import KernaussageCommunicator = require('tests/testkernaussagecommunicator')
 
 export class Tests extends unit.TestClass {
 	private modelFactory = new ModelFactory();
@@ -12,7 +12,7 @@ export class Tests extends unit.TestClass {
 	test() {
 		var model = this.modelFactory.create( 'Begriff Basisdemokratie', 'Basisdemokratie ist Demokratie, die aus der Basis kommt', 'Baduum-Disch!' );
 		var viewModel = new ViewModel.ViewModel();
-		var communicator = new ContentCommunicator();
+		var communicator = new KernaussageCommunicator();
 		var controller = new Controller.Controller(model, viewModel, communicator);
 		
 		test.assert( () => viewModel.general().title() == 'Begriff Basisdemokratie' );

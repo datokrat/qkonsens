@@ -10,11 +10,11 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'contentcontroller
             viewModel.context = ko.observable(new ContentViewModel.Context);
             this.viewModel = viewModel;
 
-            this.generalContentSynchronizer = new KSync.GeneralContentSynchronizer(communicator).setViewModelChangedHandler(function (general) {
+            this.generalContentSynchronizer = new KSync.GeneralContentSynchronizer(communicator.content).setViewModelChangedHandler(function (general) {
                 return _this.viewModel.general(general);
             }).setModelObservable(model.general);
 
-            this.context = new ContentController.Context(model.context(), viewModel.context(), communicator);
+            this.context = new ContentController.Context(model.context(), viewModel.context(), communicator.content);
         };
 
         Controller.prototype.dispose = function () {

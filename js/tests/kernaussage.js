@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/tsunit', 'tests/test', '../kernaussagemodel', '../kernaussageviewmodel', '../kernaussagecontroller', 'tests/testcontentcommunicator'], function(require, exports, unit, test, Model, ViewModel, Controller, ContentCommunicator) {
+define(["require", "exports", 'tests/tsunit', 'tests/test', '../kernaussagemodel', '../kernaussageviewmodel', '../kernaussagecontroller', 'tests/testkernaussagecommunicator'], function(require, exports, unit, test, Model, ViewModel, Controller, KernaussageCommunicator) {
     var Tests = (function (_super) {
         __extends(Tests, _super);
         function Tests() {
@@ -14,7 +14,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../kernaussagemodel
         Tests.prototype.test = function () {
             var model = this.modelFactory.create('Begriff Basisdemokratie', 'Basisdemokratie ist Demokratie, die aus der Basis kommt', 'Baduum-Disch!');
             var viewModel = new ViewModel.ViewModel();
-            var communicator = new ContentCommunicator();
+            var communicator = new KernaussageCommunicator();
             var controller = new Controller.Controller(model, viewModel, communicator);
 
             test.assert(function () {

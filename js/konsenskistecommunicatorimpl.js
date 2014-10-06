@@ -1,9 +1,17 @@
-define(["require", "exports", 'event', 'discocontext', 'contentcommunicatorimpl', 'konsenskistemodel', 'kernaussagemodel', 'contentmodel'], function(require, exports, Events, discoContext, ContentCommunicator, KonsenskisteModel, KernaussageModel, ContentModel) {
-    var KonsenskisteCommunicator = (function () {
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+define(["require", "exports", 'event', 'discocontext', 'contentcommunicatorimpl', 'discussablecommunicator', 'konsenskistemodel', 'kernaussagemodel', 'contentmodel'], function(require, exports, Events, discoContext, ContentCommunicator, DiscussableCommunicator, KonsenskisteModel, KernaussageModel, ContentModel) {
+    var KonsenskisteCommunicator = (function (_super) {
+        __extends(KonsenskisteCommunicator, _super);
         function KonsenskisteCommunicator() {
+            _super.call(this);
             this.received = new Events.EventImpl();
-            this.commentsReceived = new Events.EventImpl();
             this.content = new ContentCommunicator;
+            this.kernaussage = null; //TODO!!!
         }
         KonsenskisteCommunicator.prototype.queryKoki = function (id, err) {
             var _this = this;
@@ -16,9 +24,6 @@ define(["require", "exports", 'event', 'discocontext', 'contentcommunicatorimpl'
                 var parsedKoki = _this.parse(rawKokis[0]);
                 _this.received.raise({ id: id, konsenskiste: parsedKoki });
             });
-        };
-
-        KonsenskisteCommunicator.prototype.queryComments = function (id) {
         };
 
         KonsenskisteCommunicator.prototype.queryRaw = function (id) {
@@ -78,7 +83,7 @@ define(["require", "exports", 'event', 'discocontext', 'contentcommunicatorimpl'
             return ret;
         };
         return KonsenskisteCommunicator;
-    })();
+    })(DiscussableCommunicator.Main);
 
     
     return KonsenskisteCommunicator;

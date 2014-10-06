@@ -2,7 +2,7 @@ import observable = require('observable')
 
 import mdl = require('kernaussagemodel')
 import vm = require('kernaussageviewmodel')
-import com = require('contentcommunicator')
+import com = require('kernaussagecommunicator')
 
 import KSync = require('synchronizers/ksynchronizers')
 
@@ -24,11 +24,11 @@ export class Controller {
 		viewModel.context = ko.observable( new ContentViewModel.Context );
 		this.viewModel = viewModel;
 		
-		this.generalContentSynchronizer = new KSync.GeneralContentSynchronizer(communicator)
+		this.generalContentSynchronizer = new KSync.GeneralContentSynchronizer(communicator.content)
 			.setViewModelChangedHandler( general => this.viewModel.general(general) )
 			.setModelObservable(model.general);
 
-		this.context = new ContentController.Context(model.context(), viewModel.context(), communicator);
+		this.context = new ContentController.Context(model.context(), viewModel.context(), communicator.content);
 	}
 	
 	public dispose() {

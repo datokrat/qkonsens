@@ -1,21 +1,25 @@
 import Events = require('event')
 import discoContext = require('discocontext')
 
-import ICommunicator = require('konsenskistecommunicator')
+import IKonsenskisteCommunicator = require('konsenskistecommunicator')
 import ContentCommunicator = require('contentcommunicatorimpl')
+import DiscussableCommunicator = require('discussablecommunicator')
 import IContentCommunicator = require('contentcommunicator')
+import IKernaussageCommunicator = require('kernaussagecommunicator')
 
 import KonsenskisteModel = require('konsenskistemodel')
 import KernaussageModel = require('kernaussagemodel')
 import ContentModel = require('contentmodel')
 
-class KonsenskisteCommunicator implements ICommunicator.Main {
+class KonsenskisteCommunicator extends DiscussableCommunicator.Main implements IKonsenskisteCommunicator.Main {
 	public content: IContentCommunicator.Main;
-	public received = new Events.EventImpl<ICommunicator.ReceivedArgs>();
-	public commentsReceived = new Events.EventImpl<ICommunicator.CommentsReceivedArgs>();
+	public kernaussage: IKernaussageCommunicator.Main;
+	public received = new Events.EventImpl<IKonsenskisteCommunicator.ReceivedArgs>();
 	
 	constructor() {
+		super();
 		this.content = new ContentCommunicator;
+		this.kernaussage = null; //TODO!!!
 	}
 	
 	public queryKoki(id: number, err?: (error) => void) {
@@ -28,9 +32,6 @@ class KonsenskisteCommunicator implements ICommunicator.Main {
 			var parsedKoki = this.parse(rawKokis[0]);
 			this.received.raise({ id: id, konsenskiste: parsedKoki });
 		});
-	}
-	
-	public queryComments(id: number) {
 	}
 	
 	private queryRaw(id: number) {

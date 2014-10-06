@@ -14,6 +14,7 @@ import KokiCommunicator = require('konsenskistecommunicator')
 import ContentModel = require('contentmodel')
 import ContentViewModel = require('contentviewmodel')
 import ContentCommunicator = require('contentcommunicator')
+import DiscussableCommunicator = require('discussablecommunicator')
 import ContentController = require('contentcontroller')
 
 import Rating = require('rating')
@@ -59,7 +60,7 @@ export class ControllerImpl implements Controller {
 	private initViewModel() {
 		this.viewModel.discussionClick = () => {
 			if(this.cxt) {
-				this.communicator.queryComments(this.model.id);
+				this.communicator.queryCommentsOf(this.model.id);
 				this.cxt.discussionWindow.discussable(this.viewModel);
 				this.cxt.setLeftWindow(this.cxt.discussionWindow);
 			}
@@ -69,7 +70,7 @@ export class ControllerImpl implements Controller {
 	private initKas() {
 		this.viewModel.childKas = ko.observableArray<kernaussageVm.ViewModel>();
 		
-		this.kaSynchronizer = new KokiSync.KaSynchronizer(this.communicator.content)
+		this.kaSynchronizer = new KokiSync.KaSynchronizer(this.communicator.kernaussage)
 			.setViewModelObservable(this.viewModel.childKas)
 			.setModelObservable(this.model.childKas);
 	}
@@ -118,7 +119,7 @@ export class ControllerImpl implements Controller {
 			this.model.set( args.konsenskiste );
 	}
 	
-	private onCommentsReceived = (args: KokiCommunicator.CommentsReceivedArgs) => {
+	private onCommentsReceived = (args: DiscussableCommunicator.ReceivedArgs) => {
 		if(this.model.id == args.id)
 			this.model.comments.set(args.comments);
 	}

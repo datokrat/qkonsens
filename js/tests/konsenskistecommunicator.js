@@ -63,7 +63,7 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', '../common', 'tes
                     koki.comments.set([new Comment.Model]);
 
                     _this.com.setTestKoki(koki);
-                    _this.com.queryComments(1);
+                    _this.com.queryCommentsOf(1);
 
                     setTimeout(r);
                 },

@@ -62,7 +62,7 @@ class TestClass extends unit.TestClass {
 				koki.comments.set([new Comment.Model]);
 				
 				this.com.setTestKoki(koki);
-				this.com.queryComments(1);
+				this.com.queryCommentsOf(1);
 				
 				setTimeout(r);
 			},
