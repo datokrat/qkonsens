@@ -14,6 +14,7 @@ import KokiCommunicator = require('konsenskistecommunicator')
 import ContentModel = require('contentmodel')
 import ContentViewModel = require('contentviewmodel')
 import ContentCommunicator = require('contentcommunicator')
+import Discussable = require('discussable')
 import DiscussableCommunicator = require('discussablecommunicator')
 import ContentController = require('contentcontroller')
 
@@ -46,7 +47,7 @@ export class ControllerImpl implements Controller {
 		this.initViewModel();
 		
 		this.initKas();
-		this.initComments();
+		this.initDiscussable();
 		this.initGeneralContent();
 		this.initContext();
 		this.initRating();
@@ -54,17 +55,11 @@ export class ControllerImpl implements Controller {
 	
 	public setContext(cxt: ViewModelContext) {
 		this.cxt = cxt;
+		this.discussable.setViewModelContext(cxt);
 		return this;
 	}
 	
 	private initViewModel() {
-		this.viewModel.discussionClick = () => {
-			if(this.cxt) {
-				this.communicator.queryCommentsOf(this.model.id);
-				this.cxt.discussionWindow.discussable(this.viewModel);
-				this.cxt.setLeftWindow(this.cxt.discussionWindow);
-			}
-		}
 	}
 	
 	private initKas() {
@@ -75,12 +70,8 @@ export class ControllerImpl implements Controller {
 			.setModelObservable(this.model.childKas);
 	}
 	
-	private initComments() {
-		this.viewModel.comments = ko.observableArray<Comment.ViewModel>();
-		
-		this.commentSynchronizer = new CommentSynchronizer(this.communicator.content)
-			.setViewModelObservable(this.viewModel.comments)
-			.setModelObservable(this.model.comments);
+	private initDiscussable() {
+		this.discussable = new Discussable.Controller(this.model, this.viewModel, this.communicator);
 	}
 	
 	private initGeneralContent() {
@@ -128,7 +119,7 @@ export class ControllerImpl implements Controller {
 		this.generalContentSynchronizer.dispose();
 		this.contextSynchronizer.dispose();
 		this.ratingSynchronizer.dispose();
-		this.commentSynchronizer.dispose();
+		this.discussable.dispose();
 		
 		this.modelSubscriptions.forEach( s => s.undo() );
 		this.communicatorSubscriptions.forEach( s => s.undo() );
@@ -142,8 +133,8 @@ export class ControllerImpl implements Controller {
 	private generalContentSynchronizer: KSync.GeneralContentSynchronizer;
 	private contextSynchronizer: KSync.ContextSynchronizer;
 	private ratingSynchronizer: KSync.RatingSynchronizer;
-	private commentSynchronizer: CommentSynchronizer;
 	private kaSynchronizer: KokiSync.KaSynchronizer;
+	private discussable: Discussable.Controller;
 	
 	private modelSubscriptions: evt.Subscription[] = [];
 	private communicatorSubscriptions: evt.Subscription[] = [];

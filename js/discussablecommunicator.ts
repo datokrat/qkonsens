@@ -1,16 +1,21 @@
 import Events = require('event')
 import Comment = require('comment')
+import ContentCommunicator = require('contentcommunicator')
 //import DiscussableParser = require('discoparsers/discussable')
 
 import discoContext = require('discocontext')
 
 export interface Base {
+	content: ContentCommunicator.Main;
+
 	commentsReceived: Events.Event<ReceivedArgs>;
 	queryCommentsOf(discussableId: number, err?: (error) => void): void;
 }
 
 export class Main implements Base {
+	public content: ContentCommunicator.Main;
 	public commentsReceived: Events.Event<ReceivedArgs> = new Events.EventImpl<ReceivedArgs>();
+	
 	public queryCommentsOf(discussableId: number, err?: (error) => void): void {
 		this.queryRawCommentsOf(discussableId).then(comments => {
 			var parsed = this.parseComments(comments);

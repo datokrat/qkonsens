@@ -1,4 +1,4 @@
-define(["require", "exports", 'synchronizers/ksynchronizers', 'synchronizers/kokisynchronizers', 'synchronizers/comment'], function(require, exports, KSync, KokiSync, CommentSynchronizer) {
+define(["require", "exports", 'discussable', 'synchronizers/ksynchronizers', 'synchronizers/kokisynchronizers'], function(require, exports, Discussable, KSync, KokiSync) {
     var ControllerImpl = (function () {
         function ControllerImpl(model, viewModel, communicator) {
             var _this = this;
@@ -23,7 +23,7 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'synchronizers/kok
             this.initViewModel();
 
             this.initKas();
-            this.initComments();
+            this.initDiscussable();
             this.initGeneralContent();
             this.initContext();
             this.initRating();
@@ -31,18 +31,11 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'synchronizers/kok
 
         ControllerImpl.prototype.setContext = function (cxt) {
             this.cxt = cxt;
+            this.discussable.setViewModelContext(cxt);
             return this;
         };
 
         ControllerImpl.prototype.initViewModel = function () {
-            var _this = this;
-            this.viewModel.discussionClick = function () {
-                if (_this.cxt) {
-                    _this.communicator.queryCommentsOf(_this.model.id);
-                    _this.cxt.discussionWindow.discussable(_this.viewModel);
-                    _this.cxt.setLeftWindow(_this.cxt.discussionWindow);
-                }
-            };
         };
 
         ControllerImpl.prototype.initKas = function () {
@@ -51,10 +44,8 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'synchronizers/kok
             this.kaSynchronizer = new KokiSync.KaSynchronizer(this.communicator.kernaussage).setViewModelObservable(this.viewModel.childKas).setModelObservable(this.model.childKas);
         };
 
-        ControllerImpl.prototype.initComments = function () {
-            this.viewModel.comments = ko.observableArray();
-
-            this.commentSynchronizer = new CommentSynchronizer(this.communicator.content).setViewModelObservable(this.viewModel.comments).setModelObservable(this.model.comments);
+        ControllerImpl.prototype.initDiscussable = function () {
+            this.discussable = new Discussable.Controller(this.model, this.viewModel, this.communicator);
         };
 
         ControllerImpl.prototype.initGeneralContent = function () {
@@ -95,7 +86,7 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'synchronizers/kok
             this.generalContentSynchronizer.dispose();
             this.contextSynchronizer.dispose();
             this.ratingSynchronizer.dispose();
-            this.commentSynchronizer.dispose();
+            this.discussable.dispose();
 
             this.modelSubscriptions.forEach(function (s) {
                 return s.undo();
