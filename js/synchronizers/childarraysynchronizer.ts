@@ -47,6 +47,10 @@ export class ObservingChildArraySynchronizer<Model, ViewModel, Controller extend
 		this.modelSubscriptions = [];
 	}
 	
+	public forEachController(cb: (ctr: Controller) => void) {
+		this.innerSync.forEachController(cb);
+	}
+	
 	public dispose() {
 		this.disposeModelSubscriptions();
 		this.innerSync.dispose();
@@ -120,6 +124,10 @@ export class ChildArraySynchronizer<Model, ViewModel, Controller extends { dispo
 	
 	public dispose() {
 		this.clear();
+	}
+	
+	public forEachController(cb: (ctr: Controller) => void) {
+		this.entryValues.forEach(value => cb(value.controller));
 	}
 	
 	private viewModelFactory: Factory<ViewModel>;

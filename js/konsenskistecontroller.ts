@@ -56,6 +56,7 @@ export class ControllerImpl implements Controller {
 	public setContext(cxt: ViewModelContext) {
 		this.cxt = cxt;
 		this.discussable.setViewModelContext(cxt);
+		this.kaSynchronizer.setViewModelContext(cxt);
 		return this;
 	}
 	
@@ -65,7 +66,8 @@ export class ControllerImpl implements Controller {
 	private initKas() {
 		this.viewModel.childKas = ko.observableArray<kernaussageVm.ViewModel>();
 		
-		this.kaSynchronizer = new KokiSync.KaSynchronizer(this.communicator.kernaussage)
+		this.kaSynchronizer = new KokiSync.KaSynchronizer(this.communicator.kernaussage);
+		this.kaSynchronizer
 			.setViewModelObservable(this.viewModel.childKas)
 			.setModelObservable(this.model.childKas);
 	}
@@ -101,18 +103,12 @@ export class ControllerImpl implements Controller {
 	private initCommunicator() {
 		this.communicatorSubscriptions = ([
 			this.communicator.received.subscribe(this.onKokiReceived),
-			this.communicator.commentsReceived.subscribe(this.onCommentsReceived),
 		]);
 	}
 	
 	private onKokiReceived = (args: KokiCommunicator.ReceivedArgs) => {
 		if(this.model.id == args.konsenskiste.id)
 			this.model.set( args.konsenskiste );
-	}
-	
-	private onCommentsReceived = (args: DiscussableCommunicator.ReceivedArgs) => {
-		if(this.model.id == args.id)
-			this.model.comments.set(args.comments);
 	}
 	
 	public dispose() {

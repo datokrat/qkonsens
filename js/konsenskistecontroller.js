@@ -6,10 +6,6 @@ define(["require", "exports", 'discussable', 'synchronizers/ksynchronizers', 'sy
                 if (_this.model.id == args.konsenskiste.id)
                     _this.model.set(args.konsenskiste);
             };
-            this.onCommentsReceived = function (args) {
-                if (_this.model.id == args.id)
-                    _this.model.comments.set(args.comments);
-            };
             this.modelSubscriptions = [];
             this.communicatorSubscriptions = [];
             this.init(model, viewModel, communicator);
@@ -32,6 +28,7 @@ define(["require", "exports", 'discussable', 'synchronizers/ksynchronizers', 'sy
         ControllerImpl.prototype.setContext = function (cxt) {
             this.cxt = cxt;
             this.discussable.setViewModelContext(cxt);
+            this.kaSynchronizer.setViewModelContext(cxt);
             return this;
         };
 
@@ -41,7 +38,8 @@ define(["require", "exports", 'discussable', 'synchronizers/ksynchronizers', 'sy
         ControllerImpl.prototype.initKas = function () {
             this.viewModel.childKas = ko.observableArray();
 
-            this.kaSynchronizer = new KokiSync.KaSynchronizer(this.communicator.kernaussage).setViewModelObservable(this.viewModel.childKas).setModelObservable(this.model.childKas);
+            this.kaSynchronizer = new KokiSync.KaSynchronizer(this.communicator.kernaussage);
+            this.kaSynchronizer.setViewModelObservable(this.viewModel.childKas).setModelObservable(this.model.childKas);
         };
 
         ControllerImpl.prototype.initDiscussable = function () {
@@ -77,8 +75,7 @@ define(["require", "exports", 'discussable', 'synchronizers/ksynchronizers', 'sy
 
         ControllerImpl.prototype.initCommunicator = function () {
             this.communicatorSubscriptions = ([
-                this.communicator.received.subscribe(this.onKokiReceived),
-                this.communicator.commentsReceived.subscribe(this.onCommentsReceived)
+                this.communicator.received.subscribe(this.onKokiReceived)
             ]);
         };
 

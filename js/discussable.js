@@ -5,6 +5,10 @@ define(["require", "exports", 'synchronizers/comment'], function(require, export
             this.model = model;
             this.viewModel = viewModel;
             this.communicator = communicator;
+            this.onCommentsReceived = function (args) {
+                if (_this.model.id == args.id)
+                    _this.model.comments.set(args.comments);
+            };
             this.discussionClick = function () {
                 if (_this.viewModelContext) {
                     _this.communicator.queryCommentsOf(_this.model.id);
@@ -12,10 +16,15 @@ define(["require", "exports", 'synchronizers/comment'], function(require, export
                     _this.viewModelContext.setLeftWindow(_this.viewModelContext.discussionWindow);
                 }
             };
+            this.communicatorSubscriptions = [];
             this.viewModel.comments = ko.observableArray();
             this.viewModel.discussionClick = this.discussionClick;
 
             this.commentSynchronizer = new CommentSynchronizer(this.communicator.content).setViewModelObservable(this.viewModel.comments).setModelObservable(this.model.comments);
+
+            this.communicatorSubscriptions = [
+                this.communicator.commentsReceived.subscribe(this.onCommentsReceived)
+            ];
         }
         Controller.prototype.setViewModelContext = function (cxt) {
             this.viewModelContext = cxt;
@@ -23,6 +32,9 @@ define(["require", "exports", 'synchronizers/comment'], function(require, export
 
         Controller.prototype.dispose = function () {
             this.commentSynchronizer.dispose();
+            this.communicatorSubscriptions.forEach(function (s) {
+                return s.undo();
+            });
         };
         return Controller;
     })();

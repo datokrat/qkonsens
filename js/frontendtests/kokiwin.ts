@@ -38,6 +38,7 @@ export class Tests {
 		
 		model.konsenskiste(konsenskiste);
 		
+		kernaussage.id = 2;
 		kernaussage.general().title('Kernaussagen-Titel');
 		kernaussage.general().text('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.');
 		kernaussage.context().text('blablablablub');
@@ -144,7 +145,7 @@ export class Tests {
 		], r);
 	}
 	
-	commentsByCommunicator(cxt, r) {
+	konsenskisteComments(cxt, r) {
 		common.Callbacks.batch([
 			r => {
 				var model = reloader.model();
@@ -158,7 +159,31 @@ export class Tests {
 				setTimeout(r, 0);
 			},
 			r => {
-				this.webot.query('.kk .controls').child('*').contains('Diskussion').click();
+				this.webot.query('.kk>.controls').child('*').contains('Diskussion').click();
+				setTimeout(r, 100);
+			},
+			r => {
+				test.assert( () => this.webot.query('.cmt').child('*').text('Comment').exists() );
+				r();
+			}
+		], r);
+	}
+	
+	kernaussageComments(cxt, r) {
+		common.Callbacks.batch([
+			r => {
+				var model = reloader.model();
+				var communicator = reloader.communicator();
+				var serverKa = new ka.Model();
+				serverKa.id = 2;
+				var comment = new Comment.Model();
+				comment.content().text('Comment');
+				serverKa.comments.set([comment]);
+				communicator.konsenskiste.kernaussage.setTestKa(serverKa);
+				setTimeout(r);
+			},
+			r => {
+				this.webot.query('.ka>.controls').child('*').contains('Diskussion').click();
 				setTimeout(r, 100);
 			},
 			r => {

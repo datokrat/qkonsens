@@ -22,6 +22,7 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
 
             model.konsenskiste(konsenskiste);
 
+            kernaussage.id = 2;
             kernaussage.general().title('Kernaussagen-Titel');
             kernaussage.general().text('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.');
             kernaussage.context().text('blablablablub');
@@ -170,7 +171,7 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
             ], r);
         };
 
-        Tests.prototype.commentsByCommunicator = function (cxt, r) {
+        Tests.prototype.konsenskisteComments = function (cxt, r) {
             var _this = this;
             common.Callbacks.batch([
                 function (r) {
@@ -185,7 +186,34 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
                     setTimeout(r, 0);
                 },
                 function (r) {
-                    _this.webot.query('.kk .controls').child('*').contains('Diskussion').click();
+                    _this.webot.query('.kk>.controls').child('*').contains('Diskussion').click();
+                    setTimeout(r, 100);
+                },
+                function (r) {
+                    test.assert(function () {
+                        return _this.webot.query('.cmt').child('*').text('Comment').exists();
+                    });
+                    r();
+                }
+            ], r);
+        };
+
+        Tests.prototype.kernaussageComments = function (cxt, r) {
+            var _this = this;
+            common.Callbacks.batch([
+                function (r) {
+                    var model = reloader.model();
+                    var communicator = reloader.communicator();
+                    var serverKa = new ka.Model();
+                    serverKa.id = 2;
+                    var comment = new Comment.Model();
+                    comment.content().text('Comment');
+                    serverKa.comments.set([comment]);
+                    communicator.konsenskiste.kernaussage.setTestKa(serverKa);
+                    setTimeout(r);
+                },
+                function (r) {
+                    _this.webot.query('.ka>.controls').child('*').contains('Diskussion').click();
                     setTimeout(r, 100);
                 },
                 function (r) {

@@ -56,6 +56,10 @@ define(["require", "exports"], function(require, exports) {
             this.modelSubscriptions = [];
         };
 
+        ObservingChildArraySynchronizer.prototype.forEachController = function (cb) {
+            this.innerSync.forEachController(cb);
+        };
+
         ObservingChildArraySynchronizer.prototype.dispose = function () {
             this.disposeModelSubscriptions();
             this.innerSync.dispose();
@@ -132,6 +136,12 @@ define(["require", "exports"], function(require, exports) {
 
         ChildArraySynchronizer.prototype.dispose = function () {
             this.clear();
+        };
+
+        ChildArraySynchronizer.prototype.forEachController = function (cb) {
+            this.entryValues.forEach(function (value) {
+                return cb(value.controller);
+            });
         };
         return ChildArraySynchronizer;
     })();

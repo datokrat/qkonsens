@@ -1,4 +1,5 @@
 import Obs = require('observable')
+import Events = require('event')
 import DiscussableCommunicator = require('discussablecommunicator')
 import Comment = require('comment')
 import CommentSynchronizer = require('synchronizers/comment')
@@ -22,6 +23,15 @@ export class Controller {
 		this.commentSynchronizer = new CommentSynchronizer(this.communicator.content)
 			.setViewModelObservable(this.viewModel.comments)
 			.setModelObservable(this.model.comments);
+		
+		this.communicatorSubscriptions = [
+			this.communicator.commentsReceived.subscribe(this.onCommentsReceived),
+		];
+	}
+	
+	private onCommentsReceived = (args: DiscussableCommunicator.ReceivedArgs) => {
+		if(this.model.id == args.id)
+			this.model.comments.set(args.comments);
 	}
 	
 	public setViewModelContext(cxt: ViewModelContext) {
@@ -30,6 +40,7 @@ export class Controller {
 	
 	public dispose() {
 		this.commentSynchronizer.dispose();
+		this.communicatorSubscriptions.forEach(s => s.undo());
 	}
 	
 	private discussionClick = () => {
@@ -42,4 +53,5 @@ export class Controller {
 	
 	private viewModelContext: ViewModelContext;
 	private commentSynchronizer: CommentSynchronizer;
+	private communicatorSubscriptions: Events.Subscription[] = [];
 }
