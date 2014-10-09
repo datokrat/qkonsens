@@ -6,12 +6,18 @@ define(["require", "exports", 'synchronizers/comment'], function(require, export
             this.viewModel = viewModel;
             this.communicator = communicator;
             this.onCommentsReceived = function (args) {
-                if (_this.model.id == args.id)
+                if (_this.model.id == args.id) {
                     _this.model.comments.set(args.comments);
+                    _this.model.commentsLoading(false);
+                    _this.model.commentsLoaded(true);
+                }
             };
             this.discussionClick = function () {
                 if (_this.viewModelContext) {
-                    _this.communicator.queryCommentsOf(_this.model.id);
+                    if (!_this.model.commentsLoading() && !_this.model.commentsLoaded()) {
+                        _this.model.commentsLoading(true);
+                        _this.communicator.queryCommentsOf(_this.model.id);
+                    }
                     _this.viewModelContext.discussionWindow.discussable(_this.viewModel);
                     _this.viewModelContext.setLeftWindow(_this.viewModelContext.discussionWindow);
                 }

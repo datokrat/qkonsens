@@ -8,6 +8,8 @@ import ViewModelContext = require('viewmodelcontext')
 export interface Model {
 	id: number;
 	comments: Obs.ObservableArrayEx<Comment.Model>;
+	commentsLoaded: Obs.Observable<boolean>;
+	commentsLoading: Obs.Observable<boolean>;
 }
 
 export interface ViewModel {
@@ -30,8 +32,11 @@ export class Controller {
 	}
 	
 	private onCommentsReceived = (args: DiscussableCommunicator.ReceivedArgs) => {
-		if(this.model.id == args.id)
+		if(this.model.id == args.id) {
 			this.model.comments.set(args.comments);
+			this.model.commentsLoading(false);
+			this.model.commentsLoaded(true);
+		}
 	}
 	
 	public setViewModelContext(cxt: ViewModelContext) {
@@ -45,7 +50,10 @@ export class Controller {
 	
 	private discussionClick = () => {
 		if(this.viewModelContext) {
-			this.communicator.queryCommentsOf(this.model.id);
+			if(!this.model.commentsLoading() && !this.model.commentsLoaded()) {
+				this.model.commentsLoading(true);
+				this.communicator.queryCommentsOf(this.model.id);
+			}
 			this.viewModelContext.discussionWindow.discussable(this.viewModel);
 			this.viewModelContext.setLeftWindow(this.viewModelContext.discussionWindow);
 		}

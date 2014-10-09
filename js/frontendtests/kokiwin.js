@@ -200,11 +200,11 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
 
         Tests.prototype.kernaussageComments = function (cxt, r) {
             var _this = this;
+            var serverKa = new ka.Model();
             common.Callbacks.batch([
                 function (r) {
                     var model = reloader.model();
                     var communicator = reloader.communicator();
-                    var serverKa = new ka.Model();
                     serverKa.id = 2;
                     var comment = new Comment.Model();
                     comment.content().text('Comment');
@@ -219,6 +219,17 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
                 function (r) {
                     test.assert(function () {
                         return _this.webot.query('.cmt').child('*').text('Comment').exists();
+                    });
+
+                    var comment2 = new Comment.Model();
+                    comment2.content().text('Comment2');
+                    serverKa.comments.push(comment2);
+                    _this.webot.query('.ka>.controls').child('*').contains('Diskussion').click();
+                    setTimeout(r, 100);
+                },
+                function (r) {
+                    test.assert(function () {
+                        return _this.webot.query('.cmt').child('*').text('Comment2').exists(false);
                     });
                     r();
                 }

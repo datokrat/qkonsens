@@ -170,11 +170,11 @@ export class Tests {
 	}
 	
 	kernaussageComments(cxt, r) {
+		var serverKa = new ka.Model();
 		common.Callbacks.batch([
 			r => {
 				var model = reloader.model();
 				var communicator = reloader.communicator();
-				var serverKa = new ka.Model();
 				serverKa.id = 2;
 				var comment = new Comment.Model();
 				comment.content().text('Comment');
@@ -188,6 +188,15 @@ export class Tests {
 			},
 			r => {
 				test.assert( () => this.webot.query('.cmt').child('*').text('Comment').exists() );
+				
+				var comment2 = new Comment.Model();
+				comment2.content().text('Comment2');
+				serverKa.comments.push(comment2);
+				this.webot.query('.ka>.controls').child('*').contains('Diskussion').click();
+				setTimeout(r, 100);
+			},
+			r => {
+				test.assert( () => this.webot.query('.cmt').child('*').text('Comment2').exists(false) );
 				r();
 			}
 		], r);

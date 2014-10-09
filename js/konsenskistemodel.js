@@ -7,6 +7,8 @@ define(["require", "exports", 'contentmodel', 'rating', 'factories/event', 'obse
             this.rating = ko.observable(new Rating.Model);
             this.childKas = new Observable.ObservableArrayExtender(ko.observableArray());
             this.comments = new Observable.ObservableArrayExtender(ko.observableArray());
+            this.commentsLoaded = ko.observable(false);
+            this.commentsLoading = ko.observable(false);
             this.factoryContext = context;
         }
         Model.prototype.set = function (model) {
