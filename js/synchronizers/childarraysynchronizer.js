@@ -102,7 +102,6 @@ define(["require", "exports"], function(require, exports) {
         };
 
         ChildArraySynchronizer.prototype.inserted = function (m) {
-            console.log(m);
             if (this.entryKeys.indexOf(m) == -1) {
                 var v = this.viewModelFactory.create();
                 var c = this.controllerFactory.create(m, v);

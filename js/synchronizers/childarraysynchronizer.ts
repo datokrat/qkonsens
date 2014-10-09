@@ -89,7 +89,6 @@ export class ChildArraySynchronizer<Model, ViewModel, Controller extends { dispo
 	}
 	
 	public inserted( m: Model ) {
-		console.log(m);
 		if(this.entryKeys.indexOf(m) == -1) {
 			var v = this.viewModelFactory.create();
 			var c = this.controllerFactory.create(m, v);
