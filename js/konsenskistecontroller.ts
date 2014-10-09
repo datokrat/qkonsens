@@ -6,24 +6,16 @@ import mdl = require('konsenskistemodel')
 import vm = require('konsenskisteviewmodel')
 import ViewModelContext = require('viewmodelcontext')
 
-import kernaussageMdl = require('kernaussagemodel')
 import kernaussageVm = require('kernaussageviewmodel')
-import kernaussageCtr = require('kernaussagecontroller')
 import KokiCommunicator = require('konsenskistecommunicator')
 
-import ContentModel = require('contentmodel')
 import ContentViewModel = require('contentviewmodel')
-import ContentCommunicator = require('contentcommunicator')
 import Discussable = require('discussable')
 import DiscussableCommunicator = require('discussablecommunicator')
-import ContentController = require('contentcontroller')
 
 import Rating = require('rating')
 import Comment = require('comment')
 
-import contentVm = require('contentviewmodel');
-
-import content = require('contentcontroller')
 import KSync = require('synchronizers/ksynchronizers')
 import KokiSync = require('synchronizers/kokisynchronizers')
 import CommentSynchronizer = require('synchronizers/comment')
