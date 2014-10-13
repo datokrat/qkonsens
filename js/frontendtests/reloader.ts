@@ -1,3 +1,5 @@
+///<reference path="../typings/knockout.d.ts" />
+
 import mdl = require('../model')
 import vm = require('../viewmodel')
 import ctr = require('../controller')

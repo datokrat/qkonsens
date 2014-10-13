@@ -19,7 +19,7 @@ var communicator = new CommunicatorImpl;
 var controller = new ctr.Controller(model, viewModel, communicator);
 
 var konsenskiste = new koki.Model;
-konsenskiste.id = 12;
+konsenskiste.id(12);
 model.konsenskiste(konsenskiste);
 
 communicator.konsenskiste.queryKoki(12);

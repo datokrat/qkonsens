@@ -46,7 +46,7 @@ export class Tests extends unit.TestClass {
 		var cxt = this.factory.create();
 		
 		var oldKoki = new koki.Model;
-		oldKoki.id = 1;
+		oldKoki.id(1);
 		
 		cxt.model.konsenskiste(oldKoki);
 		
@@ -64,9 +64,9 @@ export class Tests extends unit.TestClass {
 		var cxt = this.factory.create();
 		
 		var oldKoki = new koki.Model;
-		oldKoki.id = 1;
+		oldKoki.id(1);
 		var newKoki = new koki.Model;
-		newKoki.id = 1;
+		newKoki.id(1);
 		newKoki.general().title('hi');
 		cxt.model.konsenskiste(oldKoki);
 		

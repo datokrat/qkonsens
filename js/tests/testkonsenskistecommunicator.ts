@@ -21,8 +21,8 @@ class TestKokiCommunicator extends TestDiscussableCommunicator implements KokiCo
 	}
 	
 	public setTestKoki(koki: KokiModel.Model) {
-		if(typeof koki.id === 'number') {
-			this.testItems[koki.id] = koki;
+		if(typeof koki.id() === 'number') {
+			this.testItems[koki.id()] = koki;
 		}
 		else throw new Error('TestKokiCommunicator.setTestKoki: koki.id is not a number');
 	}

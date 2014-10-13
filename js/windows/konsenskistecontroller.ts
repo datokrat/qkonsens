@@ -21,11 +21,13 @@ export class Controller {
 			
 		var konsenskisteViewModel = new kokiVm.ViewModel;
 		this.konsenskisteController = this.konsenskisteControllerFactory.create(konsenskisteModel, konsenskisteViewModel, this.communicator);
-		
+		if(this.cxt) this.konsenskisteController.setContext(this.cxt);
+        
 		this.window.kkView(konsenskisteViewModel);
 	}
 	
 	public setContext(cxt: ViewModelContext) {
+        console.log('windows/konsenskistecontroller.setContext');
 		this.cxt = cxt;
 		this.konsenskisteController.setContext(cxt);
 		return this;

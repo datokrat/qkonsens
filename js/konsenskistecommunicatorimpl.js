@@ -35,7 +35,7 @@ define(["require", "exports", 'event', 'discocontext', 'contentcommunicatorimpl'
         KonsenskisteCommunicator.prototype.parse = function (rawKoki) {
             var _this = this;
             var koki = new KonsenskisteModel.Model;
-            koki.id = parseInt(rawKoki.Id);
+            koki.id(parseInt(rawKoki.Id));
             this.parseGeneralContent(rawKoki, koki.general());
             this.parseContext(rawKoki, koki.context());
 
@@ -51,7 +51,7 @@ define(["require", "exports", 'event', 'discocontext', 'contentcommunicatorimpl'
 
         KonsenskisteCommunicator.prototype.parseKa = function (rawKa) {
             var ka = new KernaussageModel.Model;
-            ka.id = parseInt(rawKa.Id);
+            ka.id(parseInt(rawKa.Id));
             this.parseGeneralContent(rawKa, ka.general());
             this.parseContext(rawKa, ka.context());
             return ka;

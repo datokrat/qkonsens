@@ -14,8 +14,8 @@ define(["require", "exports", 'event', 'tests/testcontentcommunicator', 'tests/t
             this.kernaussage = new TestKaCommunicator({ content: this.content });
         }
         TestKokiCommunicator.prototype.setTestKoki = function (koki) {
-            if (typeof koki.id === 'number') {
-                this.testItems[koki.id] = koki;
+            if (typeof koki.id() === 'number') {
+                this.testItems[koki.id()] = koki;
             } else
                 throw new Error('TestKokiCommunicator.setTestKoki: koki.id is not a number');
         };

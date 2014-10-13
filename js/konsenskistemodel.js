@@ -1,18 +1,17 @@
-define(["require", "exports", 'contentmodel', 'rating', 'factories/event', 'observable'], function(require, exports, Content, Rating, EventFactory, Observable) {
+define(["require", "exports", 'contentmodel', 'rating', 'discussable', 'factories/event', 'observable'], function(require, exports, Content, Rating, Discussion, EventFactory, Obs) {
     var Model = (function () {
         function Model(context) {
             if (typeof context === "undefined") { context = new ModelContext; }
+            this.id = ko.observable();
             this.general = ko.observable(new Content.General);
             this.context = ko.observable(new Content.Context);
             this.rating = ko.observable(new Rating.Model);
-            this.childKas = new Observable.ObservableArrayExtender(ko.observableArray());
-            this.comments = new Observable.ObservableArrayExtender(ko.observableArray());
-            this.commentsLoaded = ko.observable(false);
-            this.commentsLoading = ko.observable(false);
+            this.childKas = new Obs.ObservableArrayExtender(ko.observableArray());
+            this.discussion = ko.observable(new Discussion.Model);
             this.factoryContext = context;
         }
         Model.prototype.set = function (model) {
-            this.id = model.id;
+            this.id(model.id());
             this.general().set(model.general());
             this.context().set(model.context());
         };

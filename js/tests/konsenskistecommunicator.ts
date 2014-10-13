@@ -27,16 +27,16 @@ class TestClass extends unit.TestClass {
 		common.Callbacks.batch([
 			r => {
 				var koki1 = new KokiModel.Model;
-				koki1.id = 1;
+				koki1.id(1);
 				koki1.general().title('Title #1');
 				koki1.general().text('Text #1');
 				
 				var koki2 = new KokiModel.Model;
-				koki2.id = 2;
+				koki2.id(2);
 				koki2.general().title('Title #2');
 				koki2.general().text('Text #2');
 				
-				this.mdl.id = 1;
+				this.mdl.id(1);
 				
 				this.com.setTestKoki(koki1);
 				this.com.setTestKoki(koki2);
@@ -56,21 +56,47 @@ class TestClass extends unit.TestClass {
 	queryComments(cxt, r) {
 		common.Callbacks.batch([
 			r => {
-				this.mdl.id = 1;
+				this.mdl.id(1);
 				var koki = new KokiModel.Model();
-				koki.id = 1;
-				koki.comments.set([new Comment.Model]);
+				koki.id(1);
+				koki.discussion().comments.set([new Comment.Model]);
 				
+				var ctr = 0;
+				this.com.commentsReceived.subscribe(args => {
+					test.assert(() => args.comments.length == 1);
+					++ctr;
+				});
 				this.com.setTestKoki(koki);
 				this.com.queryCommentsOf(1);
 				
-				setTimeout(r);
-			},
-			r => {
-				test.assert( () => this.mdl.comments.get().length == 1 );
+				test.assert(() => ctr == 1);
 				r();
 			}
 		], r);
+	}
+	
+	receiveCommentsFromCommunicator(cxt, r) {
+		common.Callbacks.batch([
+			r => {
+				this.mdl.id(1);
+				this.com.commentsReceived.raise({ id: 1, comments: [new Comment.Model] });
+				test.assert(() => this.mdl.discussion().comments.get().length == 1);
+				r();
+			}
+		], r);
+	}
+	
+	communicator(cxt, r) {
+		var communicator = new TestKokiCommunicator();
+		communicator.commentsReceived.subscribe(args => test.assert(() => args.comments.length == 1) );
+		
+		var koki = new KokiModel.Model();
+		koki.id(1);
+		koki.discussion().comments.set([new Comment.Model]);
+		communicator.setTestKoki(koki);
+		communicator.queryCommentsOf(1);
+		
+		r();
 	}
 }
 

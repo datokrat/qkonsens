@@ -33,7 +33,7 @@ export class Controller {
 		model.konsenskiste.subscribe( newKoki => this.kkWinController.setKonsenskisteModel(newKoki) );
 		
 		this.communicator.konsenskiste.received.subscribe( (args: KokiCommunicator.ReceivedArgs) => {
-			if(args.id == model.konsenskiste().id) {
+			if(args.id == model.konsenskiste().id()) {
 				model.konsenskiste( args.konsenskiste );
 			}
 		} );

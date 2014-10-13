@@ -1,11 +1,10 @@
-define(["require", "exports", 'observable', 'contentmodel'], function(require, exports, Obs, Content) {
+define(["require", "exports", 'contentmodel', 'discussable'], function(require, exports, Content, Discussion) {
     var Model = (function () {
         function Model() {
+            this.id = ko.observable();
             this.general = ko.observable(new Content.General);
             this.context = ko.observable(new Content.Context);
-            this.comments = new Obs.ObservableArrayExtender(ko.observableArray());
-            this.commentsLoaded = ko.observable(false);
-            this.commentsLoading = ko.observable(false);
+            this.discussion = ko.observable(new Discussion.Model);
         }
         return Model;
     })();

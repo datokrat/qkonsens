@@ -8,9 +8,13 @@ define(["require", "exports", 'event', 'tests/testcontentcommunicator'], functio
         TestDiscussableCommunicator.prototype.queryCommentsOf = function (discussableId) {
             var item = this.testItems[discussableId];
             if (typeof item !== 'undefined')
-                this.commentsReceived.raise({ id: discussableId, comments: item.comments.get() });
+                this.commentsReceived.raise({ id: discussableId, comments: item.discussion().comments.get() });
             else
-                throw new Error('TestDiscussableCommunicator.queryCommentsOf: discussableId not found');
+                throw new Error('TestDiscussableCommunicator.queryCommentsOf: discussableId[' + discussableId + '] not found');
+        };
+
+        TestDiscussableCommunicator.prototype.setTestDiscussable = function (discussable) {
+            this.testItems[discussable.id()] = discussable;
         };
         return TestDiscussableCommunicator;
     })();

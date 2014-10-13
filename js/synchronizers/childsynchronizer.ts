@@ -23,10 +23,15 @@ export class ChildSynchronizer<Model, ViewModel, Controller extends { dispose():
 		return this;
 	}
 	
+	public setViewModelObservable(v: Obs.Observable<ViewModel>) {
+		this.setViewModelChangedHandler(newViewModel => v(newViewModel));
+        return this;
+	}
+	
 	private modelChanged() {
 		if(this.controller) this.controller.dispose();
 		this.viewModel = this.viewModelFactory.create();
-		this.viewModelChangedHandler(this.viewModel);
+		this.viewModelChangedHandler && this.viewModelChangedHandler(this.viewModel);
 		this.controller = this.controllerFactory.create(this.model(), this.viewModel);
 	}
 	
@@ -36,7 +41,7 @@ export class ChildSynchronizer<Model, ViewModel, Controller extends { dispose():
 	
 	private model: Obs.Observable<Model>;
 	private viewModel: ViewModel;
-	private controller: Controller;
+	public controller: Controller;
 	
 	private viewModelFactory: Factory<ViewModel>;
 	private controllerFactory: ControllerFactory<Model, ViewModel, Controller>;

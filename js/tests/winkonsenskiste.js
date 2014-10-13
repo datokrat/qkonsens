@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/tsunit', 'tests/test', '../konsenskistemodel', 'windows/konsenskiste', 'windows/konsenskistecontroller', 'tests/testkonsenskistecommunicator', '../kernaussagemodel'], function(require, exports, unit, test, kokiMdl, win, ctr, KokiCommunicator, kaMdl) {
+define(["require", "exports", 'tests/tsunit', 'tests/test', '../konsenskistemodel', 'windows/konsenskiste', 'windows/konsenskistecontroller', 'tests/testkonsenskistecommunicator', '../viewmodelcontext', '../kernaussagemodel'], function(require, exports, unit, test, kokiMdl, win, ctr, KokiCommunicator, ViewModelContext, kaMdl) {
     var Tests = (function (_super) {
         __extends(Tests, _super);
         function Tests() {
@@ -75,6 +75,17 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../konsenskistemode
             });
             test.assert(function () {
                 return window.kkView().childKas()[0].general().text() == 'Blablablablub';
+            });
+        };
+
+        Tests.prototype.contextImplementation = function () {
+            var koki = new kokiMdl.Model();
+            var window = new win.Win();
+            var controller = new ctr.Controller(koki, window, new KokiCommunicator);
+            controller.setContext(new ViewModelContext(null, null, null));
+
+            test.assert(function () {
+                return controller['konsenskisteController']['cxt'];
             });
         };
         return Tests;

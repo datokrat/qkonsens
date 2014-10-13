@@ -1,3 +1,4 @@
+///<reference path="../typings/knockout.d.ts" />
 define(["require", "exports"], function(require, exports) {
     var koTypes = ko;
     var ko = top.frames[2].ko;

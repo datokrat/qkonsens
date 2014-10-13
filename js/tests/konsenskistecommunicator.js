@@ -23,16 +23,16 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', '../common', 'tes
             common.Callbacks.batch([
                 function (r) {
                     var koki1 = new KokiModel.Model;
-                    koki1.id = 1;
+                    koki1.id(1);
                     koki1.general().title('Title #1');
                     koki1.general().text('Text #1');
 
                     var koki2 = new KokiModel.Model;
-                    koki2.id = 2;
+                    koki2.id(2);
                     koki2.general().title('Title #2');
                     koki2.general().text('Text #2');
 
-                    _this.mdl.id = 1;
+                    _this.mdl.id(1);
 
                     _this.com.setTestKoki(koki1);
                     _this.com.setTestKoki(koki2);
@@ -57,23 +57,58 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', '../common', 'tes
             var _this = this;
             common.Callbacks.batch([
                 function (r) {
-                    _this.mdl.id = 1;
+                    _this.mdl.id(1);
                     var koki = new KokiModel.Model();
-                    koki.id = 1;
-                    koki.comments.set([new Comment.Model]);
+                    koki.id(1);
+                    koki.discussion().comments.set([new Comment.Model]);
 
+                    var ctr = 0;
+                    _this.com.commentsReceived.subscribe(function (args) {
+                        test.assert(function () {
+                            return args.comments.length == 1;
+                        });
+                        ++ctr;
+                    });
                     _this.com.setTestKoki(koki);
                     _this.com.queryCommentsOf(1);
 
-                    setTimeout(r);
-                },
-                function (r) {
                     test.assert(function () {
-                        return _this.mdl.comments.get().length == 1;
+                        return ctr == 1;
                     });
                     r();
                 }
             ], r);
+        };
+
+        TestClass.prototype.receiveCommentsFromCommunicator = function (cxt, r) {
+            var _this = this;
+            common.Callbacks.batch([
+                function (r) {
+                    _this.mdl.id(1);
+                    _this.com.commentsReceived.raise({ id: 1, comments: [new Comment.Model] });
+                    test.assert(function () {
+                        return _this.mdl.discussion().comments.get().length == 1;
+                    });
+                    r();
+                }
+            ], r);
+        };
+
+        TestClass.prototype.communicator = function (cxt, r) {
+            var communicator = new TestKokiCommunicator();
+            communicator.commentsReceived.subscribe(function (args) {
+                return test.assert(function () {
+                    return args.comments.length == 1;
+                });
+            });
+
+            var koki = new KokiModel.Model();
+            koki.id(1);
+            koki.discussion().comments.set([new Comment.Model]);
+            communicator.setTestKoki(koki);
+            communicator.queryCommentsOf(1);
+
+            r();
         };
         return TestClass;
     })(unit.TestClass);

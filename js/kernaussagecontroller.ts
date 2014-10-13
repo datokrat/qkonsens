@@ -15,7 +15,7 @@ export class Controller {
 	private viewModel: vm.ViewModel;
 	private generalContentSynchronizer: KSync.GeneralContentSynchronizer;
 	private context: ContentController.Context; //TODO: Synchronizer
-	private discussable: Discussable.Controller;
+	private discussionSynchronizer: KSync.DiscussionSynchronizer;
 
 	constructor(model: mdl.Model, viewModel: vm.ViewModel, communicator: com.Main) {
 		this.init(model, viewModel, communicator);
@@ -33,16 +33,22 @@ export class Controller {
 
 		this.context = new ContentController.Context(model.context(), viewModel.context(), communicator.content);
 		
-		this.discussable = new Discussable.Controller(model, viewModel, communicator);
+        viewModel.discussion = ko.observable<Discussable.ViewModel>();
+		this.discussionSynchronizer = new KSync.DiscussionSynchronizer(communicator);
+		this.discussionSynchronizer
+			.setDiscussableModel(model)
+			.setDiscussableViewModel(viewModel)
+			.setViewModelObservable(viewModel.discussion)
+			.setModelObservable(model.discussion);
 	}
 	
 	public setViewModelContext(cxt: ViewModelContext) {
-		this.discussable.setViewModelContext(cxt);
+		this.discussionSynchronizer.setViewModelContext(cxt);
 	}
 	
 	public dispose() {
 		this.generalContentSynchronizer.dispose();
 		this.context.dispose();
-		this.discussable.dispose();
+		this.discussionSynchronizer.dispose();
 	}
 }

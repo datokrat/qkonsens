@@ -1,4 +1,4 @@
-define(["require", "exports", 'synchronizers/ksynchronizers', 'discussable', 'contentcontroller', 'contentviewmodel'], function(require, exports, KSync, Discussable, ContentController, ContentViewModel) {
+define(["require", "exports", 'synchronizers/ksynchronizers', 'contentcontroller', 'contentviewmodel'], function(require, exports, KSync, ContentController, ContentViewModel) {
     var Controller = (function () {
         function Controller(model, viewModel, communicator) {
             this.init(model, viewModel, communicator);
@@ -16,17 +16,19 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'discussable', 'co
 
             this.context = new ContentController.Context(model.context(), viewModel.context(), communicator.content);
 
-            this.discussable = new Discussable.Controller(model, viewModel, communicator);
+            viewModel.discussion = ko.observable();
+            this.discussionSynchronizer = new KSync.DiscussionSynchronizer(communicator);
+            this.discussionSynchronizer.setDiscussableModel(model).setDiscussableViewModel(viewModel).setViewModelObservable(viewModel.discussion).setModelObservable(model.discussion);
         };
 
         Controller.prototype.setViewModelContext = function (cxt) {
-            this.discussable.setViewModelContext(cxt);
+            this.discussionSynchronizer.setViewModelContext(cxt);
         };
 
         Controller.prototype.dispose = function () {
             this.generalContentSynchronizer.dispose();
             this.context.dispose();
-            this.discussable.dispose();
+            this.discussionSynchronizer.dispose();
         };
         return Controller;
     })();

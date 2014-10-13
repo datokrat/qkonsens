@@ -10,8 +10,8 @@ import kernaussageVm = require('kernaussageviewmodel')
 import KokiCommunicator = require('konsenskistecommunicator')
 
 import ContentViewModel = require('contentviewmodel')
-import Discussable = require('discussable')
-import DiscussableCommunicator = require('discussablecommunicator')
+import Discussion = require('discussable')
+import DiscussionCommunicator = require('discussablecommunicator')
 
 import Rating = require('rating')
 import Comment = require('comment')
@@ -36,10 +36,9 @@ export class ControllerImpl implements Controller {
 		this.communicator = communicator;
 		
 		this.initCommunicator();
-		this.initViewModel();
 		
 		this.initKas();
-		this.initDiscussable();
+		this.initDiscussion();
 		this.initGeneralContent();
 		this.initContext();
 		this.initRating();
@@ -47,12 +46,9 @@ export class ControllerImpl implements Controller {
 	
 	public setContext(cxt: ViewModelContext) {
 		this.cxt = cxt;
-		this.discussable.setViewModelContext(cxt);
+		this.discussionSynchronizer.setViewModelContext(cxt);
 		this.kaSynchronizer.setViewModelContext(cxt);
 		return this;
-	}
-	
-	private initViewModel() {
 	}
 	
 	private initKas() {
@@ -64,8 +60,14 @@ export class ControllerImpl implements Controller {
 			.setModelObservable(this.model.childKas);
 	}
 	
-	private initDiscussable() {
-		this.discussable = new Discussable.Controller(this.model, this.viewModel, this.communicator);
+	private initDiscussion() {
+		this.viewModel.discussion = ko.observable<Discussion.ViewModel>();
+		this.discussionSynchronizer = new KSync.DiscussionSynchronizer(this.communicator);
+		this.discussionSynchronizer
+			.setDiscussableModel(this.model)
+			.setDiscussableViewModel(this.viewModel)
+			.setViewModelObservable(this.viewModel.discussion)
+			.setModelObservable(this.model.discussion);
 	}
 	
 	private initGeneralContent() {
@@ -99,7 +101,7 @@ export class ControllerImpl implements Controller {
 	}
 	
 	private onKokiReceived = (args: KokiCommunicator.ReceivedArgs) => {
-		if(this.model.id == args.konsenskiste.id)
+		if(this.model.id() == args.konsenskiste.id())
 			this.model.set( args.konsenskiste );
 	}
 	
@@ -107,7 +109,7 @@ export class ControllerImpl implements Controller {
 		this.generalContentSynchronizer.dispose();
 		this.contextSynchronizer.dispose();
 		this.ratingSynchronizer.dispose();
-		this.discussable.dispose();
+		this.discussionSynchronizer.dispose();
 		
 		this.modelSubscriptions.forEach( s => s.undo() );
 		this.communicatorSubscriptions.forEach( s => s.undo() );
@@ -122,7 +124,7 @@ export class ControllerImpl implements Controller {
 	private contextSynchronizer: KSync.ContextSynchronizer;
 	private ratingSynchronizer: KSync.RatingSynchronizer;
 	private kaSynchronizer: KokiSync.KaSynchronizer;
-	private discussable: Discussable.Controller;
+	private discussionSynchronizer: KSync.DiscussionSynchronizer;
 	
 	private modelSubscriptions: evt.Subscription[] = [];
 	private communicatorSubscriptions: evt.Subscription[] = [];

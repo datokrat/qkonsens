@@ -1,4 +1,4 @@
-define(["require", "exports", 'tests/tsunit', 'tests/asyncunit', 'tests/topicnavigationmodel', 'tests/topicnavigation', 'tests/controller', 'tests/konsenskistemodel', 'tests/kernaussage', 'tests/konsenskistecontroller', 'tests/childarraysynchronizer', 'tests/commentsynchronizer', 'tests/observable', 'tests/content', 'tests/context', 'tests/winkonsenskiste', 'tests/contentcommunicator', 'tests/konsenskistecommunicator', 'tests/contentmodel'], function(require, exports, unit, asyncunit, topicNavigationModel, topicNavigation, controller, kokiModel, kaModel, kokiController, synchronizer, commentSynchronizer, observable, content, context, winKoki, ContentCommunicator, KokiCommunicator, ContentModelTests) {
+define(["require", "exports", 'tests/tsunit', 'tests/asyncunit', 'tests/discussion', 'tests/discussionsynchronizer', 'tests/topicnavigationmodel', 'tests/topicnavigation', 'tests/controller', 'tests/konsenskistemodel', 'tests/kernaussage', 'tests/konsenskistecontroller', 'tests/childarraysynchronizer', 'tests/commentsynchronizer', 'tests/observable', 'tests/content', 'tests/context', 'tests/winkonsenskiste', 'tests/contentcommunicator', 'tests/konsenskistecommunicator', 'tests/contentmodel'], function(require, exports, unit, asyncunit, Discussion, DiscussionSynchronizer, topicNavigationModel, topicNavigation, controller, kokiModel, kaModel, kokiController, synchronizer, commentSynchronizer, observable, content, context, winKoki, ContentCommunicator, KokiCommunicator, ContentModelTests) {
     var test = new unit.Test();
     var asyncTest = new asyncunit.Test();
 
@@ -10,6 +10,8 @@ define(["require", "exports", 'tests/tsunit', 'tests/asyncunit', 'tests/topicnav
     test.addTestClass(new content.General(), 'General Content');
     test.addTestClass(new content.Context(), 'Context');
     test.addTestClass(new context.Tests(), 'Context');
+    test.addTestClass(new Discussion(), 'Discussion');
+    test.addTestClass(new DiscussionSynchronizer(), 'DiscussionSynchronizer');
     test.addTestClass(new synchronizer.Tests(), 'ChildArraySynchronizer');
     test.addTestClass(new commentSynchronizer.Tests, 'CommentSynchronizer');
     test.addTestClass(new kaModel.Tests(), 'Kernaussage');

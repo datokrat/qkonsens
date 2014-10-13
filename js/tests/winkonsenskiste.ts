@@ -5,6 +5,7 @@ import kokiMdl = require('../konsenskistemodel')
 import win = require('windows/konsenskiste')
 import ctr = require('windows/konsenskistecontroller')
 import KokiCommunicator = require('tests/testkonsenskistecommunicator')
+import ViewModelContext = require('../viewmodelcontext');
 
 import kaMdl = require('../kernaussagemodel')
 
@@ -58,4 +59,13 @@ export class Tests extends unit.TestClass {
 		test.assert( () => window.kkView().childKas()[0].general().title() == 'Begriff Basisdemokratie' );
 		test.assert( () => window.kkView().childKas()[0].general().text() == 'Blablablablub' );
 	}
+    
+    contextImplementation() {
+        var koki = new kokiMdl.Model();
+		var window = new win.Win();
+		var controller = new ctr.Controller(koki, window, new KokiCommunicator);
+		controller.setContext(new ViewModelContext(null, null, null));
+		
+		test.assert( () => controller['konsenskisteController']['cxt'] );
+    }
 }

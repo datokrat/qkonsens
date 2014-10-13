@@ -12,7 +12,7 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
             var communicator = reloader.communicator();
 
             var konsenskiste = new koki.Model;
-            konsenskiste.id = 1;
+            konsenskiste.id(1);
             konsenskiste.general().title('Konsenskisten-Titel');
             konsenskiste.general().text('Lorem ipsum dolor sit amet');
             konsenskiste.context().text('ipsum (lat.): selbst');
@@ -22,7 +22,7 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
 
             model.konsenskiste(konsenskiste);
 
-            kernaussage.id = 2;
+            kernaussage.id(2);
             kernaussage.general().title('Kernaussagen-Titel');
             kernaussage.general().text('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.');
             kernaussage.context().text('blablablablub');
@@ -64,7 +64,6 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
                     r();
                 }
             ], function (err) {
-                console.log(err);
                 r(err);
             });
         };
@@ -144,11 +143,11 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
                 function (r) {
                     var model = reloader.model();
                     var oldKoki = new koki.Model;
-                    oldKoki.id = 15;
+                    oldKoki.id(15);
                     model.konsenskiste(oldKoki);
 
                     var newKoki = new koki.Model;
-                    newKoki.id = 15;
+                    newKoki.id(15);
                     newKoki.general().title('New Title');
                     newKoki.general().text('New Text');
 
@@ -177,11 +176,12 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
                 function (r) {
                     var model = reloader.model();
                     var communicator = reloader.communicator();
+
                     var serverModel = new koki.Model();
-                    serverModel.id = 1;
+                    serverModel.id(1);
                     var comment = new Comment.Model();
                     comment.content().text('Comment');
-                    serverModel.comments.set([comment]);
+                    serverModel.discussion().comments.set([comment]);
                     communicator.konsenskiste.setTestKoki(serverModel);
                     setTimeout(r, 0);
                 },
@@ -205,10 +205,10 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
                 function (r) {
                     var model = reloader.model();
                     var communicator = reloader.communicator();
-                    serverKa.id = 2;
+                    serverKa.id(2);
                     var comment = new Comment.Model();
                     comment.content().text('Comment');
-                    serverKa.comments.set([comment]);
+                    serverKa.discussion().comments.set([comment]);
                     communicator.konsenskiste.kernaussage.setTestKa(serverKa);
                     setTimeout(r);
                 },
@@ -223,7 +223,7 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
 
                     var comment2 = new Comment.Model();
                     comment2.content().text('Comment2');
-                    serverKa.comments.push(comment2);
+                    serverKa.discussion().comments.push(comment2);
                     _this.webot.query('.ka>.controls').child('*').contains('Diskussion').click();
                     setTimeout(r, 100);
                 },

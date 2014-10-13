@@ -14,8 +14,8 @@ define(["require", "exports", '../event', 'tests/testcontentcommunicator', 'test
             this.content = cxt.content;
         }
         TestKaCommunicator.prototype.setTestKa = function (ka) {
-            if (typeof ka.id === 'number') {
-                this.testItems[ka.id] = ka;
+            if (typeof ka.id() === 'number') {
+                this.testItems[ka.id()] = ka;
             } else
                 throw new Error('TestKaCommunicator.setTestKa: ka.id is not a number');
         };

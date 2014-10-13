@@ -156,13 +156,13 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenski
 
             var comment = new Comment.Model();
             comment.content().text('A Comment');
-            model.comments.push(comment);
+            model.discussion().comments.push(comment);
 
             test.assert(function () {
-                return viewModel.comments().length == 1;
+                return viewModel.discussion().comments().length == 1;
             });
             test.assert(function () {
-                return viewModel.comments()[0].content().text() == 'A Comment';
+                return viewModel.discussion().comments()[0].content().text() == 'A Comment';
             });
         };
         return Tests;

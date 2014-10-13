@@ -5,15 +5,27 @@ import Comment = require('comment')
 import CommentSynchronizer = require('synchronizers/comment')
 import ViewModelContext = require('viewmodelcontext')
 
-export interface Model {
-	id: number;
-	comments: Obs.ObservableArrayEx<Comment.Model>;
-	commentsLoaded: Obs.Observable<boolean>;
-	commentsLoading: Obs.Observable<boolean>;
+export interface DiscussableModel {
+	id: Obs.Observable<number>;
+	discussion: Obs.Observable<Model>;
 }
 
-export interface ViewModel {
+export interface DiscussableViewModel {
+	discussion: Obs.Observable<ViewModel>;
+}
+
+export class Model {
+	comments: Obs.ObservableArrayEx<Comment.Model> = new Obs.ObservableArrayExtender<Comment.Model>(ko.observableArray<Comment.Model>());
+	commentsLoaded: Obs.Observable<boolean> = ko.observable<boolean>();
+	commentsLoading: Obs.Observable<boolean> = ko.observable<boolean>();
+	error: Obs.Observable<string> = ko.observable<string>();
+}
+
+export class ViewModel {
 	comments: Obs.ObservableArray<Comment.ViewModel>;
+	commentsLoaded: Obs.Observable<boolean>;
+	commentsLoading: Obs.Observable<boolean>;
+	error: Obs.Observable<string>;
 	discussionClick: () => void;
 }
 
@@ -21,6 +33,7 @@ export class Controller {
 	constructor(private model: Model, private viewModel: ViewModel, private communicator: DiscussableCommunicator.Base) {
 		this.viewModel.comments = ko.observableArray<Comment.ViewModel>();
 		this.viewModel.discussionClick = this.discussionClick;
+		this.viewModel.error = this.model.error;
 		
 		this.commentSynchronizer = new CommentSynchronizer(this.communicator.content)
 			.setViewModelObservable(this.viewModel.comments)
@@ -31,16 +44,29 @@ export class Controller {
 		];
 	}
 	
+	public setDiscussableModel(discussableModel: DiscussableModel) {
+		this.discussableModel = discussableModel;
+		return this;
+	}
+	
+	public setDiscussableViewModel(discussableViewModel: DiscussableViewModel) {
+		this.discussableViewModel = discussableViewModel;
+		return this;
+	}
+	
 	private onCommentsReceived = (args: DiscussableCommunicator.ReceivedArgs) => {
-		if(this.model.id == args.id) {
+		if(this.discussableModel && this.discussableModel.id() == args.id) {
 			this.model.comments.set(args.comments);
 			this.model.commentsLoading(false);
 			this.model.commentsLoaded(true);
 		}
+		else if(!this.discussableModel)
+			throw new Error('this.discussableModel is null/undefined');
 	}
 	
 	public setViewModelContext(cxt: ViewModelContext) {
 		this.viewModelContext = cxt;
+		return this;
 	}
 	
 	public dispose() {
@@ -50,14 +76,22 @@ export class Controller {
 	
 	private discussionClick = () => {
 		if(this.viewModelContext) {
-			if(!this.model.commentsLoading() && !this.model.commentsLoaded()) {
+			if(this.discussableModel && !this.model.commentsLoading() && !this.model.commentsLoaded()) {
 				this.model.commentsLoading(true);
-				this.communicator.queryCommentsOf(this.model.id);
+				this.communicator.queryCommentsOf(this.discussableModel.id());
 			}
-			this.viewModelContext.discussionWindow.discussable(this.viewModel);
+			
+			if(!this.discussableModel)
+				this.model.error('DiscussionController.discussableModel is not defined');
+
+			this.viewModelContext.discussionWindow.discussable(this.discussableViewModel);
 			this.viewModelContext.setLeftWindow(this.viewModelContext.discussionWindow);
 		}
+        else console.warn('viewModelContext is null');
 	}
+	
+	private discussableModel: DiscussableModel;
+	private discussableViewModel: DiscussableViewModel;
 	
 	private viewModelContext: ViewModelContext;
 	private commentSynchronizer: CommentSynchronizer;

@@ -1,9 +1,9 @@
-define(["require", "exports", 'discussable', 'synchronizers/ksynchronizers', 'synchronizers/kokisynchronizers'], function(require, exports, Discussable, KSync, KokiSync) {
+define(["require", "exports", 'synchronizers/ksynchronizers', 'synchronizers/kokisynchronizers'], function(require, exports, KSync, KokiSync) {
     var ControllerImpl = (function () {
         function ControllerImpl(model, viewModel, communicator) {
             var _this = this;
             this.onKokiReceived = function (args) {
-                if (_this.model.id == args.konsenskiste.id)
+                if (_this.model.id() == args.konsenskiste.id())
                     _this.model.set(args.konsenskiste);
             };
             this.modelSubscriptions = [];
@@ -16,10 +16,9 @@ define(["require", "exports", 'discussable', 'synchronizers/ksynchronizers', 'sy
             this.communicator = communicator;
 
             this.initCommunicator();
-            this.initViewModel();
 
             this.initKas();
-            this.initDiscussable();
+            this.initDiscussion();
             this.initGeneralContent();
             this.initContext();
             this.initRating();
@@ -27,12 +26,9 @@ define(["require", "exports", 'discussable', 'synchronizers/ksynchronizers', 'sy
 
         ControllerImpl.prototype.setContext = function (cxt) {
             this.cxt = cxt;
-            this.discussable.setViewModelContext(cxt);
+            this.discussionSynchronizer.setViewModelContext(cxt);
             this.kaSynchronizer.setViewModelContext(cxt);
             return this;
-        };
-
-        ControllerImpl.prototype.initViewModel = function () {
         };
 
         ControllerImpl.prototype.initKas = function () {
@@ -42,8 +38,10 @@ define(["require", "exports", 'discussable', 'synchronizers/ksynchronizers', 'sy
             this.kaSynchronizer.setViewModelObservable(this.viewModel.childKas).setModelObservable(this.model.childKas);
         };
 
-        ControllerImpl.prototype.initDiscussable = function () {
-            this.discussable = new Discussable.Controller(this.model, this.viewModel, this.communicator);
+        ControllerImpl.prototype.initDiscussion = function () {
+            this.viewModel.discussion = ko.observable();
+            this.discussionSynchronizer = new KSync.DiscussionSynchronizer(this.communicator);
+            this.discussionSynchronizer.setDiscussableModel(this.model).setDiscussableViewModel(this.viewModel).setViewModelObservable(this.viewModel.discussion).setModelObservable(this.model.discussion);
         };
 
         ControllerImpl.prototype.initGeneralContent = function () {
@@ -83,7 +81,7 @@ define(["require", "exports", 'discussable', 'synchronizers/ksynchronizers', 'sy
             this.generalContentSynchronizer.dispose();
             this.contextSynchronizer.dispose();
             this.ratingSynchronizer.dispose();
-            this.discussable.dispose();
+            this.discussionSynchronizer.dispose();
 
             this.modelSubscriptions.forEach(function (s) {
                 return s.undo();

@@ -22,7 +22,7 @@ define(["require", "exports", 'topicnavigationcontroller', 'frame', 'windows/non
             });
 
             this.communicator.konsenskiste.received.subscribe(function (args) {
-                if (args.id == model.konsenskiste().id) {
+                if (args.id == model.konsenskiste().id()) {
                     model.konsenskiste(args.konsenskiste);
                 }
             });

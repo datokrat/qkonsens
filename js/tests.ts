@@ -1,6 +1,8 @@
 import unit = require('tests/tsunit')
 import asyncunit = require('tests/asyncunit')
 
+import Discussion = require('tests/discussion');
+import DiscussionSynchronizer = require('tests/discussionsynchronizer');
 import topicNavigationModel = require('tests/topicnavigationmodel')
 import topicNavigation = require('tests/topicnavigation')
 import controller = require('tests/controller')
@@ -28,6 +30,8 @@ test.addTestClass(new ContentModelTests(), 'ContentModel')
 test.addTestClass(new content.General(), 'General Content')
 test.addTestClass(new content.Context(), 'Context')
 test.addTestClass(new context.Tests(), 'Context')
+test.addTestClass(new Discussion(), 'Discussion');
+test.addTestClass(new DiscussionSynchronizer(), 'DiscussionSynchronizer');
 test.addTestClass(new synchronizer.Tests(), 'ChildArraySynchronizer')
 test.addTestClass(new commentSynchronizer.Tests, 'CommentSynchronizer')
 test.addTestClass(new kaModel.Tests(), 'Kernaussage')

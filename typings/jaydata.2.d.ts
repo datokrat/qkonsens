@@ -38,6 +38,8 @@ declare module $data {
     export class Queryable<T extends Entity> implements Object {
         filter(predicate: (it: T) => boolean): Queryable<T>;
         filter(predicate: (it: T) => boolean, thisArg: any): Queryable<T>;
+        filter(predicate: string): Queryable<T>;
+        filter(predicate: string, thisArg: any): Queryable<T>;
 
         map(projection: (it: T) => any): Queryable<any>;
 

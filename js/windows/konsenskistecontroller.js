@@ -13,11 +13,14 @@ define(["require", "exports", 'factories/konsenskistecontroller', '../konsenskis
 
             var konsenskisteViewModel = new kokiVm.ViewModel;
             this.konsenskisteController = this.konsenskisteControllerFactory.create(konsenskisteModel, konsenskisteViewModel, this.communicator);
+            if (this.cxt)
+                this.konsenskisteController.setContext(this.cxt);
 
             this.window.kkView(konsenskisteViewModel);
         };
 
         Controller.prototype.setContext = function (cxt) {
+            console.log('windows/konsenskistecontroller.setContext');
             this.cxt = cxt;
             this.konsenskisteController.setContext(cxt);
             return this;

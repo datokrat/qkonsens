@@ -133,10 +133,10 @@ export class Tests extends unit.TestClass {
 		
 		var comment = new Comment.Model();
 		comment.content().text('A Comment');
-		model.comments.push(comment);
+		model.discussion().comments.push(comment);
 		
-		test.assert( () => viewModel.comments().length == 1 );
-		test.assert( () => viewModel.comments()[0].content().text() == 'A Comment' );
+		test.assert( () => viewModel.discussion().comments().length == 1 );
+		test.assert( () => viewModel.discussion().comments()[0].content().text() == 'A Comment' );
 	}
 }
 

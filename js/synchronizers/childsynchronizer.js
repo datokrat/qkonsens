@@ -24,11 +24,18 @@ define(["require", "exports"], function(require, exports) {
             return this;
         };
 
+        ChildSynchronizer.prototype.setViewModelObservable = function (v) {
+            this.setViewModelChangedHandler(function (newViewModel) {
+                return v(newViewModel);
+            });
+            return this;
+        };
+
         ChildSynchronizer.prototype.modelChanged = function () {
             if (this.controller)
                 this.controller.dispose();
             this.viewModel = this.viewModelFactory.create();
-            this.viewModelChangedHandler(this.viewModel);
+            this.viewModelChangedHandler && this.viewModelChangedHandler(this.viewModel);
             this.controller = this.controllerFactory.create(this.model(), this.viewModel);
         };
 

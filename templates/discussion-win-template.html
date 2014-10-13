@@ -4,8 +4,11 @@
 </h1>
 <h2 data-bind="text: discussable().general().title"></h2>
 <p data-bind="text: discussable().general().text"></p>
-<!-- ko foreach: discussable().comments -->
-<div data-bind="template: { name: 'comment-template' }"></div>
+<!-- ko if: discussable() && discussable().discussion() && discussable().discussion().error -->
+	<p data-bind="text: discussable().discussion.error"></p>
+<!-- /ko -->
+<!-- ko foreach: discussable().discussion().comments -->
+	<div data-bind="template: { name: 'comment-template' }"></div>
 <!-- /ko -->
 
 <!--div class="cmt">

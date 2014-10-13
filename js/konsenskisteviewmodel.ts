@@ -4,15 +4,13 @@ import Content = require('contentviewmodel')
 import Kernaussage = require('kernaussageviewmodel')
 import Rating = require('rating')
 import Comment = require('comment')
-import Discussable = require('discussable')
+import Discussion = require('discussable')
 
-export class ViewModel implements Discussable.ViewModel {
+export class ViewModel {
 	public general: observable.Observable<Content.General>;
 	public context: observable.Observable<Content.Context>;
 	public rating: observable.Observable<Rating.ViewModel>;
+	public discussion: observable.Observable<Discussion.ViewModel>;
 	
-	public childKas: observable.ObservableArray<Kernaussage.ViewModel>; //() => Kernaussage.ViewModel[]; //TODO: Make observable
-	public comments: observable.ObservableArray<Comment.ViewModel>;
-	
-	public discussionClick: () => void;
+	public childKas: observable.ObservableArray<Kernaussage.ViewModel>;
 }

@@ -4,7 +4,8 @@ import Comment = require('comment')
 import TestContentCommunicator = require('tests/testcontentcommunicator')
 import ContentCommunicator = require('../contentcommunicator')
 
-import DiscussableCommunicator = require('discussablecommunicator')
+import Discussion = require('../discussable')
+import DiscussableCommunicator = require('../discussablecommunicator')
 
 class TestDiscussableCommunicator implements DiscussableCommunicator.Base {
 	public content: ContentCommunicator.Main = new TestContentCommunicator();
@@ -13,11 +14,15 @@ class TestDiscussableCommunicator implements DiscussableCommunicator.Base {
 	public testItems: any = {};
 	
 	public queryCommentsOf(discussableId: number) {
-		var item = this.testItems[discussableId];
+		var item: Discussion.DiscussableModel = this.testItems[discussableId];
 		if(typeof item !== 'undefined')
-			this.commentsReceived.raise({ id: discussableId, comments: item.comments.get() });
+			this.commentsReceived.raise({ id: discussableId, comments: item.discussion().comments.get() });
 		else
-			throw new Error('TestDiscussableCommunicator.queryCommentsOf: discussableId not found');
+			throw new Error('TestDiscussableCommunicator.queryCommentsOf: discussableId[' + discussableId + '] not found');
+	}
+	
+	public setTestDiscussable(discussable: Discussion.DiscussableModel) {
+		this.testItems[discussable.id()] = discussable;
 	}
 }
 
