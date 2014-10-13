@@ -49,6 +49,8 @@ define(["require", "exports", 'observable', 'synchronizers/comment'], function(r
             this.communicatorSubscriptions = [];
             this.viewModel.comments = ko.observableArray();
             this.viewModel.discussionClick = this.discussionClick;
+            this.viewModel.commentsLoading = this.model.commentsLoading;
+            this.viewModel.commentsLoaded = this.model.commentsLoaded;
             this.viewModel.error = this.model.error;
 
             this.commentSynchronizer = new CommentSynchronizer(this.communicator.content).setViewModelObservable(this.viewModel.comments).setModelObservable(this.model.comments);

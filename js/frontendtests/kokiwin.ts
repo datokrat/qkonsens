@@ -203,4 +203,22 @@ export class Tests {
 			}
 		], r);
 	}
+	
+	commentsLoading(cxt, r) {
+		var model = reloader.model();
+		common.Callbacks.batch([
+			r => {
+				this.webot.query('.kk>.controls').child('*').contains('Diskussion').click();
+				setTimeout(r);
+			},
+			r => {
+				model.konsenskiste().discussion().commentsLoading(true);
+				setTimeout(r);
+			},
+			r => {
+				test.assert( () => this.webot.query(':contains("Diskussion")').child('*').text('Laden...').exists() );
+				r();
+			}
+		], r);
+	}
 }

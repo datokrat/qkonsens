@@ -33,6 +33,8 @@ export class Controller {
 	constructor(private model: Model, private viewModel: ViewModel, private communicator: DiscussableCommunicator.Base) {
 		this.viewModel.comments = ko.observableArray<Comment.ViewModel>();
 		this.viewModel.discussionClick = this.discussionClick;
+		this.viewModel.commentsLoading = this.model.commentsLoading;
+		this.viewModel.commentsLoaded = this.model.commentsLoaded;
 		this.viewModel.error = this.model.error;
 		
 		this.commentSynchronizer = new CommentSynchronizer(this.communicator.content)

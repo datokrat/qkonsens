@@ -235,6 +235,27 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
                 }
             ], r);
         };
+
+        Tests.prototype.commentsLoading = function (cxt, r) {
+            var _this = this;
+            var model = reloader.model();
+            common.Callbacks.batch([
+                function (r) {
+                    _this.webot.query('.kk>.controls').child('*').contains('Diskussion').click();
+                    setTimeout(r);
+                },
+                function (r) {
+                    model.konsenskiste().discussion().commentsLoading(true);
+                    setTimeout(r);
+                },
+                function (r) {
+                    test.assert(function () {
+                        return _this.webot.query(':contains("Diskussion")').child('*').text('Laden...').exists();
+                    });
+                    r();
+                }
+            ], r);
+        };
         return Tests;
     })();
     exports.Tests = Tests;
