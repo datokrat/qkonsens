@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", '../event', 'tests/testcontentcommunicator', 'tests/testdiscussablecommunicator'], function(require, exports, Events, TestContentCommunicator, TestDiscussableCommunicator) {
+define(["require", "exports", '../event', 'tests/testcontentcommunicator', 'tests/testdiscussioncommunicator'], function(require, exports, Events, TestContentCommunicator, TestDiscussionCommunicator) {
     var TestKaCommunicator = (function (_super) {
         __extends(TestKaCommunicator, _super);
         function TestKaCommunicator(cxt) {
@@ -24,7 +24,7 @@ define(["require", "exports", '../event', 'tests/testcontentcommunicator', 'test
             throw new Error('not implemented');
         };
         return TestKaCommunicator;
-    })(TestDiscussableCommunicator);
+    })(TestDiscussionCommunicator);
 
     
     return TestKaCommunicator;

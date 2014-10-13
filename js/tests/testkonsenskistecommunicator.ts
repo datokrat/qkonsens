@@ -3,12 +3,12 @@ import Events = require('event')
 import KokiCommunicator = require('../konsenskistecommunicator')
 import TestContentCommunicator = require('tests/testcontentcommunicator')
 import TestKaCommunicator = require('tests/testkernaussagecommunicator')
-import TestDiscussableCommunicator = require('tests/testdiscussablecommunicator')
+import TestDiscussionCommunicator = require('tests/testdiscussioncommunicator')
 
 import KokiModel = require('../konsenskistemodel')
 
 
-class TestKokiCommunicator extends TestDiscussableCommunicator implements KokiCommunicator.Main {
+class TestKokiCommunicator extends TestDiscussionCommunicator implements KokiCommunicator.Main {
 	public content: TestContentCommunicator;
 	public kernaussage: TestKaCommunicator;
 	

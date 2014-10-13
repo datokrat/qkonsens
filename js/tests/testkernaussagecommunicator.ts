@@ -1,12 +1,12 @@
 import Events = require('../event')
 import TestContentCommunicator = require('tests/testcontentcommunicator')
-import TestDiscussableCommunicator = require('tests/testdiscussablecommunicator')
+import TestDiscussionCommunicator = require('tests/testdiscussioncommunicator')
 import ContentCommunicator = require('../contentcommunicator')
 import KaCommunicator = require('../kernaussagecommunicator')
 
 import KernaussageModel = require('kernaussagemodel')
 
-class TestKaCommunicator extends TestDiscussableCommunicator implements KaCommunicator.Main {
+class TestKaCommunicator extends TestDiscussionCommunicator implements KaCommunicator.Main {
 	public content: ContentCommunicator.Main;
 	public received = new Events.EventImpl<KaCommunicator.ReceivedArgs>();
 	

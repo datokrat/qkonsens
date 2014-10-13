@@ -11,7 +11,7 @@ import KokiCommunicator = require('konsenskistecommunicator')
 
 import ContentViewModel = require('contentviewmodel')
 import Discussion = require('discussion')
-import DiscussionCommunicator = require('discussablecommunicator')
+import DiscussionCommunicator = require('discussioncommunicator')
 
 import Rating = require('rating')
 import Comment = require('comment')

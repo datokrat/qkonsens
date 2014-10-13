@@ -4,7 +4,7 @@ import discoContext = require('discocontext')
 import IKonsenskisteCommunicator = require('konsenskistecommunicator')
 import ContentCommunicator = require('contentcommunicatorimpl')
 import KernaussageCommunicator = require('kernaussagecommunicatorimpl')
-import DiscussableCommunicator = require('discussablecommunicator')
+import DiscussionCommunicator = require('discussioncommunicator')
 import IContentCommunicator = require('contentcommunicator')
 import IKernaussageCommunicator = require('kernaussagecommunicator')
 
@@ -12,7 +12,7 @@ import KonsenskisteModel = require('konsenskistemodel')
 import KernaussageModel = require('kernaussagemodel')
 import ContentModel = require('contentmodel')
 
-class KonsenskisteCommunicator extends DiscussableCommunicator.Main implements IKonsenskisteCommunicator.Main {
+class KonsenskisteCommunicator extends DiscussionCommunicator.Main implements IKonsenskisteCommunicator.Main {
 	public content: IContentCommunicator.Main;
 	public kernaussage: IKernaussageCommunicator.Main;
 	public received = new Events.EventImpl<IKonsenskisteCommunicator.ReceivedArgs>();

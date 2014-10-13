@@ -6,7 +6,7 @@ import ContentController = require('../contentcontroller')
 import ContentCommunicator = require('../contentcommunicator')
 import Rating = require('../rating')
 import Discussion = require('../discussion')
-import DiscussionCommunicator = require('../discussablecommunicator')
+import DiscussionCommunicator = require('../discussioncommunicator')
 import ViewModelContext = require('../viewmodelcontext')
 
 export class GeneralContentSynchronizer 

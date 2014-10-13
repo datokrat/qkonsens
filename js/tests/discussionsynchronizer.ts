@@ -2,7 +2,7 @@ import unit = require('tests/tsunit');
 import test = require('tests/test');
 
 import Discussion = require('../discussion');
-import DiscussionCommunicator = require('tests/testdiscussablecommunicator');
+import DiscussionCommunicator = require('tests/testdiscussioncommunicator');
 import KSync = require('synchronizers/ksynchronizers');
 import ViewModelContext = require('../viewmodelcontext');
 import Factories = require('factories/constructorbased');

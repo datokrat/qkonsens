@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'discussablecommunicator', 'contentcommunicatorimpl', 'event'], function(require, exports, DiscussableCommunicator, ContentCommunicatorImpl, Events) {
+define(["require", "exports", 'discussioncommunicator', 'contentcommunicatorimpl', 'event'], function(require, exports, DiscussionCommunicator, ContentCommunicatorImpl, Events) {
     var KernaussageCommunicatorImpl = (function (_super) {
         __extends(KernaussageCommunicatorImpl, _super);
         function KernaussageCommunicatorImpl(cxt) {
@@ -17,7 +17,7 @@ define(["require", "exports", 'discussablecommunicator', 'contentcommunicatorimp
             throw new Error('not implemented');
         };
         return KernaussageCommunicatorImpl;
-    })(DiscussableCommunicator.Main);
+    })(DiscussionCommunicator.Main);
 
     
     return KernaussageCommunicatorImpl;

@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'event', 'discocontext', 'contentcommunicatorimpl', 'kernaussagecommunicatorimpl', 'discussablecommunicator', 'konsenskistemodel', 'kernaussagemodel', 'contentmodel'], function(require, exports, Events, discoContext, ContentCommunicator, KernaussageCommunicator, DiscussableCommunicator, KonsenskisteModel, KernaussageModel, ContentModel) {
+define(["require", "exports", 'event', 'discocontext', 'contentcommunicatorimpl', 'kernaussagecommunicatorimpl', 'discussioncommunicator', 'konsenskistemodel', 'kernaussagemodel', 'contentmodel'], function(require, exports, Events, discoContext, ContentCommunicator, KernaussageCommunicator, DiscussionCommunicator, KonsenskisteModel, KernaussageModel, ContentModel) {
     var KonsenskisteCommunicator = (function (_super) {
         __extends(KonsenskisteCommunicator, _super);
         function KonsenskisteCommunicator() {
@@ -83,7 +83,7 @@ define(["require", "exports", 'event', 'discocontext', 'contentcommunicatorimpl'
             return ret;
         };
         return KonsenskisteCommunicator;
-    })(DiscussableCommunicator.Main);
+    })(DiscussionCommunicator.Main);
 
     
     return KonsenskisteCommunicator;

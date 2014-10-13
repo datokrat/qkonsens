@@ -1,6 +1,6 @@
 import Obs = require('observable')
 import Events = require('event')
-import DiscussableCommunicator = require('discussablecommunicator')
+import DiscussableCommunicator = require('discussioncommunicator')
 import Comment = require('comment')
 import CommentSynchronizer = require('synchronizers/comment')
 import ViewModelContext = require('viewmodelcontext')

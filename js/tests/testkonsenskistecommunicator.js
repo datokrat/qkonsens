@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'event', 'tests/testcontentcommunicator', 'tests/testkernaussagecommunicator', 'tests/testdiscussablecommunicator'], function(require, exports, Events, TestContentCommunicator, TestKaCommunicator, TestDiscussableCommunicator) {
+define(["require", "exports", 'event', 'tests/testcontentcommunicator', 'tests/testkernaussagecommunicator', 'tests/testdiscussioncommunicator'], function(require, exports, Events, TestContentCommunicator, TestKaCommunicator, TestDiscussionCommunicator) {
     var TestKokiCommunicator = (function (_super) {
         __extends(TestKokiCommunicator, _super);
         function TestKokiCommunicator() {
@@ -28,7 +28,7 @@ define(["require", "exports", 'event', 'tests/testcontentcommunicator', 'tests/t
                 throw new Error('TestKokiCommunicator.queryKoki: id not found');
         };
         return TestKokiCommunicator;
-    })(TestDiscussableCommunicator);
+    })(TestDiscussionCommunicator);
 
     
     return TestKokiCommunicator;
