@@ -4,6 +4,7 @@
 	<!-- ko template: { name: 'context-template', data: context } --><!-- /ko -->
 	
 	<div class="controls">
-			<a data-bind="click: discussion().discussionClick">Diskussion</a>
+		<!-- ko template: { name: 'rating-template', data: rating } --><!-- /ko -->
+		<a data-bind="click: discussion().discussionClick">Diskussion</a>
 	</div>
 </div>

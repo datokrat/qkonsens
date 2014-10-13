@@ -1,0 +1,4 @@
+class TestRatingCommunicator {
+}
+
+export = TestRatingCommunicator;

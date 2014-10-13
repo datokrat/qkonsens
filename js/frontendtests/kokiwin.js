@@ -256,6 +256,35 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
                 }
             ], r);
         };
+
+        Tests.prototype.rating = function (cxt, r) {
+            var _this = this;
+            var ratingButtons = this.webot.query('.kk>.controls .rating input[type="radio"]');
+            var ratingLabels = this.webot.query('.kk>.controls .rating input[type="radio"] ~ label');
+
+            common.Callbacks.batch([
+                function (r) {
+                    test.assert(function () {
+                        return ratingLabels.contains('?').exists();
+                    });
+
+                    var stronglikeLabel = ratingLabels.contains('++');
+                    test.assert(function () {
+                        return stronglikeLabel.exists();
+                    });
+
+                    stronglikeLabel.click();
+                    setTimeout(r);
+                },
+                function (r) {
+                    var stronglikeButton = ratingButtons.contains('++');
+                    test.assert(function () {
+                        return _this.webot.query('.kk>.controls .rating input[type="radio"]:checked').contains('++').exists();
+                    });
+                    r();
+                }
+            ], r);
+        };
         return Tests;
     })();
     exports.Tests = Tests;

@@ -34,6 +34,9 @@ define(["require", "exports", 'synchronizers/childsynchronizer', 'factories/cons
             this.setViewModelFactory(new Factories.Factory(Rating.ViewModel));
             this.setControllerFactory(new Factories.ControllerFactory(Rating.Controller));
         }
+        RatingSynchronizer.prototype.createViewModelObservable = function () {
+            return ko.observable();
+        };
         return RatingSynchronizer;
     })(Base.ChildSynchronizer);
     exports.RatingSynchronizer = RatingSynchronizer;

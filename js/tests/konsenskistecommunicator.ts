@@ -62,12 +62,12 @@ class TestClass extends unit.TestClass {
 				koki.discussion().comments.set([new Comment.Model]);
 				
 				var ctr = 0;
-				this.com.commentsReceived.subscribe(args => {
+				this.com.discussion.commentsReceived.subscribe(args => {
 					test.assert(() => args.comments.length == 1);
 					++ctr;
 				});
 				this.com.setTestKoki(koki);
-				this.com.queryCommentsOf(1);
+				this.com.discussion.queryCommentsOf(1);
 				
 				test.assert(() => ctr == 1);
 				r();
@@ -79,7 +79,7 @@ class TestClass extends unit.TestClass {
 		common.Callbacks.batch([
 			r => {
 				this.mdl.id(1);
-				this.com.commentsReceived.raise({ id: 1, comments: [new Comment.Model] });
+				this.com.discussion.commentsReceived.raise({ id: 1, comments: [new Comment.Model] });
 				test.assert(() => this.mdl.discussion().comments.get().length == 1);
 				r();
 			}
@@ -88,13 +88,13 @@ class TestClass extends unit.TestClass {
 	
 	communicator(cxt, r) {
 		var communicator = new TestKokiCommunicator();
-		communicator.commentsReceived.subscribe(args => test.assert(() => args.comments.length == 1) );
+		communicator.discussion.commentsReceived.subscribe(args => test.assert(() => args.comments.length == 1) );
 		
 		var koki = new KokiModel.Model();
 		koki.id(1);
 		koki.discussion().comments.set([new Comment.Model]);
 		communicator.setTestKoki(koki);
-		communicator.queryCommentsOf(1);
+		communicator.discussion.queryCommentsOf(1);
 		
 		r();
 	}

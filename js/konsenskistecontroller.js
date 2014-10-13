@@ -40,7 +40,7 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'synchronizers/kok
 
         ControllerImpl.prototype.initDiscussion = function () {
             this.viewModel.discussion = ko.observable();
-            this.discussionSynchronizer = new KSync.DiscussionSynchronizer(this.communicator);
+            this.discussionSynchronizer = new KSync.DiscussionSynchronizer(this.communicator.discussion);
             this.discussionSynchronizer.setDiscussableModel(this.model).setDiscussableViewModel(this.viewModel).setViewModelObservable(this.viewModel.discussion).setModelObservable(this.model.discussion);
         };
 
@@ -66,7 +66,8 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'synchronizers/kok
             var _this = this;
             this.viewModel.rating = ko.observable();
 
-            this.ratingSynchronizer = new KSync.RatingSynchronizer().setViewModelChangedHandler(function (value) {
+            this.ratingSynchronizer = new KSync.RatingSynchronizer();
+            this.ratingSynchronizer.setViewModelChangedHandler(function (value) {
                 return _this.viewModel.rating(value);
             }).setModelObservable(this.model.rating);
         };

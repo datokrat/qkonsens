@@ -16,6 +16,7 @@ export class Controller {
 	private generalContentSynchronizer: KSync.GeneralContentSynchronizer;
 	private contextSynchronizer: KSync.ContextSynchronizer;
 	private discussionSynchronizer: KSync.DiscussionSynchronizer;
+	private ratingSynchronizer: KSync.RatingSynchronizer;
 
 	constructor(model: mdl.Model, viewModel: vm.ViewModel, communicator: com.Main) {
 		this.init(model, viewModel, communicator);
@@ -36,12 +37,18 @@ export class Controller {
 			.setModelObservable(model.general);
 		
         viewModel.discussion = ko.observable<Discussable.ViewModel>();
-		this.discussionSynchronizer = new KSync.DiscussionSynchronizer(communicator);
+		this.discussionSynchronizer = new KSync.DiscussionSynchronizer(communicator.discussion);
 		this.discussionSynchronizer
 			.setDiscussableModel(model)
 			.setDiscussableViewModel(viewModel)
 			.setViewModelObservable(viewModel.discussion)
 			.setModelObservable(model.discussion);
+		
+		this.ratingSynchronizer = new KSync.RatingSynchronizer();
+		viewModel.rating = this.ratingSynchronizer.createViewModelObservable();
+		this.ratingSynchronizer
+			.setViewModelChangedHandler( rating => this.viewModel.rating(rating) )
+			.setModelObservable(model.rating);
 	}
 	
 	public setViewModelContext(cxt: ViewModelContext) {
@@ -52,5 +59,6 @@ export class Controller {
 		this.generalContentSynchronizer.dispose();
 		this.contextSynchronizer.dispose();
 		this.discussionSynchronizer.dispose();
+		this.ratingSynchronizer.dispose();
 	}
 }

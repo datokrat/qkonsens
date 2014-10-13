@@ -62,7 +62,7 @@ export class ControllerImpl implements Controller {
 	
 	private initDiscussion() {
 		this.viewModel.discussion = ko.observable<Discussion.ViewModel>();
-		this.discussionSynchronizer = new KSync.DiscussionSynchronizer(this.communicator);
+		this.discussionSynchronizer = new KSync.DiscussionSynchronizer(this.communicator.discussion);
 		this.discussionSynchronizer
 			.setDiscussableModel(this.model)
 			.setDiscussableViewModel(this.viewModel)
@@ -89,7 +89,8 @@ export class ControllerImpl implements Controller {
 	private initRating() {
 		this.viewModel.rating = ko.observable<Rating.ViewModel>();
 		
-		this.ratingSynchronizer = new KSync.RatingSynchronizer()
+		this.ratingSynchronizer = new KSync.RatingSynchronizer();
+		this.ratingSynchronizer
 			.setViewModelChangedHandler( value => this.viewModel.rating(value) )
 			.setModelObservable(this.model.rating);
 	}

@@ -5,11 +5,12 @@ import DiscussionCommunicator = require('discussioncommunicator')
 import KonsenskisteModel = require('konsenskistemodel')
 import Comment = require('comment')
 
-export interface Main extends DiscussionCommunicator.Base {
+export interface Main {
 	content: ContentCommunicator.Main;
 	kernaussage: KernaussageCommunicator.Main;
-	received: Events.Event<ReceivedArgs>;
+	discussion: DiscussionCommunicator.Base;
 	
+	received: Events.Event<ReceivedArgs>;
 	queryKoki(id: number);
 }
 

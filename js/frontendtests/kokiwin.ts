@@ -221,4 +221,26 @@ export class Tests {
 			}
 		], r);
 	}
+	
+	rating(cxt, r) {
+		var ratingButtons = this.webot.query('.kk>.controls .rating input[type="radio"]');
+		var ratingLabels = this.webot.query('.kk>.controls .rating input[type="radio"] ~ label');
+		
+		common.Callbacks.batch([
+			r => {
+				test.assert( () => ratingLabels.contains('?').exists() );
+				
+				var stronglikeLabel = ratingLabels.contains('++');
+				test.assert( () => stronglikeLabel.exists() );
+				
+				stronglikeLabel.click();
+				setTimeout(r);
+			},
+			r => {
+				var stronglikeButton = ratingButtons.contains('++');
+				test.assert( () => this.webot.query('.kk>.controls .rating input[type="radio"]:checked').contains('++').exists() );
+				r();
+			}
+		], r);
+	}
 }

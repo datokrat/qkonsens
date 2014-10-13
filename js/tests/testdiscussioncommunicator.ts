@@ -11,10 +11,10 @@ class TestDiscussableCommunicator implements DiscussableCommunicator.Base {
 	public content: ContentCommunicator.Main = new TestContentCommunicator();
 	public commentsReceived = new Events.EventImpl<DiscussableCommunicator.ReceivedArgs>();
 	
-	public testItems: any = {};
+	constructor(private testItems: KnockoutObservable<Object> = ko.observable({})) {}
 	
 	public queryCommentsOf(discussableId: number) {
-		var item: Discussion.DiscussableModel = this.testItems[discussableId];
+		var item: Discussion.DiscussableModel = this.testItems()[discussableId];
 		if(typeof item !== 'undefined')
 			this.commentsReceived.raise({ id: discussableId, comments: item.discussion().comments.get() });
 		else
@@ -22,7 +22,7 @@ class TestDiscussableCommunicator implements DiscussableCommunicator.Base {
 	}
 	
 	public setTestDiscussable(discussable: Discussion.DiscussableModel) {
-		this.testItems[discussable.id()] = discussable;
+		this.testItems()[discussable.id()] = discussable;
 	}
 }
 

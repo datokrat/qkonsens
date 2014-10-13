@@ -32,6 +32,10 @@ export class ContextSynchronizer
 export class RatingSynchronizer
 	extends Base.ChildSynchronizer<Rating.Model, Rating.ViewModel, Rating.Controller>
 {
+	public createViewModelObservable() {
+		return ko.observable<Rating.ViewModel>();
+	}
+	
 	constructor() {
 		super();
 		this.setViewModelFactory( new Factories.Factory(Rating.ViewModel) );

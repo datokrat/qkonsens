@@ -63,14 +63,14 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', '../common', 'tes
                     koki.discussion().comments.set([new Comment.Model]);
 
                     var ctr = 0;
-                    _this.com.commentsReceived.subscribe(function (args) {
+                    _this.com.discussion.commentsReceived.subscribe(function (args) {
                         test.assert(function () {
                             return args.comments.length == 1;
                         });
                         ++ctr;
                     });
                     _this.com.setTestKoki(koki);
-                    _this.com.queryCommentsOf(1);
+                    _this.com.discussion.queryCommentsOf(1);
 
                     test.assert(function () {
                         return ctr == 1;
@@ -85,7 +85,7 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', '../common', 'tes
             common.Callbacks.batch([
                 function (r) {
                     _this.mdl.id(1);
-                    _this.com.commentsReceived.raise({ id: 1, comments: [new Comment.Model] });
+                    _this.com.discussion.commentsReceived.raise({ id: 1, comments: [new Comment.Model] });
                     test.assert(function () {
                         return _this.mdl.discussion().comments.get().length == 1;
                     });
@@ -96,7 +96,7 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', '../common', 'tes
 
         TestClass.prototype.communicator = function (cxt, r) {
             var communicator = new TestKokiCommunicator();
-            communicator.commentsReceived.subscribe(function (args) {
+            communicator.discussion.commentsReceived.subscribe(function (args) {
                 return test.assert(function () {
                     return args.comments.length == 1;
                 });
@@ -106,7 +106,7 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', '../common', 'tes
             koki.id(1);
             koki.discussion().comments.set([new Comment.Model]);
             communicator.setTestKoki(koki);
-            communicator.queryCommentsOf(1);
+            communicator.discussion.queryCommentsOf(1);
 
             r();
         };

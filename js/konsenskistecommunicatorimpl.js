@@ -1,16 +1,9 @@
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
 define(["require", "exports", 'event', 'discocontext', 'contentcommunicatorimpl', 'kernaussagecommunicatorimpl', 'discussioncommunicator', 'konsenskistemodel', 'kernaussagemodel', 'contentmodel'], function(require, exports, Events, discoContext, ContentCommunicator, KernaussageCommunicator, DiscussionCommunicator, KonsenskisteModel, KernaussageModel, ContentModel) {
-    var KonsenskisteCommunicator = (function (_super) {
-        __extends(KonsenskisteCommunicator, _super);
+    var KonsenskisteCommunicator = (function () {
         function KonsenskisteCommunicator() {
-            _super.call(this);
             this.received = new Events.EventImpl();
             this.content = new ContentCommunicator;
+            this.discussion = new DiscussionCommunicator.Main();
             this.kernaussage = new KernaussageCommunicator({ content: this.content });
         }
         KonsenskisteCommunicator.prototype.queryKoki = function (id, err) {
@@ -83,7 +76,7 @@ define(["require", "exports", 'event', 'discocontext', 'contentcommunicatorimpl'
             return ret;
         };
         return KonsenskisteCommunicator;
-    })(DiscussionCommunicator.Main);
+    })();
 
     
     return KonsenskisteCommunicator;

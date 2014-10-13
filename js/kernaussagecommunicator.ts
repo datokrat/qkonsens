@@ -5,8 +5,9 @@ import DiscussionCommunicator = require('discussioncommunicator')
 import KernaussageModel = require('kernaussagemodel')
 import Comment = require('comment')
 
-export interface Main extends DiscussionCommunicator.Base {
+export interface Main {
 	content: ContentCommunicator.Main;
+	discussion: DiscussionCommunicator.Base;
 	received: Events.Event<ReceivedArgs>;
 	
 	query(id: number);

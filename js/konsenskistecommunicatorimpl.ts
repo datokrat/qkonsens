@@ -12,14 +12,15 @@ import KonsenskisteModel = require('konsenskistemodel')
 import KernaussageModel = require('kernaussagemodel')
 import ContentModel = require('contentmodel')
 
-class KonsenskisteCommunicator extends DiscussionCommunicator.Main implements IKonsenskisteCommunicator.Main {
+class KonsenskisteCommunicator implements IKonsenskisteCommunicator.Main {
 	public content: IContentCommunicator.Main;
 	public kernaussage: IKernaussageCommunicator.Main;
+	public discussion: DiscussionCommunicator.Base;
 	public received = new Events.EventImpl<IKonsenskisteCommunicator.ReceivedArgs>();
 	
 	constructor() {
-		super();
 		this.content = new ContentCommunicator;
+		this.discussion = new DiscussionCommunicator.Main();
 		this.kernaussage = new KernaussageCommunicator({ content: this.content });
 	}
 	

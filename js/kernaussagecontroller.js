@@ -19,8 +19,14 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'contentviewmodel'
             }).setModelObservable(model.general);
 
             viewModel.discussion = ko.observable();
-            this.discussionSynchronizer = new KSync.DiscussionSynchronizer(communicator);
+            this.discussionSynchronizer = new KSync.DiscussionSynchronizer(communicator.discussion);
             this.discussionSynchronizer.setDiscussableModel(model).setDiscussableViewModel(viewModel).setViewModelObservable(viewModel.discussion).setModelObservable(model.discussion);
+
+            this.ratingSynchronizer = new KSync.RatingSynchronizer();
+            viewModel.rating = this.ratingSynchronizer.createViewModelObservable();
+            this.ratingSynchronizer.setViewModelChangedHandler(function (rating) {
+                return _this.viewModel.rating(rating);
+            }).setModelObservable(model.rating);
         };
 
         Controller.prototype.setViewModelContext = function (cxt) {
@@ -31,6 +37,7 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'contentviewmodel'
             this.generalContentSynchronizer.dispose();
             this.contextSynchronizer.dispose();
             this.discussionSynchronizer.dispose();
+            this.ratingSynchronizer.dispose();
         };
         return Controller;
     })();
