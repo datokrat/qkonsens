@@ -1,7 +1,7 @@
 import Obs = require('observable')
 import Content = require('contentmodel')
 import Comment = require('comment')
-import Discussion = require('discussable')
+import Discussion = require('discussion')
 
 export class Model {
 	public id: Obs.Observable<number> = ko.observable<number>();

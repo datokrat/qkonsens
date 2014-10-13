@@ -4,7 +4,7 @@ import kernaussageModel = require('kernaussagemodel')
 import Content = require('contentmodel')
 import Rating = require('rating')
 import Comment = require('comment')
-import Discussion = require('discussable')
+import Discussion = require('discussion')
 
 import EventFactory = require('factories/event')
 import Obs = require('observable')

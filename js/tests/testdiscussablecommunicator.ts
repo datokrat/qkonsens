@@ -4,7 +4,7 @@ import Comment = require('comment')
 import TestContentCommunicator = require('tests/testcontentcommunicator')
 import ContentCommunicator = require('../contentcommunicator')
 
-import Discussion = require('../discussable')
+import Discussion = require('../discussion')
 import DiscussableCommunicator = require('../discussablecommunicator')
 
 class TestDiscussableCommunicator implements DiscussableCommunicator.Base {

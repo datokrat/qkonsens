@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/tsunit', 'tests/test', '../discussable', 'tests/testdiscussablecommunicator', '../comment'], function(require, exports, unit, test, Discussion, DiscussionCommunicator, Comment) {
+define(["require", "exports", 'tests/tsunit', 'tests/test', '../discussion', 'tests/testdiscussablecommunicator', '../comment'], function(require, exports, unit, test, Discussion, DiscussionCommunicator, Comment) {
     var TestClass = (function (_super) {
         __extends(TestClass, _super);
         function TestClass() {

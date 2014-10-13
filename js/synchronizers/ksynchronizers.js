@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'synchronizers/childsynchronizer', 'factories/constructorbased', '../contentviewmodel', '../contentcontroller', '../rating', '../discussable'], function(require, exports, Base, Factories, ContentViewModel, ContentController, Rating, Discussion) {
+define(["require", "exports", 'synchronizers/childsynchronizer', 'factories/constructorbased', '../contentviewmodel', '../contentcontroller', '../rating', '../discussion'], function(require, exports, Base, Factories, ContentViewModel, ContentController, Rating, Discussion) {
     var GeneralContentSynchronizer = (function (_super) {
         __extends(GeneralContentSynchronizer, _super);
         function GeneralContentSynchronizer(communicator) {

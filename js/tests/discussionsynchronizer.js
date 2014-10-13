@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/tsunit', 'tests/test', '../discussable', 'tests/testdiscussablecommunicator', 'synchronizers/ksynchronizers', '../viewmodelcontext', 'factories/constructorbased'], function(require, exports, unit, test, Discussion, DiscussionCommunicator, KSync, ViewModelContext, Factories) {
+define(["require", "exports", 'tests/tsunit', 'tests/test', '../discussion', 'tests/testdiscussablecommunicator', 'synchronizers/ksynchronizers', '../viewmodelcontext', 'factories/constructorbased'], function(require, exports, unit, test, Discussion, DiscussionCommunicator, KSync, ViewModelContext, Factories) {
     var Mocker = (function () {
         function Mocker() {
         }

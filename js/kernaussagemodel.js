@@ -1,4 +1,4 @@
-define(["require", "exports", 'contentmodel', 'discussable'], function(require, exports, Content, Discussion) {
+define(["require", "exports", 'contentmodel', 'discussion'], function(require, exports, Content, Discussion) {
     var Model = (function () {
         function Model() {
             this.id = ko.observable();

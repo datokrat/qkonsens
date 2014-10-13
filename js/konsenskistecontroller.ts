@@ -10,7 +10,7 @@ import kernaussageVm = require('kernaussageviewmodel')
 import KokiCommunicator = require('konsenskistecommunicator')
 
 import ContentViewModel = require('contentviewmodel')
-import Discussion = require('discussable')
+import Discussion = require('discussion')
 import DiscussionCommunicator = require('discussablecommunicator')
 
 import Rating = require('rating')

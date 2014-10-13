@@ -4,7 +4,7 @@ import Content = require('contentviewmodel')
 import Kernaussage = require('kernaussageviewmodel')
 import Rating = require('rating')
 import Comment = require('comment')
-import Discussion = require('discussable')
+import Discussion = require('discussion')
 
 export class ViewModel {
 	public general: observable.Observable<Content.General>;

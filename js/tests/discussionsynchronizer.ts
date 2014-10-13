@@ -1,7 +1,7 @@
 import unit = require('tests/tsunit');
 import test = require('tests/test');
 
-import Discussion = require('../discussable');
+import Discussion = require('../discussion');
 import DiscussionCommunicator = require('tests/testdiscussablecommunicator');
 import KSync = require('synchronizers/ksynchronizers');
 import ViewModelContext = require('../viewmodelcontext');

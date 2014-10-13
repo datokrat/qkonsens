@@ -6,7 +6,7 @@ import com = require('kernaussagecommunicator')
 import ViewModelContext = require('viewmodelcontext')
 
 import KSync = require('synchronizers/ksynchronizers')
-import Discussable = require('discussable')
+import Discussable = require('discussion')
 
 import ContentController = require('contentcontroller')
 import ContentViewModel = require('contentviewmodel')

@@ -2,7 +2,7 @@ import unit = require('tests/tsunit');
 import test = require('tests/test');
 import frame = require('../frame');
 
-import Discussion = require('../discussable');
+import Discussion = require('../discussion');
 import DiscussionCommunicator = require('tests/testdiscussablecommunicator');
 import Comment = require('../comment');
 import ViewModelContext = require('../viewmodelcontext');

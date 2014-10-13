@@ -1,6 +1,6 @@
 import Content = require('contentviewmodel')
 import Comment = require('comment')
-import Discussion = require('discussable')
+import Discussion = require('discussion')
 import Obs = require('observable')
 
 export class ViewModel {

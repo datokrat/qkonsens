@@ -5,7 +5,7 @@ import ContentModel = require('../contentmodel')
 import ContentController = require('../contentcontroller')
 import ContentCommunicator = require('../contentcommunicator')
 import Rating = require('../rating')
-import Discussion = require('../discussable')
+import Discussion = require('../discussion')
 import DiscussionCommunicator = require('../discussablecommunicator')
 import ViewModelContext = require('../viewmodelcontext')
 

@@ -1,4 +1,4 @@
-define(["require", "exports", 'contentmodel', 'rating', 'discussable', 'factories/event', 'observable'], function(require, exports, Content, Rating, Discussion, EventFactory, Obs) {
+define(["require", "exports", 'contentmodel', 'rating', 'discussion', 'factories/event', 'observable'], function(require, exports, Content, Rating, Discussion, EventFactory, Obs) {
     var Model = (function () {
         function Model(context) {
             if (typeof context === "undefined") { context = new ModelContext; }
