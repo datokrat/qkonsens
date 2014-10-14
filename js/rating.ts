@@ -1,4 +1,10 @@
-import Obs = require('observable')
+import Obs = require('observable');
+import RatingCommunicator = require('ratingcommunicator');
+
+export interface RatableModel {
+	id: Obs.Observable<number>;
+	rating: Obs.Observable<Model>;
+}
 
 export class Model {
 	public personalRating: Obs.Observable<string> = ko.observable<string>('none');
@@ -15,7 +21,7 @@ export class ViewModel {
 export class Controller {
 	private static idCtr = 0;
 	
-	constructor(model: Model, viewModel: ViewModel) {
+	constructor(model: Model, viewModel: ViewModel, communicator: RatingCommunicator.Base) {
 		viewModel.id = Controller.idCtr++;
 		viewModel.personalRating = model.personalRating;
 		
@@ -24,7 +30,13 @@ export class Controller {
 			dislike: ko.observable(0), strongdislike: ko.observable(0)
 		});
 		
-		viewModel.select = (rating: string) => () => viewModel.personalRating(rating);
+		viewModel.select = (rating: string) => () => setTimeout(() =>{
+			viewModel.personalRating(rating);
+		});
+	}
+	
+	public selectClick(rating: string) {
+		
 	}
 	
 	public dispose() {

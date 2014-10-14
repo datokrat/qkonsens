@@ -5,6 +5,7 @@ import IKonsenskisteCommunicator = require('konsenskistecommunicator')
 import ContentCommunicator = require('contentcommunicatorimpl')
 import KernaussageCommunicator = require('kernaussagecommunicatorimpl')
 import DiscussionCommunicator = require('discussioncommunicator')
+import RatingCommunicator = require('ratingcommunicator')
 import IContentCommunicator = require('contentcommunicator')
 import IKernaussageCommunicator = require('kernaussagecommunicator')
 
@@ -16,12 +17,14 @@ class KonsenskisteCommunicator implements IKonsenskisteCommunicator.Main {
 	public content: IContentCommunicator.Main;
 	public kernaussage: IKernaussageCommunicator.Main;
 	public discussion: DiscussionCommunicator.Base;
+	public rating: RatingCommunicator.Base;
 	public received = new Events.EventImpl<IKonsenskisteCommunicator.ReceivedArgs>();
 	
 	constructor() {
 		this.content = new ContentCommunicator;
 		this.discussion = new DiscussionCommunicator.Main();
 		this.kernaussage = new KernaussageCommunicator({ content: this.content });
+		this.rating = new RatingCommunicator.Main();
 	}
 	
 	public queryKoki(id: number, err?: (error) => void) {

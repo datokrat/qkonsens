@@ -22,7 +22,7 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'contentviewmodel'
             this.discussionSynchronizer = new KSync.DiscussionSynchronizer(communicator.discussion);
             this.discussionSynchronizer.setDiscussableModel(model).setDiscussableViewModel(viewModel).setViewModelObservable(viewModel.discussion).setModelObservable(model.discussion);
 
-            this.ratingSynchronizer = new KSync.RatingSynchronizer();
+            this.ratingSynchronizer = new KSync.RatingSynchronizer(communicator.rating);
             viewModel.rating = this.ratingSynchronizer.createViewModelObservable();
             this.ratingSynchronizer.setViewModelChangedHandler(function (rating) {
                 return _this.viewModel.rating(rating);

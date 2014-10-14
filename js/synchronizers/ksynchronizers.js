@@ -29,10 +29,10 @@ define(["require", "exports", 'synchronizers/childsynchronizer', 'factories/cons
 
     var RatingSynchronizer = (function (_super) {
         __extends(RatingSynchronizer, _super);
-        function RatingSynchronizer() {
+        function RatingSynchronizer(communicator) {
             _super.call(this);
             this.setViewModelFactory(new Factories.Factory(Rating.ViewModel));
-            this.setControllerFactory(new Factories.ControllerFactory(Rating.Controller));
+            this.setControllerFactory(new Factories.ControllerFactoryEx(Rating.Controller, communicator));
         }
         RatingSynchronizer.prototype.createViewModelObservable = function () {
             return ko.observable();

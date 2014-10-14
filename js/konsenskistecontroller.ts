@@ -89,7 +89,7 @@ export class ControllerImpl implements Controller {
 	private initRating() {
 		this.viewModel.rating = ko.observable<Rating.ViewModel>();
 		
-		this.ratingSynchronizer = new KSync.RatingSynchronizer();
+		this.ratingSynchronizer = new KSync.RatingSynchronizer(this.communicator.rating);
 		this.ratingSynchronizer
 			.setViewModelChangedHandler( value => this.viewModel.rating(value) )
 			.setModelObservable(this.model.rating);

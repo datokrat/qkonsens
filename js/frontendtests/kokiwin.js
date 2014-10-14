@@ -274,12 +274,12 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
                     });
 
                     stronglikeLabel.click();
-                    setTimeout(r);
+                    setTimeout(r, 100);
                 },
                 function (r) {
                     var stronglikeButton = ratingButtons.contains('++');
                     test.assert(function () {
-                        return _this.webot.query('.kk>.controls .rating input[type="radio"]:checked').contains('++').exists();
+                        return _this.webot.query('.kk>.controls .rating input[type="radio"]:checked ~ label').contains('++').exists();
                     });
                     r();
                 }

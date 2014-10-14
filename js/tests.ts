@@ -3,6 +3,7 @@ import asyncunit = require('tests/asyncunit')
 
 import Discussion = require('tests/discussion');
 import DiscussionSynchronizer = require('tests/discussionsynchronizer');
+import TestRatingCommunicator = require('tests/ratingcommunicator');
 import topicNavigationModel = require('tests/topicnavigationmodel')
 import topicNavigation = require('tests/topicnavigation')
 import controller = require('tests/controller')
@@ -31,6 +32,7 @@ test.addTestClass(new content.General(), 'General Content')
 test.addTestClass(new content.Context(), 'Context')
 test.addTestClass(new context.Tests(), 'Context')
 test.addTestClass(new Discussion(), 'Discussion');
+test.addTestClass(new TestRatingCommunicator(), 'TestRatingCommunicator');
 test.addTestClass(new DiscussionSynchronizer(), 'DiscussionSynchronizer');
 test.addTestClass(new synchronizer.Tests(), 'ChildArraySynchronizer')
 test.addTestClass(new commentSynchronizer.Tests, 'CommentSynchronizer')

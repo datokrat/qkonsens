@@ -44,7 +44,7 @@ export class Controller {
 			.setViewModelObservable(viewModel.discussion)
 			.setModelObservable(model.discussion);
 		
-		this.ratingSynchronizer = new KSync.RatingSynchronizer();
+		this.ratingSynchronizer = new KSync.RatingSynchronizer(communicator.rating);
 		viewModel.rating = this.ratingSynchronizer.createViewModelObservable();
 		this.ratingSynchronizer
 			.setViewModelChangedHandler( rating => this.viewModel.rating(rating) )

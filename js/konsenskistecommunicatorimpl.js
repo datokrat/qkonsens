@@ -1,10 +1,11 @@
-define(["require", "exports", 'event', 'discocontext', 'contentcommunicatorimpl', 'kernaussagecommunicatorimpl', 'discussioncommunicator', 'konsenskistemodel', 'kernaussagemodel', 'contentmodel'], function(require, exports, Events, discoContext, ContentCommunicator, KernaussageCommunicator, DiscussionCommunicator, KonsenskisteModel, KernaussageModel, ContentModel) {
+define(["require", "exports", 'event', 'discocontext', 'contentcommunicatorimpl', 'kernaussagecommunicatorimpl', 'discussioncommunicator', 'ratingcommunicator', 'konsenskistemodel', 'kernaussagemodel', 'contentmodel'], function(require, exports, Events, discoContext, ContentCommunicator, KernaussageCommunicator, DiscussionCommunicator, RatingCommunicator, KonsenskisteModel, KernaussageModel, ContentModel) {
     var KonsenskisteCommunicator = (function () {
         function KonsenskisteCommunicator() {
             this.received = new Events.EventImpl();
             this.content = new ContentCommunicator;
             this.discussion = new DiscussionCommunicator.Main();
             this.kernaussage = new KernaussageCommunicator({ content: this.content });
+            this.rating = new RatingCommunicator.Main();
         }
         KonsenskisteCommunicator.prototype.queryKoki = function (id, err) {
             var _this = this;

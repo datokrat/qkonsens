@@ -1,25 +1,28 @@
-define(["require", "exports", 'event', 'tests/testcontentcommunicator', 'tests/testkernaussagecommunicator', 'tests/testdiscussioncommunicator'], function(require, exports, Events, TestContentCommunicator, TestKaCommunicator, TestDiscussionCommunicator) {
+define(["require", "exports", 'event', 'itemcontainer', 'tests/testcontentcommunicator', 'tests/testkernaussagecommunicator', 'tests/testdiscussioncommunicator', 'tests/testratingcommunicator'], function(require, exports, Events, ItemContainer, TestContentCommunicator, TestKaCommunicator, TestDiscussionCommunicator, TestRatingCommunicator) {
     var TestKokiCommunicator = (function () {
         function TestKokiCommunicator() {
             this.received = new Events.EventImpl();
-            this.testItems = ko.observable({});
+            this.testItems = new ItemContainer.Main();
             this.discussion = new TestDiscussionCommunicator(this.testItems);
+            this.rating = new TestRatingCommunicator.Main(this.testItems);
             this.content = new TestContentCommunicator();
             this.kernaussage = new TestKaCommunicator({ content: this.content });
         }
         TestKokiCommunicator.prototype.setTestKoki = function (koki) {
             if (typeof koki.id() === 'number') {
-                this.testItems()[koki.id()] = koki;
+                this.testItems.set(koki.id(), koki);
             } else
                 throw new Error('TestKokiCommunicator.setTestKoki: koki.id is not a number');
         };
 
         TestKokiCommunicator.prototype.queryKoki = function (id) {
-            var koki = this.testItems()[id];
-            if (typeof koki !== 'undefined') {
-                this.received.raise({ id: id, konsenskiste: koki });
-            } else
+            try  {
+                var koki = this.testItems.get(id);
+            } catch (e) {
                 throw new Error('TestKokiCommunicator.queryKoki: id not found');
+                return;
+            }
+            this.received.raise({ id: id, konsenskiste: koki });
         };
         return TestKokiCommunicator;
     })();

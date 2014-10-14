@@ -8,6 +8,7 @@ import Rating = require('../rating')
 import Discussion = require('../discussion')
 import DiscussionCommunicator = require('../discussioncommunicator')
 import ViewModelContext = require('../viewmodelcontext')
+import RatingCommunicator = require('../ratingcommunicator')
 
 export class GeneralContentSynchronizer 
 	extends Base.ChildSynchronizer<ContentModel.General, ContentViewModel.General, ContentController.General>
@@ -36,10 +37,10 @@ export class RatingSynchronizer
 		return ko.observable<Rating.ViewModel>();
 	}
 	
-	constructor() {
+	constructor(communicator: RatingCommunicator.Base) {
 		super();
 		this.setViewModelFactory( new Factories.Factory(Rating.ViewModel) );
-		this.setControllerFactory( new Factories.ControllerFactory(Rating.Controller) );
+		this.setControllerFactory( new Factories.ControllerFactoryEx(Rating.Controller, communicator) );
 	}
 }
 

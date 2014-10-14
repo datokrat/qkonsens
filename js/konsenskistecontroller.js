@@ -66,7 +66,7 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'synchronizers/kok
             var _this = this;
             this.viewModel.rating = ko.observable();
 
-            this.ratingSynchronizer = new KSync.RatingSynchronizer();
+            this.ratingSynchronizer = new KSync.RatingSynchronizer(this.communicator.rating);
             this.ratingSynchronizer.setViewModelChangedHandler(function (value) {
                 return _this.viewModel.rating(value);
             }).setModelObservable(this.model.rating);

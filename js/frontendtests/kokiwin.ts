@@ -234,11 +234,11 @@ export class Tests {
 				test.assert( () => stronglikeLabel.exists() );
 				
 				stronglikeLabel.click();
-				setTimeout(r);
+				setTimeout(r, 100);
 			},
 			r => {
 				var stronglikeButton = ratingButtons.contains('++');
-				test.assert( () => this.webot.query('.kk>.controls .rating input[type="radio"]:checked').contains('++').exists() );
+				test.assert( () => this.webot.query('.kk>.controls .rating input[type="radio"]:checked ~ label').contains('++').exists() );
 				r();
 			}
 		], r);

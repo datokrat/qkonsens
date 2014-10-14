@@ -15,7 +15,7 @@ define(["require", "exports"], function(require, exports) {
     exports.ViewModel = ViewModel;
 
     var Controller = (function () {
-        function Controller(model, viewModel) {
+        function Controller(model, viewModel, communicator) {
             viewModel.id = Controller.idCtr++;
             viewModel.personalRating = model.personalRating;
 
@@ -26,10 +26,15 @@ define(["require", "exports"], function(require, exports) {
 
             viewModel.select = function (rating) {
                 return function () {
-                    return viewModel.personalRating(rating);
+                    return setTimeout(function () {
+                        viewModel.personalRating(rating);
+                    });
                 };
             };
         }
+        Controller.prototype.selectClick = function (rating) {
+        };
+
         Controller.prototype.dispose = function () {
         };
         Controller.idCtr = 0;
