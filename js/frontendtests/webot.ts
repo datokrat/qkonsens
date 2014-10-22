@@ -59,7 +59,7 @@ export class WebotElement {
 	}
 	
 	public click() {
-		this.el.simulateClick();
+		this.el['simulateClick']();
 	}
 	
 	public length() {
@@ -93,8 +93,12 @@ export class WebotElement {
 	}
 	
 	public existMany(): boolean {
-		return this.length();
+		return this.length() != 0;
 	}
 	
-	private el: any;
+	public $(): JQuery {
+		return this.el;
+	}
+	
+	private el: JQuery;
 }

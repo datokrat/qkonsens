@@ -53,6 +53,11 @@ export class ControllerImpl implements Controller {
 	
 	private initKas() {
 		this.viewModel.childKas = ko.observableArray<kernaussageVm.ViewModel>();
+		this.viewModel.newKaFormVisible = ko.observable<boolean>(false);
+		this.viewModel.newKaClick = () => {
+			var oldValue = this.viewModel.newKaFormVisible();
+			this.viewModel.newKaFormVisible(!oldValue);
+		}
 		
 		this.kaSynchronizer = new KokiSync.KaSynchronizer(this.communicator.kernaussage);
 		this.kaSynchronizer

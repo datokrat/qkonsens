@@ -13,4 +13,6 @@ export class ViewModel {
 	public discussion: observable.Observable<Discussion.ViewModel>;
 	
 	public childKas: observable.ObservableArray<Kernaussage.ViewModel>;
+	public newKaFormVisible: observable.Observable<boolean>;
+	public newKaClick: () => void;
 }

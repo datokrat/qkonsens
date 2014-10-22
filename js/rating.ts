@@ -35,10 +35,6 @@ export class Controller {
 		});
 	}
 	
-	public selectClick(rating: string) {
-		
-	}
-	
 	public dispose() {
 	}
 }

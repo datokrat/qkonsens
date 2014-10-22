@@ -53,7 +53,7 @@ define(["require", "exports"], function(require, exports) {
                 this.el = q;
         }
         WebotElement.prototype.click = function () {
-            this.el.simulateClick();
+            this.el['simulateClick']();
         };
 
         WebotElement.prototype.length = function () {
@@ -87,7 +87,11 @@ define(["require", "exports"], function(require, exports) {
         };
 
         WebotElement.prototype.existMany = function () {
-            return this.length();
+            return this.length() != 0;
+        };
+
+        WebotElement.prototype.$ = function () {
+            return this.el;
         };
         return WebotElement;
     })();

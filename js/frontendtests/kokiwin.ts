@@ -20,9 +20,12 @@ declare var ko;
 ko = top.frames[2].ko;
 
 export class Tests {
-	private webot = new webot.Webot;
+	private webot = new webot.Webot();
+	private helper: Helper;
 	
 	setUp(r) {
+		this.helper = new Helper(this.webot);
+		
 		var model: mdl.Model = reloader.model();
 		var viewModel: vm.ViewModel = reloader.viewModel();
 		var controller: ctr.Controller = reloader.controller();
@@ -242,5 +245,78 @@ export class Tests {
 				r();
 			}
 		], r);
+	}
+	
+	newKaButtonExists(cxt, r) {
+		var newKaButton = this.helper.getNewKaButton();
+		
+		test.assert(() => newKaButton.exists());
+		r();
+	}
+	
+	newKa(cxt, r) {
+		common.Callbacks.batch([
+			r => {
+				this.helper.getNewKaButton().click();
+				setTimeout(r);
+			},
+			r => {
+				test.assert(() => this.helper.isNewKaFormVisible());
+				r();
+			}
+		], r);
+	}
+	
+	doubleClickNewKa(cxt, r) {
+		common.Callbacks.batch([
+			r => {
+				this.helper.getNewKaButton().click();
+				this.helper.getNewKaButton().click();
+				setTimeout(r);
+			},
+			r => {
+				test.assert(() => !this.helper.isNewKaFormVisible());
+				r();
+			}
+		], r);
+	}
+	
+	submitNewKa(cxt, r) {
+		common.Callbacks.batch([
+			r => {
+				this.helper.getNewKaButton().click();
+				setTimeout(r);
+			},
+			r => {
+				this.helper.submitNewKa();
+				r();
+			},
+			r => {
+				test.assert(() => this.helper.isNewKaSubmitted());
+			}
+		], r);
+	}
+}
+
+class Helper {
+	constructor(private webot: webot.Webot) {}
+	
+	public getNewKaButton(): webot.WebotElement {
+		return this.webot.query('.kk *').text('+Kernaussage');
+	}
+	
+	public isNewKaFormVisible(): boolean {
+		return this.webot.query('.kk').child('.ka').contains('Anfügen').exists();
+	}
+	
+	public submitNewKa() {
+		var form = this.webot.query('.kk').child('.ka').contains('Anfügen');
+		form.child('.title input[type=text]').$().val('Title');
+		form.child('.text textarea').$().val('Text');
+		form.child('button').text('Anfügen').click();
+	}
+	
+	public isNewKaSubmitted(): boolean {
+		return false
 	}
 }

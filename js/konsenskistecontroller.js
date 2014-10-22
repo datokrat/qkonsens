@@ -32,7 +32,13 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'synchronizers/kok
         };
 
         ControllerImpl.prototype.initKas = function () {
+            var _this = this;
             this.viewModel.childKas = ko.observableArray();
+            this.viewModel.newKaFormVisible = ko.observable(false);
+            this.viewModel.newKaClick = function () {
+                var oldValue = _this.viewModel.newKaFormVisible();
+                _this.viewModel.newKaFormVisible(!oldValue);
+            };
 
             this.kaSynchronizer = new KokiSync.KaSynchronizer(this.communicator.kernaussage);
             this.kaSynchronizer.setViewModelObservable(this.viewModel.childKas).setModelObservable(this.model.childKas);

@@ -11,4 +11,10 @@
 	<!-- ko foreach: childKas -->
 		<!-- ko template: { name: 'ka-template' } --><!-- /ko -->
 	<!-- /ko -->
+	<a class="clickable control" data-bind="click: newKaClick">+Kernaussage</a>
+	<div class="ka" data-bind="if: newKaFormVisible">
+		<p class="title"><input type="text" class="block titleInput" /></p>
+		<p class="text"><textarea class="textInput"></textarea></p>
+		<button>Anfügen</button>
+	</div>
 </div>

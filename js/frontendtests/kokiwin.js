@@ -3,9 +3,11 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
 
     var Tests = (function () {
         function Tests() {
-            this.webot = new webot.Webot;
+            this.webot = new webot.Webot();
         }
         Tests.prototype.setUp = function (r) {
+            this.helper = new Helper(this.webot);
+
             var model = reloader.model();
             var viewModel = reloader.viewModel();
             var controller = reloader.controller();
@@ -285,7 +287,93 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
                 }
             ], r);
         };
+
+        Tests.prototype.newKaButtonExists = function (cxt, r) {
+            var newKaButton = this.helper.getNewKaButton();
+
+            test.assert(function () {
+                return newKaButton.exists();
+            });
+            r();
+        };
+
+        Tests.prototype.newKa = function (cxt, r) {
+            var _this = this;
+            common.Callbacks.batch([
+                function (r) {
+                    _this.helper.getNewKaButton().click();
+                    setTimeout(r);
+                },
+                function (r) {
+                    test.assert(function () {
+                        return _this.helper.isNewKaFormVisible();
+                    });
+                    r();
+                }
+            ], r);
+        };
+
+        Tests.prototype.doubleClickNewKa = function (cxt, r) {
+            var _this = this;
+            common.Callbacks.batch([
+                function (r) {
+                    _this.helper.getNewKaButton().click();
+                    _this.helper.getNewKaButton().click();
+                    setTimeout(r);
+                },
+                function (r) {
+                    test.assert(function () {
+                        return !_this.helper.isNewKaFormVisible();
+                    });
+                    r();
+                }
+            ], r);
+        };
+
+        Tests.prototype.submitNewKa = function (cxt, r) {
+            var _this = this;
+            common.Callbacks.batch([
+                function (r) {
+                    _this.helper.getNewKaButton().click();
+                    setTimeout(r);
+                },
+                function (r) {
+                    _this.helper.submitNewKa();
+                    r();
+                },
+                function (r) {
+                    test.assert(function () {
+                        return _this.helper.isNewKaSubmitted();
+                    });
+                }
+            ], r);
+        };
         return Tests;
     })();
     exports.Tests = Tests;
+
+    var Helper = (function () {
+        function Helper(webot) {
+            this.webot = webot;
+        }
+        Helper.prototype.getNewKaButton = function () {
+            return this.webot.query('.kk *').text('+Kernaussage');
+        };
+
+        Helper.prototype.isNewKaFormVisible = function () {
+            return this.webot.query('.kk').child('.ka').contains('Anfügen').exists();
+        };
+
+        Helper.prototype.submitNewKa = function () {
+            var form = this.webot.query('.kk').child('.ka').contains('Anfügen');
+            form.child('.title input[type=text]').$().val('Title');
+            form.child('.text textarea').$().val('Text');
+            form.child('button').text('Anfügen').click();
+        };
+
+        Helper.prototype.isNewKaSubmitted = function () {
+            return false;
+        };
+        return Helper;
+    })();
 });

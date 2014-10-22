@@ -32,9 +32,6 @@ define(["require", "exports"], function(require, exports) {
                 };
             };
         }
-        Controller.prototype.selectClick = function (rating) {
-        };
-
         Controller.prototype.dispose = function () {
         };
         Controller.idCtr = 0;
