@@ -1,10 +1,14 @@
-define(["require", "exports", 'synchronizers/ksynchronizers', 'synchronizers/kokisynchronizers'], function(require, exports, KSync, KokiSync) {
+define(["require", "exports", 'factories/kernaussagemodel', 'synchronizers/ksynchronizers', 'synchronizers/kokisynchronizers'], function(require, exports, KernaussageFactory, KSync, KokiSync) {
     var ControllerImpl = (function () {
         function ControllerImpl(model, viewModel, communicator) {
             var _this = this;
             this.onKokiReceived = function (args) {
                 if (_this.model.id() == args.konsenskiste.id())
                     _this.model.set(args.konsenskiste);
+            };
+            this.onKaAppended = function (args) {
+                if (_this.model.id() == args.konsenskisteId)
+                    _this.model.childKas.push(args.kernaussage);
             };
             this.modelSubscriptions = [];
             this.communicatorSubscriptions = [];
@@ -35,9 +39,23 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'synchronizers/kok
             var _this = this;
             this.viewModel.childKas = ko.observableArray();
             this.viewModel.newKaFormVisible = ko.observable(false);
+            this.viewModel.newKaTitle = ko.observable();
+            this.viewModel.newKaText = ko.observable();
             this.viewModel.newKaClick = function () {
                 var oldValue = _this.viewModel.newKaFormVisible();
                 _this.viewModel.newKaFormVisible(!oldValue);
+            };
+            this.viewModel.newKaSubmit = function () {
+                var kaFactory = new KernaussageFactory.Factory();
+                console.log('newKaSubmit', _this.viewModel);
+                var ka = kaFactory.create(_this.viewModel.newKaText(), _this.viewModel.newKaTitle());
+                _this.communicator.kernaussageAppended.subscribeUntil(function (args) {
+                    if (args.konsenskisteId == _this.model.id() && args.kernaussage == ka) {
+                        _this.viewModel.newKaFormVisible(false);
+                        return true;
+                    }
+                });
+                _this.communicator.createAndAppendKa(_this.model.id(), ka);
             };
 
             this.kaSynchronizer = new KokiSync.KaSynchronizer(this.communicator.kernaussage);
@@ -80,7 +98,8 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'synchronizers/kok
 
         ControllerImpl.prototype.initCommunicator = function () {
             this.communicatorSubscriptions = ([
-                this.communicator.received.subscribe(this.onKokiReceived)
+                this.communicator.received.subscribe(this.onKokiReceived),
+                this.communicator.kernaussageAppended.subscribe(this.onKaAppended)
             ]);
         };
 

@@ -1,13 +1,14 @@
-import Events = require('event')
-import ItemContainer = require('itemcontainer')
+import Events = require('event');
+import ItemContainer = require('itemcontainer');
 
-import KokiCommunicator = require('../konsenskistecommunicator')
-import TestContentCommunicator = require('tests/testcontentcommunicator')
-import TestKaCommunicator = require('tests/testkernaussagecommunicator')
-import TestDiscussionCommunicator = require('tests/testdiscussioncommunicator')
+import KokiCommunicator = require('../konsenskistecommunicator');
+import TestContentCommunicator = require('tests/testcontentcommunicator');
+import TestKaCommunicator = require('tests/testkernaussagecommunicator');
+import TestDiscussionCommunicator = require('tests/testdiscussioncommunicator');
 import TestRatingCommunicator = require('tests/testratingcommunicator');
 
-import KokiModel = require('../konsenskistemodel')
+import KonsenskisteModel = require('../konsenskistemodel');
+import KernaussageModel = require('../kernaussagemodel');
 
 
 class TestKokiCommunicator implements KokiCommunicator.Main {
@@ -15,8 +16,9 @@ class TestKokiCommunicator implements KokiCommunicator.Main {
 	public kernaussage: TestKaCommunicator;
 	
 	public received = new Events.EventImpl<KokiCommunicator.ReceivedArgs>();
+	public kernaussageAppended = new Events.EventImpl<KokiCommunicator.KaAppendedArgs>();
 	
-	private testItems = new ItemContainer.Main<KokiModel.Model>();
+	private testItems = new ItemContainer.Main<KonsenskisteModel.Model>();
 	public discussion = new TestDiscussionCommunicator(this.testItems);
 	public rating = new TestRatingCommunicator.Main(this.testItems);
 	
@@ -25,7 +27,7 @@ class TestKokiCommunicator implements KokiCommunicator.Main {
 		this.kernaussage = new TestKaCommunicator({ content: this.content });
 	}
 	
-	public setTestKoki(koki: KokiModel.Model) {
+	public setTestKoki(koki: KonsenskisteModel.Model) {
 		if(typeof koki.id() === 'number') {
 			this.testItems.set(koki.id(), koki);
 		}
@@ -41,6 +43,12 @@ class TestKokiCommunicator implements KokiCommunicator.Main {
 			return;
 		}
 		this.received.raise({ id: id, konsenskiste: koki });
+	}
+	
+	public createAndAppendKa(kokiId: number, ka: KernaussageModel.Model) {
+		var koki = this.testItems.get(kokiId);
+		koki.childKas.push(ka);
+		this.kernaussageAppended.raise({ konsenskisteId: kokiId, kernaussage: ka });
 	}
 }
 

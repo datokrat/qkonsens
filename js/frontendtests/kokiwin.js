@@ -339,12 +339,13 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
                 },
                 function (r) {
                     _this.helper.submitNewKa();
-                    r();
+                    setTimeout(r);
                 },
                 function (r) {
                     test.assert(function () {
                         return _this.helper.isNewKaSubmitted();
                     });
+                    r();
                 }
             ], r);
         };
@@ -366,13 +367,15 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
 
         Helper.prototype.submitNewKa = function () {
             var form = this.webot.query('.kk').child('.ka').contains('Anfügen');
-            form.child('.title input[type=text]').$().val('Title');
-            form.child('.text textarea').$().val('Text');
+            form.child('.title input[type=text]').$().val('Title').change();
+            form.child('.text textarea').$().val('Text').change();
             form.child('button').text('Anfügen').click();
         };
 
         Helper.prototype.isNewKaSubmitted = function () {
-            return false;
+            var ka = this.webot.query('.kk').child('.ka').contains('Diskussion');
+            var form = this.webot.query('.kk').child('.ka').contains('Anfügen');
+            return ka.contains('Title').contains('Text').exists() && form.exists(false);
         };
         return Helper;
     })();

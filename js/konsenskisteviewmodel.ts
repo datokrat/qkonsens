@@ -1,4 +1,4 @@
-import observable = require('observable')
+import Obs = require('observable')
 
 import Content = require('contentviewmodel')
 import Kernaussage = require('kernaussageviewmodel')
@@ -7,12 +7,15 @@ import Comment = require('comment')
 import Discussion = require('discussion')
 
 export class ViewModel {
-	public general: observable.Observable<Content.General>;
-	public context: observable.Observable<Content.Context>;
-	public rating: observable.Observable<Rating.ViewModel>;
-	public discussion: observable.Observable<Discussion.ViewModel>;
+	public general: Obs.Observable<Content.General>;
+	public context: Obs.Observable<Content.Context>;
+	public rating: Obs.Observable<Rating.ViewModel>;
+	public discussion: Obs.Observable<Discussion.ViewModel>;
 	
-	public childKas: observable.ObservableArray<Kernaussage.ViewModel>;
-	public newKaFormVisible: observable.Observable<boolean>;
+	public childKas: Obs.ObservableArray<Kernaussage.ViewModel>;
+	public newKaFormVisible: Obs.Observable<boolean>;
 	public newKaClick: () => void;
+	public newKaSubmit: () => void;
+	public newKaTitle: Obs.Observable<string>;
+	public newKaText: Obs.Observable<string>;
 }

@@ -50,6 +50,14 @@ class TestEvent<Args> implements Event.Event<Args>, GenericTestEvent {
 		return { undo: () => this.unsubscribe(cb) };
 	}
 	
+	public subscribeUntil(cb: Event.Listener<Args>, timeout?: number): Event.Subscription {
+		var subscription: Event.Subscription;
+		var handler = (args: Args) => { if(cb(args)) subscription.undo() };
+		subscription = this.subscribe(handler);
+		if(typeof timeout === 'number') setTimeout(() => subscription.undo(), timeout);
+		return subscription;
+	}
+	
 	public unsubscribe(cb: Event.Listener<Args>): void {
 		this.listenerCtr--;
 		this.event.unsubscribe(cb);

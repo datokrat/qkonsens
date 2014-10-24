@@ -2,6 +2,8 @@
 
 export interface Event<Args> {
 	subscribe(cb: (Args) => void);
+	///unsubscribe as soon as cb returns true
+	subscribeUntil(cb: (args: Args) => boolean, timeout?: number): Subscription;
 	unsubscribe(cb: (Args) => void);
 	raise(args?: Args);
 	raiseThis(args?: Args);
@@ -26,11 +28,19 @@ export class EventImpl<Args> implements Event<Args> {
 		this.raiseThis = this.raise.bind(this);
 	}
 
-	public subscribe(cb: (Args) => void): Subscription {
+	public subscribe(cb: (args: Args) => void): Subscription {
 		if(!this.isListener(cb))
 			this.listeners.push(cb);
 		
 		return { undo: () => this.unsubscribe(cb) };
+	}
+	
+	public subscribeUntil(cb: (args: Args) => boolean, timeout?: number): Subscription {
+		var subscription: Subscription;
+		var handler = (args: Args) => { if(cb(args)) subscription.undo() };
+		subscription = this.subscribe(handler);
+		if(typeof timeout === 'number') setTimeout(() => subscription.undo(), timeout);
+		return subscription;
 	}
 
 	public unsubscribe(cb: (Args) => void) {

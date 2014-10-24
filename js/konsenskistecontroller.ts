@@ -15,6 +15,7 @@ import DiscussionCommunicator = require('discussioncommunicator')
 
 import Rating = require('rating')
 import Comment = require('comment')
+import KernaussageFactory = require('factories/kernaussagemodel')
 
 import KSync = require('synchronizers/ksynchronizers')
 import KokiSync = require('synchronizers/kokisynchronizers')
@@ -54,9 +55,23 @@ export class ControllerImpl implements Controller {
 	private initKas() {
 		this.viewModel.childKas = ko.observableArray<kernaussageVm.ViewModel>();
 		this.viewModel.newKaFormVisible = ko.observable<boolean>(false);
+		this.viewModel.newKaTitle = ko.observable<string>();
+		this.viewModel.newKaText = ko.observable<string>();
 		this.viewModel.newKaClick = () => {
 			var oldValue = this.viewModel.newKaFormVisible();
 			this.viewModel.newKaFormVisible(!oldValue);
+		}
+		this.viewModel.newKaSubmit = () => {
+			var kaFactory = new KernaussageFactory.Factory();
+			console.log('newKaSubmit', this.viewModel);
+			var ka = kaFactory.create(this.viewModel.newKaText(), this.viewModel.newKaTitle());
+			this.communicator.kernaussageAppended.subscribeUntil(args => {
+				if(args.konsenskisteId == this.model.id() && args.kernaussage == ka) {
+					this.viewModel.newKaFormVisible(false);
+					return true;
+				}
+			});
+			this.communicator.createAndAppendKa(this.model.id(), ka);
 		}
 		
 		this.kaSynchronizer = new KokiSync.KaSynchronizer(this.communicator.kernaussage);
@@ -103,12 +118,18 @@ export class ControllerImpl implements Controller {
 	private initCommunicator() {
 		this.communicatorSubscriptions = ([
 			this.communicator.received.subscribe(this.onKokiReceived),
+			this.communicator.kernaussageAppended.subscribe(this.onKaAppended)
 		]);
 	}
 	
 	private onKokiReceived = (args: KokiCommunicator.ReceivedArgs) => {
 		if(this.model.id() == args.konsenskiste.id())
 			this.model.set( args.konsenskiste );
+	}
+	
+	private onKaAppended = (args: KokiCommunicator.KaAppendedArgs) => {
+		if(this.model.id() == args.konsenskisteId)
+			this.model.childKas.push(args.kernaussage);
 	}
 	
 	public dispose() {

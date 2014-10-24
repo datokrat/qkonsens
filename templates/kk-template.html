@@ -12,9 +12,11 @@
 		<!-- ko template: { name: 'ka-template' } --><!-- /ko -->
 	<!-- /ko -->
 	<a class="clickable control" data-bind="click: newKaClick">+Kernaussage</a>
-	<div class="ka" data-bind="if: newKaFormVisible">
-		<p class="title"><input type="text" class="block titleInput" /></p>
-		<p class="text"><textarea class="textInput"></textarea></p>
-		<button>Anfügen</button>
+	<!-- ko if: newKaFormVisible -->
+	<div class="ka">
+		<p class="title"><input placeholder="Titel" type="text" class="block titleInput" data-bind="value: newKaTitle" /></p>
+		<p class="text"><textarea placeholder="Text" class="textInput" data-bind="value: newKaText" ></textarea></p>
+		<button data-bind="click: newKaSubmit">Anfügen</button>
 	</div>
+	<!-- /ko -->
 </div>

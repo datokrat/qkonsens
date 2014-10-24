@@ -59,7 +59,7 @@ export class Tests extends unit.TestClass {
 		var viewModel = new vm.ViewModel();
 		var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator);
 		
-		model.childKas.push( this.kaModelFactory.create('Begriff Basisdemokratie') );
+		model.childKas.push( this.kaModelFactory.create('', 'Begriff Basisdemokratie') );
 		
 		test.assert(() => viewModel.childKas()[0].general().title() == 'Begriff Basisdemokratie');
 		test.assert(() => viewModel.childKas().length == 1);
@@ -70,7 +70,7 @@ export class Tests extends unit.TestClass {
 		var model = this.kkModelFactory.create( 'Basisdemokratie (Konzept)' );
 		var viewModel = new vm.ViewModel();
 		var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator);
-		var ka = this.kaModelFactory.create('Begriff Basisdemokratie');
+		var ka = this.kaModelFactory.create('', 'Begriff Basisdemokratie');
 		
 		model.childKas.push( ka );
 		model.childKas.remove( ka );
@@ -88,7 +88,7 @@ export class Tests extends unit.TestClass {
 		var inserted = < TestEvent<KernaussageModel.Model> > model.childKas.pushed;
 		var removed = < TestEvent<KernaussageModel.Model> > model.childKas.removed;
 		
-		model.childKas.push( this.kaModelFactory.create('Test') );
+		model.childKas.push( this.kaModelFactory.create('', 'Test') );
 		
 		//TODO: Make this possible again
 		//test.assert( () => inserted.countListeners() == 0 );
@@ -151,6 +151,14 @@ class TestEvent<Args> implements Event.Event<Args> {
 		this.listenerCtr++;
 		this.event.subscribe(cb);
 		return { undo: () => this.unsubscribe(cb) };
+	}
+	
+	public subscribeUntil(cb: Event.Listener<Args>, timeout?: number): Event.Subscription {
+		var subscription: Event.Subscription;
+		var handler = (args: Args) => { if(cb(args)) subscription.undo() };
+		subscription = this.subscribe(handler);
+		if(typeof timeout === 'number') setTimeout(() => subscription.undo(), timeout);
+		return subscription;
 	}
 	
 	public unsubscribe(cb: Event.Listener<Args>): void {

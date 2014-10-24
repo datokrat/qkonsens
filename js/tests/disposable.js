@@ -36,6 +36,20 @@ define(["require", "exports", 'tests/tsunit', '../event'], function(require, exp
                 } };
         };
 
+        TestEvent.prototype.subscribeUntil = function (cb, timeout) {
+            var subscription;
+            var handler = function (args) {
+                if (cb(args))
+                    subscription.undo();
+            };
+            subscription = this.subscribe(handler);
+            if (typeof timeout === 'number')
+                setTimeout(function () {
+                    return subscription.undo();
+                }, timeout);
+            return subscription;
+        };
+
         TestEvent.prototype.unsubscribe = function (cb) {
             this.listenerCtr--;
             this.event.unsubscribe(cb);

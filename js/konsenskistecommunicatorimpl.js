@@ -2,11 +2,16 @@ define(["require", "exports", 'event', 'discocontext', 'contentcommunicatorimpl'
     var KonsenskisteCommunicator = (function () {
         function KonsenskisteCommunicator() {
             this.received = new Events.EventImpl();
+            this.kernaussageAppended = new Events.EventImpl();
             this.content = new ContentCommunicator;
             this.discussion = new DiscussionCommunicator.Main();
             this.kernaussage = new KernaussageCommunicator({ content: this.content });
             this.rating = new RatingCommunicator.Main();
         }
+        KonsenskisteCommunicator.prototype.createAndAppendKa = function (kokiId, ka) {
+            throw new Error('not implemented');
+        };
+
         KonsenskisteCommunicator.prototype.queryKoki = function (id, err) {
             var _this = this;
             this.queryRaw(id).then(function (rawKokis) {

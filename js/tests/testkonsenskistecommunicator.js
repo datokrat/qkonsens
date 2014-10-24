@@ -2,6 +2,7 @@ define(["require", "exports", 'event', 'itemcontainer', 'tests/testcontentcommun
     var TestKokiCommunicator = (function () {
         function TestKokiCommunicator() {
             this.received = new Events.EventImpl();
+            this.kernaussageAppended = new Events.EventImpl();
             this.testItems = new ItemContainer.Main();
             this.discussion = new TestDiscussionCommunicator(this.testItems);
             this.rating = new TestRatingCommunicator.Main(this.testItems);
@@ -23,6 +24,12 @@ define(["require", "exports", 'event', 'itemcontainer', 'tests/testcontentcommun
                 return;
             }
             this.received.raise({ id: id, konsenskiste: koki });
+        };
+
+        TestKokiCommunicator.prototype.createAndAppendKa = function (kokiId, ka) {
+            var koki = this.testItems.get(kokiId);
+            koki.childKas.push(ka);
+            this.kernaussageAppended.raise({ konsenskisteId: kokiId, kernaussage: ka });
         };
         return TestKokiCommunicator;
     })();

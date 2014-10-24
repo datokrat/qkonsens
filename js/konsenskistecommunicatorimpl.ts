@@ -19,12 +19,17 @@ class KonsenskisteCommunicator implements IKonsenskisteCommunicator.Main {
 	public discussion: DiscussionCommunicator.Base;
 	public rating: RatingCommunicator.Base;
 	public received = new Events.EventImpl<IKonsenskisteCommunicator.ReceivedArgs>();
+	public kernaussageAppended = new Events.EventImpl<IKonsenskisteCommunicator.KaAppendedArgs>();
 	
 	constructor() {
 		this.content = new ContentCommunicator;
 		this.discussion = new DiscussionCommunicator.Main();
 		this.kernaussage = new KernaussageCommunicator({ content: this.content });
 		this.rating = new RatingCommunicator.Main();
+	}
+	
+	public createAndAppendKa(kokiId: number, ka: KernaussageModel.Model) {
+		throw new Error('not implemented');
 	}
 	
 	public queryKoki(id: number, err?: (error) => void) {
@@ -77,7 +82,7 @@ class KonsenskisteCommunicator implements IKonsenskisteCommunicator.Main {
 		return koki;
 	}
 	
-	parseKa(rawKa: Disco.Ontology.Post): KernaussageModel.Model {
+	private parseKa(rawKa: Disco.Ontology.Post): KernaussageModel.Model {
 		var ka = new KernaussageModel.Model;
 		ka.id(parseInt(rawKa.Id));
 		this.parseGeneralContent(rawKa, ka.general());
@@ -85,14 +90,14 @@ class KonsenskisteCommunicator implements IKonsenskisteCommunicator.Main {
 		return ka;
 	}
 	
-	parseGeneralContent(rawPost: Disco.Ontology.Post, out?: ContentModel.General): ContentModel.General {
+	private parseGeneralContent(rawPost: Disco.Ontology.Post, out?: ContentModel.General): ContentModel.General {
 		out = out || new ContentModel.General;
 		out.title(rawPost.Content.Title);
 		out.text(rawPost.Content.Text);
 		return out;
 	}
 	
-	parseContext(rawPost: Disco.Ontology.Post, out?: ContentModel.Context): ContentModel.Context {
+	private parseContext(rawPost: Disco.Ontology.Post, out?: ContentModel.Context): ContentModel.Context {
 		var rawContext = this.extractRawContext(rawPost);
 		if(rawContext) {
 			out = out || new ContentModel.Context;
@@ -101,7 +106,7 @@ class KonsenskisteCommunicator implements IKonsenskisteCommunicator.Main {
 		}
 	}
 	
-	extractRawContext(rawPost: Disco.Ontology.Post): Disco.Ontology.Post {
+	private extractRawContext(rawPost: Disco.Ontology.Post): Disco.Ontology.Post {
 		var ret: Disco.Ontology.Post;
 		rawPost.RefersTo.forEach(reference => {
 			if(reference.ReferenceType.Description.Name == 'Context') {

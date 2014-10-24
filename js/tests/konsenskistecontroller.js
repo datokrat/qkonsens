@@ -65,7 +65,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenski
             var viewModel = new vm.ViewModel();
             var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator);
 
-            model.childKas.push(this.kaModelFactory.create('Begriff Basisdemokratie'));
+            model.childKas.push(this.kaModelFactory.create('', 'Begriff Basisdemokratie'));
 
             test.assert(function () {
                 return viewModel.childKas()[0].general().title() == 'Begriff Basisdemokratie';
@@ -82,7 +82,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenski
             var model = this.kkModelFactory.create('Basisdemokratie (Konzept)');
             var viewModel = new vm.ViewModel();
             var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator);
-            var ka = this.kaModelFactory.create('Begriff Basisdemokratie');
+            var ka = this.kaModelFactory.create('', 'Begriff Basisdemokratie');
 
             model.childKas.push(ka);
             model.childKas.remove(ka);
@@ -102,7 +102,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenski
             var inserted = model.childKas.pushed;
             var removed = model.childKas.removed;
 
-            model.childKas.push(this.kaModelFactory.create('Test'));
+            model.childKas.push(this.kaModelFactory.create('', 'Test'));
 
             //TODO: Make this possible again
             //test.assert( () => inserted.countListeners() == 0 );
@@ -182,6 +182,20 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenski
             return { undo: function () {
                     return _this.unsubscribe(cb);
                 } };
+        };
+
+        TestEvent.prototype.subscribeUntil = function (cb, timeout) {
+            var subscription;
+            var handler = function (args) {
+                if (cb(args))
+                    subscription.undo();
+            };
+            subscription = this.subscribe(handler);
+            if (typeof timeout === 'number')
+                setTimeout(function () {
+                    return subscription.undo();
+                }, timeout);
+            return subscription;
         };
 
         TestEvent.prototype.unsubscribe = function (cb) {
