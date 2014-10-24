@@ -5,12 +5,15 @@ define(["require", "exports", '../event', '../itemcontainer', 'tests/testcontent
             this.testItems = testItems;
             this.content = new TestContentCommunicator();
             this.commentsReceived = new Events.EventImpl();
+            this.commentsReceiptError = new Events.EventImpl();
         }
         TestDiscussableCommunicator.prototype.queryCommentsOf = function (discussableId) {
             try  {
                 var item = this.testItems.get(discussableId);
             } catch (e) {
-                throw new Error('TestDiscussableCommunicator.queryCommentsOf: discussableId[' + discussableId + '] not found');
+                this.commentsReceiptError.raise({ discussableId: discussableId, message: 'discussableId[' + discussableId + '] not found' });
+
+                //throw new Error('TestDiscussableCommunicator.queryCommentsOf: discussableId[' + discussableId + '] not found');
                 return;
             }
             this.commentsReceived.raise({ id: discussableId, comments: item.discussion().comments.get() });

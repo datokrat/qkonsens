@@ -9,12 +9,14 @@ export interface Base {
 	content: ContentCommunicator.Main;
 
 	commentsReceived: Events.Event<ReceivedArgs>;
+	commentsReceiptError: Events.Event<CommentsReceiptErrorArgs>;
 	queryCommentsOf(discussableId: number, err?: (error) => void): void;
 }
 
 export class Main implements Base {
 	public content: ContentCommunicator.Main;
 	public commentsReceived: Events.Event<ReceivedArgs> = new Events.EventImpl<ReceivedArgs>();
+	public commentsReceiptError: Events.Event<CommentsReceiptErrorArgs> = new Events.EventImpl<CommentsReceiptErrorArgs>();
 	
 	public queryCommentsOf(discussableId: number, err?: (error) => void): void {
 		this.queryRawCommentsOf(discussableId).then(comments => {
@@ -54,4 +56,9 @@ export class Main implements Base {
 export interface ReceivedArgs {
 	id: number;
 	comments: Comment.Model[];
+}
+
+export interface CommentsReceiptErrorArgs {
+	discussableId: number;
+	message: string;
 }

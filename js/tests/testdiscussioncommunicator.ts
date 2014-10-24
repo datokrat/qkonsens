@@ -11,6 +11,7 @@ import DiscussableCommunicator = require('../discussioncommunicator')
 class TestDiscussableCommunicator implements DiscussableCommunicator.Base {
 	public content: ContentCommunicator.Main = new TestContentCommunicator();
 	public commentsReceived = new Events.EventImpl<DiscussableCommunicator.ReceivedArgs>();
+	public commentsReceiptError = new Events.EventImpl<DiscussableCommunicator.CommentsReceiptErrorArgs>();
 	
 	constructor(private testItems: ItemContainer.Base<Discussion.DiscussableModel> = new ItemContainer.Main<Discussion.DiscussableModel>()) {}
 	
@@ -19,7 +20,8 @@ class TestDiscussableCommunicator implements DiscussableCommunicator.Base {
 			var item: Discussion.DiscussableModel = this.testItems.get(discussableId);
 		}
 		catch(e) {
-			throw new Error('TestDiscussableCommunicator.queryCommentsOf: discussableId[' + discussableId + '] not found');
+			this.commentsReceiptError.raise({ discussableId: discussableId, message: 'discussableId[' + discussableId + '] not found' });
+			//throw new Error('TestDiscussableCommunicator.queryCommentsOf: discussableId[' + discussableId + '] not found');
 			return;
 		}
 		this.commentsReceived.raise({ id: discussableId, comments: item.discussion().comments.get() });

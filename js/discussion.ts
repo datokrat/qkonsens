@@ -43,6 +43,7 @@ export class Controller {
 		
 		this.communicatorSubscriptions = [
 			this.communicator.commentsReceived.subscribe(this.onCommentsReceived),
+			this.communicator.commentsReceiptError.subscribe(this.onCommentsReceiptError)
 		];
 	}
 	
@@ -64,6 +65,14 @@ export class Controller {
 		}
 		else if(!this.discussableModel)
 			throw new Error('this.discussableModel is null/undefined');
+	}
+	
+	private onCommentsReceiptError = (args: DiscussableCommunicator.CommentsReceiptErrorArgs) => {
+		if(this.discussableModel && this.discussableModel.id() == args.discussableId) {
+			this.model.error(args.message);
+			this.model.commentsLoading(false);
+			this.model.commentsLoaded(false);
+		}
 	}
 	
 	public setViewModelContext(cxt: ViewModelContext) {

@@ -2,6 +2,7 @@ define(["require", "exports", 'event', 'comment', 'discocontext'], function(requ
     var Main = (function () {
         function Main() {
             this.commentsReceived = new Events.EventImpl();
+            this.commentsReceiptError = new Events.EventImpl();
         }
         Main.prototype.queryCommentsOf = function (discussableId, err) {
             var _this = this;

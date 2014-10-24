@@ -31,6 +31,13 @@ define(["require", "exports", 'observable', 'synchronizers/comment'], function(r
                 } else if (!_this.discussableModel)
                     throw new Error('this.discussableModel is null/undefined');
             };
+            this.onCommentsReceiptError = function (args) {
+                if (_this.discussableModel && _this.discussableModel.id() == args.discussableId) {
+                    _this.model.error(args.message);
+                    _this.model.commentsLoading(false);
+                    _this.model.commentsLoaded(false);
+                }
+            };
             this.discussionClick = function () {
                 if (_this.viewModelContext) {
                     if (_this.discussableModel && !_this.model.commentsLoading() && !_this.model.commentsLoaded()) {
@@ -56,7 +63,8 @@ define(["require", "exports", 'observable', 'synchronizers/comment'], function(r
             this.commentSynchronizer = new CommentSynchronizer(this.communicator.content).setViewModelObservable(this.viewModel.comments).setModelObservable(this.model.comments);
 
             this.communicatorSubscriptions = [
-                this.communicator.commentsReceived.subscribe(this.onCommentsReceived)
+                this.communicator.commentsReceived.subscribe(this.onCommentsReceived),
+                this.communicator.commentsReceiptError.subscribe(this.onCommentsReceiptError)
             ];
         }
         Controller.prototype.setDiscussableModel = function (discussableModel) {
