@@ -13,11 +13,27 @@ class TestDiscussableCommunicator implements DiscussableCommunicator.Base {
 	public commentsReceived = new Events.EventImpl<DiscussableCommunicator.ReceivedArgs>();
 	public commentsReceiptError = new Events.EventImpl<DiscussableCommunicator.CommentsReceiptErrorArgs>();
 	
-	constructor(private testItems: ItemContainer.Base<Discussion.DiscussableModel> = new ItemContainer.Main<Discussion.DiscussableModel>()) {}
+	private testItemContainers: ItemContainer.Many<Discussion.DiscussableModel>;
+	private internalItemContainer: ItemContainer.Base<Discussion.DiscussableModel>;
+	
+	constructor() {
+		this.testItemContainers = new ItemContainer.Many<Discussion.DiscussableModel>();
+		this.testItemContainers.insertContainer(
+			this.internalItemContainer = new ItemContainer.Main<Discussion.DiscussableModel>()
+		);
+	}
+	
+	public insertTestItemContainer(container: ItemContainer.Readonly<Discussion.DiscussableModel>) {
+		this.testItemContainers.insertContainer(container);
+	}
+	
+	public removeTestItemContainer(container: ItemContainer.Readonly<Discussion.DiscussableModel>) {
+		this.testItemContainers.removeContainer(container);
+	}
 	
 	public queryCommentsOf(discussableId: number) {
 		try {
-			var item: Discussion.DiscussableModel = this.testItems.get(discussableId);
+			var item: Discussion.DiscussableModel = this.testItemContainers.get(discussableId);
 		}
 		catch(e) {
 			this.commentsReceiptError.raise({ discussableId: discussableId, message: 'discussableId[' + discussableId + '] not found' });
@@ -28,7 +44,7 @@ class TestDiscussableCommunicator implements DiscussableCommunicator.Base {
 	}
 	
 	public setTestDiscussable(discussable: Discussion.DiscussableModel) {
-		this.testItems.set(discussable.id(), discussable);
+		this.internalItemContainer.set(discussable.id(), discussable);
 	}
 }
 

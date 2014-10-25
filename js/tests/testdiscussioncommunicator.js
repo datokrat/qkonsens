@@ -1,15 +1,23 @@
 define(["require", "exports", '../event', '../itemcontainer', 'tests/testcontentcommunicator'], function(require, exports, Events, ItemContainer, TestContentCommunicator) {
     var TestDiscussableCommunicator = (function () {
-        function TestDiscussableCommunicator(testItems) {
-            if (typeof testItems === "undefined") { testItems = new ItemContainer.Main(); }
-            this.testItems = testItems;
+        function TestDiscussableCommunicator() {
             this.content = new TestContentCommunicator();
             this.commentsReceived = new Events.EventImpl();
             this.commentsReceiptError = new Events.EventImpl();
+            this.testItemContainers = new ItemContainer.Many();
+            this.testItemContainers.insertContainer(this.internalItemContainer = new ItemContainer.Main());
         }
+        TestDiscussableCommunicator.prototype.insertTestItemContainer = function (container) {
+            this.testItemContainers.insertContainer(container);
+        };
+
+        TestDiscussableCommunicator.prototype.removeTestItemContainer = function (container) {
+            this.testItemContainers.removeContainer(container);
+        };
+
         TestDiscussableCommunicator.prototype.queryCommentsOf = function (discussableId) {
             try  {
-                var item = this.testItems.get(discussableId);
+                var item = this.testItemContainers.get(discussableId);
             } catch (e) {
                 this.commentsReceiptError.raise({ discussableId: discussableId, message: 'discussableId[' + discussableId + '] not found' });
 
@@ -20,7 +28,7 @@ define(["require", "exports", '../event', '../itemcontainer', 'tests/testcontent
         };
 
         TestDiscussableCommunicator.prototype.setTestDiscussable = function (discussable) {
-            this.testItems.set(discussable.id(), discussable);
+            this.internalItemContainer.set(discussable.id(), discussable);
         };
         return TestDiscussableCommunicator;
     })();

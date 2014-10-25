@@ -1,12 +1,13 @@
-define(["require", "exports", 'event', 'itemcontainer', 'tests/testcontentcommunicator', 'tests/testkernaussagecommunicator', 'tests/testdiscussioncommunicator', 'tests/testratingcommunicator'], function(require, exports, Events, ItemContainer, TestContentCommunicator, TestKaCommunicator, TestDiscussionCommunicator, TestRatingCommunicator) {
+define(["require", "exports", '../id', 'event', 'itemcontainer', 'tests/testcontentcommunicator', 'tests/testkernaussagecommunicator', 'tests/testdiscussioncommunicator', 'tests/testratingcommunicator'], function(require, exports, newId, Events, ItemContainer, TestContentCommunicator, TestKaCommunicator, TestDiscussionCommunicator, TestRatingCommunicator) {
     var TestKokiCommunicator = (function () {
         function TestKokiCommunicator() {
             this.received = new Events.EventImpl();
             this.kernaussageAppended = new Events.EventImpl();
             this.kernaussageAppendingError = new Events.EventImpl();
             this.testItems = new ItemContainer.Main();
-            this.discussion = new TestDiscussionCommunicator(this.testItems);
+            this.discussion = new TestDiscussionCommunicator();
             this.rating = new TestRatingCommunicator.Main(this.testItems);
+            this.discussion.insertTestItemContainer(this.testItems);
             this.content = new TestContentCommunicator();
             this.kernaussage = new TestKaCommunicator({ content: this.content });
         }
@@ -34,6 +35,8 @@ define(["require", "exports", 'event', 'itemcontainer', 'tests/testcontentcommun
                 this.kernaussageAppendingError.raise({ konsenskisteId: kokiId, message: "createAndAppendKa: kokiId[" + kokiId + "] not found" });
                 return;
             }
+            ka.id(newId());
+            this.kernaussage.setTestKa(ka);
             koki.childKas.push(ka);
             this.kernaussageAppended.raise({ konsenskisteId: kokiId, kernaussage: ka });
         };

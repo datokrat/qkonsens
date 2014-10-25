@@ -293,6 +293,11 @@ export class Tests {
 			},
 			r => {
 				test.assert(() => this.helper.isNewKaSubmitted());
+				this.helper.openDiscussionOfNewKa();
+				setTimeout(r);
+			},
+			r => {
+				test.assert(() => this.helper.isNewKaDiscussionVisible());
 				r();
 			}
 		], r);
@@ -321,5 +326,16 @@ class Helper {
 		var ka = this.webot.query('.kk').child('.ka').contains('Diskussion');
 		var form = this.webot.query('.kk').child('.ka').contains('Anfügen');
 		return ka.contains('Title').contains('Text').exists() && form.exists(false);
+	}
+	
+	public openDiscussionOfNewKa() {
+		var ka = this.webot.query('.kk').child('.ka').contains('Diskussion').contains('Title').contains('Text');
+		ka.child('*').text('Diskussion').click();
+	}
+	
+	public isNewKaDiscussionVisible(): boolean {
+		var discussion = this.webot.query('.win').child('h1:contains("Diskussion") ~ *');
+		return discussion.contains('Text').exists() && discussion.contains('Title').exists()
+			&& !discussion.contains('Fehler').exists();
 	}
 }

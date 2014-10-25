@@ -1,3 +1,4 @@
+import newId = require('../id');
 import Events = require('event');
 import ItemContainer = require('itemcontainer');
 
@@ -20,10 +21,11 @@ class TestKokiCommunicator implements KokiCommunicator.Main {
 	public kernaussageAppendingError = new Events.EventImpl<KokiCommunicator.KaAppendingErrorArgs>();
 	
 	private testItems = new ItemContainer.Main<KonsenskisteModel.Model>();
-	public discussion = new TestDiscussionCommunicator(this.testItems);
+	public discussion = new TestDiscussionCommunicator();
 	public rating = new TestRatingCommunicator.Main(this.testItems);
 	
 	constructor() {
+		this.discussion.insertTestItemContainer(this.testItems);
 		this.content = new TestContentCommunicator();
 		this.kernaussage = new TestKaCommunicator({ content: this.content });
 	}
@@ -54,6 +56,8 @@ class TestKokiCommunicator implements KokiCommunicator.Main {
 			this.kernaussageAppendingError.raise({ konsenskisteId: kokiId, message: "createAndAppendKa: kokiId[" + kokiId + "] not found" });
 			return;
 		}
+		ka.id(newId());
+		this.kernaussage.setTestKa(ka);
 		koki.childKas.push(ka);
 		this.kernaussageAppended.raise({ konsenskisteId: kokiId, kernaussage: ka });
 	}

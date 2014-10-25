@@ -345,6 +345,13 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
                     test.assert(function () {
                         return _this.helper.isNewKaSubmitted();
                     });
+                    _this.helper.openDiscussionOfNewKa();
+                    setTimeout(r);
+                },
+                function (r) {
+                    test.assert(function () {
+                        return _this.helper.isNewKaDiscussionVisible();
+                    });
                     r();
                 }
             ], r);
@@ -376,6 +383,16 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
             var ka = this.webot.query('.kk').child('.ka').contains('Diskussion');
             var form = this.webot.query('.kk').child('.ka').contains('Anfügen');
             return ka.contains('Title').contains('Text').exists() && form.exists(false);
+        };
+
+        Helper.prototype.openDiscussionOfNewKa = function () {
+            var ka = this.webot.query('.kk').child('.ka').contains('Diskussion').contains('Title').contains('Text');
+            ka.child('*').text('Diskussion').click();
+        };
+
+        Helper.prototype.isNewKaDiscussionVisible = function () {
+            var discussion = this.webot.query('.win').child('h1:contains("Diskussion") ~ *');
+            return discussion.contains('Text').exists() && discussion.contains('Title').exists() && !discussion.contains('Fehler').exists();
         };
         return Helper;
     })();

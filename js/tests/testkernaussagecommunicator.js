@@ -3,9 +3,10 @@ define(["require", "exports", '../event', '../itemcontainer', 'tests/testcontent
         function TestKaCommunicator(cxt) {
             if (typeof cxt === "undefined") { cxt = { content: new TestContentCommunicator }; }
             this.testItems = new ItemContainer.Main();
-            this.discussion = new TestDiscussionCommunicator(this.testItems);
+            this.discussion = new TestDiscussionCommunicator();
             this.rating = new TestRatingCommunicator.Main(this.testItems);
             this.received = new Events.EventImpl();
+            this.discussion.insertTestItemContainer(this.testItems);
             this.content = cxt.content;
         }
         TestKaCommunicator.prototype.setTestKa = function (ka) {

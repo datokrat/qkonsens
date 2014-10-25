@@ -12,12 +12,13 @@ class TestKaCommunicator implements KaCommunicator.Main {
 	public content: ContentCommunicator.Main;
 	
 	private testItems = new ItemContainer.Main<KernaussageModel.Model>();
-	public discussion = new TestDiscussionCommunicator(this.testItems);
+	public discussion = new TestDiscussionCommunicator();
 	public rating = new TestRatingCommunicator.Main(this.testItems);
 	
 	public received = new Events.EventImpl<KaCommunicator.ReceivedArgs>();
 	
 	constructor(cxt: { content: ContentCommunicator.Main } = { content: new TestContentCommunicator }) {
+		this.discussion.insertTestItemContainer(this.testItems);
 		this.content = cxt.content;
 	}
 
