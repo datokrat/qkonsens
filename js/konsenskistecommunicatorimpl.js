@@ -3,6 +3,7 @@ define(["require", "exports", 'event', 'discocontext', 'contentcommunicatorimpl'
         function KonsenskisteCommunicator() {
             this.received = new Events.EventImpl();
             this.kernaussageAppended = new Events.EventImpl();
+            this.kernaussageAppendingError = new Events.EventImpl();
             this.content = new ContentCommunicator;
             this.discussion = new DiscussionCommunicator.Main();
             this.kernaussage = new KernaussageCommunicator({ content: this.content });

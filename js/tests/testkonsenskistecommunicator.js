@@ -3,6 +3,7 @@ define(["require", "exports", 'event', 'itemcontainer', 'tests/testcontentcommun
         function TestKokiCommunicator() {
             this.received = new Events.EventImpl();
             this.kernaussageAppended = new Events.EventImpl();
+            this.kernaussageAppendingError = new Events.EventImpl();
             this.testItems = new ItemContainer.Main();
             this.discussion = new TestDiscussionCommunicator(this.testItems);
             this.rating = new TestRatingCommunicator.Main(this.testItems);
@@ -27,7 +28,12 @@ define(["require", "exports", 'event', 'itemcontainer', 'tests/testcontentcommun
         };
 
         TestKokiCommunicator.prototype.createAndAppendKa = function (kokiId, ka) {
-            var koki = this.testItems.get(kokiId);
+            try  {
+                var koki = this.testItems.get(kokiId);
+            } catch (e) {
+                this.kernaussageAppendingError.raise({ konsenskisteId: kokiId, message: "createAndAppendKa: kokiId[" + kokiId + "] not found" });
+                return;
+            }
             koki.childKas.push(ka);
             this.kernaussageAppended.raise({ konsenskisteId: kokiId, kernaussage: ka });
         };

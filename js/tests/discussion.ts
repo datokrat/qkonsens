@@ -42,6 +42,18 @@ class TestClass extends unit.TestClass {
 		test.assert( () => ctr == 1 );
 	}
 	
+	queryCommentsOfNonExistantId() {
+		var errorCtr = 0;
+		var receivedCtr = 0;
+		this.communicator.commentsReceived.subscribe(() => ++receivedCtr);
+		this.communicator.commentsReceiptError.subscribe(() => ++errorCtr);
+		
+		this.communicator.queryCommentsOf(3);
+		
+		test.assert(() => errorCtr == 1);
+		test.assert(() => receivedCtr == 0);
+	}
+	
 	receiveCommentsFromCommunicator() {
 		this.communicator.commentsReceived.raise({ id: 2, comments: this.discussable.discussion().comments.get() });
 		

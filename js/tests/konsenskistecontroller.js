@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenskistemodel', 'factories/kernaussagemodel', '../konsenskisteviewmodel', '../konsenskistecontroller', '../contentmodel', '../rating', '../comment', 'tests/testkonsenskistecommunicator', '../event'], function(require, exports, unit, test, kkModelFty, kaModelFty, vm, ctr, ContentModel, Rating, Comment, KokiCommunicator, Event) {
+define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenskistemodel', 'factories/kernaussagemodel', '../kernaussagemodel', '../konsenskisteviewmodel', '../konsenskistecontroller', '../contentmodel', '../rating', '../comment', 'tests/testkonsenskistecommunicator', '../event'], function(require, exports, unit, test, kkModelFty, kaModelFty, KernaussageModel, vm, ctr, ContentModel, Rating, Comment, KokiCommunicator, Event) {
     var Tests = (function (_super) {
         __extends(Tests, _super);
         function Tests() {
@@ -163,6 +163,57 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenski
             });
             test.assert(function () {
                 return viewModel.discussion().comments()[0].content().text() == 'A Comment';
+            });
+        };
+
+        Tests.prototype.appendKaViaCommunicator = function () {
+            var eventCtr = 0;
+            var model = this.kkModelFactory.create('Basisdemokratie');
+            model.id(2);
+            var viewModel = new vm.ViewModel();
+            var communicator = new KokiCommunicator();
+            var controller = new ctr.ControllerImpl(model, viewModel, communicator);
+
+            var serverKoki = this.kkModelFactory.create('Basisdemokratie');
+            serverKoki.id(2);
+            communicator.setTestKoki(serverKoki);
+            communicator.kernaussageAppended.subscribe(function () {
+                return ++eventCtr;
+            });
+
+            var kernaussage = new KernaussageModel.Model();
+            communicator.createAndAppendKa(model.id(), kernaussage);
+
+            test.assert(function () {
+                return eventCtr == 1;
+            });
+        };
+
+        Tests.prototype.appendKaViaCommunicator_error = function () {
+            var errorCtr = 0;
+            var successCtr = 0;
+            var model = this.kkModelFactory.create('Title', 'Text', 2);
+            var serverKoki = this.kkModelFactory.create('Title', 'Text', 3);
+            var viewModel = new vm.ViewModel();
+            var communicator = new KokiCommunicator();
+            var controller = new ctr.ControllerImpl(model, viewModel, communicator);
+
+            communicator.setTestKoki(serverKoki);
+            communicator.kernaussageAppendingError.subscribe(function () {
+                return ++errorCtr;
+            });
+            communicator.kernaussageAppended.subscribe(function () {
+                return ++successCtr;
+            });
+
+            var kernaussage = new KernaussageModel.Model();
+            communicator.createAndAppendKa(model.id(), kernaussage);
+
+            test.assert(function () {
+                return successCtr == 0;
+            });
+            test.assert(function () {
+                return errorCtr == 1;
             });
         };
         return Tests;

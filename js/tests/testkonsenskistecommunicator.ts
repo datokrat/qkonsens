@@ -17,6 +17,7 @@ class TestKokiCommunicator implements KokiCommunicator.Main {
 	
 	public received = new Events.EventImpl<KokiCommunicator.ReceivedArgs>();
 	public kernaussageAppended = new Events.EventImpl<KokiCommunicator.KaAppendedArgs>();
+	public kernaussageAppendingError = new Events.EventImpl<KokiCommunicator.KaAppendingErrorArgs>();
 	
 	private testItems = new ItemContainer.Main<KonsenskisteModel.Model>();
 	public discussion = new TestDiscussionCommunicator(this.testItems);
@@ -46,7 +47,13 @@ class TestKokiCommunicator implements KokiCommunicator.Main {
 	}
 	
 	public createAndAppendKa(kokiId: number, ka: KernaussageModel.Model) {
-		var koki = this.testItems.get(kokiId);
+		try {
+			var koki = this.testItems.get(kokiId);
+		}
+		catch(e) {
+			this.kernaussageAppendingError.raise({ konsenskisteId: kokiId, message: "createAndAppendKa: kokiId[" + kokiId + "] not found" });
+			return;
+		}
 		koki.childKas.push(ka);
 		this.kernaussageAppended.raise({ konsenskisteId: kokiId, kernaussage: ka });
 	}

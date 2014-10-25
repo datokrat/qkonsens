@@ -20,6 +20,7 @@ class KonsenskisteCommunicator implements IKonsenskisteCommunicator.Main {
 	public rating: RatingCommunicator.Base;
 	public received = new Events.EventImpl<IKonsenskisteCommunicator.ReceivedArgs>();
 	public kernaussageAppended = new Events.EventImpl<IKonsenskisteCommunicator.KaAppendedArgs>();
+	public kernaussageAppendingError = new Events.EventImpl<IKonsenskisteCommunicator.KaAppendingErrorArgs>();
 	
 	constructor() {
 		this.content = new ContentCommunicator;

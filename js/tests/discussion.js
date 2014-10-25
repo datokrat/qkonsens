@@ -46,6 +46,26 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../discussion', 'te
             });
         };
 
+        TestClass.prototype.queryCommentsOfNonExistantId = function () {
+            var errorCtr = 0;
+            var receivedCtr = 0;
+            this.communicator.commentsReceived.subscribe(function () {
+                return ++receivedCtr;
+            });
+            this.communicator.commentsReceiptError.subscribe(function () {
+                return ++errorCtr;
+            });
+
+            this.communicator.queryCommentsOf(3);
+
+            test.assert(function () {
+                return errorCtr == 1;
+            });
+            test.assert(function () {
+                return receivedCtr == 0;
+            });
+        };
+
         TestClass.prototype.receiveCommentsFromCommunicator = function () {
             var _this = this;
             this.communicator.commentsReceived.raise({ id: 2, comments: this.discussable.discussion().comments.get() });

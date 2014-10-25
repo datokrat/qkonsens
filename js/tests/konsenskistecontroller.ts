@@ -138,6 +138,45 @@ export class Tests extends unit.TestClass {
 		test.assert( () => viewModel.discussion().comments().length == 1 );
 		test.assert( () => viewModel.discussion().comments()[0].content().text() == 'A Comment' );
 	}
+	
+	appendKaViaCommunicator() {
+		var eventCtr = 0;
+		var model = this.kkModelFactory.create('Basisdemokratie');
+		model.id(2);
+		var viewModel = new vm.ViewModel();
+		var communicator = new KokiCommunicator();
+		var controller = new ctr.ControllerImpl(model, viewModel, communicator);
+		
+		var serverKoki = this.kkModelFactory.create('Basisdemokratie');
+		serverKoki.id(2);
+		communicator.setTestKoki(serverKoki);
+		communicator.kernaussageAppended.subscribe(() => ++eventCtr);
+		
+		var kernaussage = new KernaussageModel.Model();
+		communicator.createAndAppendKa(model.id(), kernaussage);
+		
+		test.assert(() => eventCtr == 1);
+	}
+	
+	appendKaViaCommunicator_error() {
+		var errorCtr = 0;
+		var successCtr = 0;
+		var model = this.kkModelFactory.create('Title', 'Text', 2);
+		var serverKoki = this.kkModelFactory.create('Title', 'Text', 3);
+		var viewModel = new vm.ViewModel();
+		var communicator = new KokiCommunicator();
+		var controller = new ctr.ControllerImpl(model, viewModel, communicator);
+		
+		communicator.setTestKoki(serverKoki);
+		communicator.kernaussageAppendingError.subscribe(() => ++errorCtr);
+		communicator.kernaussageAppended.subscribe(() => ++successCtr);
+		
+		var kernaussage = new KernaussageModel.Model();
+		communicator.createAndAppendKa(model.id(), kernaussage);
+		
+		test.assert(() => successCtr == 0);
+		test.assert(() => errorCtr == 1);
+	}
 }
 
 class TestEvent<Args> implements Event.Event<Args> {

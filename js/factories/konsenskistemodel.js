@@ -2,10 +2,11 @@ define(["require", "exports", '../konsenskistemodel'], function(require, exports
     var Factory = (function () {
         function Factory() {
         }
-        Factory.prototype.create = function (title, text) {
+        Factory.prototype.create = function (title, text, id) {
             var konsenskiste = new koki.Model({ eventFactory: this.eventFactory });
+            id && konsenskiste.id(id);
+            text && konsenskiste.general().text(text);
             konsenskiste.general().title(title);
-            konsenskiste.general().text(text);
             return konsenskiste;
         };
 
