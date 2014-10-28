@@ -10,10 +10,6 @@ export class Win {
 	public viewTemplate: any;
 	public state = ko.observable<any>();
 	
-	/*public goBack(container) {
-		container.goBack();
-	}*/
-	
 	public setState(newState: any) {}
 	
 	public onEnter = () => {}
@@ -37,9 +33,9 @@ export class WinContainer {
 	}
 	
 	public onChangeWin=(newWin: Win):void => {
-			if(newWin) newWin.onEnter();
-			if(this.lastWin()) this.lastWin().onLeave();
-			this.lastWin(newWin);
+		if(newWin) newWin.onEnter();
+		if(this.lastWin()) this.lastWin().onLeave();
+		this.lastWin(newWin);
 	}
 	
 	//
@@ -70,7 +66,7 @@ export class WinContainer {
 		this.win(combi.win);
 	};
 	
-	//replaces the most top window of this.history with newWin and makes it active
+	//replaces the most upper window of this.history with newWin and makes it active
 	public replaceWin = (newWin: Win) => {
 		this.removeLast(1);
 		this.win(newWin);

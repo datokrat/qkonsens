@@ -15,7 +15,7 @@ export interface Main {
 	received: Events.Event<ReceivedArgs>;
 	kernaussageAppended: Events.Event<KaAppendedArgs>;
 	kernaussageAppendingError: Events.Event<KaAppendingErrorArgs>;
-	queryKoki(id: number);
+	queryKoki(id: number): KonsenskisteModel.Model;
 	createAndAppendKa(kokiId: number, ka: KernaussageModel.Model);
 }
 

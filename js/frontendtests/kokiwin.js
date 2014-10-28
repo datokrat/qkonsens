@@ -1,4 +1,4 @@
-define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendtests/webot', '../common', 'comment', 'konsenskistemodel', 'kernaussagemodel'], function(require, exports, test, reloader, webot, common, Comment, koki, ka) {
+define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendtests/webot', '../common', 'comment', 'konsenskistemodel', 'kernaussagemodel'], function(require, exports, test, reloader, webot, common, Comment, KonsenskisteModel, KernaussageModel) {
     ko = top.frames[2].ko;
 
     var Tests = (function () {
@@ -13,13 +13,13 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
             var controller = reloader.controller();
             var communicator = reloader.communicator();
 
-            var konsenskiste = new koki.Model;
+            var konsenskiste = new KonsenskisteModel.Model;
             konsenskiste.id(1);
             konsenskiste.general().title('Konsenskisten-Titel');
             konsenskiste.general().text('Lorem ipsum dolor sit amet');
             konsenskiste.context().text('ipsum (lat.): selbst');
 
-            var kernaussage = new ka.Model();
+            var kernaussage = new KernaussageModel.Model();
             konsenskiste.childKas.push(kernaussage);
 
             model.konsenskiste(konsenskiste);
@@ -144,11 +144,11 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
             common.Callbacks.batch([
                 function (r) {
                     var model = reloader.model();
-                    var oldKoki = new koki.Model;
+                    var oldKoki = new KonsenskisteModel.Model;
                     oldKoki.id(15);
                     model.konsenskiste(oldKoki);
 
-                    var newKoki = new koki.Model;
+                    var newKoki = new KonsenskisteModel.Model;
                     newKoki.id(15);
                     newKoki.general().title('New Title');
                     newKoki.general().text('New Text');
@@ -179,7 +179,7 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
                     var model = reloader.model();
                     var communicator = reloader.communicator();
 
-                    var serverModel = new koki.Model();
+                    var serverModel = new KonsenskisteModel.Model();
                     serverModel.id(1);
                     var comment = new Comment.Model();
                     comment.content().text('Comment');
@@ -202,7 +202,7 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
 
         Tests.prototype.kernaussageComments = function (cxt, r) {
             var _this = this;
-            var serverKa = new ka.Model();
+            var serverKa = new KernaussageModel.Model();
             common.Callbacks.batch([
                 function (r) {
                     var model = reloader.model();
@@ -351,6 +351,48 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
                 function (r) {
                     test.assert(function () {
                         return _this.helper.isNewKaDiscussionVisible();
+                    });
+                    r();
+                }
+            ], r);
+        };
+
+        Tests.prototype.history = function (cxt, r) {
+            var _this = this;
+            var communicator = reloader.communicator().konsenskiste;
+            var viewModel = reloader.viewModel();
+
+            var koki1 = new KonsenskisteModel.Model();
+            koki1.id(123);
+            koki1.general().text('This is Post #123');
+            communicator.setTestKoki(koki1);
+            var koki2 = new KonsenskisteModel.Model();
+            koki2.id(246);
+            koki2.general().text('This is Post #246');
+            communicator.setTestKoki(koki2);
+
+            common.Callbacks.batch([
+                function (r) {
+                    viewModel.center.win().setState({ kokiId: 123 });
+                    setTimeout(r);
+                },
+                function (r) {
+                    test.assert(function () {
+                        return _this.webot.query('*').text('This is Post #123').exists();
+                    });
+                    viewModel.center.win().setState({ kokiId: 246 });
+                    setTimeout(r);
+                },
+                function (r) {
+                    test.assert(function () {
+                        return _this.webot.query('*').text('This is Post #246').exists();
+                    });
+                    _this.webot.query('.win').contains('This is Post #246').child('h1').contains('Konsenskiste').child('*').text('<<').click();
+                    setTimeout(r);
+                },
+                function (r) {
+                    test.assert(function () {
+                        return _this.webot.query('*').text('This is Post #123').exists();
                     });
                     r();
                 }

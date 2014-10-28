@@ -2,14 +2,23 @@ define(["require", "exports", 'factories/konsenskistecontroller', '../konsenskis
     var Controller = (function () {
         function Controller(konsenskisteModel, windowViewModel, communicator) {
             this.konsenskisteControllerFactory = new KokiControllerFactory.Factory;
-            this.window = windowViewModel;
+            this.initWindow(windowViewModel);
             this.communicator = communicator;
             this.window.kkView = ko.observable();
             this.initKonsenskiste(konsenskisteModel);
         }
+        Controller.prototype.initWindow = function (win) {
+            var _this = this;
+            this.window = win;
+            this.window.setState = function (state) {
+                var typedState = state;
+                var kk = _this.communicator.queryKoki(typedState.kokiId);
+                _this.setKonsenskisteModel(kk);
+            };
+        };
+
         Controller.prototype.initKonsenskiste = function (konsenskisteModel) {
-            if (this.konsenskisteController)
-                this.konsenskisteController.dispose();
+            this.disposeKonsenskiste();
 
             var konsenskisteViewModel = new kokiVm.ViewModel;
             this.konsenskisteController = this.konsenskisteControllerFactory.create(konsenskisteModel, konsenskisteViewModel, this.communicator);
@@ -17,10 +26,16 @@ define(["require", "exports", 'factories/konsenskistecontroller', '../konsenskis
                 this.konsenskisteController.setContext(this.cxt);
 
             this.window.kkView(konsenskisteViewModel);
+            this.window.state({ kokiId: konsenskisteModel && konsenskisteModel.id() });
+            console.log('state = ', this.window.state());
+        };
+
+        Controller.prototype.disposeKonsenskiste = function () {
+            if (this.konsenskisteController)
+                this.konsenskisteController.dispose();
         };
 
         Controller.prototype.setContext = function (cxt) {
-            console.log('windows/konsenskistecontroller.setContext');
             this.cxt = cxt;
             this.konsenskisteController.setContext(cxt);
             return this;

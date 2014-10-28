@@ -10,8 +10,8 @@ import vm = require('viewmodel')
 import ctr = require('controller')
 
 import Comment = require('comment')
-import koki = require('konsenskistemodel')
-import ka = require('kernaussagemodel')
+import KonsenskisteModel = require('konsenskistemodel')
+import KernaussageModel = require('kernaussagemodel')
 
 import TestCommunicator = require('tests/testcommunicator')
 
@@ -31,13 +31,13 @@ export class Tests {
 		var controller: ctr.Controller = reloader.controller();
 		var communicator = reloader.communicator();
 		
-		var konsenskiste = new koki.Model;
+		var konsenskiste = new KonsenskisteModel.Model;
 		konsenskiste.id(1);
 		konsenskiste.general().title('Konsenskisten-Titel');
 		konsenskiste.general().text('Lorem ipsum dolor sit amet');
 		konsenskiste.context().text('ipsum (lat.): selbst');
 		
-		var kernaussage = new ka.Model();
+		var kernaussage = new KernaussageModel.Model();
 		konsenskiste.childKas.push(kernaussage);
 		
 		model.konsenskiste(konsenskiste);
@@ -127,11 +127,11 @@ export class Tests {
 		common.Callbacks.batch([
 			r => {
 				var model = reloader.model();
-				var oldKoki = new koki.Model;
+				var oldKoki = new KonsenskisteModel.Model;
 				oldKoki.id(15);
 				model.konsenskiste(oldKoki);
 				
-				var newKoki = new koki.Model;
+				var newKoki = new KonsenskisteModel.Model;
 				newKoki.id(15);
 				newKoki.general().title('New Title');
 				newKoki.general().text('New Text');
@@ -155,7 +155,7 @@ export class Tests {
 				var model = reloader.model();
 				var communicator = reloader.communicator();
 				
-				var serverModel = new koki.Model();
+				var serverModel = new KonsenskisteModel.Model();
 				serverModel.id(1);
 				var comment = new Comment.Model();
 				comment.content().text('Comment');
@@ -175,7 +175,7 @@ export class Tests {
 	}
 	
 	kernaussageComments(cxt, r) {
-		var serverKa = new ka.Model();
+		var serverKa = new KernaussageModel.Model();
 		common.Callbacks.batch([
 			r => {
 				var model = reloader.model();
@@ -298,6 +298,41 @@ export class Tests {
 			},
 			r => {
 				test.assert(() => this.helper.isNewKaDiscussionVisible());
+				r();
+			}
+		], r);
+	}
+	
+	history(cxt, r) {
+		var communicator = reloader.communicator().konsenskiste;
+		var viewModel = reloader.viewModel();
+		
+		var koki1 = new KonsenskisteModel.Model();
+		koki1.id(123);
+		koki1.general().text('This is Post #123');
+		communicator.setTestKoki(koki1);
+		var koki2 = new KonsenskisteModel.Model();
+		koki2.id(246);
+		koki2.general().text('This is Post #246');
+		communicator.setTestKoki(koki2);
+		
+		common.Callbacks.batch([
+			r => {
+				viewModel.center.win().setState({ kokiId: 123 });
+				setTimeout(r);
+			},
+			r => {
+				test.assert(() => this.webot.query('*').text('This is Post #123').exists());
+				viewModel.center.win().setState({ kokiId: 246 });
+				setTimeout(r);
+			},
+			r => {
+				test.assert(() => this.webot.query('*').text('This is Post #246').exists());
+				this.webot.query('.win').contains('This is Post #246').child('h1').contains('Konsenskiste').child('*').text('<<').click();
+				setTimeout(r);
+			},
+			r => {
+				test.assert(() => this.webot.query('*').text('This is Post #123').exists());
 				r();
 			}
 		], r);

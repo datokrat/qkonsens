@@ -7,27 +7,45 @@ import kokiCtr = require('../konsenskistecontroller')
 import KokiCommunicator = require('../konsenskistecommunicator')
 import ViewModelContext = require('viewmodelcontext')
 
+export interface State {
+	kokiId: number;
+}
+
 export class Controller {
 		constructor(konsenskisteModel: kokiMdl.Model, windowViewModel: winVm.Win, communicator: KokiCommunicator.Main) {
-		this.window = windowViewModel;
+		this.initWindow(windowViewModel);
 		this.communicator = communicator;
 		this.window.kkView = ko.observable<kokiVm.ViewModel>();
 		this.initKonsenskiste(konsenskisteModel);
 	}
 	
+	private initWindow(win: winVm.Win) {
+		this.window = win;
+		this.window.setState = (state: any) => {
+			var typedState = <State>state;
+			var kk = this.communicator.queryKoki(typedState.kokiId);
+			this.setKonsenskisteModel(kk);
+		}
+	}
+	
 	private initKonsenskiste(konsenskisteModel: kokiMdl.Model) {
-		if(this.konsenskisteController)
-			this.konsenskisteController.dispose();
+		this.disposeKonsenskiste();
 			
 		var konsenskisteViewModel = new kokiVm.ViewModel;
 		this.konsenskisteController = this.konsenskisteControllerFactory.create(konsenskisteModel, konsenskisteViewModel, this.communicator);
 		if(this.cxt) this.konsenskisteController.setContext(this.cxt);
         
 		this.window.kkView(konsenskisteViewModel);
+		this.window.state(<State>{ kokiId: konsenskisteModel && konsenskisteModel.id() });
+		console.log('state = ', this.window.state());
+	}
+	
+	private disposeKonsenskiste() {
+		if(this.konsenskisteController)
+			this.konsenskisteController.dispose();
 	}
 	
 	public setContext(cxt: ViewModelContext) {
-        console.log('windows/konsenskistecontroller.setContext');
 		this.cxt = cxt;
 		this.konsenskisteController.setContext(cxt);
 		return this;

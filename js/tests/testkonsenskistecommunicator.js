@@ -26,6 +26,7 @@ define(["require", "exports", '../id', 'event', 'itemcontainer', 'tests/testcont
                 return;
             }
             this.received.raise({ id: id, konsenskiste: koki });
+            return koki;
         };
 
         TestKokiCommunicator.prototype.createAndAppendKa = function (kokiId, ka) {

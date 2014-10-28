@@ -37,7 +37,7 @@ class TestKokiCommunicator implements KokiCommunicator.Main {
 		else throw new Error('TestKokiCommunicator.setTestKoki: koki.id is not a number');
 	}
 	
-	public queryKoki(id: number) {
+	public queryKoki(id: number): KonsenskisteModel.Model {
 		try {
 			var koki = this.testItems.get(id);
 		}
@@ -46,6 +46,7 @@ class TestKokiCommunicator implements KokiCommunicator.Main {
 			return;
 		}
 		this.received.raise({ id: id, konsenskiste: koki });
+		return koki;
 	}
 	
 	public createAndAppendKa(kokiId: number, ka: KernaussageModel.Model) {

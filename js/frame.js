@@ -9,9 +9,6 @@ define(["require", "exports", 'common'], function(require, exports, cmn) {
             this.viewTemplate = viewTemplate;
             this.view = view;
         }
-        /*public goBack(container) {
-        container.goBack();
-        }*/
         Win.prototype.setState = function (newState) {
         };
         return Win;
@@ -60,7 +57,7 @@ define(["require", "exports", 'common'], function(require, exports, cmn) {
                 combi.win.setState(combi.state);
                 _this.win(combi.win);
             };
-            //replaces the most top window of this.history with newWin and makes it active
+            //replaces the most upper window of this.history with newWin and makes it active
             this.replaceWin = function (newWin) {
                 _this.removeLast(1);
                 _this.win(newWin);
