@@ -13,6 +13,7 @@ export interface Main {
 	rating: RatingCommunicator.Base;
 	
 	received: Events.Event<ReceivedArgs>;
+	receiptError: Events.Event<ReceiptErrorArgs>;
 	kernaussageAppended: Events.Event<KaAppendedArgs>;
 	kernaussageAppendingError: Events.Event<KaAppendingErrorArgs>;
 	queryKoki(id: number): KonsenskisteModel.Model;
@@ -21,6 +22,12 @@ export interface Main {
 
 export interface ReceivedArgs {
 	id: number;
+	konsenskiste: KonsenskisteModel.Model;
+}
+
+export interface ReceiptErrorArgs {
+	id: number;
+	message: string;
 	konsenskiste: KonsenskisteModel.Model;
 }
 

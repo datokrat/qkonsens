@@ -7,6 +7,7 @@ define(["require", "exports", 'contentmodel', 'rating', 'discussion', 'factories
             this.context = ko.observable(new Content.Context);
             this.rating = ko.observable(new Rating.Model);
             this.childKas = new Obs.ObservableArrayExtender(ko.observableArray());
+            this.error = ko.observable();
             this.discussion = ko.observable(new Discussion.Model);
             this.factoryContext = context;
         }

@@ -19,6 +19,7 @@ class KonsenskisteCommunicator implements IKonsenskisteCommunicator.Main {
 	public discussion: DiscussionCommunicator.Base;
 	public rating: RatingCommunicator.Base;
 	public received = new Events.EventImpl<IKonsenskisteCommunicator.ReceivedArgs>();
+	public receiptError = new Events.EventImpl<IKonsenskisteCommunicator.ReceiptErrorArgs>();
 	public kernaussageAppended = new Events.EventImpl<IKonsenskisteCommunicator.KaAppendedArgs>();
 	public kernaussageAppendingError = new Events.EventImpl<IKonsenskisteCommunicator.KaAppendingErrorArgs>();
 	
@@ -33,16 +34,22 @@ class KonsenskisteCommunicator implements IKonsenskisteCommunicator.Main {
 		throw new Error('not implemented');
 	}
 	
-	public queryKoki(id: number, err?: (error) => void) {
+	public queryKoki(id: number, err?: (error) => void): KonsenskisteModel.Model {
+		var out = new KonsenskisteModel.Model();
+		
 		this.queryRaw(id).then(rawKokis => {
 			if(rawKokis.length != 1) {
+				out.error('koki id[' + id + '] could not be found');
 				var error = new Error('KonsenskisteCommunicatorImpl.query: a single koki could not be found for this id.');
 				err && err(error);
-				throw error;
+				this.receiptError.raise({ id: id, message: "a single koki could not be found for this id[" + id + "].", konsenskiste: out });
+				return out;
 			}
-			var parsedKoki = this.parse(rawKokis[0]);
+			var parsedKoki = this.parse(rawKokis[0], out);
 			this.received.raise({ id: id, konsenskiste: parsedKoki });
 		});
+		
+		return out;
 	}
 	
 	private queryRaw(id: number) {
@@ -67,20 +74,20 @@ class KonsenskisteCommunicator implements IKonsenskisteCommunicator.Main {
 		.toArray();
 	}
 	
-	private parse(rawKoki: Disco.Ontology.Post): KonsenskisteModel.Model {
-		var koki = new KonsenskisteModel.Model;
-		koki.id(parseInt(rawKoki.Id));
-		this.parseGeneralContent(rawKoki, koki.general());
-		this.parseContext(rawKoki, koki.context());
+	private parse(rawKoki: Disco.Ontology.Post, out?: KonsenskisteModel.Model): KonsenskisteModel.Model {
+		out = out || new KonsenskisteModel.Model();
+		out.id(parseInt(rawKoki.Id));
+		this.parseGeneralContent(rawKoki, out.general());
+		this.parseContext(rawKoki, out.context());
 		
 		rawKoki.ReferredFrom.forEach(reference => {
 			if(reference.ReferenceType.Description.Name == 'Part') {
 				var ka = this.parseKa(reference.Referrer);
-				koki.childKas.push(ka);
+				out.childKas.push(ka);
 			}
 		});
 		
-		return koki;
+		return out;
 	}
 	
 	private parseKa(rawKa: Disco.Ontology.Post): KernaussageModel.Model {

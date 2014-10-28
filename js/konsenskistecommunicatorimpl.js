@@ -2,6 +2,7 @@ define(["require", "exports", 'event', 'discocontext', 'contentcommunicatorimpl'
     var KonsenskisteCommunicator = (function () {
         function KonsenskisteCommunicator() {
             this.received = new Events.EventImpl();
+            this.receiptError = new Events.EventImpl();
             this.kernaussageAppended = new Events.EventImpl();
             this.kernaussageAppendingError = new Events.EventImpl();
             this.content = new ContentCommunicator;
@@ -15,15 +16,21 @@ define(["require", "exports", 'event', 'discocontext', 'contentcommunicatorimpl'
 
         KonsenskisteCommunicator.prototype.queryKoki = function (id, err) {
             var _this = this;
+            var out = new KonsenskisteModel.Model();
+
             this.queryRaw(id).then(function (rawKokis) {
                 if (rawKokis.length != 1) {
+                    out.error('koki id[' + id + '] could not be found');
                     var error = new Error('KonsenskisteCommunicatorImpl.query: a single koki could not be found for this id.');
                     err && err(error);
-                    throw error;
+                    _this.receiptError.raise({ id: id, message: "a single koki could not be found for this id[" + id + "].", konsenskiste: out });
+                    return out;
                 }
-                var parsedKoki = _this.parse(rawKokis[0]);
+                var parsedKoki = _this.parse(rawKokis[0], out);
                 _this.received.raise({ id: id, konsenskiste: parsedKoki });
             });
+
+            return out;
         };
 
         KonsenskisteCommunicator.prototype.queryRaw = function (id) {
@@ -32,21 +39,21 @@ define(["require", "exports", 'event', 'discocontext', 'contentcommunicatorimpl'
             }, { Id: id }).include("ReferredFrom.Referrer.Content").include("ReferredFrom.Referrer.Ratings").include("ReferredFrom.Referrer.Ratings.ModifiedBy.Author").include("ReferredFrom.Referrer.ReferredFrom").include("ReferredFrom.Referrer.ReferredFrom.ReferenceType.Description").include("ReferredFrom.Referrer.RefersTo.Referree.Content").include("ReferredFrom.Referrer.RefersTo.ReferenceType.Description").include("ReferredFrom.ReferenceType.Description").include("RefersTo.Referree").include("RefersTo.Referree.Ratings").include("RefersTo.Referree.Ratings.ModifiedBy.Author").include("RefersTo.Referree.Content").include("RefersTo.ReferenceType").include("RefersTo.ReferenceType.Description").include("Content").include("Ratings").include("Ratings.ModifiedBy.Author").toArray();
         };
 
-        KonsenskisteCommunicator.prototype.parse = function (rawKoki) {
+        KonsenskisteCommunicator.prototype.parse = function (rawKoki, out) {
             var _this = this;
-            var koki = new KonsenskisteModel.Model;
-            koki.id(parseInt(rawKoki.Id));
-            this.parseGeneralContent(rawKoki, koki.general());
-            this.parseContext(rawKoki, koki.context());
+            out = out || new KonsenskisteModel.Model();
+            out.id(parseInt(rawKoki.Id));
+            this.parseGeneralContent(rawKoki, out.general());
+            this.parseContext(rawKoki, out.context());
 
             rawKoki.ReferredFrom.forEach(function (reference) {
                 if (reference.ReferenceType.Description.Name == 'Part') {
                     var ka = _this.parseKa(reference.Referrer);
-                    koki.childKas.push(ka);
+                    out.childKas.push(ka);
                 }
             });
 
-            return koki;
+            return out;
         };
 
         KonsenskisteCommunicator.prototype.parseKa = function (rawKa) {

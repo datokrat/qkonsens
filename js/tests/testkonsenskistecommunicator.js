@@ -1,7 +1,8 @@
-define(["require", "exports", '../id', 'event', 'itemcontainer', 'tests/testcontentcommunicator', 'tests/testkernaussagecommunicator', 'tests/testdiscussioncommunicator', 'tests/testratingcommunicator'], function(require, exports, newId, Events, ItemContainer, TestContentCommunicator, TestKaCommunicator, TestDiscussionCommunicator, TestRatingCommunicator) {
+define(["require", "exports", '../id', 'event', 'itemcontainer', 'tests/testcontentcommunicator', 'tests/testkernaussagecommunicator', 'tests/testdiscussioncommunicator', 'tests/testratingcommunicator', '../konsenskistemodel'], function(require, exports, newId, Events, ItemContainer, TestContentCommunicator, TestKaCommunicator, TestDiscussionCommunicator, TestRatingCommunicator, KonsenskisteModel) {
     var TestKokiCommunicator = (function () {
         function TestKokiCommunicator() {
             this.received = new Events.EventImpl();
+            this.receiptError = new Events.EventImpl();
             this.kernaussageAppended = new Events.EventImpl();
             this.kernaussageAppendingError = new Events.EventImpl();
             this.testItems = new ItemContainer.Main();
@@ -22,8 +23,10 @@ define(["require", "exports", '../id', 'event', 'itemcontainer', 'tests/testcont
             try  {
                 var koki = this.testItems.get(id);
             } catch (e) {
-                throw new Error('TestKokiCommunicator.queryKoki: id not found');
-                return;
+                koki = new KonsenskisteModel.Model;
+                koki.error('id[' + id + '] not found');
+                this.receiptError.raise({ id: id, message: 'id[' + id + '] not found', konsenskiste: koki });
+                return koki;
             }
             this.received.raise({ id: id, konsenskiste: koki });
             return koki;
