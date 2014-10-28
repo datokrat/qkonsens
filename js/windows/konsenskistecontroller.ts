@@ -37,7 +37,6 @@ export class Controller {
         
 		this.window.kkView(konsenskisteViewModel);
 		this.window.state(<State>{ kokiId: konsenskisteModel && konsenskisteModel.id() });
-		console.log('state = ', this.window.state());
 	}
 	
 	private disposeKonsenskiste() {

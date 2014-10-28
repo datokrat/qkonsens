@@ -27,7 +27,6 @@ define(["require", "exports", 'factories/konsenskistecontroller', '../konsenskis
 
             this.window.kkView(konsenskisteViewModel);
             this.window.state({ kokiId: konsenskisteModel && konsenskisteModel.id() });
-            console.log('state = ', this.window.state());
         };
 
         Controller.prototype.disposeKonsenskiste = function () {
