@@ -38,6 +38,7 @@ export class ControllerImpl implements Controller {
 		
 		this.initCommunicator();
 		
+		this.initProperties();
 		this.initKas();
 		this.initDiscussion();
 		this.initGeneralContent();
@@ -50,6 +51,11 @@ export class ControllerImpl implements Controller {
 		this.discussionSynchronizer.setViewModelContext(cxt);
 		this.kaSynchronizer.setViewModelContext(cxt);
 		return this;
+	}
+	
+	private initProperties() {
+		this.viewModel.loading = this.model.loading;
+		this.viewModel.error = this.model.error;
 	}
 	
 	private initKas() {

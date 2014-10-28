@@ -21,6 +21,7 @@ define(["require", "exports", 'factories/kernaussagemodel', 'synchronizers/ksync
 
             this.initCommunicator();
 
+            this.initProperties();
             this.initKas();
             this.initDiscussion();
             this.initGeneralContent();
@@ -33,6 +34,11 @@ define(["require", "exports", 'factories/kernaussagemodel', 'synchronizers/ksync
             this.discussionSynchronizer.setViewModelContext(cxt);
             this.kaSynchronizer.setViewModelContext(cxt);
             return this;
+        };
+
+        ControllerImpl.prototype.initProperties = function () {
+            this.viewModel.loading = this.model.loading;
+            this.viewModel.error = this.model.error;
         };
 
         ControllerImpl.prototype.initKas = function () {

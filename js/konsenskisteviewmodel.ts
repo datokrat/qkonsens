@@ -7,6 +7,9 @@ import Comment = require('comment')
 import Discussion = require('discussion')
 
 export class ViewModel {
+	public error: Obs.Observable<string>;
+	public loading: Obs.Observable<boolean>;
+	
 	public general: Obs.Observable<Content.General>;
 	public context: Obs.Observable<Content.Context>;
 	public rating: Obs.Observable<Rating.ViewModel>;

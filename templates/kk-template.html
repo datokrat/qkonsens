@@ -1,22 +1,30 @@
 <div class="kk">
-	<!-- ko template: { name: 'content-template', data: general } --><!-- /ko -->
-	
-	<!-- ko template: { name: 'context-template', data: context } --><!-- /ko -->
-	
-	<div class="controls">
-		<!-- ko template: { name: 'rating-template', data: rating } --><!-- /ko -->
-		<a data-bind="click: discussion().discussionClick">Diskussion</a>
-	</div>
-	
-	<!-- ko foreach: childKas -->
-		<!-- ko template: { name: 'ka-template' } --><!-- /ko -->
+	<!-- ko if: error() -->
+		<span style="color: red">Fehler: <span data-bind="text: error"></span></span>
 	<!-- /ko -->
-	<a class="clickable control" data-bind="click: newKaClick">+Kernaussage</a>
-	<!-- ko if: newKaFormVisible -->
-	<div class="ka">
-		<p class="title"><input placeholder="Titel" type="text" class="block titleInput" data-bind="value: newKaTitle" /></p>
-		<p class="text"><textarea placeholder="Text" class="textInput" data-bind="value: newKaText" ></textarea></p>
-		<button data-bind="click: newKaSubmit">Anfügen</button>
-	</div>
+	<!-- ko if: !error() && loading() -->
+		Laden...
+	<!-- /ko -->
+	<!-- ko if: !error() && !loading() -->
+		<!-- ko template: { name: 'content-template', data: general } --><!-- /ko -->
+		
+		<!-- ko template: { name: 'context-template', data: context } --><!-- /ko -->
+		
+		<div class="controls">
+			<!-- ko template: { name: 'rating-template', data: rating } --><!-- /ko -->
+			<a data-bind="click: discussion().discussionClick">Diskussion</a>
+		</div>
+		
+		<!-- ko foreach: childKas -->
+			<!-- ko template: { name: 'ka-template' } --><!-- /ko -->
+		<!-- /ko -->
+		<a class="clickable control" data-bind="click: newKaClick">+Kernaussage</a>
+		<!-- ko if: newKaFormVisible -->
+		<div class="ka">
+			<p class="title"><input placeholder="Titel" type="text" class="block titleInput" data-bind="value: newKaTitle" /></p>
+			<p class="text"><textarea placeholder="Text" class="textInput" data-bind="value: newKaText" ></textarea></p>
+			<button data-bind="click: newKaSubmit">Anfügen</button>
+		</div>
+		<!-- /ko -->
 	<!-- /ko -->
 </div>

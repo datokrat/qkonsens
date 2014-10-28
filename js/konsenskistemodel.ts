@@ -18,6 +18,7 @@ export class Model {
 		= new Obs.ObservableArrayExtender<kernaussageModel.Model>(ko.observableArray<kernaussageModel.Model>());
 	
 	public error: Obs.Observable<string> = ko.observable<string>();
+	public loading: Obs.Observable<boolean> = ko.observable<boolean>();
 		
 	public discussion: Obs.Observable<Discussion.Model> = ko.observable<Discussion.Model>( new Discussion.Model );
 	
@@ -25,6 +26,8 @@ export class Model {
 		this.id(model.id());
 		this.general().set(model.general());
 		this.context().set(model.context());
+		this.loading(model.loading());
+		this.error(model.error());
 	}
 	
 	constructor(context: ModelContext = new ModelContext) {

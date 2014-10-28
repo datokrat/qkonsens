@@ -38,18 +38,23 @@ class TestKokiCommunicator implements KokiCommunicator.Main {
 		else throw new Error('TestKokiCommunicator.setTestKoki: koki.id is not a number');
 	}
 	
-	public queryKoki(id: number): KonsenskisteModel.Model {
+	public queryKoki(id: number, out?: KonsenskisteModel.Model): KonsenskisteModel.Model {
 		try {
-			var koki = this.testItems.get(id);
+			out = out || new KonsenskisteModel.Model();
+			out.id(id);
+			out.loading(true);
+			out.set(this.testItems.get(id));
 		}
 		catch(e) {
-			koki = new KonsenskisteModel.Model;
-			koki.error('id[' + id + '] not found');
-			this.receiptError.raise({ id: id, message: 'id[' + id + '] not found', konsenskiste: koki });
-			return koki;
+			out.error('id[' + id + '] not found');
+			out.loading(false);
+			this.receiptError.raise({ id: id, message: 'id[' + id + '] not found', konsenskiste: out });
+			return out;
 		}
-		this.received.raise({ id: id, konsenskiste: koki });
-		return koki;
+		out.error(null);
+		out.loading(false);
+		this.received.raise({ id: id, konsenskiste: out });
+		return out;
 	}
 	
 	public createAndAppendKa(kokiId: number, ka: KernaussageModel.Model) {

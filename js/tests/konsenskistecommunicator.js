@@ -43,6 +43,12 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', '../common', 'tes
                 },
                 function (r) {
                     test.assert(function () {
+                        return _this.mdl.loading() == false;
+                    });
+                    test.assert(function () {
+                        return !_this.mdl.error();
+                    });
+                    test.assert(function () {
                         return _this.mdl.general().title() == 'Title #1';
                     });
                     test.assert(function () {

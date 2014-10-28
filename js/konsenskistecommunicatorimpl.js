@@ -17,13 +17,18 @@ define(["require", "exports", 'event', 'discocontext', 'contentcommunicatorimpl'
         KonsenskisteCommunicator.prototype.queryKoki = function (id) {
             var _this = this;
             var out = new KonsenskisteModel.Model();
+            out.loading(true);
+            out.id(id);
 
             this.queryRaw(id).then(function (rawKokis) {
                 if (rawKokis.length != 1) {
                     out.error('koki id[' + id + '] could not be found');
+                    out.loading(false);
                     _this.receiptError.raise({ id: id, message: "a single koki could not be found for this id[" + id + "].", konsenskiste: out });
                     return out;
                 }
+                out.error(null);
+                out.loading(false);
                 var parsedKoki = _this.parse(rawKokis[0], out);
                 _this.received.raise({ id: id, konsenskiste: parsedKoki });
             });

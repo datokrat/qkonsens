@@ -46,6 +46,8 @@ class TestClass extends unit.TestClass {
 				setTimeout(r, 0);
 			},
 			r => {
+				test.assert( () => this.mdl.loading() == false );
+				test.assert( () => !this.mdl.error() );
 				test.assert( () => this.mdl.general().title() == 'Title #1' );
 				test.assert( () => this.mdl.general().text() == 'Text #1' );
 				r();
