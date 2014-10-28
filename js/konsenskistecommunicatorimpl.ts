@@ -34,14 +34,12 @@ class KonsenskisteCommunicator implements IKonsenskisteCommunicator.Main {
 		throw new Error('not implemented');
 	}
 	
-	public queryKoki(id: number, err?: (error) => void): KonsenskisteModel.Model {
+	public queryKoki(id: number): KonsenskisteModel.Model {
 		var out = new KonsenskisteModel.Model();
 		
 		this.queryRaw(id).then(rawKokis => {
 			if(rawKokis.length != 1) {
 				out.error('koki id[' + id + '] could not be found');
-				var error = new Error('KonsenskisteCommunicatorImpl.query: a single koki could not be found for this id.');
-				err && err(error);
 				this.receiptError.raise({ id: id, message: "a single koki could not be found for this id[" + id + "].", konsenskiste: out });
 				return out;
 			}

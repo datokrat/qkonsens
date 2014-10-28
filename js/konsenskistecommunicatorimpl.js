@@ -14,15 +14,13 @@ define(["require", "exports", 'event', 'discocontext', 'contentcommunicatorimpl'
             throw new Error('not implemented');
         };
 
-        KonsenskisteCommunicator.prototype.queryKoki = function (id, err) {
+        KonsenskisteCommunicator.prototype.queryKoki = function (id) {
             var _this = this;
             var out = new KonsenskisteModel.Model();
 
             this.queryRaw(id).then(function (rawKokis) {
                 if (rawKokis.length != 1) {
                     out.error('koki id[' + id + '] could not be found');
-                    var error = new Error('KonsenskisteCommunicatorImpl.query: a single koki could not be found for this id.');
-                    err && err(error);
                     _this.receiptError.raise({ id: id, message: "a single koki could not be found for this id[" + id + "].", konsenskiste: out });
                     return out;
                 }
