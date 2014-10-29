@@ -61,9 +61,16 @@ export class Tests {
 				setTimeout(r, 0);
 			},
 			r => {
-				test.assert( () => this.webot.query('*').text('Dokumentansicht').exists() );
-				test.assert( () => this.webot.query('*').text('Detailansicht').exists(false) );
+				//following workaround necessary so that view is reset to 'detail' ("wechseln")
+				var test1 = this.webot.query('*').text('Dokumentansicht').exists();
+				var test2 = this.webot.query('*').text('Konsenskisten-Titel').exists();
+				var test3 = this.webot.query('p').contains('consetetur sadipscing elitr').exists();
+				var test4 = this.webot.query('*').text('Detailansicht').exists(false);
 				this.webot.queryContains('a', 'wechseln').click();
+				test.assert(() => test1);
+				test.assert(() => test2);
+				test.assert(() => test3);
+				test.assert(() => test4);
 				setTimeout(r, 0);
 			},
 			r => {

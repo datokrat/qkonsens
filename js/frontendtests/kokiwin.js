@@ -47,13 +47,24 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
                     setTimeout(r, 0);
                 },
                 function (r) {
-                    test.assert(function () {
-                        return _this.webot.query('*').text('Dokumentansicht').exists();
-                    });
-                    test.assert(function () {
-                        return _this.webot.query('*').text('Detailansicht').exists(false);
-                    });
+                    //following workaround necessary so that view is reset to 'detail' ("wechseln")
+                    var test1 = _this.webot.query('*').text('Dokumentansicht').exists();
+                    var test2 = _this.webot.query('*').text('Konsenskisten-Titel').exists();
+                    var test3 = _this.webot.query('p').contains('consetetur sadipscing elitr').exists();
+                    var test4 = _this.webot.query('*').text('Detailansicht').exists(false);
                     _this.webot.queryContains('a', 'wechseln').click();
+                    test.assert(function () {
+                        return test1;
+                    });
+                    test.assert(function () {
+                        return test2;
+                    });
+                    test.assert(function () {
+                        return test3;
+                    });
+                    test.assert(function () {
+                        return test4;
+                    });
                     setTimeout(r, 0);
                 },
                 function (r) {

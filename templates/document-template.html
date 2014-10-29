@@ -1,6 +1,6 @@
 <div>
-	<h1 data-bind="text: title()"></h1>
-	<!-- ko foreach: (children && children()) || [] -->
-		<p data-bind="text: text()"></p>
+		<!-- ko template: { name: 'content-template', data: general } --><!-- /ko -->
+	<!-- ko foreach: (childKas && childKas()) || [] -->
+		<p data-bind="text: general().text()"></p>
 	<!-- /ko -->
 </div>
