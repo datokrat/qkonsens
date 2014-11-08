@@ -13,7 +13,7 @@ import KonsenskisteModel = require('konsenskistemodel')
 import KernaussageModel = require('kernaussagemodel')
 import ContentModel = require('contentmodel')
 
-class KonsenskisteCommunicator implements IKonsenskisteCommunicator.Main {
+export class Main implements IKonsenskisteCommunicator.Main {
 	public content: IContentCommunicator.Main;
 	public kernaussage: IKernaussageCommunicator.Main;
 	public discussion: DiscussionCommunicator.Base;
@@ -22,11 +22,12 @@ class KonsenskisteCommunicator implements IKonsenskisteCommunicator.Main {
 	public receiptError = new Events.EventImpl<IKonsenskisteCommunicator.ReceiptErrorArgs>();
 	public kernaussageAppended = new Events.EventImpl<IKonsenskisteCommunicator.KaAppendedArgs>();
 	public kernaussageAppendingError = new Events.EventImpl<IKonsenskisteCommunicator.KaAppendingErrorArgs>();
+	private parser = new Parser();
 	
 	constructor() {
 		this.content = new ContentCommunicator;
 		this.discussion = new DiscussionCommunicator.Main();
-		this.kernaussage = new KernaussageCommunicator({ content: this.content });
+		this.kernaussage = new KernaussageCommunicator.Main({ content: this.content });
 		this.rating = new RatingCommunicator.Main();
 	}
 	
@@ -48,7 +49,7 @@ class KonsenskisteCommunicator implements IKonsenskisteCommunicator.Main {
 			}
 			out.error(null);
 			out.loading(false);
-			var parsedKoki = this.parse(rawKokis[0], out);
+			var parsedKoki = this.parser.parse(rawKokis[0], out);
 			this.received.raise({ id: id, konsenskiste: parsedKoki });
 		});
 		
@@ -76,8 +77,10 @@ class KonsenskisteCommunicator implements IKonsenskisteCommunicator.Main {
 		.include("Ratings.ModifiedBy.Author")
 		.toArray();
 	}
-	
-	private parse(rawKoki: Disco.Ontology.Post, out?: KonsenskisteModel.Model): KonsenskisteModel.Model {
+}
+
+export class Parser {
+	public parse(rawKoki: Disco.Ontology.Post, out?: KonsenskisteModel.Model): KonsenskisteModel.Model {
 		out = out || new KonsenskisteModel.Model();
 		out.id(parseInt(rawKoki.Id));
 		this.parseGeneralContent(rawKoki, out.general());
@@ -93,7 +96,7 @@ class KonsenskisteCommunicator implements IKonsenskisteCommunicator.Main {
 		return out;
 	}
 	
-	private parseKa(rawKa: Disco.Ontology.Post): KernaussageModel.Model {
+	public parseKa(rawKa: Disco.Ontology.Post): KernaussageModel.Model {
 		var ka = new KernaussageModel.Model;
 		ka.id(parseInt(rawKa.Id));
 		this.parseGeneralContent(rawKa, ka.general());
@@ -101,14 +104,14 @@ class KonsenskisteCommunicator implements IKonsenskisteCommunicator.Main {
 		return ka;
 	}
 	
-	private parseGeneralContent(rawPost: Disco.Ontology.Post, out?: ContentModel.General): ContentModel.General {
+	public parseGeneralContent(rawPost: Disco.Ontology.Post, out?: ContentModel.General): ContentModel.General {
 		out = out || new ContentModel.General;
 		out.title(rawPost.Content.Title);
 		out.text(rawPost.Content.Text);
 		return out;
 	}
 	
-	private parseContext(rawPost: Disco.Ontology.Post, out?: ContentModel.Context): ContentModel.Context {
+	public parseContext(rawPost: Disco.Ontology.Post, out?: ContentModel.Context): ContentModel.Context {
 		var rawContext = this.extractRawContext(rawPost);
 		if(rawContext) {
 			out = out || new ContentModel.Context;
@@ -117,7 +120,7 @@ class KonsenskisteCommunicator implements IKonsenskisteCommunicator.Main {
 		}
 	}
 	
-	private extractRawContext(rawPost: Disco.Ontology.Post): Disco.Ontology.Post {
+	public extractRawContext(rawPost: Disco.Ontology.Post): Disco.Ontology.Post {
 		var ret: Disco.Ontology.Post;
 		rawPost.RefersTo.forEach(reference => {
 			if(reference.ReferenceType.Description.Name == 'Context') {
@@ -127,5 +130,3 @@ class KonsenskisteCommunicator implements IKonsenskisteCommunicator.Main {
 		return ret;
 	}
 }
-
-export = KonsenskisteCommunicator;

@@ -1,18 +1,23 @@
 define(["require", "exports", 'discussioncommunicator', 'ratingcommunicator', 'contentcommunicatorimpl', 'event'], function(require, exports, DiscussionCommunicator, RatingCommunicator, ContentCommunicatorImpl, Events) {
-    var KernaussageCommunicatorImpl = (function () {
-        function KernaussageCommunicatorImpl(cxt) {
+    var Main = (function () {
+        function Main(cxt) {
             if (typeof cxt === "undefined") { cxt = { content: new ContentCommunicatorImpl }; }
             this.discussion = new DiscussionCommunicator.Main;
             this.rating = new RatingCommunicator.Main;
             this.received = new Events.EventImpl();
             this.content = cxt.content;
         }
-        KernaussageCommunicatorImpl.prototype.query = function (id) {
+        Main.prototype.query = function (id) {
             throw new Error('not implemented');
         };
-        return KernaussageCommunicatorImpl;
+        return Main;
     })();
+    exports.Main = Main;
 
-    
-    return KernaussageCommunicatorImpl;
+    var Parser = (function () {
+        function Parser() {
+        }
+        return Parser;
+    })();
+    exports.Parser = Parser;
 });

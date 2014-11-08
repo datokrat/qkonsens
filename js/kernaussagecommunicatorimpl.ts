@@ -5,7 +5,7 @@ import ContentCommunicator = require('contentcommunicator')
 import ContentCommunicatorImpl = require('contentcommunicatorimpl')
 import Events = require('event')
 
-class KernaussageCommunicatorImpl implements KernaussageCommunicator.Main {
+export class Main implements KernaussageCommunicator.Main {
 	public content: ContentCommunicator.Main;
 	public discussion = new DiscussionCommunicator.Main;
 	public rating = new RatingCommunicator.Main;
@@ -21,4 +21,6 @@ class KernaussageCommunicatorImpl implements KernaussageCommunicator.Main {
 	}
 }
 
-export = KernaussageCommunicatorImpl;
+export class Parser {
+	
+}
