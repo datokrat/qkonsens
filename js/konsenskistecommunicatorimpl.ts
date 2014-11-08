@@ -27,6 +27,7 @@ export class Main implements IKonsenskisteCommunicator.Main {
 	constructor() {
 		this.content = new ContentCommunicator;
 		this.discussion = new DiscussionCommunicator.Main();
+		this.discussion.content = this.content;
 		this.kernaussage = new KernaussageCommunicator.Main({ content: this.content });
 		this.rating = new RatingCommunicator.Main();
 	}

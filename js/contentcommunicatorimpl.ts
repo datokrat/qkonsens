@@ -9,12 +9,15 @@ class ContentCommunicator implements IContentCommunicator.Main {
 	public contextRetrieved = new Events.EventImpl<IContentCommunicator.ContextRetrievedArgs>();
 	
 	public query(id: number) {
+		throw new Error('not implemented');
 	}
 	
 	public queryGeneral(id: number) {
+		throw new Error('not implemented');
 	}
 	
 	public queryContext(id: number) {
+		throw new Error('not implemented');
 	}
 }
 

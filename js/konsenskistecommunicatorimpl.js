@@ -8,6 +8,7 @@ define(["require", "exports", 'event', 'discocontext', 'contentcommunicatorimpl'
             this.parser = new Parser();
             this.content = new ContentCommunicator;
             this.discussion = new DiscussionCommunicator.Main();
+            this.discussion.content = this.content;
             this.kernaussage = new KernaussageCommunicator.Main({ content: this.content });
             this.rating = new RatingCommunicator.Main();
         }

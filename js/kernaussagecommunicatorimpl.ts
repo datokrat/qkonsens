@@ -12,6 +12,7 @@ export class Main implements KernaussageCommunicator.Main {
 	
 	constructor(cxt: { content: ContentCommunicator.Main } = { content: new ContentCommunicatorImpl }) {
 		this.content = cxt.content;
+		this.discussion.content = this.content;
 	}
 	
 	public received = new Events.EventImpl<KernaussageCommunicator.ReceivedArgs>();

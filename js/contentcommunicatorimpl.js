@@ -5,12 +5,15 @@ define(["require", "exports", 'event'], function(require, exports, Events) {
             this.contextRetrieved = new Events.EventImpl();
         }
         ContentCommunicator.prototype.query = function (id) {
+            throw new Error('not implemented');
         };
 
         ContentCommunicator.prototype.queryGeneral = function (id) {
+            throw new Error('not implemented');
         };
 
         ContentCommunicator.prototype.queryContext = function (id) {
+            throw new Error('not implemented');
         };
         return ContentCommunicator;
     })();

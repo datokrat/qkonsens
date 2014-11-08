@@ -6,6 +6,7 @@ define(["require", "exports", 'discussioncommunicator', 'ratingcommunicator', 'c
             this.rating = new RatingCommunicator.Main;
             this.received = new Events.EventImpl();
             this.content = cxt.content;
+            this.discussion.content = this.content;
         }
         Main.prototype.query = function (id) {
             throw new Error('not implemented');
