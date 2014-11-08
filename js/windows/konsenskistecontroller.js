@@ -1,7 +1,8 @@
-define(["require", "exports", 'factories/konsenskistecontroller', '../konsenskisteviewmodel'], function(require, exports, KokiControllerFactory, kokiVm) {
+define(["require", "exports", '../locationhash', 'factories/konsenskistecontroller', '../konsenskisteviewmodel'], function(require, exports, LocationHash, KokiControllerFactory, kokiVm) {
     var Controller = (function () {
         function Controller(konsenskisteModel, windowViewModel, communicator) {
             this.konsenskisteControllerFactory = new KokiControllerFactory.Factory;
+            this.subscriptions = [];
             this.initWindow(windowViewModel);
             this.communicator = communicator;
             this.window.kkView = ko.observable();
@@ -15,12 +16,32 @@ define(["require", "exports", 'factories/konsenskistecontroller', '../konsenskis
                 var kk = _this.communicator.queryKoki(typedState.kokiId);
                 _this.setKonsenskisteModel(kk);
             };
+            this.window.state.subscribe(function (state) {
+                LocationHash.set(JSON.stringify(state), false);
+            });
+            this.subscriptions = this.subscriptions.concat([
+                LocationHash.changed.subscribe(function () {
+                    _this.onHashChanged();
+                })
+            ]);
+        };
+
+        Controller.prototype.onHashChanged = function () {
+            var hash = location.hash;
+            var hashObj = JSON.parse(hash.slice(1));
+            if (hashObj.kokId != (this.konsenskisteModel && this.konsenskisteModel.id()))
+                this.setKonsenskisteModelById(hashObj.kokiId);
+        };
+
+        Controller.prototype.setKonsenskisteModelById = function (id) {
+            this.cxt.konsenskisteModel(this.communicator.queryKoki(id));
         };
 
         Controller.prototype.initKonsenskiste = function (konsenskisteModel) {
             this.disposeKonsenskiste();
 
             var konsenskisteViewModel = new kokiVm.ViewModel;
+            this.konsenskisteModel = konsenskisteModel;
             this.konsenskisteController = this.konsenskisteControllerFactory.create(konsenskisteModel, konsenskisteViewModel, this.communicator);
             if (this.cxt)
                 this.konsenskisteController.setContext(this.cxt);
@@ -47,6 +68,9 @@ define(["require", "exports", 'factories/konsenskistecontroller', '../konsenskis
 
         Controller.prototype.dispose = function () {
             this.konsenskisteController.dispose();
+            this.subscriptions.forEach(function (s) {
+                return s.undo();
+            });
         };
         return Controller;
     })();

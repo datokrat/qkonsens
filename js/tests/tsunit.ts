@@ -1,4 +1,6 @@
- export interface ITestClass {
+//Modified version of: https://tsunit.codeplex.com/
+ 
+export interface ITestClass {
 
  }
 

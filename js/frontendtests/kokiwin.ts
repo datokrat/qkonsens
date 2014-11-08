@@ -58,7 +58,7 @@ export class Tests {
 		common.Callbacks.batch([
 			r => {
 				this.webot.query('*').text('wechseln').click();
-				setTimeout(r, 0);
+				setTimeout(r, 100);
 			},
 			r => {
 				//following workaround necessary so that view is reset to 'detail' ("wechseln")
@@ -145,7 +145,7 @@ export class Tests {
 				
 				var com = reloader.communicator();
 				com.konsenskiste.received.raise({id: 15, konsenskiste: newKoki });
-				setTimeout(r, 0);
+				setTimeout(r);
 			},
 			r => {
 				test.assert( () => this.webot.query('h1').text('New Title').exists() );
@@ -172,7 +172,7 @@ export class Tests {
 			},
 			r => {
 				this.webot.query('.kk>.controls').child('*').contains('Diskussion').click();
-				setTimeout(r, 100);
+				setTimeout(r, 300);
 			},
 			r => {
 				test.assert( () => this.webot.query('.cmt').child('*').text('Comment').exists() );
@@ -340,6 +340,31 @@ export class Tests {
 			},
 			r => {
 				test.assert(() => this.webot.query('*').text('This is Post #123').exists());
+				r();
+			}
+		], r);
+	}
+	
+	permaLink(cxt, r) {
+		var hash = JSON.parse(location.hash.slice(1));
+		test.assert(() => hash.kokiId == 1);
+		r();
+	}
+	
+	changePermaLink(cxt, r) {
+		var com = reloader.communicator();
+		var testKoki = new KonsenskisteModel.Model();
+		testKoki.id(111);
+		testKoki.general().title('KoKi #111');
+		com.konsenskiste.setTestKoki(testKoki);
+		
+		common.Callbacks.batch([
+			r => {
+				location.hash = '{ "kokiId": 111 }';
+				setTimeout(r);
+			},
+			r => {
+				test.assert(() => this.webot.query('*').text('KoKi #111').exists());
 				r();
 			}
 		], r);

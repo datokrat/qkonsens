@@ -1,11 +1,13 @@
-import KokiControllerFactory = require('factories/konsenskistecontroller')
+import LocationHash = require('../locationhash');
+import Evt = require('../event');
+import KokiControllerFactory = require('factories/konsenskistecontroller');
 
-import winVm = require('windows/konsenskiste')
-import kokiMdl = require('../konsenskistemodel')
-import kokiVm = require('../konsenskisteviewmodel')
-import kokiCtr = require('../konsenskistecontroller')
-import KokiCommunicator = require('../konsenskistecommunicator')
-import ViewModelContext = require('viewmodelcontext')
+import winVm = require('windows/konsenskiste');
+import kokiMdl = require('../konsenskistemodel');
+import kokiVm = require('../konsenskisteviewmodel');
+import kokiCtr = require('../konsenskistecontroller');
+import KokiCommunicator = require('../konsenskistecommunicator');
+import ViewModelContext = require('viewmodelcontext');
 
 export interface State {
 	kokiId: number;
@@ -26,12 +28,31 @@ export class Controller {
 			var kk = this.communicator.queryKoki(typedState.kokiId);
 			this.setKonsenskisteModel(kk);
 		}
+		this.window.state.subscribe(state => {
+			LocationHash.set(JSON.stringify(state), false)
+		});
+		this.subscriptions = this.subscriptions.concat([
+			LocationHash.changed.subscribe(() => {
+				this.onHashChanged()
+			})
+		]);
+	}
+	
+	private onHashChanged() {
+		var hash = location.hash;
+		var hashObj = JSON.parse(hash.slice(1));
+		if(hashObj.kokId != (this.konsenskisteModel && this.konsenskisteModel.id())) this.setKonsenskisteModelById(hashObj.kokiId);
+	}
+	
+	private setKonsenskisteModelById(id: number) {
+		this.cxt.konsenskisteModel(this.communicator.queryKoki(id));
 	}
 	
 	private initKonsenskiste(konsenskisteModel: kokiMdl.Model) {
 		this.disposeKonsenskiste();
 			
 		var konsenskisteViewModel = new kokiVm.ViewModel;
+		this.konsenskisteModel = konsenskisteModel;
 		this.konsenskisteController = this.konsenskisteControllerFactory.create(konsenskisteModel, konsenskisteViewModel, this.communicator);
 		if(this.cxt) this.konsenskisteController.setContext(this.cxt);
         
@@ -57,12 +78,16 @@ export class Controller {
 	
 	public dispose() {
 		this.konsenskisteController.dispose();
+		this.subscriptions.forEach(s => s.undo());
 	}
 	
 	private cxt: ViewModelContext;
 	
 	private window: winVm.Win;
+	private konsenskisteModel: kokiMdl.Model;
 	private konsenskisteController: kokiCtr.Controller;
 	private communicator: KokiCommunicator.Main;
 	private konsenskisteControllerFactory = new KokiControllerFactory.Factory;
+	
+	private subscriptions: Evt.Subscription[] = [];
 }

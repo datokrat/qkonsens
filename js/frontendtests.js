@@ -14,8 +14,6 @@ define(["require", "exports", 'tests/asyncunit', 'frontendtests/reloader', 'fron
     reloader.controller(controller);
 
     setTimeout(function () {
-        console.log('test mode start');
-
         var test = new unit.Test();
 
         test.addTestClass(new kokiWin.Tests());

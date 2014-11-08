@@ -1,6 +1,7 @@
 import Obs = require('observable')
 import frame = require('frame')
 import DiscussionWindow = require('windows/discussion')
+import KonsenskisteModel = require('konsenskistemodel');
 
 class ViewModelContext {
 	constructor(left: frame.WinContainer, right: frame.WinContainer, center: frame.WinContainer) {
@@ -22,6 +23,8 @@ class ViewModelContext {
 	
 	public konsenskisteWindow: frame.Win;
 	public discussionWindow: DiscussionWindow.Win;
+	
+	public konsenskisteModel: Obs.Observable<KonsenskisteModel.Model>;
 	
 	private left: frame.WinContainer;
 	private right: frame.WinContainer;

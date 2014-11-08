@@ -40,6 +40,10 @@ define(["require", "exports"], function(require, exports) {
         Webot.prototype.queryContains = function (q, text) {
             return this.query(q + ':contains("' + text + '")');
         };
+
+        Webot.prototype.getDocument = function () {
+            return this.frame;
+        };
         return Webot;
     })();
     exports.Webot = Webot;

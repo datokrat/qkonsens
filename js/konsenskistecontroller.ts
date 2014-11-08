@@ -69,7 +69,6 @@ export class ControllerImpl implements Controller {
 		}
 		this.viewModel.newKaSubmit = () => {
 			var kaFactory = new KernaussageFactory.Factory();
-			console.log('newKaSubmit', this.viewModel);
 			var ka = kaFactory.create(this.viewModel.newKaText(), this.viewModel.newKaTitle());
 			this.communicator.kernaussageAppended.subscribeUntil(args => {
 				if(args.konsenskisteId == this.model.id() && args.kernaussage == ka) {

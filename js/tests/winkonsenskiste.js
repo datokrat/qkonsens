@@ -10,82 +10,86 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../konsenskistemode
         function Tests() {
             _super.apply(this, arguments);
         }
-        Tests.prototype.testKkView = function () {
-            var koki = new kokiMdl.Model;
-            var window = new win.Win;
-            var controller = new ctr.Controller(koki, window, new KokiCommunicator);
+        Tests.prototype.setUp = function () {
+            this.konsenskisteModel = new kokiMdl.Model();
+            this.window = new win.Win();
+            this.controller = new ctr.Controller(this.konsenskisteModel, this.window, new KokiCommunicator);
+        };
 
-            koki.general().title('Title');
+        Tests.prototype.tearDown = function () {
+            this.controller.dispose();
+        };
+
+        Tests.prototype.testKkView = function () {
+            var _this = this;
+            this.konsenskisteModel.general().title('Title');
 
             test.assert(function () {
-                return window.kkView().general().title() == 'Title';
+                return _this.window.kkView().general().title() == 'Title';
             });
             test.assert(function () {
-                return window.kkView().childKas != null;
+                return _this.window.kkView().childKas != null;
             });
         };
 
         Tests.prototype.testSetKonsenskisteModel = function () {
-            var modelOld = new kokiMdl.Model;
-            var modelNew = new kokiMdl.Model;
-            var window = new win.Win;
-            var controller = new ctr.Controller(modelOld, window, new KokiCommunicator);
+            var _this = this;
+            var newModel = new kokiMdl.Model;
 
             var currentTitle = ko.computed(function () {
-                return window.kkView().general().title();
+                return _this.window.kkView().general().title();
             });
 
-            modelOld.general().title('Alt');
-            modelNew.general().title('Neu');
-            controller.setKonsenskisteModel(modelNew);
+            this.konsenskisteModel.general().title('Alt');
+            newModel.general().title('Neu');
+            this.controller.setKonsenskisteModel(newModel);
             test.assert(function () {
                 return currentTitle() == 'Neu';
             });
-            modelNew.general().title('Basisdemokratie');
+            newModel.general().title('Basisdemokratie');
             test.assert(function () {
                 return currentTitle() == 'Basisdemokratie';
             });
         };
 
         Tests.prototype.testNullModel = function () {
-            var window = new win.Win;
-            var controller = new ctr.Controller(null, window, new KokiCommunicator);
+            try  {
+                var window = new win.Win;
+                var controller = new ctr.Controller(null, window, new KokiCommunicator);
+            } finally {
+                controller && controller.dispose();
+            }
         };
 
         Tests.prototype.testAComplexUseCase = function () {
-            var koki = new kokiMdl.Model;
-            var window = new win.Win;
-            var controller = new ctr.Controller(koki, window, new KokiCommunicator);
-
+            var _this = this;
             var ka = new kaMdl.Model();
-            koki.childKas.push(ka);
+            this.konsenskisteModel.childKas.push(ka);
 
-            koki.general().title('Basisdemokratie');
+            this.konsenskisteModel.general().title('Basisdemokratie');
             ka.general().title('Begriff Basisdemokratie');
             ka.general().text('Blablablablub');
 
             test.assert(function () {
-                return window.kkView().general().title() == 'Basisdemokratie';
+                return _this.window.kkView().general().title() == 'Basisdemokratie';
             });
             test.assert(function () {
-                return window.kkView().childKas().length == 1;
+                return _this.window.kkView().childKas().length == 1;
             });
             test.assert(function () {
-                return window.kkView().childKas()[0].general().title() == 'Begriff Basisdemokratie';
+                return _this.window.kkView().childKas()[0].general().title() == 'Begriff Basisdemokratie';
             });
             test.assert(function () {
-                return window.kkView().childKas()[0].general().text() == 'Blablablablub';
+                return _this.window.kkView().childKas()[0].general().text() == 'Blablablablub';
             });
         };
 
         Tests.prototype.contextImplementation = function () {
-            var koki = new kokiMdl.Model();
-            var window = new win.Win();
-            var controller = new ctr.Controller(koki, window, new KokiCommunicator);
-            controller.setContext(new ViewModelContext(null, null, null));
+            var _this = this;
+            this.controller.setContext(new ViewModelContext(null, null, null));
 
             test.assert(function () {
-                return controller['konsenskisteController']['cxt'];
+                return _this.controller['konsenskisteController']['cxt'];
             });
         };
         return Tests;

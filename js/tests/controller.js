@@ -12,54 +12,55 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../model', '../view
             this.factory = new Factory();
             this.topicFactory = new TopicFactory();
         }
+        Tests.prototype.setUp = function () {
+            this.cxt = this.factory.create();
+        };
+
+        Tests.prototype.tearDown = function () {
+            this.cxt.controller.dispose();
+        };
+
         Tests.prototype.testTopicNavigation = function () {
-            var cxt = this.factory.create();
+            this.cxt.model.topicNavigation.appendChild(this.topicFactory.create('root'));
 
-            cxt.model.topicNavigation.appendChild(this.topicFactory.create('root'));
-
-            this.areIdentical(cxt.viewModel.topicNavigation.breadcrumb()[0], 'root');
+            this.areIdentical(this.cxt.viewModel.topicNavigation.breadcrumb()[0], 'root');
         };
 
         Tests.prototype.testLeftWinContainer = function () {
-            var cxt = this.factory.create();
-
+            var _this = this;
             test.assert(function () {
-                return cxt.viewModel.left != null;
+                return _this.cxt.viewModel.left != null;
             });
             test.assert(function () {
-                return cxt.viewModel.right != null;
+                return _this.cxt.viewModel.right != null;
             });
             test.assert(function () {
-                return cxt.viewModel.center.win() instanceof kokiWin.Win;
+                return _this.cxt.viewModel.center.win() instanceof kokiWin.Win;
             });
         };
 
         Tests.prototype.testKonsenskiste = function () {
-            var cxt = this.factory.create();
+            this.cxt.model.konsenskiste(new koki.Model());
+            this.cxt.model.konsenskiste().general().title('Hi!');
 
-            cxt.model.konsenskiste(new koki.Model());
-            cxt.model.konsenskiste().general().title('Hi!');
-
-            var konsenskisteWindow = cxt.viewModel.center.win();
+            var konsenskisteWindow = this.cxt.viewModel.center.win();
             test.assert(function () {
                 return konsenskisteWindow.kkView().general().title() == 'Hi!';
             });
         };
 
         Tests.prototype.testCommunicatorConnection = function () {
-            var cxt = this.factory.create();
-
             var oldKoki = new koki.Model;
             oldKoki.id(1);
 
-            cxt.model.konsenskiste(oldKoki);
+            this.cxt.model.konsenskiste(oldKoki);
 
             var newKoki = new koki.Model;
             newKoki.general().title('hi');
             newKoki.general().text('ho');
-            cxt.communicator.konsenskiste.content.generalContentRetrieved.raise({ general: newKoki.general() });
+            this.cxt.communicator.konsenskiste.content.generalContentRetrieved.raise({ general: newKoki.general() });
 
-            var konsenskisteWindow = cxt.viewModel.center.win();
+            var konsenskisteWindow = this.cxt.viewModel.center.win();
             test.assert(function () {
                 return konsenskisteWindow.kkView().general().title() == 'hi';
             });
@@ -69,18 +70,16 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../model', '../view
         };
 
         Tests.prototype.testLoadKonsenskiste = function () {
-            var cxt = this.factory.create();
-
             var oldKoki = new koki.Model;
             oldKoki.id(1);
             var newKoki = new koki.Model;
             newKoki.id(1);
             newKoki.general().title('hi');
-            cxt.model.konsenskiste(oldKoki);
+            this.cxt.model.konsenskiste(oldKoki);
 
-            cxt.communicator.konsenskiste.received.raise({ id: 1, konsenskiste: newKoki });
+            this.cxt.communicator.konsenskiste.received.raise({ id: 1, konsenskiste: newKoki });
 
-            var konsenskisteWindow = cxt.viewModel.center.win();
+            var konsenskisteWindow = this.cxt.viewModel.center.win();
             test.assert(function () {
                 return konsenskisteWindow.kkView().general().title() == 'hi';
             });

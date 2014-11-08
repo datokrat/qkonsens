@@ -1,3 +1,5 @@
+//Modified version of: https://tsunit.codeplex.com/
+
 import common = require('common')
 
  export interface ITestClass {

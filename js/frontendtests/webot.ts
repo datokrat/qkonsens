@@ -43,6 +43,10 @@ export class Webot {
 		return this.query( q + ':contains("' + text + '")' );
 	}
 	
+	public getDocument(): Document {
+		return this.frame;
+	}
+	
 	private frame;
 }
 

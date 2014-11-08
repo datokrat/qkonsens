@@ -53,7 +53,6 @@ define(["require", "exports", 'factories/kernaussagemodel', 'synchronizers/ksync
             };
             this.viewModel.newKaSubmit = function () {
                 var kaFactory = new KernaussageFactory.Factory();
-                console.log('newKaSubmit', _this.viewModel);
                 var ka = kaFactory.create(_this.viewModel.newKaText(), _this.viewModel.newKaTitle());
                 _this.communicator.kernaussageAppended.subscribeUntil(function (args) {
                     if (args.konsenskisteId == _this.model.id() && args.kernaussage == ka) {
