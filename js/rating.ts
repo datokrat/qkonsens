@@ -1,4 +1,5 @@
 import Obs = require('observable');
+import Evt = require('event');
 import RatingCommunicator = require('ratingcommunicator');
 
 export interface RatableModel {
@@ -31,12 +32,32 @@ export class Controller {
 		});
 		
 		viewModel.select = (rating: string) => () => setTimeout(() =>{
-			viewModel.personalRating(rating);
+			//viewModel.personalRating(rating);
+			if(this.ratableModel) {
+				communicator.submitRating(this.ratableModel.id(), rating);
+			}
+			else {
+				throw new Error('cannot submit rating - no ratableModel set');
+			}
 		});
+		
+		this.subscriptions = [
+			communicator.ratingSubmitted.subscribe(args => {
+				if(this.ratableModel && (args.ratableId == this.ratableModel.id())) model.personalRating(args.rating);
+			})
+		];
+	}
+	
+	public setRatableModel(ratableModel: RatableModel) {
+		this.ratableModel = ratableModel;
 	}
 	
 	public dispose() {
+		this.subscriptions.forEach(s => s.undo());
 	}
+	
+	private ratableModel: RatableModel;
+	private subscriptions: Evt.Subscription[] = [];
 }
 
 export class SummarizedRatingCollection {

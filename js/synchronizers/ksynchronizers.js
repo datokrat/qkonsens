@@ -31,15 +31,39 @@ define(["require", "exports", 'synchronizers/childsynchronizer', 'factories/cons
         __extends(RatingSynchronizer, _super);
         function RatingSynchronizer(communicator) {
             _super.call(this);
+
             this.setViewModelFactory(new Factories.Factory(Rating.ViewModel));
-            this.setControllerFactory(new Factories.ControllerFactoryEx(Rating.Controller, communicator));
+
+            this.controllerFty = new RatingControllerFactory(communicator);
+            this.setControllerFactory(this.controllerFty);
         }
         RatingSynchronizer.prototype.createViewModelObservable = function () {
             return ko.observable();
         };
+
+        RatingSynchronizer.prototype.setRatableModel = function (ratableModel) {
+            this.controllerFty.setRatableModel(ratableModel);
+        };
         return RatingSynchronizer;
     })(Base.ChildSynchronizer);
     exports.RatingSynchronizer = RatingSynchronizer;
+
+    var RatingControllerFactory = (function () {
+        function RatingControllerFactory(communicator) {
+            this.communicator = communicator;
+        }
+        RatingControllerFactory.prototype.create = function (m, v) {
+            var ret = new Rating.Controller(m, v, this.communicator);
+            ret.setRatableModel(this.ratableModel);
+            return ret;
+        };
+
+        RatingControllerFactory.prototype.setRatableModel = function (ratableModel) {
+            this.ratableModel = ratableModel;
+        };
+        return RatingControllerFactory;
+    })();
+    exports.RatingControllerFactory = RatingControllerFactory;
 
     var DiscussionSynchronizer = (function (_super) {
         __extends(DiscussionSynchronizer, _super);

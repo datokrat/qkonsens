@@ -96,6 +96,7 @@ define(["require", "exports", 'factories/kernaussagemodel', 'synchronizers/ksync
             this.viewModel.rating = ko.observable();
 
             this.ratingSynchronizer = new KSync.RatingSynchronizer(this.communicator.rating);
+            this.ratingSynchronizer.setRatableModel(this.model);
             this.ratingSynchronizer.setViewModelChangedHandler(function (value) {
                 return _this.viewModel.rating(value);
             }).setModelObservable(this.model.rating);

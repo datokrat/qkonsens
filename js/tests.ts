@@ -1,6 +1,7 @@
 import unit = require('tests/tsunit')
 import asyncunit = require('tests/asyncunit')
 
+import Rating = require('tests/rating');
 import Discussion = require('tests/discussion');
 import DiscussionSynchronizer = require('tests/discussionsynchronizer');
 import TestRatingCommunicator = require('tests/ratingcommunicator');
@@ -25,12 +26,13 @@ var asyncTest = new asyncunit.Test();
 
 asyncTest.addTestClass(new ContentCommunicator(), 'ContentCommunicator');
 asyncTest.addTestClass(new KokiCommunicator(), 'KonsenskisteCommunicator');
+asyncTest.addTestClass(new Rating.TestClass(), 'Rating');
 
-test.addTestClass(new observable.Tests, 'Observable')
-test.addTestClass(new ContentModelTests(), 'ContentModel')
-test.addTestClass(new content.General(), 'General Content')
-test.addTestClass(new content.Context(), 'Context')
-test.addTestClass(new context.Tests(), 'Context')
+test.addTestClass(new observable.Tests, 'Observable');
+test.addTestClass(new ContentModelTests(), 'ContentModel');
+test.addTestClass(new content.General(), 'General Content');
+test.addTestClass(new content.Context(), 'Context');
+test.addTestClass(new context.Tests(), 'Context');
 test.addTestClass(new Discussion(), 'Discussion');
 test.addTestClass(new TestRatingCommunicator(), 'TestRatingCommunicator');
 test.addTestClass(new DiscussionSynchronizer(), 'DiscussionSynchronizer');

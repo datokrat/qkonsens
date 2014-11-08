@@ -1,7 +1,7 @@
 ///<reference path="array.ts" />
 
 export interface Event<Args> {
-	subscribe(cb: (Args) => void);
+	subscribe(cb: (args: Args) => void): Subscription;
 	///unsubscribe as soon as cb returns true
 	subscribeUntil(cb: (args: Args) => boolean, timeout?: number): Subscription;
 	unsubscribe(cb: (Args) => void);

@@ -116,6 +116,8 @@ export class ControllerImpl implements Controller {
 		
 		this.ratingSynchronizer = new KSync.RatingSynchronizer(this.communicator.rating);
 		this.ratingSynchronizer
+			.setRatableModel(this.model);
+		this.ratingSynchronizer
 			.setViewModelChangedHandler( value => this.viewModel.rating(value) )
 			.setModelObservable(this.model.rating);
 	}

@@ -37,11 +37,39 @@ export class RatingSynchronizer
 		return ko.observable<Rating.ViewModel>();
 	}
 	
+	public setRatableModel(ratableModel: Rating.RatableModel) {
+		this.controllerFty.setRatableModel(ratableModel);
+	}
+	
 	constructor(communicator: RatingCommunicator.Base) {
 		super();
+		
 		this.setViewModelFactory( new Factories.Factory(Rating.ViewModel) );
-		this.setControllerFactory( new Factories.ControllerFactoryEx(Rating.Controller, communicator) );
+		
+		this.controllerFty = new RatingControllerFactory(communicator);
+		this.setControllerFactory( this.controllerFty );
 	}
+	
+	private controllerFty: RatingControllerFactory;
+}
+
+export class RatingControllerFactory {
+	constructor(communicator: RatingCommunicator.Base) {
+		this.communicator = communicator;
+	}
+	
+	public create(m: Rating.Model, v: Rating.ViewModel) {
+		var ret = new Rating.Controller(m, v, this.communicator);
+		ret.setRatableModel(this.ratableModel);
+		return ret;
+	}
+	
+	public setRatableModel(ratableModel: Rating.RatableModel) {
+		this.ratableModel = ratableModel;
+	}
+	
+	private communicator: RatingCommunicator.Base;
+	private ratableModel: Rating.RatableModel;
 }
 
 export class DiscussionSynchronizer
