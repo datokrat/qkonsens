@@ -7,6 +7,13 @@ define(["require", "exports", 'contentmodel', 'rating', 'discussion'], function(
             this.rating = ko.observable(new Rating.Model);
             this.discussion = ko.observable(new Discussion.Model);
         }
+        Model.prototype.set = function (other) {
+            this.id(other.id());
+            this.general(other.general());
+            this.context(other.context());
+            this.rating(other.rating());
+            this.discussion(other.discussion());
+        };
         return Model;
     })();
     exports.Model = Model;

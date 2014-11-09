@@ -26,8 +26,18 @@ export class Model {
 		this.id(model.id());
 		this.general().set(model.general());
 		this.context().set(model.context());
+		this.rating().set(model.rating());
+		this.setChildKas(model.childKas.get())
 		this.loading(model.loading());
 		this.error(model.error());
+	}
+	
+	private setChildKas(other: kernaussageModel.Model[]) {
+		this.childKas.set(other.map(otherKa => {
+			var ka = new kernaussageModel.Model();
+			ka.set(otherKa);
+			return ka;
+		}));
 	}
 	
 	constructor(context: ModelContext = new ModelContext) {

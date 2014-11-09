@@ -9,6 +9,10 @@ export interface RatableModel {
 
 export class Model {
 	public personalRating: Obs.Observable<string> = ko.observable<string>('none');
+	
+	public set(other: Model) {
+		this.personalRating(other.personalRating());
+	}
 }
 
 export class ViewModel {

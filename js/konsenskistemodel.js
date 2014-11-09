@@ -1,4 +1,4 @@
-define(["require", "exports", 'contentmodel', 'rating', 'discussion', 'factories/event', 'observable'], function(require, exports, Content, Rating, Discussion, EventFactory, Obs) {
+define(["require", "exports", 'kernaussagemodel', 'contentmodel', 'rating', 'discussion', 'factories/event', 'observable'], function(require, exports, kernaussageModel, Content, Rating, Discussion, EventFactory, Obs) {
     var Model = (function () {
         function Model(context) {
             if (typeof context === "undefined") { context = new ModelContext; }
@@ -16,8 +16,18 @@ define(["require", "exports", 'contentmodel', 'rating', 'discussion', 'factories
             this.id(model.id());
             this.general().set(model.general());
             this.context().set(model.context());
+            this.rating().set(model.rating());
+            this.setChildKas(model.childKas.get());
             this.loading(model.loading());
             this.error(model.error());
+        };
+
+        Model.prototype.setChildKas = function (other) {
+            this.childKas.set(other.map(function (otherKa) {
+                var ka = new kernaussageModel.Model();
+                ka.set(otherKa);
+                return ka;
+            }));
         };
         return Model;
     })();

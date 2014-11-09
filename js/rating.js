@@ -3,6 +3,9 @@ define(["require", "exports"], function(require, exports) {
         function Model() {
             this.personalRating = ko.observable('none');
         }
+        Model.prototype.set = function (other) {
+            this.personalRating(other.personalRating());
+        };
         return Model;
     })();
     exports.Model = Model;

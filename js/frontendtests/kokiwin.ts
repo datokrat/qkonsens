@@ -369,6 +369,34 @@ export class Tests {
 			}
 		], r);
 	}
+	
+	initialRatings(cxt, r) {
+		common.Callbacks.batch([
+			r => {
+				var serverKa = new KernaussageModel.Model();
+				serverKa.rating().personalRating('dislike');
+				var serverKoki = new KonsenskisteModel.Model();
+				serverKoki.id(592);
+				serverKoki.rating().personalRating('strongdislike');
+				serverKoki.childKas.push(serverKa);
+				
+				var com = reloader.communicator();
+				com.konsenskiste.setTestKoki(serverKoki);
+				
+				var koki = new KonsenskisteModel.Model();
+				koki.id(592);
+				reloader.model().konsenskiste(koki);
+				
+				com.konsenskiste.queryKoki(592);
+				setTimeout(r);
+			},
+			r => {
+				test.assert(() => this.webot.query('.kk>.controls .rating input[type="radio"]:checked ~ label').text('--').exists());
+				test.assert(() => this.webot.query('.ka>.controls .rating input[type="radio"]:checked ~ label').text('-').exists());
+				r();
+			}
+		], r);
+	}
 }
 
 class Helper {

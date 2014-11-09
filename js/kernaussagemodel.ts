@@ -10,4 +10,12 @@ export class Model {
 	public context: Obs.Observable<Content.Context> = ko.observable<Content.Context>( new Content.Context );
 	public rating: Obs.Observable<Rating.Model> = ko.observable<Rating.Model>( new Rating.Model );
 	public discussion: Obs.Observable<Discussion.Model> = ko.observable<Discussion.Model>( new Discussion.Model );
+	
+	public set(other: Model) {
+		this.id(other.id());
+		this.general(other.general());
+		this.context(other.context());
+		this.rating(other.rating());
+		this.discussion(other.discussion());
+	}
 }

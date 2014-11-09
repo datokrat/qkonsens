@@ -439,6 +439,39 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
                 }
             ], r);
         };
+
+        Tests.prototype.initialRatings = function (cxt, r) {
+            var _this = this;
+            common.Callbacks.batch([
+                function (r) {
+                    var serverKa = new KernaussageModel.Model();
+                    serverKa.rating().personalRating('dislike');
+                    var serverKoki = new KonsenskisteModel.Model();
+                    serverKoki.id(592);
+                    serverKoki.rating().personalRating('strongdislike');
+                    serverKoki.childKas.push(serverKa);
+
+                    var com = reloader.communicator();
+                    com.konsenskiste.setTestKoki(serverKoki);
+
+                    var koki = new KonsenskisteModel.Model();
+                    koki.id(592);
+                    reloader.model().konsenskiste(koki);
+
+                    com.konsenskiste.queryKoki(592);
+                    setTimeout(r);
+                },
+                function (r) {
+                    test.assert(function () {
+                        return _this.webot.query('.kk>.controls .rating input[type="radio"]:checked ~ label').text('--').exists();
+                    });
+                    test.assert(function () {
+                        return _this.webot.query('.ka>.controls .rating input[type="radio"]:checked ~ label').text('-').exists();
+                    });
+                    r();
+                }
+            ], r);
+        };
         return Tests;
     })();
     exports.Tests = Tests;
