@@ -24,6 +24,7 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'contentviewmodel'
 
             this.ratingSynchronizer = new KSync.RatingSynchronizer(communicator.rating);
             viewModel.rating = this.ratingSynchronizer.createViewModelObservable();
+            this.ratingSynchronizer.setRatableModel(model);
             this.ratingSynchronizer.setViewModelChangedHandler(function (rating) {
                 return _this.viewModel.rating(rating);
             }).setModelObservable(model.rating);
