@@ -16,25 +16,58 @@ export interface Base {
 export class Main implements Base {
 	public submitRating(ratableId: number, rating: string): void {
 		var ratings: Disco.Ontology.Rating[];
+		var discoRating: Disco.Ontology.Rating;
 		common.Callbacks.batch([
 			r => {
-				discoContext.Ratings.filter(
-				it => it.ModifiedBy.AuthorId == '12' && it.PostId == (<any>this).ratableId.toString(), { ratableId: ratableId })
+				discoContext.Ratings.filter(function(it) {
+					return it.ModifiedBy.AuthorId == '12' && it.PostId == this.ratableId.toString() }, { ratableId: ratableId })
 				.toArray().then(results => { ratings = results; r() });
 			},
 			r => {
-				console.log(ratings);
+				if(ratings.length < 1) {
+					discoRating = new Disco.Ontology.Rating({ PostId: ratableId.toString() });
+					discoContext.Ratings.add(discoRating);
+				}
+				if(ratings.length > 1) 
+					console.warn('More than one Rating was found for Ratable #' + ratableId);
+				if(ratings.length >= 1) {
+					discoRating = ratings[0];
+				}
 				r();
+			},
+			r => {
+				console.log('send');
+				discoContext.Ratings.attach(discoRating);
+				discoRating.Score = ScoreParser.toDisco(rating);
+				discoContext.saveChanges()
+					.then(r)
+					.fail(args => this.submissionFailed.raise({ ratableId: ratableId, error: args }));
 			}
 		], () => {
+			this.ratingSubmitted.raise({ ratableId: ratableId, rating: ScoreParser.fromDisco(discoRating.Score) });
 		});
 	}
 	public queryRating(ratableId: number): void {}
 	
-	public ratingSubmitted: Events.Event<SubmittedArgs>;
-	public ratingReceived: Events.Event<ReceivedArgs>;
+	public ratingSubmitted: Events.Event<SubmittedArgs> = new Events.EventImpl<SubmittedArgs>();
+	public ratingReceived: Events.Event<ReceivedArgs> = new Events.EventImpl<ReceivedArgs>();
 	
-	public submissionFailed: Events.Event<SubmissionFailedArgs>;
+	public submissionFailed: Events.Event<SubmissionFailedArgs> = new Events.EventImpl<SubmissionFailedArgs>();
+}
+
+class ScoreParser {
+	public static toDisco(qkRating: string): number {
+		var index = ScoreParser.strings.indexOf(qkRating);
+		if(index >= 0) return (index - 2) * 3;
+		return null;
+	}
+	
+	public static fromDisco(discoRating: number): string {
+		if(discoRating) return ScoreParser.strings[Math.round(discoRating/3)+2];
+		else return 'none';
+	}
+	
+	private static strings = ['strongdislike', 'dislike', 'neutral', 'like', 'stronglike'];
 }
 
 export interface ReceivedArgs {
