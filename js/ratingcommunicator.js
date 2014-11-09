@@ -19,7 +19,7 @@ define(["require", "exports", 'event', 'discocontext', 'common'], function(requi
                     });
                 },
                 function (r) {
-                    if (ratings.length < 1) {
+                    if (ratings.length == 0 && rating != 'none') {
                         discoRating = new Disco.Ontology.Rating({ PostId: ratableId.toString() });
                         discoContext.Ratings.add(discoRating);
                     }
@@ -31,12 +31,19 @@ define(["require", "exports", 'event', 'discocontext', 'common'], function(requi
                     r();
                 },
                 function (r) {
-                    console.log('send');
-                    discoContext.Ratings.attach(discoRating);
-                    discoRating.Score = ScoreParser.toDisco(rating);
-                    discoContext.saveChanges().then(r).fail(function (args) {
-                        return _this.submissionFailed.raise({ ratableId: ratableId, error: args });
-                    });
+                    if (rating != 'none') {
+                        discoContext.Ratings.attach(discoRating);
+                        discoRating.Score = ScoreParser.toDisco(rating);
+                        discoContext.saveChanges().then(r).fail(function (args) {
+                            return _this.submissionFailed.raise({ ratableId: ratableId, error: args });
+                        });
+                    } else if (discoRating) {
+                        //discoContext.Ratings.remove(discoRating);
+                        _this.submissionFailed.raise({ ratableId: ratableId, error: new Error('rating deletion not implemented') });
+                        r();
+                    } else {
+                        r();
+                    }
                 }
             ], function () {
                 _this.ratingSubmitted.raise({ ratableId: ratableId, rating: ScoreParser.fromDisco(discoRating.Score) });

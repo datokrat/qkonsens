@@ -24,7 +24,7 @@ export class Main implements Base {
 				.toArray().then(results => { ratings = results; r() });
 			},
 			r => {
-				if(ratings.length < 1) {
+				if(ratings.length == 0 && rating != 'none') {
 					discoRating = new Disco.Ontology.Rating({ PostId: ratableId.toString() });
 					discoContext.Ratings.add(discoRating);
 				}
@@ -36,12 +36,21 @@ export class Main implements Base {
 				r();
 			},
 			r => {
-				console.log('send');
-				discoContext.Ratings.attach(discoRating);
-				discoRating.Score = ScoreParser.toDisco(rating);
-				discoContext.saveChanges()
-					.then(r)
-					.fail(args => this.submissionFailed.raise({ ratableId: ratableId, error: args }));
+				if(rating != 'none') {
+					discoContext.Ratings.attach(discoRating);
+					discoRating.Score = ScoreParser.toDisco(rating);
+					discoContext.saveChanges()
+						.then(r)
+						.fail(args => this.submissionFailed.raise({ ratableId: ratableId, error: args }));
+				}
+				else if(discoRating) {
+					//discoContext.Ratings.remove(discoRating);
+					this.submissionFailed.raise({ ratableId: ratableId, error: new Error('rating deletion not implemented') });
+					r();
+				}
+				else {
+					r();
+				}
 			}
 		], () => {
 			this.ratingSubmitted.raise({ ratableId: ratableId, rating: ScoreParser.fromDisco(discoRating.Score) });
