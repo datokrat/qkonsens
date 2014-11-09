@@ -18,6 +18,7 @@ define(["require", "exports"], function(require, exports) {
         function Controller(model, viewModel, communicator) {
             var _this = this;
             this.subscriptions = [];
+            this.model = model;
             viewModel.id = Controller.idCtr++;
             viewModel.personalRating = model.personalRating;
 
@@ -40,12 +41,20 @@ define(["require", "exports"], function(require, exports) {
             };
 
             this.subscriptions = [
-                communicator.ratingSubmitted.subscribe(function (args) {
-                    if (_this.ratableModel && (args.ratableId == _this.ratableModel.id()))
-                        model.personalRating(args.rating);
-                })
+                communicator.ratingSubmitted.subscribe(this.onRatingSubmitted.bind(this)),
+                communicator.ratingReceived.subscribe(this.onRatingChanged.bind(this))
             ];
         }
+        Controller.prototype.onRatingSubmitted = function (args) {
+            if (this.ratableModel && (args.ratableId == this.ratableModel.id()))
+                this.model.personalRating(args.rating);
+        };
+
+        Controller.prototype.onRatingChanged = function (args) {
+            if (this.ratableModel && (args.ratableId == this.ratableModel.id()))
+                this.model.personalRating(args.rating.personalRating());
+        };
+
         Controller.prototype.setRatableModel = function (ratableModel) {
             this.ratableModel = ratableModel;
         };

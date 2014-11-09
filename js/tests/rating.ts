@@ -33,4 +33,29 @@ export class TestClass extends unit.TestClass {
 			}
 		}, 100);
 	}
+	
+	queryRating(cxt, r) {
+		var mdl = new Rating.Model();
+		var vm = new Rating.ViewModel();
+		var com = new RatingCommunicator.Main();
+		var ctr = new Rating.Controller(mdl, vm, com);
+		ctr.setRatableModel({ id: ko.observable(2), rating: ko.observable(mdl) });
+		
+		var successCtr = 0;
+		
+		var serverRatableModel = { id: ko.observable(2), rating: ko.observable(new Rating.Model) };
+		serverRatableModel.rating().personalRating('stronglike');
+		com.setTestRatable(serverRatableModel);
+		com.ratingReceived.subscribe(args => {
+			++successCtr;
+			test.assert(() => args.ratableId == 2);
+			test.assert(() => args.rating.personalRating() == 'stronglike');
+		});
+		
+		com.queryRating(2);
+		
+		test.assert(() => successCtr == 1);
+		test.assert(() => mdl.personalRating() == 'stronglike');
+		r();
+	}
 }

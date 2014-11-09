@@ -23,6 +23,7 @@ export class Controller {
 	private static idCtr = 0;
 	
 	constructor(model: Model, viewModel: ViewModel, communicator: RatingCommunicator.Base) {
+		this.model = model;
 		viewModel.id = Controller.idCtr++;
 		viewModel.personalRating = model.personalRating;
 		
@@ -42,10 +43,17 @@ export class Controller {
 		});
 		
 		this.subscriptions = [
-			communicator.ratingSubmitted.subscribe(args => {
-				if(this.ratableModel && (args.ratableId == this.ratableModel.id())) model.personalRating(args.rating);
-			})
+			communicator.ratingSubmitted.subscribe(this.onRatingSubmitted.bind(this)),
+			communicator.ratingReceived.subscribe(this.onRatingChanged.bind(this))
 		];
+	}
+	
+	private onRatingSubmitted(args: RatingCommunicator.SubmittedArgs) {
+		if(this.ratableModel && (args.ratableId == this.ratableModel.id())) this.model.personalRating(args.rating);
+	}
+	
+	private onRatingChanged(args: RatingCommunicator.ReceivedArgs) {
+		if(this.ratableModel && (args.ratableId == this.ratableModel.id())) this.model.personalRating(args.rating.personalRating());
 	}
 	
 	public setRatableModel(ratableModel: RatableModel) {
@@ -57,6 +65,7 @@ export class Controller {
 	}
 	
 	private ratableModel: RatableModel;
+	private model: Model;
 	private subscriptions: Evt.Subscription[] = [];
 }
 
