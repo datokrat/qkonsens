@@ -46,6 +46,7 @@ define(["require", "exports", 'event', 'discocontext', 'common'], function(requi
                     }
                 }
             ], function () {
+                console.log('ratingSubmitted', { ratableId: ratableId, rating: ScoreParser.fromDisco(discoRating.Score) });
                 _this.ratingSubmitted.raise({ ratableId: ratableId, rating: ScoreParser.fromDisco(discoRating.Score) });
             });
         };
@@ -66,7 +67,7 @@ define(["require", "exports", 'event', 'discocontext', 'common'], function(requi
         };
 
         ScoreParser.fromDisco = function (discoRating) {
-            if (discoRating)
+            if (discoRating != null)
                 return ScoreParser.strings[Math.round(discoRating / 3) + 2];
             else
                 return 'none';

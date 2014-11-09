@@ -53,6 +53,7 @@ export class Main implements Base {
 				}
 			}
 		], () => {
+			console.log('ratingSubmitted', { ratableId: ratableId, rating: ScoreParser.fromDisco(discoRating.Score) });
 			this.ratingSubmitted.raise({ ratableId: ratableId, rating: ScoreParser.fromDisco(discoRating.Score) });
 		});
 	}
@@ -72,7 +73,7 @@ class ScoreParser {
 	}
 	
 	public static fromDisco(discoRating: number): string {
-		if(discoRating) return ScoreParser.strings[Math.round(discoRating/3)+2];
+		if(discoRating != null) return ScoreParser.strings[Math.round(discoRating/3)+2];
 		else return 'none';
 	}
 	
