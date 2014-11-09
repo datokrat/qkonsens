@@ -64,6 +64,9 @@ define(["require", "exports", 'event', 'discocontext', 'contentcommunicatorimpl'
                 }
             });
 
+            var ratingParser = new RatingCommunicator.Parser();
+            ratingParser.parse(rawKoki.Ratings, out.rating());
+
             return out;
         };
 

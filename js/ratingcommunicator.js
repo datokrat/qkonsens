@@ -1,4 +1,4 @@
-define(["require", "exports", 'event', 'discocontext', 'common'], function(require, exports, Events, discoContext, common) {
+define(["require", "exports", 'event', 'rating', 'discocontext', 'common'], function(require, exports, Events, Rating, discoContext, common) {
     var Main = (function () {
         function Main() {
             this.ratingSubmitted = new Events.EventImpl();
@@ -56,6 +56,23 @@ define(["require", "exports", 'event', 'discocontext', 'common'], function(requi
     })();
     exports.Main = Main;
 
+    var Parser = (function () {
+        function Parser() {
+        }
+        Parser.prototype.parse = function (rawRatings, out) {
+            out = out || new Rating.Model();
+            out.personalRating('none');
+            rawRatings.forEach(function (rawRating) {
+                if (rawRating.ModifiedBy.AuthorId == '12') {
+                    out.personalRating(ScoreParser.fromDisco(rawRating.Score));
+                }
+            });
+            return out;
+        };
+        return Parser;
+    })();
+    exports.Parser = Parser;
+
     var ScoreParser = (function () {
         function ScoreParser() {
         }
@@ -76,4 +93,5 @@ define(["require", "exports", 'event', 'discocontext', 'common'], function(requi
         ScoreParser.strings = ['strongdislike', 'dislike', 'neutral', 'like', 'stronglike'];
         return ScoreParser;
     })();
+    exports.ScoreParser = ScoreParser;
 });

@@ -94,6 +94,9 @@ export class Parser {
 			}
 		});
 		
+		var ratingParser = new RatingCommunicator.Parser();
+		ratingParser.parse(rawKoki.Ratings, out.rating());
+		
 		return out;
 	}
 	

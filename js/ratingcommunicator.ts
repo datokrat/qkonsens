@@ -65,7 +65,20 @@ export class Main implements Base {
 	public submissionFailed: Events.Event<SubmissionFailedArgs> = new Events.EventImpl<SubmissionFailedArgs>();
 }
 
-class ScoreParser {
+export class Parser {
+	public parse(rawRatings: Disco.Ontology.Rating[], out?: Rating.Model): Rating.Model {
+		out = out || new Rating.Model();
+		out.personalRating('none');
+		rawRatings.forEach(rawRating => {
+			if(rawRating.ModifiedBy.AuthorId == '12') {
+				out.personalRating(ScoreParser.fromDisco(rawRating.Score));
+			}
+		});
+		return out;
+	}
+}
+
+export class ScoreParser {
 	public static toDisco(qkRating: string): number {
 		var index = ScoreParser.strings.indexOf(qkRating);
 		if(index >= 0) return (index - 2) * 3;
