@@ -86,6 +86,7 @@ export class Parser {
 		out.id(parseInt(rawKoki.Id));
 		this.parseGeneralContent(rawKoki, out.general());
 		this.parseContext(rawKoki, out.context());
+		this.ratingParser.parse(rawKoki.Ratings, out.rating());
 		
 		rawKoki.ReferredFrom.forEach(reference => {
 			if(reference.ReferenceType.Description.Name == 'Part') {
@@ -93,9 +94,6 @@ export class Parser {
 				out.childKas.push(ka);
 			}
 		});
-		
-		var ratingParser = new RatingCommunicator.Parser();
-		ratingParser.parse(rawKoki.Ratings, out.rating());
 		
 		return out;
 	}
@@ -105,6 +103,7 @@ export class Parser {
 		ka.id(parseInt(rawKa.Id));
 		this.parseGeneralContent(rawKa, ka.general());
 		this.parseContext(rawKa, ka.context());
+		this.ratingParser.parse(rawKa.Ratings, ka.rating());
 		return ka;
 	}
 	
@@ -133,4 +132,6 @@ export class Parser {
 		});
 		return ret;
 	}
+	
+	private ratingParser = new RatingCommunicator.Parser();
 }

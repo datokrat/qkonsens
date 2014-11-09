@@ -49,6 +49,7 @@ define(["require", "exports", 'event', 'discocontext', 'contentcommunicatorimpl'
 
     var Parser = (function () {
         function Parser() {
+            this.ratingParser = new RatingCommunicator.Parser();
         }
         Parser.prototype.parse = function (rawKoki, out) {
             var _this = this;
@@ -56,6 +57,7 @@ define(["require", "exports", 'event', 'discocontext', 'contentcommunicatorimpl'
             out.id(parseInt(rawKoki.Id));
             this.parseGeneralContent(rawKoki, out.general());
             this.parseContext(rawKoki, out.context());
+            this.ratingParser.parse(rawKoki.Ratings, out.rating());
 
             rawKoki.ReferredFrom.forEach(function (reference) {
                 if (reference.ReferenceType.Description.Name == 'Part') {
@@ -63,9 +65,6 @@ define(["require", "exports", 'event', 'discocontext', 'contentcommunicatorimpl'
                     out.childKas.push(ka);
                 }
             });
-
-            var ratingParser = new RatingCommunicator.Parser();
-            ratingParser.parse(rawKoki.Ratings, out.rating());
 
             return out;
         };
@@ -75,6 +74,7 @@ define(["require", "exports", 'event', 'discocontext', 'contentcommunicatorimpl'
             ka.id(parseInt(rawKa.Id));
             this.parseGeneralContent(rawKa, ka.general());
             this.parseContext(rawKa, ka.context());
+            this.ratingParser.parse(rawKa.Ratings, ka.rating());
             return ka;
         };
 
