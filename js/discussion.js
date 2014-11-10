@@ -1,4 +1,4 @@
-define(["require", "exports", 'observable', 'synchronizers/comment'], function(require, exports, Obs, CommentSynchronizer) {
+define(["require", "exports", 'observable', 'comment', 'synchronizers/comment'], function(require, exports, Obs, Comment, CommentSynchronizer) {
     var Model = (function () {
         function Model() {
             this.comments = new Obs.ObservableArrayExtender(ko.observableArray());
@@ -60,13 +60,32 @@ define(["require", "exports", 'observable', 'synchronizers/comment'], function(r
             this.viewModel.commentsLoaded = this.model.commentsLoaded;
             this.viewModel.error = this.model.error;
 
+            this.viewModel.newCommentDisabled = ko.observable(false);
+            this.viewModel.newCommentText = ko.observable();
+            this.viewModel.submitCommentClick = function () {
+                var comment = new Comment.Model();
+                comment.content().text(_this.viewModel.newCommentText());
+                communicator.appendComment(_this.discussableModel.id(), comment);
+                _this.viewModel.newCommentDisabled(true);
+            };
+
             this.commentSynchronizer = new CommentSynchronizer(this.communicator.content).setViewModelObservable(this.viewModel.comments).setModelObservable(this.model.comments);
 
             this.communicatorSubscriptions = [
                 this.communicator.commentsReceived.subscribe(this.onCommentsReceived),
-                this.communicator.commentsReceiptError.subscribe(this.onCommentsReceiptError)
+                this.communicator.commentsReceiptError.subscribe(this.onCommentsReceiptError),
+                this.communicator.commentAppended.subscribe(this.onCommentAppended.bind(this)),
+                this.communicator.commentAppendingError.subscribe(this.onCommentAppendingError.bind(this))
             ];
         }
+        Controller.prototype.onCommentAppended = function (args) {
+            this.communicator.queryCommentsOf(this.discussableModel.id());
+        };
+
+        Controller.prototype.onCommentAppendingError = function (args) {
+            console.log(args);
+        };
+
         Controller.prototype.setDiscussableModel = function (discussableModel) {
             this.discussableModel = discussableModel;
             return this;

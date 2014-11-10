@@ -1,6 +1,6 @@
 import Obs = require('observable')
 import Events = require('event')
-import DiscussableCommunicator = require('discussioncommunicator')
+import DiscussionCommunicator = require('discussioncommunicator')
 import Comment = require('comment')
 import CommentSynchronizer = require('synchronizers/comment')
 import ViewModelContext = require('viewmodelcontext')
@@ -27,15 +27,28 @@ export class ViewModel {
 	commentsLoading: Obs.Observable<boolean>;
 	error: Obs.Observable<string>;
 	discussionClick: () => void;
+	
+	submitCommentClick: () => void;
+	newCommentText: Obs.Observable<string>;
+	newCommentDisabled: Obs.Observable<boolean>;
 }
 
 export class Controller {
-	constructor(private model: Model, private viewModel: ViewModel, private communicator: DiscussableCommunicator.Base) {
+	constructor(private model: Model, private viewModel: ViewModel, private communicator: DiscussionCommunicator.Base) {
 		this.viewModel.comments = ko.observableArray<Comment.ViewModel>();
 		this.viewModel.discussionClick = this.discussionClick;
 		this.viewModel.commentsLoading = this.model.commentsLoading;
 		this.viewModel.commentsLoaded = this.model.commentsLoaded;
 		this.viewModel.error = this.model.error;
+		
+		this.viewModel.newCommentDisabled = ko.observable<boolean>(false);
+		this.viewModel.newCommentText = ko.observable<string>();
+		this.viewModel.submitCommentClick = () => {
+			var comment = new Comment.Model();
+			comment.content().text(this.viewModel.newCommentText());
+			communicator.appendComment(this.discussableModel.id(), comment);
+			this.viewModel.newCommentDisabled(true);
+		};
 		
 		this.commentSynchronizer = new CommentSynchronizer(this.communicator.content)
 			.setViewModelObservable(this.viewModel.comments)
@@ -43,8 +56,18 @@ export class Controller {
 		
 		this.communicatorSubscriptions = [
 			this.communicator.commentsReceived.subscribe(this.onCommentsReceived),
-			this.communicator.commentsReceiptError.subscribe(this.onCommentsReceiptError)
+			this.communicator.commentsReceiptError.subscribe(this.onCommentsReceiptError),
+			this.communicator.commentAppended.subscribe(this.onCommentAppended.bind(this)),
+			this.communicator.commentAppendingError.subscribe(this.onCommentAppendingError.bind(this))
 		];
+	}
+	
+	public onCommentAppended(args: DiscussionCommunicator.AppendedArgs) {
+		this.communicator.queryCommentsOf(this.discussableModel.id());
+	}
+	
+	public onCommentAppendingError(args: DiscussionCommunicator.AppendingErrorArgs) {
+		console.log(args);
 	}
 	
 	public setDiscussableModel(discussableModel: DiscussableModel) {
@@ -57,7 +80,7 @@ export class Controller {
 		return this;
 	}
 	
-	private onCommentsReceived = (args: DiscussableCommunicator.ReceivedArgs) => {
+	private onCommentsReceived = (args: DiscussionCommunicator.ReceivedArgs) => {
 		if(this.discussableModel && this.discussableModel.id() == args.id) {
 			this.model.comments.set(args.comments);
 			this.model.commentsLoading(false);
@@ -67,7 +90,7 @@ export class Controller {
 			throw new Error('this.discussableModel is null/undefined');
 	}
 	
-	private onCommentsReceiptError = (args: DiscussableCommunicator.CommentsReceiptErrorArgs) => {
+	private onCommentsReceiptError = (args: DiscussionCommunicator.CommentsReceiptErrorArgs) => {
 		if(this.discussableModel && this.discussableModel.id() == args.discussableId) {
 			this.model.error(args.message);
 			this.model.commentsLoading(false);

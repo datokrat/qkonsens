@@ -1,17 +1,20 @@
 import Events = require('../event')
 import Obs = require('../observable')
+import Id = require('../id');
 import ItemContainer = require('../itemcontainer')
 import Comment = require('../comment')
 import TestContentCommunicator = require('tests/testcontentcommunicator')
 import ContentCommunicator = require('../contentcommunicator')
 
 import Discussion = require('../discussion')
-import DiscussableCommunicator = require('../discussioncommunicator')
+import DiscussionCommunicator = require('../discussioncommunicator')
 
-class TestDiscussableCommunicator implements DiscussableCommunicator.Base {
+class TestDiscussableCommunicator implements DiscussionCommunicator.Base {
 	public content: ContentCommunicator.Main = new TestContentCommunicator();
-	public commentsReceived = new Events.EventImpl<DiscussableCommunicator.ReceivedArgs>();
-	public commentsReceiptError = new Events.EventImpl<DiscussableCommunicator.CommentsReceiptErrorArgs>();
+	public commentsReceived = new Events.EventImpl<DiscussionCommunicator.ReceivedArgs>();
+	public commentsReceiptError = new Events.EventImpl<DiscussionCommunicator.CommentsReceiptErrorArgs>();
+	public commentAppended: Events.Event<DiscussionCommunicator.AppendedArgs> = new Events.EventImpl<DiscussionCommunicator.AppendedArgs>();
+	public commentAppendingError: Events.Event<DiscussionCommunicator.AppendingErrorArgs> = new Events.EventImpl<DiscussionCommunicator.AppendingErrorArgs>();
 	
 	private testItemContainers: ItemContainer.Many<Discussion.DiscussableModel>;
 	private internalItemContainer: ItemContainer.Base<Discussion.DiscussableModel>;
@@ -41,6 +44,11 @@ class TestDiscussableCommunicator implements DiscussableCommunicator.Base {
 			return;
 		}
 		this.commentsReceived.raise({ id: discussableId, comments: item.discussion().comments.get() });
+	}
+	
+	public appendComment(discussableId: number, comment: Comment.Model) {
+		this.testItemContainers.get(discussableId).discussion().comments.push(comment);
+		this.commentAppended.raise({ discussableId: discussableId, comment: comment });
 	}
 	
 	public setTestDiscussable(discussable: Discussion.DiscussableModel) {

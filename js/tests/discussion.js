@@ -23,6 +23,10 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../discussion', 'te
             this.controller.setDiscussableModel(this.discussable);
         };
 
+        TestClass.prototype.tearDown = function () {
+            this.controller.dispose();
+        };
+
         TestClass.prototype.queryComments = function () {
             var ctr = 0;
             this.communicator.setTestDiscussable(this.discussable);
@@ -72,6 +76,39 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../discussion', 'te
 
             test.assert(function () {
                 return _this.model.comments.get().length == 1;
+            });
+        };
+
+        TestClass.prototype.appendComment = function () {
+            var comment = new Comment.Model();
+            var successCtr = 0, errorCtr = 0, receiptCtr = 0;
+
+            this.communicator.setTestDiscussable({ id: ko.observable(2), discussion: ko.observable(new Discussion.Model()) });
+            this.communicator.commentAppended.subscribe(function (args) {
+                return ++successCtr;
+            });
+            this.communicator.commentAppendingError.subscribe(function (args) {
+                return ++errorCtr;
+            });
+            this.communicator.appendComment(2, comment);
+
+            test.assert(function () {
+                return successCtr == 1;
+            });
+            test.assert(function () {
+                return errorCtr == 0;
+            });
+
+            this.communicator.commentsReceived.subscribe(function (args) {
+                ++receiptCtr;
+                test.assert(function () {
+                    return args.comments.length == 1;
+                });
+            });
+            this.communicator.queryCommentsOf(2);
+
+            test.assert(function () {
+                return receiptCtr == 1;
             });
         };
         return TestClass;

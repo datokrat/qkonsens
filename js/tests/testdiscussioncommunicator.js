@@ -4,6 +4,8 @@ define(["require", "exports", '../event', '../itemcontainer', 'tests/testcontent
             this.content = new TestContentCommunicator();
             this.commentsReceived = new Events.EventImpl();
             this.commentsReceiptError = new Events.EventImpl();
+            this.commentAppended = new Events.EventImpl();
+            this.commentAppendingError = new Events.EventImpl();
             this.testItemContainers = new ItemContainer.Many();
             this.testItemContainers.insertContainer(this.internalItemContainer = new ItemContainer.Main());
         }
@@ -25,6 +27,11 @@ define(["require", "exports", '../event', '../itemcontainer', 'tests/testcontent
                 return;
             }
             this.commentsReceived.raise({ id: discussableId, comments: item.discussion().comments.get() });
+        };
+
+        TestDiscussableCommunicator.prototype.appendComment = function (discussableId, comment) {
+            this.testItemContainers.get(discussableId).discussion().comments.push(comment);
+            this.commentAppended.raise({ discussableId: discussableId, comment: comment });
         };
 
         TestDiscussableCommunicator.prototype.setTestDiscussable = function (discussable) {

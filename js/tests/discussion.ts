@@ -27,6 +27,10 @@ class TestClass extends unit.TestClass {
 		this.controller.setDiscussableModel(this.discussable);
 	}
 	
+	tearDown() {
+		this.controller.dispose();
+	}
+	
 	queryComments() {
 		var ctr = 0;
 		this.communicator.setTestDiscussable(this.discussable);
@@ -58,6 +62,27 @@ class TestClass extends unit.TestClass {
 		this.communicator.commentsReceived.raise({ id: 2, comments: this.discussable.discussion().comments.get() });
 		
 		test.assert( () => this.model.comments.get().length == 1 );
+	}
+	
+	appendComment() {
+		var comment = new Comment.Model();
+		var successCtr = 0, errorCtr = 0, receiptCtr = 0;
+		
+		this.communicator.setTestDiscussable({ id: ko.observable(2), discussion: ko.observable(new Discussion.Model()) });
+		this.communicator.commentAppended.subscribe(args => ++successCtr);
+		this.communicator.commentAppendingError.subscribe(args => ++errorCtr);
+		this.communicator.appendComment(2, comment);
+		
+		test.assert(() => successCtr == 1);
+		test.assert(() => errorCtr == 0);
+		
+		this.communicator.commentsReceived.subscribe(args => {
+			++receiptCtr;
+			test.assert(() => args.comments.length == 1);
+		});
+		this.communicator.queryCommentsOf(2);
+		
+		test.assert(() => receiptCtr == 1);
 	}
 }
 

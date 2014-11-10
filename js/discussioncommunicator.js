@@ -3,6 +3,8 @@ define(["require", "exports", 'event', 'comment', 'discocontext'], function(requ
         function Main() {
             this.commentsReceived = new Events.EventImpl();
             this.commentsReceiptError = new Events.EventImpl();
+            this.commentAppended = new Events.EventImpl();
+            this.commentAppendingError = new Events.EventImpl();
         }
         Main.prototype.queryCommentsOf = function (discussableId, err) {
             var _this = this;
@@ -10,6 +12,10 @@ define(["require", "exports", 'event', 'comment', 'discocontext'], function(requ
                 var parsed = _this.parseComments(comments);
                 _this.commentsReceived.raise({ id: discussableId, comments: parsed });
             });
+        };
+
+        Main.prototype.appendComment = function (discussableId, comment) {
+            throw new Error('not implemented');
         };
 
         Main.prototype.queryRawCommentsOf = function (discussableId) {

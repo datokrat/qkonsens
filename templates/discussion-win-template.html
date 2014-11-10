@@ -15,10 +15,10 @@
 		<div data-bind="template: { name: 'comment-template' }"></div>
 	<!-- /ko -->
 	
-	<!--div class="cmt">
-		<form data-bind="event: { submit: function() { submitComment_onClick(); return false; } }">
-			<p><textarea maxlength="250" placeholder="Dein Beitrag" data-bind="value: newCommentText, attr: { disabled: newCommentDisabled }"></textarea></p>
-			<input type="submit" value="Beitrag abschicken" data-bind="attr: { disabled: newCommentDisabled }" />
+	<div class="cmt">
+		<form data-bind="event: { submit: function() { discussable().discussion().submitCommentClick(); return false; } }">
+			<p><textarea maxlength="250" placeholder="Dein Beitrag" data-bind="value: discussable().discussion().newCommentText, attr: { disabled: discussable().discussion().newCommentDisabled }"></textarea></p>
+			<button data-bind="attr: { disabled: discussable().discussion().newCommentDisabled }" >Beitrag abschicken</button>
 		</form>
-	</div-->
+	</div>
 <!-- /ko -->

@@ -397,6 +397,24 @@ export class Tests {
 			}
 		], r);
 	}
+	
+	appendComment(cxt, r) {
+		common.Callbacks.batch([
+			r => {
+				this.webot.query('.kk>.controls').child('*').contains('Diskussion').click();
+				setTimeout(r);
+			},
+			r => {
+				this.webot.query('.win').child('form').contains('Beitrag abschicken').child('textarea').$().val('This is a comment').change();
+				this.webot.query('.win').child('form').child('button').contains('Beitrag abschicken').click();
+				setTimeout(r);
+			},
+			r => {
+				test.assert(() => this.webot.query('.win').child('.cmt:not(:contains("Beitrag abschicken"))').child('*').text('This is a comment').exists());
+				r();
+			}
+		], r);
+	}
 }
 
 class Helper {

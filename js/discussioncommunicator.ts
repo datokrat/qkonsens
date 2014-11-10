@@ -11,18 +11,28 @@ export interface Base {
 	commentsReceived: Events.Event<ReceivedArgs>;
 	commentsReceiptError: Events.Event<CommentsReceiptErrorArgs>;
 	queryCommentsOf(discussableId: number, err?: (error) => void): void;
+	
+	commentAppended: Events.Event<AppendedArgs>;
+	commentAppendingError: Events.Event<AppendingErrorArgs>;
+	appendComment(discussableId: number, comment: Comment.Model): void;
 }
 
 export class Main implements Base {
 	public content: ContentCommunicator.Main;
 	public commentsReceived: Events.Event<ReceivedArgs> = new Events.EventImpl<ReceivedArgs>();
 	public commentsReceiptError: Events.Event<CommentsReceiptErrorArgs> = new Events.EventImpl<CommentsReceiptErrorArgs>();
+	public commentAppended: Events.Event<AppendedArgs> = new Events.EventImpl<AppendedArgs>();
+	public commentAppendingError: Events.Event<AppendingErrorArgs> = new Events.EventImpl<AppendingErrorArgs>();
 	
 	public queryCommentsOf(discussableId: number, err?: (error) => void): void {
 		this.queryRawCommentsOf(discussableId).then(comments => {
 			var parsed = this.parseComments(comments);
 			this.commentsReceived.raise({ id: discussableId, comments: parsed });
 		});
+	}
+	
+	public appendComment(discussableId: number, comment: Comment.Model) {
+		throw new Error('not implemented');
 	}
 	
 	private queryRawCommentsOf(discussableId: number) {
@@ -61,4 +71,14 @@ export interface ReceivedArgs {
 export interface CommentsReceiptErrorArgs {
 	discussableId: number;
 	message: string;
+}
+
+export interface AppendedArgs {
+	discussableId: number;
+	comment: Comment.Model;
+}
+
+export interface AppendingErrorArgs {
+	discussableId: number;
+	error: Error;
 }

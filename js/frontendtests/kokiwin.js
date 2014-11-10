@@ -472,6 +472,27 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
                 }
             ], r);
         };
+
+        Tests.prototype.appendComment = function (cxt, r) {
+            var _this = this;
+            common.Callbacks.batch([
+                function (r) {
+                    _this.webot.query('.kk>.controls').child('*').contains('Diskussion').click();
+                    setTimeout(r);
+                },
+                function (r) {
+                    _this.webot.query('.win').child('form').contains('Beitrag abschicken').child('textarea').$().val('This is a comment').change();
+                    _this.webot.query('.win').child('form').child('button').contains('Beitrag abschicken').click();
+                    setTimeout(r);
+                },
+                function (r) {
+                    test.assert(function () {
+                        return _this.webot.query('.win').child('.cmt:not(:contains("Beitrag abschicken"))').child('*').text('This is a comment').exists();
+                    });
+                    r();
+                }
+            ], r);
+        };
         return Tests;
     })();
     exports.Tests = Tests;
