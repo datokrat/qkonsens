@@ -1,4 +1,5 @@
-import Events = require('event')
+import Events = require('event');
+import Common = require('common');
 
 export interface Observable<T> {
 	(): T;

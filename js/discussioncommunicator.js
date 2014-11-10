@@ -5,6 +5,8 @@ define(["require", "exports", 'event', 'common', 'comment', 'discocontext'], fun
             this.commentsReceiptError = new Events.EventImpl();
             this.commentAppended = new Events.EventImpl();
             this.commentAppendingError = new Events.EventImpl();
+            this.commentRemoved = new Events.EventImpl();
+            this.commentRemovalError = new Events.EventImpl();
         }
         Main.prototype.queryCommentsOf = function (discussableId, err) {
             var _this = this;
@@ -17,7 +19,7 @@ define(["require", "exports", 'event', 'common', 'comment', 'discocontext'], fun
         Main.prototype.appendComment = function (discussableId, comment) {
             var _this = this;
             var onError = function (error) {
-                return _this.commentAppendingError.raise({ discussableId: discussableId, error: error });
+                return _this.commentAppendingError.raise({ discussableId: discussableId, comment: comment, error: error });
             };
             var content;
             var post;
@@ -56,6 +58,10 @@ define(["require", "exports", 'event', 'common', 'comment', 'discocontext'], fun
                 comment.id = parseInt(post.Id);
                 _this.commentAppended.raise({ discussableId: discussableId, comment: comment });
             });
+        };
+
+        Main.prototype.removeComment = function (args) {
+            throw new Error('not implemented');
         };
 
         Main.prototype.queryRawCommentsOf = function (discussableId) {

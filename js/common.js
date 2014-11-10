@@ -29,6 +29,16 @@ define(["require", "exports"], function(require, exports) {
             return Coll.where(collection, predicate).length;
         };
 
+        Coll.removeOneByPredicate = function (collection, predicate) {
+            var first = collection.filter(predicate)[0];
+            if (first) {
+                collection.splice(collection.indexOf(first), 1);
+                return true;
+            } else {
+                return false;
+            }
+        };
+
         Coll.koRemoveWhere = function (collection, predicate) {
             var where = Coll.where(collection(), predicate);
             if (where.length > 0)

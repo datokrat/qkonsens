@@ -28,6 +28,17 @@ export class Coll {
 		return Coll.where(collection, predicate).length;
 	}
 	
+	public static removeOneByPredicate<T>(collection: T[], predicate: (item: any) => boolean): boolean {
+		var first = collection.filter(predicate)[0];
+		if(first) {
+			collection.splice(collection.indexOf(first), 1);
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
 	public static koRemoveWhere(collection: any, predicate: (item: any, index: number) => boolean ): any[] {
 		var where = Coll.where(collection(), predicate);
 		if(where.length > 0)

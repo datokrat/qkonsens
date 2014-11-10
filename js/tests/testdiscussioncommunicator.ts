@@ -1,6 +1,7 @@
 import Events = require('../event')
 import Obs = require('../observable')
 import Id = require('../id');
+import Common = require('../common');
 import ItemContainer = require('../itemcontainer')
 import Comment = require('../comment')
 import TestContentCommunicator = require('tests/testcontentcommunicator')
@@ -15,6 +16,8 @@ class TestDiscussableCommunicator implements DiscussionCommunicator.Base {
 	public commentsReceiptError = new Events.EventImpl<DiscussionCommunicator.CommentsReceiptErrorArgs>();
 	public commentAppended: Events.Event<DiscussionCommunicator.AppendedArgs> = new Events.EventImpl<DiscussionCommunicator.AppendedArgs>();
 	public commentAppendingError: Events.Event<DiscussionCommunicator.AppendingErrorArgs> = new Events.EventImpl<DiscussionCommunicator.AppendingErrorArgs>();
+	public commentRemoved = new Events.EventImpl<DiscussionCommunicator.RemovedArgs>();
+	public commentRemovalError = new Events.EventImpl<DiscussionCommunicator.RemovalErrorArgs>();
 	
 	private testItemContainers: ItemContainer.Many<Discussion.DiscussableModel>;
 	private internalItemContainer: ItemContainer.Base<Discussion.DiscussableModel>;
@@ -49,6 +52,12 @@ class TestDiscussableCommunicator implements DiscussionCommunicator.Base {
 	public appendComment(discussableId: number, comment: Comment.Model) {
 		this.testItemContainers.get(discussableId).discussion().comments.push(comment);
 		this.commentAppended.raise({ discussableId: discussableId, comment: comment });
+	}
+	
+	public removeComment(args: DiscussionCommunicator.RemovalArgs) {
+		Common.Coll.removeOneByPredicate(this.testItemContainers.get(args.discussableId).discussion().comments.get(), 
+			comment => comment.id == args.commentId); //TODO: Should comparison be based on ReferenceId instead?
+		this.commentRemoved.raise({ discussableId: args.discussableId, commentId: args.commentId });
 	}
 	
 	public setTestDiscussable(discussable: Discussion.DiscussableModel) {

@@ -16,6 +16,10 @@ export interface Base {
 	commentAppended: Events.Event<AppendedArgs>;
 	commentAppendingError: Events.Event<AppendingErrorArgs>;
 	appendComment(discussableId: number, comment: Comment.Model): void;
+	
+	commentRemoved: Events.Event<RemovedArgs>;
+	commentRemovalError: Events.Event<RemovalErrorArgs>;
+	removeComment(args: RemovalArgs);
 }
 
 export class Main implements Base {
@@ -24,6 +28,8 @@ export class Main implements Base {
 	public commentsReceiptError: Events.Event<CommentsReceiptErrorArgs> = new Events.EventImpl<CommentsReceiptErrorArgs>();
 	public commentAppended: Events.Event<AppendedArgs> = new Events.EventImpl<AppendedArgs>();
 	public commentAppendingError: Events.Event<AppendingErrorArgs> = new Events.EventImpl<AppendingErrorArgs>();
+	public commentRemoved = new Events.EventImpl<RemovedArgs>();
+	public commentRemovalError = new Events.EventImpl<RemovalErrorArgs>();
 	
 	public queryCommentsOf(discussableId: number, err?: (error) => void): void {
 		this.queryRawCommentsOf(discussableId).then(comments => {
@@ -33,7 +39,7 @@ export class Main implements Base {
 	}
 	
 	public appendComment(discussableId: number, comment: Comment.Model) {
-		var onError = error => this.commentAppendingError.raise({ discussableId: discussableId, error: error });
+		var onError = error => this.commentAppendingError.raise({ discussableId: discussableId, comment: comment, error: error });
 		var content: Disco.Ontology.Content;
 		var post: Disco.Ontology.Post;
 		var reference: Disco.Ontology.PostReference;
@@ -65,6 +71,10 @@ export class Main implements Base {
 			comment.id = parseInt(post.Id);
 			this.commentAppended.raise({ discussableId: discussableId, comment: comment });
 		});
+	}
+	
+	public removeComment(args: RemovalArgs) {
+		throw new Error('not implemented');
 	}
 	
 	private queryRawCommentsOf(discussableId: number) {
@@ -112,5 +122,22 @@ export interface AppendedArgs {
 
 export interface AppendingErrorArgs {
 	discussableId: number;
+	comment: Comment.Model;
 	error: any;
+}
+
+export interface RemovedArgs {
+	discussableId: number;
+	commentId: number;
+}
+
+export interface RemovalErrorArgs {
+	discussableId: number;
+	comment: number;
+	error: any;
+}
+
+export interface RemovalArgs {
+	discussableId: number;
+	commentId: number;
 }

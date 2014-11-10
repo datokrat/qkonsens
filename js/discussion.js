@@ -80,13 +80,17 @@ define(["require", "exports", 'observable', 'comment', 'synchronizers/comment'],
             ];
         }
         Controller.prototype.onCommentAppended = function (args) {
-            this.communicator.queryCommentsOf(this.discussableModel.id());
-            this.viewModel.newCommentDisabled(false);
+            if (args.discussableId == this.discussableModel.id()) {
+                this.communicator.queryCommentsOf(this.discussableModel.id());
+                this.viewModel.newCommentDisabled(false);
+            }
         };
 
         Controller.prototype.onCommentAppendingError = function (args) {
-            console.log(args);
-            alert('Beitrag konnte nicht erstellt werden. Bitte lade die Seite neu!');
+            if (args.discussableId == this.discussableModel.id()) {
+                console.log(args);
+                alert('Beitrag konnte nicht erstellt werden. Bitte lade die Seite neu!');
+            }
         };
 
         Controller.prototype.setDiscussableModel = function (discussableModel) {
