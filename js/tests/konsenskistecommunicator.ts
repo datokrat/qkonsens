@@ -40,8 +40,8 @@ class TestClass extends unit.TestClass {
 				
 				this.com.setTestKoki(koki1);
 				this.com.setTestKoki(koki2);
-				this.com.queryKoki(1);
-				this.com.queryKoki(2);
+				this.com.query(1);
+				this.com.query(2);
 				
 				setTimeout(r, 0);
 			},
@@ -111,7 +111,7 @@ class TestClass extends unit.TestClass {
 		});
 		this.com.received.subscribe(args => ++successCtr);
 		
-		koki = this.com.queryKoki(369);
+		koki = this.com.query(369);
 		
 		test.assert(() => successCtr == 0);
 		test.assert(() => errorCtr == 1);

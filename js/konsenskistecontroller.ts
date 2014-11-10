@@ -23,7 +23,7 @@ import CommentSynchronizer = require('synchronizers/comment')
 
 export interface Controller {
 	dispose(): void;
-	setContext(cxt: ViewModelContext): void;
+	setViewModelContext(cxt: ViewModelContext): void;
 }
 
 export class ControllerImpl implements Controller {
@@ -46,7 +46,7 @@ export class ControllerImpl implements Controller {
 		this.initRating();
 	}
 	
-	public setContext(cxt: ViewModelContext) {
+	public setViewModelContext(cxt: ViewModelContext) {
 		this.cxt = cxt;
 		this.discussionSynchronizer.setViewModelContext(cxt);
 		this.kaSynchronizer.setViewModelContext(cxt);

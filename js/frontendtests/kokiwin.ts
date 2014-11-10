@@ -387,7 +387,7 @@ export class Tests {
 				koki.id(592);
 				reloader.model().konsenskiste(koki);
 				
-				com.konsenskiste.queryKoki(592);
+				com.konsenskiste.query(592);
 				setTimeout(r);
 			},
 			r => {

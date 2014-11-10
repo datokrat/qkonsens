@@ -29,7 +29,7 @@ define(["require", "exports", 'factories/kernaussagemodel', 'synchronizers/ksync
             this.initRating();
         };
 
-        ControllerImpl.prototype.setContext = function (cxt) {
+        ControllerImpl.prototype.setViewModelContext = function (cxt) {
             this.cxt = cxt;
             this.discussionSynchronizer.setViewModelContext(cxt);
             this.kaSynchronizer.setViewModelContext(cxt);

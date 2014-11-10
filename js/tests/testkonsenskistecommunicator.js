@@ -19,7 +19,7 @@ define(["require", "exports", '../id', 'event', 'itemcontainer', 'tests/testcont
                 throw new Error('TestKokiCommunicator.setTestKoki: koki.id is not a number');
         };
 
-        TestKokiCommunicator.prototype.queryKoki = function (id, out) {
+        TestKokiCommunicator.prototype.query = function (id, out) {
             try  {
                 out = out || new KonsenskisteModel.Model();
                 out.id(id);

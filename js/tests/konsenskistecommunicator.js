@@ -36,8 +36,8 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', '../common', 'tes
 
                     _this.com.setTestKoki(koki1);
                     _this.com.setTestKoki(koki2);
-                    _this.com.queryKoki(1);
-                    _this.com.queryKoki(2);
+                    _this.com.query(1);
+                    _this.com.query(2);
 
                     setTimeout(r, 0);
                 },
@@ -131,7 +131,7 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', '../common', 'tes
                 return ++successCtr;
             });
 
-            koki = this.com.queryKoki(369);
+            koki = this.com.query(369);
 
             test.assert(function () {
                 return successCtr == 0;

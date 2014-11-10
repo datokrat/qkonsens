@@ -458,7 +458,7 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
                     koki.id(592);
                     reloader.model().konsenskiste(koki);
 
-                    com.konsenskiste.queryKoki(592);
+                    com.konsenskiste.query(592);
                     setTimeout(r);
                 },
                 function (r) {

@@ -25,7 +25,7 @@ export class Controller {
 		this.window = win;
 		this.window.setState = (state: any) => {
 			var typedState = <State>state;
-			var kk = this.communicator.queryKoki(typedState.kokiId);
+			var kk = this.communicator.query(typedState.kokiId);
 			this.setKonsenskisteModel(kk);
 		}
 		this.window.state.subscribe(state => {
@@ -45,7 +45,7 @@ export class Controller {
 	}
 	
 	private setKonsenskisteModelById(id: number) {
-		this.cxt.konsenskisteModel(this.communicator.queryKoki(id));
+		this.cxt.konsenskisteModel(this.communicator.query(id));
 	}
 	
 	private initKonsenskiste(konsenskisteModel: kokiMdl.Model) {
@@ -54,7 +54,7 @@ export class Controller {
 		var konsenskisteViewModel = new kokiVm.ViewModel;
 		this.konsenskisteModel = konsenskisteModel;
 		this.konsenskisteController = this.konsenskisteControllerFactory.create(konsenskisteModel, konsenskisteViewModel, this.communicator);
-		if(this.cxt) this.konsenskisteController.setContext(this.cxt);
+		if(this.cxt) this.konsenskisteController.setViewModelContext(this.cxt);
         
 		this.window.kkView(konsenskisteViewModel);
 		this.window.state(<State>{ kokiId: konsenskisteModel && konsenskisteModel.id() });
@@ -67,7 +67,7 @@ export class Controller {
 	
 	public setContext(cxt: ViewModelContext) {
 		this.cxt = cxt;
-		this.konsenskisteController.setContext(cxt);
+		this.konsenskisteController.setViewModelContext(cxt);
 		return this;
 	}
 	

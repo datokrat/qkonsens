@@ -36,7 +36,7 @@ export class Main implements IKonsenskisteCommunicator.Main {
 		throw new Error('not implemented');
 	}
 	
-	public queryKoki(id: number): KonsenskisteModel.Model {
+	public query(id: number): KonsenskisteModel.Model {
 		var out = new KonsenskisteModel.Model();
 		out.loading(true);
 		out.id(id);

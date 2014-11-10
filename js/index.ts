@@ -22,6 +22,6 @@ var konsenskiste = new koki.Model;
 konsenskiste.id(12);
 model.konsenskiste(konsenskiste);
 
-communicator.konsenskiste.queryKoki(12);
+communicator.konsenskiste.query(12);
 
 ko.applyBindings(viewModel);

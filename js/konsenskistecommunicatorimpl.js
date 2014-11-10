@@ -16,7 +16,7 @@ define(["require", "exports", 'event', 'discocontext', 'contentcommunicatorimpl'
             throw new Error('not implemented');
         };
 
-        Main.prototype.queryKoki = function (id) {
+        Main.prototype.query = function (id) {
             var _this = this;
             var out = new KonsenskisteModel.Model();
             out.loading(true);

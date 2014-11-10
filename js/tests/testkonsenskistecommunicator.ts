@@ -38,7 +38,7 @@ class TestKokiCommunicator implements KokiCommunicator.Main {
 		else throw new Error('TestKokiCommunicator.setTestKoki: koki.id is not a number');
 	}
 	
-	public queryKoki(id: number, out?: KonsenskisteModel.Model): KonsenskisteModel.Model {
+	public query(id: number, out?: KonsenskisteModel.Model): KonsenskisteModel.Model {
 		try {
 			out = out || new KonsenskisteModel.Model();
 			out.id(id);

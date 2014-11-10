@@ -1,45 +1,16 @@
-define(["require", "exports", 'synchronizers/ksynchronizers', 'contentviewmodel'], function(require, exports, KSync, ContentViewModel) {
-    var Controller = (function () {
-        function Controller(model, viewModel, communicator) {
-            this.init(model, viewModel, communicator);
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+define(["require", "exports", 'kelement'], function(require, exports, KElement) {
+    var Controller = (function (_super) {
+        __extends(Controller, _super);
+        function Controller() {
+            _super.apply(this, arguments);
         }
-        Controller.prototype.init = function (model, viewModel, communicator) {
-            var _this = this;
-            this.viewModel = viewModel;
-
-            viewModel.context = ko.observable(new ContentViewModel.Context);
-            this.contextSynchronizer = new KSync.ContextSynchronizer(communicator.content).setViewModelChangedHandler(function (context) {
-                return _this.viewModel.context(context);
-            }).setModelObservable(model.context);
-
-            viewModel.general = ko.observable(new ContentViewModel.General);
-            this.generalContentSynchronizer = new KSync.GeneralContentSynchronizer(communicator.content).setViewModelChangedHandler(function (general) {
-                return _this.viewModel.general(general);
-            }).setModelObservable(model.general);
-
-            viewModel.discussion = ko.observable();
-            this.discussionSynchronizer = new KSync.DiscussionSynchronizer(communicator.discussion);
-            this.discussionSynchronizer.setDiscussableModel(model).setDiscussableViewModel(viewModel).setViewModelObservable(viewModel.discussion).setModelObservable(model.discussion);
-
-            this.ratingSynchronizer = new KSync.RatingSynchronizer(communicator.rating);
-            viewModel.rating = this.ratingSynchronizer.createViewModelObservable();
-            this.ratingSynchronizer.setRatableModel(model);
-            this.ratingSynchronizer.setViewModelChangedHandler(function (rating) {
-                return _this.viewModel.rating(rating);
-            }).setModelObservable(model.rating);
-        };
-
-        Controller.prototype.setViewModelContext = function (cxt) {
-            this.discussionSynchronizer.setViewModelContext(cxt);
-        };
-
-        Controller.prototype.dispose = function () {
-            this.generalContentSynchronizer.dispose();
-            this.contextSynchronizer.dispose();
-            this.discussionSynchronizer.dispose();
-            this.ratingSynchronizer.dispose();
-        };
         return Controller;
-    })();
+    })(KElement.Controller);
     exports.Controller = Controller;
 });

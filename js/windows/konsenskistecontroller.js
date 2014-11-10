@@ -13,7 +13,7 @@ define(["require", "exports", '../locationhash', 'factories/konsenskistecontroll
             this.window = win;
             this.window.setState = function (state) {
                 var typedState = state;
-                var kk = _this.communicator.queryKoki(typedState.kokiId);
+                var kk = _this.communicator.query(typedState.kokiId);
                 _this.setKonsenskisteModel(kk);
             };
             this.window.state.subscribe(function (state) {
@@ -34,7 +34,7 @@ define(["require", "exports", '../locationhash', 'factories/konsenskistecontroll
         };
 
         Controller.prototype.setKonsenskisteModelById = function (id) {
-            this.cxt.konsenskisteModel(this.communicator.queryKoki(id));
+            this.cxt.konsenskisteModel(this.communicator.query(id));
         };
 
         Controller.prototype.initKonsenskiste = function (konsenskisteModel) {
@@ -44,7 +44,7 @@ define(["require", "exports", '../locationhash', 'factories/konsenskistecontroll
             this.konsenskisteModel = konsenskisteModel;
             this.konsenskisteController = this.konsenskisteControllerFactory.create(konsenskisteModel, konsenskisteViewModel, this.communicator);
             if (this.cxt)
-                this.konsenskisteController.setContext(this.cxt);
+                this.konsenskisteController.setViewModelContext(this.cxt);
 
             this.window.kkView(konsenskisteViewModel);
             this.window.state({ kokiId: konsenskisteModel && konsenskisteModel.id() });
@@ -57,7 +57,7 @@ define(["require", "exports", '../locationhash', 'factories/konsenskistecontroll
 
         Controller.prototype.setContext = function (cxt) {
             this.cxt = cxt;
-            this.konsenskisteController.setContext(cxt);
+            this.konsenskisteController.setViewModelContext(cxt);
             return this;
         };
 
