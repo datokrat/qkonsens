@@ -1,22 +1,22 @@
-define(["require", "exports", 'kernaussagemodel', 'contentmodel', 'rating', 'discussion', 'factories/event', 'observable'], function(require, exports, kernaussageModel, Content, Rating, Discussion, EventFactory, Obs) {
-    var Model = (function () {
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+define(["require", "exports", 'kernaussagemodel', 'kelement', 'factories/event', 'observable'], function(require, exports, KernaussageModel, KElement, EventFactory, Obs) {
+    var Model = (function (_super) {
+        __extends(Model, _super);
         function Model(context) {
             if (typeof context === "undefined") { context = new ModelContext; }
-            this.id = ko.observable();
-            this.general = ko.observable(new Content.General);
-            this.context = ko.observable(new Content.Context);
-            this.rating = ko.observable(new Rating.Model);
+            _super.call(this);
             this.childKas = new Obs.ObservableArrayExtender(ko.observableArray());
             this.error = ko.observable();
             this.loading = ko.observable();
-            this.discussion = ko.observable(new Discussion.Model);
             this.factoryContext = context;
         }
         Model.prototype.set = function (model) {
-            this.id(model.id());
-            this.general().set(model.general());
-            this.context().set(model.context());
-            this.rating().set(model.rating());
+            KElement.Model.prototype.set.apply(this, arguments);
             this.setChildKas(model.childKas.get());
             this.loading(model.loading());
             this.error(model.error());
@@ -24,13 +24,13 @@ define(["require", "exports", 'kernaussagemodel', 'contentmodel', 'rating', 'dis
 
         Model.prototype.setChildKas = function (other) {
             this.childKas.set(other.map(function (otherKa) {
-                var ka = new kernaussageModel.Model();
+                var ka = new KernaussageModel.Model();
                 ka.set(otherKa);
                 return ka;
             }));
         };
         return Model;
-    })();
+    })(KElement.Model);
     exports.Model = Model;
 
     var ChildKaEventArgs = (function () {

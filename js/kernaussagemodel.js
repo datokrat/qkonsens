@@ -1,20 +1,19 @@
-define(["require", "exports", 'contentmodel', 'rating', 'discussion'], function(require, exports, Content, Rating, Discussion) {
-    var Model = (function () {
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+define(["require", "exports", 'kelement'], function(require, exports, KElement) {
+    var Model = (function (_super) {
+        __extends(Model, _super);
         function Model() {
-            this.id = ko.observable();
-            this.general = ko.observable(new Content.General);
-            this.context = ko.observable(new Content.Context);
-            this.rating = ko.observable(new Rating.Model);
-            this.discussion = ko.observable(new Discussion.Model);
+            _super.apply(this, arguments);
         }
         Model.prototype.set = function (other) {
-            this.id(other.id());
-            this.general(other.general());
-            this.context(other.context());
-            this.rating(other.rating());
-            this.discussion(other.discussion());
+            KElement.Model.prototype.set.apply(this, arguments);
         };
         return Model;
-    })();
+    })(KElement.Model);
     exports.Model = Model;
 });

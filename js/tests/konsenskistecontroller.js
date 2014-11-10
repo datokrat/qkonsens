@@ -73,9 +73,6 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenski
             test.assert(function () {
                 return viewModel.childKas().length == 1;
             });
-            test.assert(function () {
-                return !viewModel.childKas()[0].isActive();
-            });
         };
 
         Tests.prototype.testRemoveChildKa = function () {

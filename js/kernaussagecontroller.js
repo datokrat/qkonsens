@@ -5,7 +5,6 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'contentviewmodel'
         }
         Controller.prototype.init = function (model, viewModel, communicator) {
             var _this = this;
-            viewModel.isActive = ko.observable();
             this.viewModel = viewModel;
 
             viewModel.context = ko.observable(new ContentViewModel.Context);

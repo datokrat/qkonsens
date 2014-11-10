@@ -63,7 +63,6 @@ export class Tests extends unit.TestClass {
 		
 		test.assert(() => viewModel.childKas()[0].general().title() == 'Begriff Basisdemokratie');
 		test.assert(() => viewModel.childKas().length == 1);
-		test.assert(() => !viewModel.childKas()[0].isActive());
 	}
 	
 	testRemoveChildKa() {

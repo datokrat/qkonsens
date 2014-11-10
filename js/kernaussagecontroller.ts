@@ -23,7 +23,6 @@ export class Controller {
 	}
 	
 	private init(model: mdl.Model, viewModel: vm.ViewModel, communicator: com.Main) {
-		viewModel.isActive = ko.observable<boolean>();
 		this.viewModel = viewModel;
 		
 		viewModel.context = ko.observable( new ContentViewModel.Context );

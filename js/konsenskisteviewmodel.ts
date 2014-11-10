@@ -6,14 +6,11 @@ import Rating = require('rating')
 import Comment = require('comment')
 import Discussion = require('discussion')
 
-export class ViewModel {
+import KElement = require('kelement');
+
+export class ViewModel extends KElement.ViewModel {
 	public error: Obs.Observable<string>;
 	public loading: Obs.Observable<boolean>;
-	
-	public general: Obs.Observable<Content.General>;
-	public context: Obs.Observable<Content.Context>;
-	public rating: Obs.Observable<Rating.ViewModel>;
-	public discussion: Obs.Observable<Discussion.ViewModel>;
 	
 	public childKas: Obs.ObservableArray<Kernaussage.ViewModel>;
 	public newKaFormVisible: Obs.Observable<boolean>;
