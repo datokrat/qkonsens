@@ -86,12 +86,11 @@ class TestClass extends unit.TestClass {
 	}
 	
 	removeComment() {
-		var comment = new Comment.Model();
 		var serverDiscussable = { id: ko.observable(2), discussion: ko.observable(new Discussion.Model()) };
 		serverDiscussable.discussion().comments.push(new Comment.Model);
 		serverDiscussable.discussion().comments.get()[0].id = 10;
 		
-		var successCtr = 0, errorCtr = 0, receiptCtr = 0;
+		var successCtr = 0, errorCtr = 0;
 		this.communicator.setTestDiscussable(serverDiscussable);
 		this.communicator.commentRemoved.subscribe(args => ++successCtr);
 		this.communicator.commentRemovalError.subscribe(args => ++errorCtr);
@@ -101,6 +100,33 @@ class TestClass extends unit.TestClass {
 		test.assert(() => successCtr == 1);
 		test.assert(() => errorCtr == 0);
 		test.assert(() => serverDiscussable.discussion().comments.get().length == 0);
+	}
+	
+	removeNonExistantComment() {
+		var serverDiscussable = { id: ko.observable(2), discussion: ko.observable(new Discussion.Model()) };
+		
+		var successCtr = 0, errorCtr = 0;
+		this.communicator.setTestDiscussable(serverDiscussable);
+		this.communicator.commentRemoved.subscribe(args => ++successCtr);
+		this.communicator.commentRemovalError.subscribe(args => ++errorCtr);
+		
+		this.communicator.removeComment({ discussableId: 2, commentId: 10 });
+		
+		test.assert(() => successCtr == 0);
+		test.assert(() => errorCtr == 1);
+		test.assert(() => serverDiscussable.discussion().comments.get().length == 0);
+	}
+	
+	removeCommentOfNonExistant() {
+		var successCtr = 0;
+		var errorCtr = 0;
+		this.communicator.commentRemoved.subscribe(args => ++successCtr);
+		this.communicator.commentRemovalError.subscribe(args => ++errorCtr);
+		
+		this.communicator.removeComment({ discussableId: 2, commentId: 10 });
+		
+		test.assert(() => successCtr == 0);
+		test.assert(() => errorCtr == 1);
 	}
 }
 

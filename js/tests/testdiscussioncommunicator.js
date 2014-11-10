@@ -37,10 +37,18 @@ define(["require", "exports", '../event', '../common', '../itemcontainer', 'test
         };
 
         TestDiscussableCommunicator.prototype.removeComment = function (args) {
-            Common.Coll.removeOneByPredicate(this.testItemContainers.get(args.discussableId).discussion().comments.get(), function (comment) {
-                return comment.id == args.commentId;
-            });
-            this.commentRemoved.raise({ discussableId: args.discussableId, commentId: args.commentId });
+            try  {
+                var comments = this.testItemContainers.get(args.discussableId).discussion().comments.get();
+                var predicate = function (comment) {
+                    return comment.id == args.commentId;
+                };
+                if (Common.Coll.removeOneByPredicate(comments, predicate))
+                    this.commentRemoved.raise({ discussableId: args.discussableId, commentId: args.commentId });
+                else
+                    this.commentRemovalError.raise({ discussableId: args.discussableId, commentId: args.commentId, error: 'comment not found' });
+            } catch (e) {
+                this.commentRemovalError.raise({ discussableId: args.discussableId, commentId: args.commentId, error: 'discussable not found' });
+            }
         };
 
         TestDiscussableCommunicator.prototype.setTestDiscussable = function (discussable) {

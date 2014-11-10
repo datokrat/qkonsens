@@ -133,7 +133,7 @@ export interface RemovedArgs {
 
 export interface RemovalErrorArgs {
 	discussableId: number;
-	comment: number;
+	commentId: number;
 	error: any;
 }
 

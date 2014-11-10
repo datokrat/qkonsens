@@ -55,9 +55,17 @@ class TestDiscussableCommunicator implements DiscussionCommunicator.Base {
 	}
 	
 	public removeComment(args: DiscussionCommunicator.RemovalArgs) {
-		Common.Coll.removeOneByPredicate(this.testItemContainers.get(args.discussableId).discussion().comments.get(), 
-			comment => comment.id == args.commentId); //TODO: Should comparison be based on ReferenceId instead?
-		this.commentRemoved.raise({ discussableId: args.discussableId, commentId: args.commentId });
+		try {
+			var comments = this.testItemContainers.get(args.discussableId).discussion().comments.get();
+			var predicate = comment => comment.id == args.commentId; //TODO: Should comparison be based on ReferenceId instead?
+			if(Common.Coll.removeOneByPredicate(comments, predicate))
+				this.commentRemoved.raise({ discussableId: args.discussableId, commentId: args.commentId });
+			else
+				this.commentRemovalError.raise({ discussableId: args.discussableId, commentId: args.commentId, error: 'comment not found' });
+		}
+		catch(e) {
+			this.commentRemovalError.raise({ discussableId: args.discussableId, commentId: args.commentId, error: 'discussable not found' });
+		}
 	}
 	
 	public setTestDiscussable(discussable: Discussion.DiscussableModel) {
