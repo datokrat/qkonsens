@@ -1,6 +1,6 @@
 <div class="cmt">
-	<!-- ko if: $root.isAdmin -->
-		<a class="clickable symbol" style="float: right" data-bind="click: remove_onClick">x</a>
+	<!-- ko if: true -->
+		<a class="clickable symbol" style="float: right" data-bind="click: removeClick">x</a>
 	<!-- /ko -->
 	<!-- ko if: content().title() && content().title().length -->
 		<h1 class="title" data-bind="text: content().title"></h1>

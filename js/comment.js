@@ -18,12 +18,21 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'contentmodel'], f
 
     var Controller = (function () {
         function Controller(model, viewModel, communicator) {
+            var _this = this;
             viewModel.content = ko.observable();
+            viewModel.removeClick = function () {
+                console.log('removeClick', _this.commentableModel);
+                _this.commentableModel && _this.commentableModel.removeComment(model);
+            };
 
             this.contentSynchronizer = new KSync.GeneralContentSynchronizer(communicator).setViewModelChangedHandler(function (content) {
                 return viewModel.content(content);
             }).setModelObservable(model.content);
         }
+        Controller.prototype.setCommentableModel = function (commentableModel) {
+            this.commentableModel = commentableModel;
+        };
+
         Controller.prototype.dispose = function () {
             this.contentSynchronizer.dispose();
         };

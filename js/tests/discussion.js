@@ -112,7 +112,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../discussion', 'te
             });
         };
 
-        TestClass.prototype.removeComment = function () {
+        TestClass.prototype.communicatorRemoveComment = function () {
             var serverDiscussable = { id: ko.observable(2), discussion: ko.observable(new Discussion.Model()) };
             serverDiscussable.discussion().comments.push(new Comment.Model);
             serverDiscussable.discussion().comments.get()[0].id = 10;
@@ -139,7 +139,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../discussion', 'te
             });
         };
 
-        TestClass.prototype.removeNonExistantComment = function () {
+        TestClass.prototype.communicatorRemoveNonExistantComment = function () {
             var serverDiscussable = { id: ko.observable(2), discussion: ko.observable(new Discussion.Model()) };
 
             var successCtr = 0, errorCtr = 0;
@@ -164,7 +164,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../discussion', 'te
             });
         };
 
-        TestClass.prototype.removeCommentOfNonExistant = function () {
+        TestClass.prototype.communicatorRemoveCommentOfNonExistant = function () {
             var successCtr = 0;
             var errorCtr = 0;
             this.communicator.commentRemoved.subscribe(function (args) {
@@ -181,6 +181,30 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../discussion', 'te
             });
             test.assert(function () {
                 return errorCtr == 1;
+            });
+        };
+
+        TestClass.prototype.controllerRemoveComment = function () {
+            console.log('controllerRemoveComment');
+            var model = new Discussion.Model();
+            var viewModel = new Discussion.ViewModel();
+            var communicator = new DiscussionCommunicator();
+            var controller = new Discussion.Controller(model, viewModel, communicator);
+            controller.setDiscussableModel({ id: ko.observable(2), discussion: ko.observable(model) });
+
+            var serverDiscussable = { id: ko.observable(2), discussion: ko.observable(new Discussion.Model) };
+            var serverComment = new Comment.Model();
+            serverComment.id = 13;
+            serverDiscussable.discussion().comments.push(serverComment);
+            communicator.setTestDiscussable(serverDiscussable);
+
+            var comment = new Comment.Model();
+            comment.id = 13;
+            model.comments.push(comment);
+            viewModel.comments()[0].removeClick();
+
+            test.assert(function () {
+                return viewModel.comments().length == 0;
             });
         };
         return TestClass;

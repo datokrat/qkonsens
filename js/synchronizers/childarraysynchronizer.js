@@ -44,6 +44,11 @@ define(["require", "exports"], function(require, exports) {
             return this;
         };
 
+        ObservingChildArraySynchronizer.prototype.setInitializationHandler = function (handler) {
+            this.innerSync.setInitializationHandler(handler);
+            return this;
+        };
+
         ObservingChildArraySynchronizer.prototype.initState = function () {
             if (this.models && this.viewModels)
                 this.innerSync.setInitialState(this.models.get());
@@ -96,6 +101,12 @@ define(["require", "exports"], function(require, exports) {
             return this;
         };
 
+        ChildArraySynchronizer.prototype.setInitializationHandler = function (handler) {
+            this.initializationHandler = handler || (function (v) {
+            });
+            return this;
+        };
+
         ChildArraySynchronizer.prototype.setInitialState = function (models) {
             this.clear();
             models.forEach(this.inserted.bind(this));
@@ -109,6 +120,7 @@ define(["require", "exports"], function(require, exports) {
                 this.entryKeys.push(m);
                 this.entryValues.push({ model: m, viewModel: v, controller: c });
                 this.viewModelInsertionHandler(v);
+                this.initializationHandler && this.initializationHandler(m, v, c);
             } else
                 throw new DuplicateInsertionException();
         };

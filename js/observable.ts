@@ -24,6 +24,7 @@ export interface ObservableArrayEx<T> {
 	
 	push(item: T): void;
 	remove(item: T): void;
+	removeByPredicate(predicate: (item: T) => boolean): void;
 
 	pushed: Events.Event<T>;
 	removed: Events.Event<T>;
@@ -55,6 +56,11 @@ export class ObservableArrayExtender<T> implements ObservableArrayEx<T> {
 	public remove(item: T): void {
 		this.innerObservable.remove(item);
 		this.removed.raise(item);
+	}
+	
+	public removeByPredicate(predicate: (item: T) => boolean) {
+		var filtered = this.innerObservable().filter(predicate).reverse();
+		filtered.forEach(item => this.remove(item));
 	}
 	
 	public subscribe( handler: (T) => void ): Subscription {

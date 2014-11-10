@@ -1,5 +1,6 @@
 import Obs = require('observable')
 import Events = require('event')
+import Common = require('common');
 import DiscussionCommunicator = require('discussioncommunicator')
 import Comment = require('comment')
 import CommentSynchronizer = require('synchronizers/comment')
@@ -19,6 +20,8 @@ export class Model {
 	commentsLoaded: Obs.Observable<boolean> = ko.observable<boolean>();
 	commentsLoading: Obs.Observable<boolean> = ko.observable<boolean>();
 	error: Obs.Observable<string> = ko.observable<string>();
+	
+	removeComment: (comment: Comment.Model) => void;
 }
 
 export class ViewModel {
@@ -51,16 +54,39 @@ export class Controller {
 			communicator.appendComment(this.discussableModel.id(), comment);
 		};
 		
+		this.model.removeComment = (comment: Comment.Model) => {
+			console.log('removeComment');
+			this.communicator.removeComment({ discussableId: this.discussableModel.id(), commentId: comment.id });
+		};
+		
 		this.commentSynchronizer = new CommentSynchronizer(this.communicator.content)
 			.setViewModelObservable(this.viewModel.comments)
-			.setModelObservable(this.model.comments);
+			.setModelObservable(this.model.comments)
+			.setInitializationHandler((m, v, c) => {
+				c.setCommentableModel(this.model);
+			});
 		
 		this.communicatorSubscriptions = [
 			this.communicator.commentsReceived.subscribe(this.onCommentsReceived),
 			this.communicator.commentsReceiptError.subscribe(this.onCommentsReceiptError),
 			this.communicator.commentAppended.subscribe(this.onCommentAppended.bind(this)),
-			this.communicator.commentAppendingError.subscribe(this.onCommentAppendingError.bind(this))
+			this.communicator.commentAppendingError.subscribe(this.onCommentAppendingError.bind(this)),
+			this.communicator.commentRemoved.subscribe(this.onCommentRemoved.bind(this)),
+			this.communicator.commentRemovalError.subscribe(this.onCommentRemovalError.bind(this)),
 		];
+	}
+	
+	public onCommentRemoved(args: DiscussionCommunicator.RemovedArgs) {
+		console.log('onCommentRemoved', arguments, this);
+		if(args.discussableId == this.discussableModel.id()) {
+			this.model.comments.removeByPredicate(c => c.id == args.commentId);
+		}
+	}
+	
+	public onCommentRemovalError(args: DiscussionCommunicator.RemovalErrorArgs) {
+		if(args.discussableId == this.discussableModel.id()) {
+			console.log('comment[' + args.commentId + '] could not be removed');
+		}
 	}
 	
 	public onCommentAppended(args: DiscussionCommunicator.AppendedArgs) {

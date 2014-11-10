@@ -70,15 +70,39 @@ define(["require", "exports", 'observable', 'comment', 'synchronizers/comment'],
                 communicator.appendComment(_this.discussableModel.id(), comment);
             };
 
-            this.commentSynchronizer = new CommentSynchronizer(this.communicator.content).setViewModelObservable(this.viewModel.comments).setModelObservable(this.model.comments);
+            this.model.removeComment = function (comment) {
+                console.log('removeComment');
+                _this.communicator.removeComment({ discussableId: _this.discussableModel.id(), commentId: comment.id });
+            };
+
+            this.commentSynchronizer = new CommentSynchronizer(this.communicator.content).setViewModelObservable(this.viewModel.comments).setModelObservable(this.model.comments).setInitializationHandler(function (m, v, c) {
+                c.setCommentableModel(_this.model);
+            });
 
             this.communicatorSubscriptions = [
                 this.communicator.commentsReceived.subscribe(this.onCommentsReceived),
                 this.communicator.commentsReceiptError.subscribe(this.onCommentsReceiptError),
                 this.communicator.commentAppended.subscribe(this.onCommentAppended.bind(this)),
-                this.communicator.commentAppendingError.subscribe(this.onCommentAppendingError.bind(this))
+                this.communicator.commentAppendingError.subscribe(this.onCommentAppendingError.bind(this)),
+                this.communicator.commentRemoved.subscribe(this.onCommentRemoved.bind(this)),
+                this.communicator.commentRemovalError.subscribe(this.onCommentRemovalError.bind(this))
             ];
         }
+        Controller.prototype.onCommentRemoved = function (args) {
+            console.log('onCommentRemoved', arguments, this);
+            if (args.discussableId == this.discussableModel.id()) {
+                this.model.comments.removeByPredicate(function (c) {
+                    return c.id == args.commentId;
+                });
+            }
+        };
+
+        Controller.prototype.onCommentRemovalError = function (args) {
+            if (args.discussableId == this.discussableModel.id()) {
+                console.log('comment[' + args.commentId + '] could not be removed');
+            }
+        };
+
         Controller.prototype.onCommentAppended = function (args) {
             if (args.discussableId == this.discussableModel.id()) {
                 this.communicator.queryCommentsOf(this.discussableModel.id());

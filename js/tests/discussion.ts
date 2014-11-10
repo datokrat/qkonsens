@@ -85,7 +85,7 @@ class TestClass extends unit.TestClass {
 		test.assert(() => receiptCtr == 1);
 	}
 	
-	removeComment() {
+	communicatorRemoveComment() {
 		var serverDiscussable = { id: ko.observable(2), discussion: ko.observable(new Discussion.Model()) };
 		serverDiscussable.discussion().comments.push(new Comment.Model);
 		serverDiscussable.discussion().comments.get()[0].id = 10;
@@ -102,7 +102,7 @@ class TestClass extends unit.TestClass {
 		test.assert(() => serverDiscussable.discussion().comments.get().length == 0);
 	}
 	
-	removeNonExistantComment() {
+	communicatorRemoveNonExistantComment() {
 		var serverDiscussable = { id: ko.observable(2), discussion: ko.observable(new Discussion.Model()) };
 		
 		var successCtr = 0, errorCtr = 0;
@@ -117,7 +117,7 @@ class TestClass extends unit.TestClass {
 		test.assert(() => serverDiscussable.discussion().comments.get().length == 0);
 	}
 	
-	removeCommentOfNonExistant() {
+	communicatorRemoveCommentOfNonExistant() {
 		var successCtr = 0;
 		var errorCtr = 0;
 		this.communicator.commentRemoved.subscribe(args => ++successCtr);
@@ -127,6 +127,26 @@ class TestClass extends unit.TestClass {
 		
 		test.assert(() => successCtr == 0);
 		test.assert(() => errorCtr == 1);
+	}
+	
+	controllerRemoveComment() {
+		console.log('controllerRemoveComment');
+		var model = new Discussion.Model();
+		var viewModel = new Discussion.ViewModel();
+		var communicator = new DiscussionCommunicator();
+		var controller = new Discussion.Controller(model, viewModel, communicator);
+		controller.setDiscussableModel({ id: ko.observable(2), discussion: ko.observable(model) });
+		
+		var serverDiscussable = { id: ko.observable(2), discussion: ko.observable(new Discussion.Model) };
+		var serverComment = new Comment.Model(); serverComment.id = 13;
+		serverDiscussable.discussion().comments.push(serverComment);
+		communicator.setTestDiscussable(serverDiscussable);
+		
+		var comment = new Comment.Model(); comment.id= 13;
+		model.comments.push(comment);
+		viewModel.comments()[0].removeClick();
+		
+		test.assert(() => viewModel.comments().length == 0);
 	}
 }
 

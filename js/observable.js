@@ -26,6 +26,14 @@ define(["require", "exports", 'event'], function(require, exports, Events) {
             this.removed.raise(item);
         };
 
+        ObservableArrayExtender.prototype.removeByPredicate = function (predicate) {
+            var _this = this;
+            var filtered = this.innerObservable().filter(predicate).reverse();
+            filtered.forEach(function (item) {
+                return _this.remove(item);
+            });
+        };
+
         ObservableArrayExtender.prototype.subscribe = function (handler) {
             return this.innerObservable.subscribe(handler);
         };
