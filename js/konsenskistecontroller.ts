@@ -21,29 +21,23 @@ import KSync = require('synchronizers/ksynchronizers')
 import KokiSync = require('synchronizers/kokisynchronizers')
 import CommentSynchronizer = require('synchronizers/comment')
 
+import KElement = require('kelement');
+
 export interface Controller {
 	dispose(): void;
 	setViewModelContext(cxt: ViewModelContext): void;
 }
 
-export class ControllerImpl implements Controller {
+export class ControllerImpl extends KElement.Controller<mdl.Model, vm.ViewModel, KokiCommunicator.Main> implements Controller {
 	constructor(model: mdl.Model, viewModel: vm.ViewModel, communicator: KokiCommunicator.Main) {
+		super(model, viewModel, communicator);
 		this.init(model, viewModel, communicator);
 	}
 	
 	private init(model: mdl.Model, viewModel: vm.ViewModel, communicator: KokiCommunicator.Main) {
-		this.model = model;
-		this.viewModel = viewModel;
-		this.communicator = communicator;
-		
 		this.initCommunicator();
-		
 		this.initProperties();
 		this.initKas();
-		this.initDiscussion();
-		this.initGeneralContent();
-		this.initContext();
-		this.initRating();
 	}
 	
 	public setViewModelContext(cxt: ViewModelContext) {
@@ -85,43 +79,6 @@ export class ControllerImpl implements Controller {
 			.setModelObservable(this.model.childKas);
 	}
 	
-	private initDiscussion() {
-		this.viewModel.discussion = ko.observable<Discussion.ViewModel>();
-		this.discussionSynchronizer = new KSync.DiscussionSynchronizer(this.communicator.discussion);
-		this.discussionSynchronizer
-			.setDiscussableModel(this.model)
-			.setDiscussableViewModel(this.viewModel)
-			.setViewModelObservable(this.viewModel.discussion)
-			.setModelObservable(this.model.discussion);
-	}
-	
-	private initGeneralContent() {
-		this.viewModel.general = ko.observable<ContentViewModel.General>();
-		
-		this.generalContentSynchronizer = new KSync.GeneralContentSynchronizer(this.communicator.content)
-			.setViewModelChangedHandler( value => this.viewModel.general(value) )
-			.setModelObservable(this.model.general);
-	}
-	
-	private initContext() {
-		this.viewModel.context = ko.observable<ContentViewModel.Context>();
-		
-		this.contextSynchronizer = new KSync.ContextSynchronizer(this.communicator.content)
-			.setViewModelChangedHandler( value => this.viewModel.context(value) )
-			.setModelObservable(this.model.context);
-	}
-	
-	private initRating() {
-		this.viewModel.rating = ko.observable<Rating.ViewModel>();
-		
-		this.ratingSynchronizer = new KSync.RatingSynchronizer(this.communicator.rating);
-		this.ratingSynchronizer
-			.setRatableModel(this.model);
-		this.ratingSynchronizer
-			.setViewModelChangedHandler( value => this.viewModel.rating(value) )
-			.setModelObservable(this.model.rating);
-	}
-	
 	private initCommunicator() {
 		this.communicatorSubscriptions = ([
 			this.communicator.received.subscribe(this.onKokiReceived),
@@ -140,25 +97,13 @@ export class ControllerImpl implements Controller {
 	}
 	
 	public dispose() {
-		this.generalContentSynchronizer.dispose();
-		this.contextSynchronizer.dispose();
-		this.ratingSynchronizer.dispose();
-		this.discussionSynchronizer.dispose();
+		KElement.Controller.prototype.dispose.apply(this, arguments);
 		
 		this.modelSubscriptions.forEach( s => s.undo() );
 		this.communicatorSubscriptions.forEach( s => s.undo() );
 	}
 	
-	private model: mdl.Model;
-	private viewModel: vm.ViewModel;
-	private communicator: KokiCommunicator.Main;
-	private cxt: ViewModelContext;
-		
-	private generalContentSynchronizer: KSync.GeneralContentSynchronizer;
-	private contextSynchronizer: KSync.ContextSynchronizer;
-	private ratingSynchronizer: KSync.RatingSynchronizer;
 	private kaSynchronizer: KokiSync.KaSynchronizer;
-	private discussionSynchronizer: KSync.DiscussionSynchronizer;
 	
 	private modelSubscriptions: evt.Subscription[] = [];
 	private communicatorSubscriptions: evt.Subscription[] = [];

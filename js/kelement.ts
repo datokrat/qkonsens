@@ -74,9 +74,6 @@ export class Controller<Mdl extends Model, Vm extends ViewModel, Com extends Com
 		this.contextSynchronizer.dispose();
 		this.ratingSynchronizer.dispose();
 		this.discussionSynchronizer.dispose();
-		
-		this.modelSubscriptions.forEach( s => s.undo() );
-		this.communicatorSubscriptions.forEach( s => s.undo() );
 	}
 	
 	private initDiscussion() {
@@ -131,7 +128,4 @@ export class Controller<Mdl extends Model, Vm extends ViewModel, Com extends Com
 	public contextSynchronizer: KSync.ContextSynchronizer;
 	public ratingSynchronizer: KSync.RatingSynchronizer;
 	public discussionSynchronizer: KSync.DiscussionSynchronizer;
-	
-	private modelSubscriptions: Evt.Subscription[] = [];
-	private communicatorSubscriptions: Evt.Subscription[] = [];
 }

@@ -27,8 +27,6 @@ define(["require", "exports", 'contentmodel', 'rating', 'discussion', 'synchroni
 
     var Controller = (function () {
         function Controller(model, viewModel, communicator) {
-            this.modelSubscriptions = [];
-            this.communicatorSubscriptions = [];
             this.model = model;
             this.viewModel = viewModel;
             this.communicator = communicator;
@@ -43,13 +41,6 @@ define(["require", "exports", 'contentmodel', 'rating', 'discussion', 'synchroni
             this.contextSynchronizer.dispose();
             this.ratingSynchronizer.dispose();
             this.discussionSynchronizer.dispose();
-
-            this.modelSubscriptions.forEach(function (s) {
-                return s.undo();
-            });
-            this.communicatorSubscriptions.forEach(function (s) {
-                return s.undo();
-            });
         };
 
         Controller.prototype.initDiscussion = function () {

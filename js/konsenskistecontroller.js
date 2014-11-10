@@ -1,7 +1,15 @@
-define(["require", "exports", 'factories/kernaussagemodel', 'synchronizers/ksynchronizers', 'synchronizers/kokisynchronizers'], function(require, exports, KernaussageFactory, KSync, KokiSync) {
-    var ControllerImpl = (function () {
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+define(["require", "exports", 'factories/kernaussagemodel', 'synchronizers/kokisynchronizers', 'kelement'], function(require, exports, KernaussageFactory, KokiSync, KElement) {
+    var ControllerImpl = (function (_super) {
+        __extends(ControllerImpl, _super);
         function ControllerImpl(model, viewModel, communicator) {
             var _this = this;
+            _super.call(this, model, viewModel, communicator);
             this.onKokiReceived = function (args) {
                 if (_this.model.id() == args.konsenskiste.id())
                     _this.model.set(args.konsenskiste);
@@ -15,18 +23,9 @@ define(["require", "exports", 'factories/kernaussagemodel', 'synchronizers/ksync
             this.init(model, viewModel, communicator);
         }
         ControllerImpl.prototype.init = function (model, viewModel, communicator) {
-            this.model = model;
-            this.viewModel = viewModel;
-            this.communicator = communicator;
-
             this.initCommunicator();
-
             this.initProperties();
             this.initKas();
-            this.initDiscussion();
-            this.initGeneralContent();
-            this.initContext();
-            this.initRating();
         };
 
         ControllerImpl.prototype.setViewModelContext = function (cxt) {
@@ -67,41 +66,6 @@ define(["require", "exports", 'factories/kernaussagemodel', 'synchronizers/ksync
             this.kaSynchronizer.setViewModelObservable(this.viewModel.childKas).setModelObservable(this.model.childKas);
         };
 
-        ControllerImpl.prototype.initDiscussion = function () {
-            this.viewModel.discussion = ko.observable();
-            this.discussionSynchronizer = new KSync.DiscussionSynchronizer(this.communicator.discussion);
-            this.discussionSynchronizer.setDiscussableModel(this.model).setDiscussableViewModel(this.viewModel).setViewModelObservable(this.viewModel.discussion).setModelObservable(this.model.discussion);
-        };
-
-        ControllerImpl.prototype.initGeneralContent = function () {
-            var _this = this;
-            this.viewModel.general = ko.observable();
-
-            this.generalContentSynchronizer = new KSync.GeneralContentSynchronizer(this.communicator.content).setViewModelChangedHandler(function (value) {
-                return _this.viewModel.general(value);
-            }).setModelObservable(this.model.general);
-        };
-
-        ControllerImpl.prototype.initContext = function () {
-            var _this = this;
-            this.viewModel.context = ko.observable();
-
-            this.contextSynchronizer = new KSync.ContextSynchronizer(this.communicator.content).setViewModelChangedHandler(function (value) {
-                return _this.viewModel.context(value);
-            }).setModelObservable(this.model.context);
-        };
-
-        ControllerImpl.prototype.initRating = function () {
-            var _this = this;
-            this.viewModel.rating = ko.observable();
-
-            this.ratingSynchronizer = new KSync.RatingSynchronizer(this.communicator.rating);
-            this.ratingSynchronizer.setRatableModel(this.model);
-            this.ratingSynchronizer.setViewModelChangedHandler(function (value) {
-                return _this.viewModel.rating(value);
-            }).setModelObservable(this.model.rating);
-        };
-
         ControllerImpl.prototype.initCommunicator = function () {
             this.communicatorSubscriptions = ([
                 this.communicator.received.subscribe(this.onKokiReceived),
@@ -110,10 +74,7 @@ define(["require", "exports", 'factories/kernaussagemodel', 'synchronizers/ksync
         };
 
         ControllerImpl.prototype.dispose = function () {
-            this.generalContentSynchronizer.dispose();
-            this.contextSynchronizer.dispose();
-            this.ratingSynchronizer.dispose();
-            this.discussionSynchronizer.dispose();
+            KElement.Controller.prototype.dispose.apply(this, arguments);
 
             this.modelSubscriptions.forEach(function (s) {
                 return s.undo();
@@ -123,6 +84,6 @@ define(["require", "exports", 'factories/kernaussagemodel', 'synchronizers/ksync
             });
         };
         return ControllerImpl;
-    })();
+    })(KElement.Controller);
     exports.ControllerImpl = ControllerImpl;
 });
