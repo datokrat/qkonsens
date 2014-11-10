@@ -46,8 +46,9 @@ export class Controller {
 		this.viewModel.submitCommentClick = () => {
 			var comment = new Comment.Model();
 			comment.content().text(this.viewModel.newCommentText());
-			communicator.appendComment(this.discussableModel.id(), comment);
+			this.viewModel.newCommentText('');
 			this.viewModel.newCommentDisabled(true);
+			communicator.appendComment(this.discussableModel.id(), comment);
 		};
 		
 		this.commentSynchronizer = new CommentSynchronizer(this.communicator.content)
@@ -64,10 +65,12 @@ export class Controller {
 	
 	public onCommentAppended(args: DiscussionCommunicator.AppendedArgs) {
 		this.communicator.queryCommentsOf(this.discussableModel.id());
+		this.viewModel.newCommentDisabled(false);
 	}
 	
 	public onCommentAppendingError(args: DiscussionCommunicator.AppendingErrorArgs) {
 		console.log(args);
+		alert('Beitrag konnte nicht erstellt werden. Bitte lade die Seite neu!');
 	}
 	
 	public setDiscussableModel(discussableModel: DiscussableModel) {

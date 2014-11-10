@@ -1,4 +1,5 @@
 import Events = require('event')
+import Common = require('common');
 import Comment = require('comment')
 import ContentCommunicator = require('contentcommunicator')
 //import DiscussableParser = require('discoparsers/discussable')
@@ -32,7 +33,38 @@ export class Main implements Base {
 	}
 	
 	public appendComment(discussableId: number, comment: Comment.Model) {
-		throw new Error('not implemented');
+		var onError = error => this.commentAppendingError.raise({ discussableId: discussableId, error: error });
+		var content: Disco.Ontology.Content;
+		var post: Disco.Ontology.Post;
+		var reference: Disco.Ontology.PostReference;
+		Common.Callbacks.batch([
+			r => {
+				content = new Disco.Ontology.Content();
+				content.CultureId = '2';
+				content.Title = comment.content().title();
+				content.Text = comment.content().text();
+				discoContext.add(content);
+				discoContext.saveChanges(() => r()).fail(onError);
+			},
+			r => {
+				post = new Disco.Ontology.Post();
+				post.ContentId = content.Id;
+				post.PostTypeId = '2';
+				discoContext.add(post);
+				discoContext.saveChanges(() => r()).fail(onError);
+			},
+			r => {
+				reference = new Disco.Ontology.PostReference();
+				reference.ReferrerId = post.Id;
+				reference.ReferreeId = discussableId.toString();
+				reference.ReferenceTypeId = '2';
+				discoContext.add(reference);
+				discoContext.saveChanges().then(() => r()).fail(onError);
+			}
+		], () => {
+			comment.id = parseInt(post.Id);
+			this.commentAppended.raise({ discussableId: discussableId, comment: comment });
+		});
 	}
 	
 	private queryRawCommentsOf(discussableId: number) {
@@ -80,5 +112,5 @@ export interface AppendedArgs {
 
 export interface AppendingErrorArgs {
 	discussableId: number;
-	error: Error;
+	error: any;
 }

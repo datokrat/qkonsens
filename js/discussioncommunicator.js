@@ -1,4 +1,4 @@
-define(["require", "exports", 'event', 'comment', 'discocontext'], function(require, exports, Events, Comment, discoContext) {
+define(["require", "exports", 'event', 'common', 'comment', 'discocontext'], function(require, exports, Events, Common, Comment, discoContext) {
     var Main = (function () {
         function Main() {
             this.commentsReceived = new Events.EventImpl();
@@ -15,7 +15,47 @@ define(["require", "exports", 'event', 'comment', 'discocontext'], function(requ
         };
 
         Main.prototype.appendComment = function (discussableId, comment) {
-            throw new Error('not implemented');
+            var _this = this;
+            var onError = function (error) {
+                return _this.commentAppendingError.raise({ discussableId: discussableId, error: error });
+            };
+            var content;
+            var post;
+            var reference;
+            Common.Callbacks.batch([
+                function (r) {
+                    content = new Disco.Ontology.Content();
+                    content.CultureId = '2';
+                    content.Title = comment.content().title();
+                    content.Text = comment.content().text();
+                    discoContext.add(content);
+                    discoContext.saveChanges(function () {
+                        return r();
+                    }).fail(onError);
+                },
+                function (r) {
+                    post = new Disco.Ontology.Post();
+                    post.ContentId = content.Id;
+                    post.PostTypeId = '2';
+                    discoContext.add(post);
+                    discoContext.saveChanges(function () {
+                        return r();
+                    }).fail(onError);
+                },
+                function (r) {
+                    reference = new Disco.Ontology.PostReference();
+                    reference.ReferrerId = post.Id;
+                    reference.ReferreeId = discussableId.toString();
+                    reference.ReferenceTypeId = '2';
+                    discoContext.add(reference);
+                    discoContext.saveChanges().then(function () {
+                        return r();
+                    }).fail(onError);
+                }
+            ], function () {
+                comment.id = parseInt(post.Id);
+                _this.commentAppended.raise({ discussableId: discussableId, comment: comment });
+            });
         };
 
         Main.prototype.queryRawCommentsOf = function (discussableId) {

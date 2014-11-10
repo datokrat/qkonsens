@@ -65,8 +65,9 @@ define(["require", "exports", 'observable', 'comment', 'synchronizers/comment'],
             this.viewModel.submitCommentClick = function () {
                 var comment = new Comment.Model();
                 comment.content().text(_this.viewModel.newCommentText());
-                communicator.appendComment(_this.discussableModel.id(), comment);
+                _this.viewModel.newCommentText('');
                 _this.viewModel.newCommentDisabled(true);
+                communicator.appendComment(_this.discussableModel.id(), comment);
             };
 
             this.commentSynchronizer = new CommentSynchronizer(this.communicator.content).setViewModelObservable(this.viewModel.comments).setModelObservable(this.model.comments);
@@ -80,10 +81,12 @@ define(["require", "exports", 'observable', 'comment', 'synchronizers/comment'],
         }
         Controller.prototype.onCommentAppended = function (args) {
             this.communicator.queryCommentsOf(this.discussableModel.id());
+            this.viewModel.newCommentDisabled(false);
         };
 
         Controller.prototype.onCommentAppendingError = function (args) {
             console.log(args);
+            alert('Beitrag konnte nicht erstellt werden. Bitte lade die Seite neu!');
         };
 
         Controller.prototype.setDiscussableModel = function (discussableModel) {
