@@ -185,7 +185,6 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../discussion', 'te
         };
 
         TestClass.prototype.controllerRemoveComment = function () {
-            console.log('controllerRemoveComment');
             var model = new Discussion.Model();
             var viewModel = new Discussion.ViewModel();
             var communicator = new DiscussionCommunicator();

@@ -53,7 +53,6 @@ export class Main implements Base {
 				}
 			}
 		], () => {
-			console.log('ratingSubmitted', { ratableId: ratableId, rating: ScoreParser.fromDisco(discoRating.Score) });
 			this.ratingSubmitted.raise({ ratableId: ratableId, rating: ScoreParser.fromDisco(discoRating.Score) });
 		});
 	}

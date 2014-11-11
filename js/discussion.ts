@@ -55,7 +55,6 @@ export class Controller {
 		};
 		
 		this.model.removeComment = (comment: Comment.Model) => {
-			console.log('removeComment');
 			this.communicator.removeComment({ discussableId: this.discussableModel.id(), commentId: comment.id });
 		};
 		
@@ -77,7 +76,6 @@ export class Controller {
 	}
 	
 	public onCommentRemoved(args: DiscussionCommunicator.RemovedArgs) {
-		console.log('onCommentRemoved', arguments, this);
 		if(args.discussableId == this.discussableModel.id()) {
 			this.model.comments.removeByPredicate(c => c.id == args.commentId);
 		}
@@ -85,7 +83,7 @@ export class Controller {
 	
 	public onCommentRemovalError(args: DiscussionCommunicator.RemovalErrorArgs) {
 		if(args.discussableId == this.discussableModel.id()) {
-			console.log('comment[' + args.commentId + '] could not be removed');
+			console.error('comment[' + args.commentId + '] could not be removed');
 		}
 	}
 	
@@ -98,7 +96,6 @@ export class Controller {
 	
 	public onCommentAppendingError(args: DiscussionCommunicator.AppendingErrorArgs) {
 		if(args.discussableId == this.discussableModel.id()) {
-			console.log(args);
 			alert('Beitrag konnte nicht erstellt werden. Bitte lade die Seite neu!');
 		}
 	}

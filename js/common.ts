@@ -40,7 +40,6 @@ export class Coll {
 	}
 	
 	public static removeByPredicate<T>(collection: T[], predicate: (item: T) => boolean) {
-		console.log('removeByPredicate', arguments);
 		var filtered = collection.filter(predicate).reverse();
 		filtered.forEach((value, index) => collection.splice(index, 1));
 	}

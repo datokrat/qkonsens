@@ -27,7 +27,6 @@ export class Controller {
 	constructor(model: Model, viewModel: ViewModel, communicator: ContentCommunicator.Main) {
 		viewModel.content = ko.observable<ContentViewModel.General>();
 		viewModel.removeClick = () => {
-			console.log('removeClick', this.commentableModel);
 			this.commentableModel && this.commentableModel.removeComment(model);
 		};
 	

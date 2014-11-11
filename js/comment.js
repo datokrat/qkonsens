@@ -21,7 +21,6 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'contentmodel'], f
             var _this = this;
             viewModel.content = ko.observable();
             viewModel.removeClick = function () {
-                console.log('removeClick', _this.commentableModel);
                 _this.commentableModel && _this.commentableModel.removeComment(model);
             };
 

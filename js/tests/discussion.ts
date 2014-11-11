@@ -130,7 +130,6 @@ class TestClass extends unit.TestClass {
 	}
 	
 	controllerRemoveComment() {
-		console.log('controllerRemoveComment');
 		var model = new Discussion.Model();
 		var viewModel = new Discussion.ViewModel();
 		var communicator = new DiscussionCommunicator();

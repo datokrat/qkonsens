@@ -98,8 +98,6 @@ define(["require", "exports", 'event', 'common', 'comment', 'discocontext'], fun
                     ], r);
                 },
                 function (r) {
-                    console.log('1');
-                    console.log(data);
                     data.referenceToDelete = data.references[0];
                     if (data.referenceToDelete)
                         discoContext.PostReferences.remove(new Disco.Ontology.PostReference({ Id: data.referenceToDelete.Id }));

@@ -40,7 +40,6 @@ define(["require", "exports"], function(require, exports) {
         };
 
         Coll.removeByPredicate = function (collection, predicate) {
-            console.log('removeByPredicate', arguments);
             var filtered = collection.filter(predicate).reverse();
             filtered.forEach(function (value, index) {
                 return collection.splice(index, 1);

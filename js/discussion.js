@@ -71,7 +71,6 @@ define(["require", "exports", 'observable', 'comment', 'synchronizers/comment'],
             };
 
             this.model.removeComment = function (comment) {
-                console.log('removeComment');
                 _this.communicator.removeComment({ discussableId: _this.discussableModel.id(), commentId: comment.id });
             };
 
@@ -89,7 +88,6 @@ define(["require", "exports", 'observable', 'comment', 'synchronizers/comment'],
             ];
         }
         Controller.prototype.onCommentRemoved = function (args) {
-            console.log('onCommentRemoved', arguments, this);
             if (args.discussableId == this.discussableModel.id()) {
                 this.model.comments.removeByPredicate(function (c) {
                     return c.id == args.commentId;
@@ -99,7 +97,7 @@ define(["require", "exports", 'observable', 'comment', 'synchronizers/comment'],
 
         Controller.prototype.onCommentRemovalError = function (args) {
             if (args.discussableId == this.discussableModel.id()) {
-                console.log('comment[' + args.commentId + '] could not be removed');
+                console.error('comment[' + args.commentId + '] could not be removed');
             }
         };
 
@@ -112,7 +110,6 @@ define(["require", "exports", 'observable', 'comment', 'synchronizers/comment'],
 
         Controller.prototype.onCommentAppendingError = function (args) {
             if (args.discussableId == this.discussableModel.id()) {
-                console.log(args);
                 alert('Beitrag konnte nicht erstellt werden. Bitte lade die Seite neu!');
             }
         };

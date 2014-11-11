@@ -46,7 +46,6 @@ define(["require", "exports", 'event', 'rating', 'discocontext', 'common'], func
                     }
                 }
             ], function () {
-                console.log('ratingSubmitted', { ratableId: ratableId, rating: ScoreParser.fromDisco(discoRating.Score) });
                 _this.ratingSubmitted.raise({ ratableId: ratableId, rating: ScoreParser.fromDisco(discoRating.Score) });
             });
         };

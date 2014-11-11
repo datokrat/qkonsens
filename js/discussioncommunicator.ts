@@ -100,8 +100,6 @@ export class Main implements Base {
 				], r);
 			},
 			r => {
-				console.log('1');
-				console.log(data);
 				data.referenceToDelete = data.references[0];
 				if(data.referenceToDelete) 
 					discoContext.PostReferences.remove(new Disco.Ontology.PostReference({ Id: data.referenceToDelete.Id }));
