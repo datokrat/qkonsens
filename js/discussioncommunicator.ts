@@ -74,7 +74,53 @@ export class Main implements Base {
 	}
 	
 	public removeComment(args: RemovalArgs) {
-		throw new Error('not implemented');
+		var onError = error => this.commentRemovalError.raise({ discussableId: args.discussableId, commentId: args.commentId, error: error });
+		var data = {
+			commentId: args.commentId,
+			discussableId: args.discussableId,
+			referredTimes: 0,
+			refersTimes: 0,
+			references: <Disco.Ontology.PostReference[]>null,
+			referenceToDelete: <Disco.Ontology.PostReference>null,
+		};
+		var references: Disco.Ontology.PostReference[];
+		Common.Callbacks.batch([
+			r => {
+				Common.Callbacks.atOnce([
+					r => discoContext.PostReferences.filter('it.ReferreeId == this.commentId', data)
+						.toArray().then(refs => { data.referredTimes = refs.length; r() }).fail(onError),
+					r => discoContext.PostReferences.filter('it.ReferrerId == this.commentId', data)
+						.toArray().then(refs => { data.refersTimes = refs.length; r() }).fail(onError),
+					r => discoContext.PostReferences.filter(
+					'it.ReferrerId == this.commentId && it.ReferreeId == this.discussableId ' + 
+					'&& it.ReferenceType.Description.Name != "Part"' + 
+					'&& it.ReferenceType.Description.Name != "Child"' + 
+					'&& it.ReferenceType.Description.Name != "Context"', data)
+						.toArray().then(refs => { data.references = refs; r() }).fail(onError)
+				], r);
+			},
+			r => {
+				console.log('1');
+				console.log(data);
+				data.referenceToDelete = data.references[0];
+				if(data.referenceToDelete) 
+					discoContext.PostReferences.remove(new Disco.Ontology.PostReference({ Id: data.referenceToDelete.Id }));
+				discoContext.saveChanges().then(() => r()).fail(onError);
+			},
+			r => {
+				var removedReferences = data.referenceToDelete ? 1 : 0;
+				var stillHasReferences = data.referredTimes != 0 || data.refersTimes-removedReferences != 0;
+				if(!stillHasReferences) {
+					//discoContext.Posts.remove(new Disco.Ontology.Post({ Id: args.commentId }));
+					//discoContext.saveChanges().then(() => r).fail(onError);
+					console.warn('This comment should be deleted now. Due to technical problems, that\'s not possible so far.');
+					r();
+				}
+				else r();
+			}
+		], () => {
+			this.commentRemoved.raise({ discussableId: args.discussableId, commentId: args.commentId });
+		});
 	}
 	
 	private queryRawCommentsOf(discussableId: number) {
