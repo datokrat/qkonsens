@@ -48,7 +48,7 @@ define(["require", "exports", '../locationhash', 'factories/konsenskistecontroll
                 this.konsenskisteController.setViewModelContext(this.cxt);
 
             this.window.kkView(konsenskisteViewModel);
-            this.window.state({ kokiId: konsenskisteModel && konsenskisteModel.id() });
+            this.window.state((konsenskisteModel && konsenskisteModel.id()) ? { kokiId: konsenskisteModel && konsenskisteModel.id() } : null);
         };
 
         Controller.prototype.disposeKonsenskiste = function () {

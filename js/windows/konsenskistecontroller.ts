@@ -58,7 +58,8 @@ export class Controller {
 		if(this.cxt) this.konsenskisteController.setViewModelContext(this.cxt);
         
 		this.window.kkView(konsenskisteViewModel);
-		this.window.state(<State>{ kokiId: konsenskisteModel && konsenskisteModel.id() });
+		this.window.state((konsenskisteModel && konsenskisteModel.id()) ? <State>{ kokiId: konsenskisteModel && konsenskisteModel.id() } : null);
+			
 	}
 	
 	private disposeKonsenskiste() {
