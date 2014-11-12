@@ -18,21 +18,26 @@ define(["require", "exports", 'event', 'discocontext', 'contentcommunicatorimpl'
 
         Main.prototype.query = function (id) {
             var _this = this;
+            var onError = function (message) {
+                out.error(message);
+                out.loading(false);
+                _this.receiptError.raise({ id: id, message: message, konsenskiste: out });
+            };
             var out = new KonsenskisteModel.Model();
             out.loading(true);
             out.id(id);
 
             this.queryRaw(id).then(function (rawKokis) {
                 if (rawKokis.length != 1) {
-                    out.error('koki id[' + id + '] could not be found');
-                    out.loading(false);
-                    _this.receiptError.raise({ id: id, message: "a single koki could not be found for this id[" + id + "].", konsenskiste: out });
-                    return out;
+                    onError('koki id[' + id + '] could not be found');
+                    return;
                 }
                 out.error(null);
                 out.loading(false);
                 var parsedKoki = _this.parser.parse(rawKokis[0], out);
                 _this.received.raise({ id: id, konsenskiste: parsedKoki });
+            }).fail(function (error) {
+                return onError("JayData request failed");
             });
 
             return out;

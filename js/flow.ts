@@ -1,5 +1,5 @@
 export interface Flow {
-	doSync(cb: 
+	doSync();
 }
 
 export interface SyncCommand<T> {

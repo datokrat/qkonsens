@@ -37,22 +37,25 @@ export class Main implements IKonsenskisteCommunicator.Main {
 	}
 	
 	public query(id: number): KonsenskisteModel.Model {
+		var onError = message => {
+			out.error(message);
+			out.loading(false);
+			this.receiptError.raise({ id: id, message: message, konsenskiste: out });
+		};
 		var out = new KonsenskisteModel.Model();
 		out.loading(true);
 		out.id(id);
 		
 		this.queryRaw(id).then(rawKokis => {
 			if(rawKokis.length != 1) {
-				out.error('koki id[' + id + '] could not be found');
-				out.loading(false);
-				this.receiptError.raise({ id: id, message: "a single koki could not be found for this id[" + id + "].", konsenskiste: out });
-				return out;
+				onError('koki id[' + id + '] could not be found');
+				return;
 			}
 			out.error(null);
 			out.loading(false);
 			var parsedKoki = this.parser.parse(rawKokis[0], out);
 			this.received.raise({ id: id, konsenskiste: parsedKoki });
-		});
+		}).fail(error => onError("JayData request failed"));
 		
 		return out;
 	}

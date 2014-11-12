@@ -49,6 +49,7 @@ export class Controller {
 	}
 	
 	private initKonsenskiste(konsenskisteModel: kokiMdl.Model) {
+		console.log('initKonsenskiste');
 		this.disposeKonsenskiste();
 			
 		var konsenskisteViewModel = new kokiVm.ViewModel;

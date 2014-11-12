@@ -38,6 +38,7 @@ define(["require", "exports", '../locationhash', 'factories/konsenskistecontroll
         };
 
         Controller.prototype.initKonsenskiste = function (konsenskisteModel) {
+            console.log('initKonsenskiste');
             this.disposeKonsenskiste();
 
             var konsenskisteViewModel = new kokiVm.ViewModel;
