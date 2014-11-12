@@ -1,4 +1,4 @@
-define(["require", "exports", 'event', 'discocontext', 'contentcommunicatorimpl', 'kernaussagecommunicatorimpl', 'discussioncommunicator', 'ratingcommunicator', 'konsenskistemodel', 'kernaussagemodel', 'contentmodel'], function(require, exports, Events, discoContext, ContentCommunicator, KernaussageCommunicator, DiscussionCommunicator, RatingCommunicator, KonsenskisteModel, KernaussageModel, ContentModel) {
+define(["require", "exports", 'event', 'common', 'discocontext', 'contentcommunicatorimpl', 'kernaussagecommunicatorimpl', 'discussioncommunicator', 'ratingcommunicator', 'konsenskistemodel', 'kernaussagemodel', 'contentmodel'], function(require, exports, Events, Common, discoContext, ContentCommunicator, KernaussageCommunicator, DiscussionCommunicator, RatingCommunicator, KonsenskisteModel, KernaussageModel, ContentModel) {
     var Main = (function () {
         function Main() {
             this.received = new Events.EventImpl();
@@ -13,7 +13,55 @@ define(["require", "exports", 'event', 'discocontext', 'contentcommunicatorimpl'
             this.rating = new RatingCommunicator.Main();
         }
         Main.prototype.createAndAppendKa = function (kokiId, ka) {
-            throw new Error('not implemented');
+            var _this = this;
+            var onError = function (message) {
+                _this.kernaussageAppendingError.raise({ konsenskisteId: kokiId, message: message.toString() });
+            };
+
+            var content = new Disco.Ontology.Content();
+            var post = new Disco.Ontology.Post();
+            var reference = new Disco.Ontology.PostReference();
+            Common.Callbacks.batch([
+                function (r) {
+                    content.Title = ka.general().title();
+                    content.Text = ka.general().text();
+                    content.CultureId = '2';
+                    discoContext.Content.add(content);
+                    discoContext.saveChanges().then(function () {
+                        return r();
+                    }).fail(function (error) {
+                        return onError(error);
+                    });
+                },
+                function (r) {
+                    post.PostTypeId = '2';
+                    post.ContentId = content.Id;
+                    discoContext.Posts.add(post);
+                    discoContext.saveChanges().then(function () {
+                        return r();
+                    }).fail(function (error) {
+                        return onError(error);
+                    });
+                },
+                function (r) {
+                    reference.ReferrerId = post.Id;
+                    reference.ReferreeId = kokiId.toString();
+                    reference.ReferenceTypeId = '11';
+                    discoContext.PostReferences.add(reference);
+                    discoContext.saveChanges().then(function () {
+                        return r();
+                    }).fail(function (error) {
+                        return onError(error);
+                    });
+                }
+            ], function (err) {
+                if (err)
+                    onError(err);
+                else {
+                    ka.id(parseInt(post.Id));
+                    _this.kernaussageAppended.raise({ konsenskisteId: kokiId, kernaussage: ka });
+                }
+            });
         };
 
         Main.prototype.query = function (id) {

@@ -1,4 +1,5 @@
 import Events = require('event')
+import Common = require('common');
 import discoContext = require('discocontext')
 
 import IKonsenskisteCommunicator = require('konsenskistecommunicator')
@@ -33,7 +34,42 @@ export class Main implements IKonsenskisteCommunicator.Main {
 	}
 	
 	public createAndAppendKa(kokiId: number, ka: KernaussageModel.Model) {
-		throw new Error('not implemented');
+		var onError = (message: any) => {
+			this.kernaussageAppendingError.raise({ konsenskisteId: kokiId, message: message.toString() });
+		};
+		
+		var content = new Disco.Ontology.Content();
+		var post = new Disco.Ontology.Post();
+		var reference = new Disco.Ontology.PostReference();
+		Common.Callbacks.batch([
+			r => {
+				content.Title = ka.general().title();
+				content.Text = ka.general().text();
+				content.CultureId = '2';
+				discoContext.Content.add(content);
+				discoContext.saveChanges().then(() => r()).fail(error => onError(error));
+			},
+			r => {
+				post.PostTypeId = '2';
+				post.ContentId = content.Id;
+				discoContext.Posts.add(post);
+				discoContext.saveChanges().then(() => r()).fail(error => onError(error));
+			},
+			r => {
+				reference.ReferrerId = post.Id;
+				reference.ReferreeId = kokiId.toString();
+				reference.ReferenceTypeId = '11';
+				discoContext.PostReferences.add(reference);
+				discoContext.saveChanges().then(() => r()).fail(error => onError(error));
+			}
+		], (err) => {
+			if(err)
+				onError(err);
+			else {
+				ka.id(parseInt(post.Id));
+				this.kernaussageAppended.raise({ konsenskisteId: kokiId, kernaussage: ka });
+			}
+		});
 	}
 	
 	public query(id: number): KonsenskisteModel.Model {
