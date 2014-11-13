@@ -46,6 +46,7 @@ define(["require", "exports", 'factories/kernaussagemodel', 'synchronizers/kokis
             this.viewModel.newKaFormVisible = ko.observable(false);
             this.viewModel.newKaTitle = ko.observable();
             this.viewModel.newKaText = ko.observable();
+            this.viewModel.newKaContext = ko.observable();
             this.viewModel.newKaClick = function () {
                 var oldValue = _this.viewModel.newKaFormVisible();
                 _this.viewModel.newKaFormVisible(!oldValue);
@@ -53,6 +54,8 @@ define(["require", "exports", 'factories/kernaussagemodel', 'synchronizers/kokis
             this.viewModel.newKaSubmit = function () {
                 var kaFactory = new KernaussageFactory.Factory();
                 var ka = kaFactory.create(_this.viewModel.newKaText(), _this.viewModel.newKaTitle());
+                if (_this.viewModel.newKaContext())
+                    ka.context().text(_this.viewModel.newKaContext());
                 _this.communicator.kernaussageAppended.subscribeUntil(function (args) {
                     if (args.konsenskisteId == _this.model.id() && args.kernaussage == ka) {
                         _this.viewModel.newKaFormVisible(false);

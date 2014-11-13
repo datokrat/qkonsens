@@ -432,13 +432,14 @@ class Helper {
 		var form = this.webot.query('.kk').child('.ka').contains('Anfügen');
 		form.child('.title input[type=text]').$().val('Title').change();
 		form.child('.text textarea').$().val('Text').change();
+		form.child('.context textarea').$().val('Klärtext').change();
 		form.child('button').text('Anfügen').click();
 	}
 	
 	public isNewKaSubmitted(): boolean {
 		var ka = this.webot.query('.kk').child('.ka').contains('Diskussion');
 		var form = this.webot.query('.kk').child('.ka').contains('Anfügen');
-		return ka.contains('Title').contains('Text').exists() && form.exists(false);
+		return ka.contains('Title').contains('Text').contains('Klärtext aufklappen').exists() && form.exists(false);
 	}
 	
 	public openDiscussionOfNewKa() {

@@ -18,4 +18,5 @@ export class ViewModel extends KElement.ViewModel {
 	public newKaSubmit: () => void;
 	public newKaTitle: Obs.Observable<string>;
 	public newKaText: Obs.Observable<string>;
+	public newKaContext: Obs.Observable<string>;
 }

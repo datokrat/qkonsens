@@ -57,6 +57,7 @@ export class ControllerImpl extends KElement.Controller<mdl.Model, vm.ViewModel,
 		this.viewModel.newKaFormVisible = ko.observable<boolean>(false);
 		this.viewModel.newKaTitle = ko.observable<string>();
 		this.viewModel.newKaText = ko.observable<string>();
+		this.viewModel.newKaContext = ko.observable<string>();
 		this.viewModel.newKaClick = () => {
 			var oldValue = this.viewModel.newKaFormVisible();
 			this.viewModel.newKaFormVisible(!oldValue);
@@ -64,6 +65,7 @@ export class ControllerImpl extends KElement.Controller<mdl.Model, vm.ViewModel,
 		this.viewModel.newKaSubmit = () => {
 			var kaFactory = new KernaussageFactory.Factory();
 			var ka = kaFactory.create(this.viewModel.newKaText(), this.viewModel.newKaTitle());
+			if(this.viewModel.newKaContext()) ka.context().text(this.viewModel.newKaContext());
 			this.communicator.kernaussageAppended.subscribeUntil(args => {
 				if(args.konsenskisteId == this.model.id() && args.kernaussage == ka) {
 					this.viewModel.newKaFormVisible(false);
