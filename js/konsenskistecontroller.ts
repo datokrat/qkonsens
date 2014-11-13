@@ -89,6 +89,7 @@ export class ControllerImpl extends KElement.Controller<mdl.Model, vm.ViewModel,
 	}
 	
 	private onKokiReceived = (args: KokiCommunicator.ReceivedArgs) => {
+		console.log('kokiReceived', this, arguments);
 		if(this.model.id() == args.konsenskiste.id())
 			this.model.set( args.konsenskiste );
 	}

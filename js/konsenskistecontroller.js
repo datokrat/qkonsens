@@ -11,6 +11,7 @@ define(["require", "exports", 'factories/kernaussagemodel', 'synchronizers/kokis
             var _this = this;
             _super.call(this, model, viewModel, communicator);
             this.onKokiReceived = function (args) {
+                console.log('kokiReceived', _this, arguments);
                 if (_this.model.id() == args.konsenskiste.id())
                     _this.model.set(args.konsenskiste);
             };

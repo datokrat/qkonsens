@@ -1,6 +1,8 @@
 import mdl = require('model')
 import vm = require('viewmodel')
 import topicNavigationCtr = require('topicnavigationcontroller')
+import LocationHash = require('locationhash');
+import Evt = require('event');
 
 import frame = require('frame')
 import noneWin = require('windows/none')
@@ -29,22 +31,35 @@ export class Controller {
 		
 		this.kkWinController = new kokiWinCtr.Controller(model.konsenskiste(), this.kkWin, communicator.konsenskiste)
 			.setContext(globalContext);
+		
 		this.communicator = communicator;
 		
 		model.konsenskiste.subscribe( newKoki => this.kkWinController.setKonsenskisteModel(newKoki) );
 		
-		this.communicator.konsenskiste.received.subscribe( (args: KokiCommunicator.ReceivedArgs) => {
-			if(args.id == model.konsenskiste().id()) {
-				model.konsenskiste( args.konsenskiste );
-			}
-		} );
+		this.kkWin.state.subscribe(state => LocationHash.set(JSON.stringify(state), false));
+		this.subscriptions = [ LocationHash.changed.subscribe(() => this.onHashChanged()) ];
+		this.onHashChanged();
 	}
 	
 	public dispose() {
 		this.kkWinController.dispose();
+		this.subscriptions.forEach(s => s.undo());
+	}
+	
+	private onHashChanged() {
+		var hash = LocationHash.get().slice(1);
+		try {
+			var hashObj = JSON.parse(hash);
+			this.kkWin.setState(hashObj || { kokiId: 12 });
+		}
+		catch(e) {
+			this.kkWin.setState({ kokiId: 12 });
+		}
 	}
 	
 	private kkWin: kokiWin.Win;
 	private kkWinController: kokiWinCtr.Controller;
 	private communicator: Communicator.Main;
+	
+	private subscriptions: Evt.Subscription[] = [];
 }

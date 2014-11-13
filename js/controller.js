@@ -1,7 +1,8 @@
-define(["require", "exports", 'topicnavigationcontroller', 'frame', 'windows/none', 'windows/konsenskiste', 'windows/discussion', 'windows/konsenskistecontroller', 'viewmodelcontext'], function(require, exports, topicNavigationCtr, frame, noneWin, kokiWin, DiscussionWindow, kokiWinCtr, ViewModelContext) {
+define(["require", "exports", 'topicnavigationcontroller', 'locationhash', 'frame', 'windows/none', 'windows/konsenskiste', 'windows/discussion', 'windows/konsenskistecontroller', 'viewmodelcontext'], function(require, exports, topicNavigationCtr, LocationHash, frame, noneWin, kokiWin, DiscussionWindow, kokiWinCtr, ViewModelContext) {
     var Controller = (function () {
         function Controller(model, viewModel, communicator) {
             var _this = this;
+            this.subscriptions = [];
             var topicNavigationController = new topicNavigationCtr.Controller(model.topicNavigation, viewModel.topicNavigation);
 
             this.kkWin = new kokiWin.Win();
@@ -16,20 +17,36 @@ define(["require", "exports", 'topicnavigationcontroller', 'frame', 'windows/non
             globalContext.konsenskisteModel = model.konsenskiste;
 
             this.kkWinController = new kokiWinCtr.Controller(model.konsenskiste(), this.kkWin, communicator.konsenskiste).setContext(globalContext);
+
             this.communicator = communicator;
 
             model.konsenskiste.subscribe(function (newKoki) {
                 return _this.kkWinController.setKonsenskisteModel(newKoki);
             });
 
-            this.communicator.konsenskiste.received.subscribe(function (args) {
-                if (args.id == model.konsenskiste().id()) {
-                    model.konsenskiste(args.konsenskiste);
-                }
+            this.kkWin.state.subscribe(function (state) {
+                return LocationHash.set(JSON.stringify(state), false);
             });
+            this.subscriptions = [LocationHash.changed.subscribe(function () {
+                    return _this.onHashChanged();
+                })];
+            this.onHashChanged();
         }
         Controller.prototype.dispose = function () {
             this.kkWinController.dispose();
+            this.subscriptions.forEach(function (s) {
+                return s.undo();
+            });
+        };
+
+        Controller.prototype.onHashChanged = function () {
+            var hash = LocationHash.get().slice(1);
+            try  {
+                var hashObj = JSON.parse(hash);
+                this.kkWin.setState(hashObj || { kokiId: 12 });
+            } catch (e) {
+                this.kkWin.setState({ kokiId: 12 });
+            }
         };
         return Controller;
     })();

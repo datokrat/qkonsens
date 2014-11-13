@@ -1,4 +1,4 @@
-define(["require", "exports", '../locationhash', 'factories/konsenskistecontroller', '../konsenskisteviewmodel'], function(require, exports, LocationHash, KokiControllerFactory, kokiVm) {
+define(["require", "exports", 'factories/konsenskistecontroller', '../konsenskisteviewmodel'], function(require, exports, KokiControllerFactory, kokiVm) {
     var Controller = (function () {
         function Controller(konsenskisteModel, windowViewModel, communicator) {
             this.konsenskisteControllerFactory = new KokiControllerFactory.Factory;
@@ -12,25 +12,13 @@ define(["require", "exports", '../locationhash', 'factories/konsenskistecontroll
             var _this = this;
             this.window = win;
             this.window.setState = function (state) {
-                var typedState = state;
-                var kk = _this.communicator.query(typedState.kokiId);
-                _this.setKonsenskisteModel(kk);
+                console.log(new Error('setState'), state);
+                if (state) {
+                    var typedState = state;
+                    var kk = _this.communicator.query(typedState.kokiId);
+                    _this.setKonsenskisteModel(kk);
+                }
             };
-            this.window.state.subscribe(function (state) {
-                LocationHash.set(JSON.stringify(state), false);
-            });
-            this.subscriptions = this.subscriptions.concat([
-                LocationHash.changed.subscribe(function () {
-                    _this.onHashChanged();
-                })
-            ]);
-        };
-
-        Controller.prototype.onHashChanged = function () {
-            var hash = location.hash;
-            var hashObj = JSON.parse(hash.slice(1));
-            if (hashObj.kokId != (this.konsenskisteModel && this.konsenskisteModel.id()))
-                this.setKonsenskisteModelById(hashObj.kokiId);
         };
 
         Controller.prototype.setKonsenskisteModelById = function (id) {
@@ -38,7 +26,7 @@ define(["require", "exports", '../locationhash', 'factories/konsenskistecontroll
         };
 
         Controller.prototype.initKonsenskiste = function (konsenskisteModel) {
-            console.log('initKonsenskiste');
+            console.log('initKonsenskiste', konsenskisteModel);
             this.disposeKonsenskiste();
 
             var konsenskisteViewModel = new kokiVm.ViewModel;

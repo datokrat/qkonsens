@@ -24,24 +24,13 @@ export class Controller {
 	private initWindow(win: winVm.Win) {
 		this.window = win;
 		this.window.setState = (state: any) => {
-			var typedState = <State>state;
-			var kk = this.communicator.query(typedState.kokiId);
-			this.setKonsenskisteModel(kk);
+			console.log(new Error('setState'), state);
+			if(state) {
+				var typedState = <State>state;
+				var kk = this.communicator.query(typedState.kokiId);
+				this.setKonsenskisteModel(kk);
+			}
 		}
-		this.window.state.subscribe(state => {
-			LocationHash.set(JSON.stringify(state), false)
-		});
-		this.subscriptions = this.subscriptions.concat([
-			LocationHash.changed.subscribe(() => {
-				this.onHashChanged()
-			})
-		]);
-	}
-	
-	private onHashChanged() {
-		var hash = location.hash;
-		var hashObj = JSON.parse(hash.slice(1));
-		if(hashObj.kokId != (this.konsenskisteModel && this.konsenskisteModel.id())) this.setKonsenskisteModelById(hashObj.kokiId);
 	}
 	
 	private setKonsenskisteModelById(id: number) {
@@ -49,7 +38,7 @@ export class Controller {
 	}
 	
 	private initKonsenskiste(konsenskisteModel: kokiMdl.Model) {
-		console.log('initKonsenskiste');
+		console.log('initKonsenskiste', konsenskisteModel);
 		this.disposeKonsenskiste();
 			
 		var konsenskisteViewModel = new kokiVm.ViewModel;
