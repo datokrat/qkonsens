@@ -21,6 +21,9 @@ define(["require", "exports", 'event', 'common', 'discocontext', 'contentcommuni
             var content = new Disco.Ontology.Content();
             var post = new Disco.Ontology.Post();
             var reference = new Disco.Ontology.PostReference();
+            var cxtContent = new Disco.Ontology.Content();
+            var cxtPost = new Disco.Ontology.Post();
+            var cxtReference = new Disco.Ontology.PostReference();
             Common.Callbacks.batch([
                 function (r) {
                     content.Title = ka.general().title();
@@ -48,6 +51,37 @@ define(["require", "exports", 'event', 'common', 'discocontext', 'contentcommuni
                     reference.ReferreeId = kokiId.toString();
                     reference.ReferenceTypeId = '11';
                     discoContext.PostReferences.add(reference);
+                    discoContext.saveChanges().then(function () {
+                        return r();
+                    }).fail(function (error) {
+                        return onError(error);
+                    });
+                },
+                function (r) {
+                    cxtContent.Text = ka.context().text();
+                    cxtContent.CultureId = '2';
+                    discoContext.Content.add(cxtContent);
+                    discoContext.saveChanges().then(function () {
+                        return r();
+                    }).fail(function (error) {
+                        return onError(error);
+                    });
+                },
+                function (r) {
+                    cxtPost.PostTypeId = '2';
+                    cxtPost.ContentId = cxtContent.Id;
+                    discoContext.Posts.add(cxtPost);
+                    discoContext.saveChanges().then(function () {
+                        return r();
+                    }).fail(function (error) {
+                        return onError(error);
+                    });
+                },
+                function (r) {
+                    cxtReference.ReferrerId = post.Id;
+                    cxtReference.ReferreeId = cxtPost.Id;
+                    cxtReference.ReferenceTypeId = '10';
+                    discoContext.PostReferences.add(cxtReference);
                     discoContext.saveChanges().then(function () {
                         return r();
                     }).fail(function (error) {
