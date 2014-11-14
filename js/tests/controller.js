@@ -112,7 +112,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../model', '../view
         function TopicFactory() {
         }
         TopicFactory.prototype.create = function (title) {
-            var topic = new tpc.Topic();
+            var topic = new tpc.Model();
             topic.title(title);
             return topic;
         };

@@ -1,5 +1,5 @@
 ///<reference path="../typings/jquery.d.ts" />
-define(["require", "exports", 'tests/asyncunit', 'frontendtests/reloader', 'frontendtests/kokiwin', 'model', 'viewmodel', 'controller', 'konsenskistemodel', 'tests/testcommunicator'], function(require, exports, unit, reloader, kokiWin, mdl, vm, ctr, koki, TestCommunicator) {
+define(["require", "exports", 'tests/asyncunit', 'frontendtests/reloader', 'frontendtests/kokiwin', 'frontendtests/browsewin', 'model', 'viewmodel', 'controller', 'konsenskistemodel', 'tests/testcommunicator'], function(require, exports, unit, reloader, kokiWin, browseWin, mdl, vm, ctr, koki, TestCommunicator) {
     var model = new mdl.ModelImpl;
     var viewModel = new vm.ViewModel;
     var communicator = new TestCommunicator;
@@ -16,7 +16,8 @@ define(["require", "exports", 'tests/asyncunit', 'frontendtests/reloader', 'fron
     setTimeout(function () {
         var test = new unit.Test();
 
-        test.addTestClass(new kokiWin.Tests());
+        test.addTestClass(new kokiWin.Tests(), 'KonsenskisteWindow');
+        test.addTestClass(new browseWin.Tests(), 'BrowseWindow');
 
         test.run(function (result) {
             return test.showResults(document.getElementById('tests'), result);

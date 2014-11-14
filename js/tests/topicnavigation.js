@@ -28,7 +28,7 @@ define(["require", "exports", 'tests/tsunit', '../topicnavigationcontroller', '.
         function TopicFactory() {
         }
         TopicFactory.prototype.create = function (title) {
-            var topic = new tpc.Topic();
+            var topic = new tpc.Model();
             topic.title(title);
             return topic;
         };

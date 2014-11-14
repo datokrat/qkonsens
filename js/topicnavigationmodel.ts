@@ -1,18 +1,18 @@
 ///<reference path="../typings/knockout.d.ts" />
 ///<reference path="array.ts" />
 
-import tpc = require('topic')
+import Topic = require('topic')
 
 export interface Model {
-	appendChild(child: tpc.Topic);
+	appendChild(child: Topic.Model);
 	goBackToBreadcrumbTopic(index: number);
 	
-	getSelectedTopic(): tpc.Topic;
-	getBreadcrumbTopics(): tpc.Topic[];
+	getSelectedTopic(): Topic.Model;
+	getBreadcrumbTopics(): Topic.Model[];
 }
 
 export class ModelImpl implements Model {
-	public appendChild(child: tpc.Topic) {
+	public appendChild(child: Topic.Model) {
 		this.breadcrumbTopics.push(child);
 	}
 	
@@ -28,5 +28,5 @@ export class ModelImpl implements Model {
 		return this.breadcrumbTopics();
 	}
 
-	public breadcrumbTopics = ko.observableArray<tpc.Topic>()
+	public breadcrumbTopics = ko.observableArray<Topic.Model>()
 }

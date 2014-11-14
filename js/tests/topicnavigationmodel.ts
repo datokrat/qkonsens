@@ -38,7 +38,7 @@ class Factory {
 
 class TopicFactory {
 	public create(title: string) {
-		var topic = new tpc.Topic();
+		var topic = new tpc.Model();
 		topic.title(title);
 		return topic;
 	}

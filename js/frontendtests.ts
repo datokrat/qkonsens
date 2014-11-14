@@ -5,6 +5,7 @@ import test = require('tests/test')
 
 import reloader = require('frontendtests/reloader')
 import kokiWin = require('frontendtests/kokiwin')
+import browseWin = require('frontendtests/browsewin')
 
 import mdl = require('model')
 import vm = require('viewmodel')
@@ -31,7 +32,8 @@ reloader.controller(controller);
 setTimeout(function() {
 	var test = new unit.Test();
 	
-	test.addTestClass( new kokiWin.Tests() );
+	test.addTestClass( new kokiWin.Tests(), 'KonsenskisteWindow' );
+	test.addTestClass( new browseWin.Tests(), 'BrowseWindow' );
 	
 	test.run( result => test.showResults(document.getElementById('tests'), result) );
 }, 1000);
