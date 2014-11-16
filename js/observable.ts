@@ -16,14 +16,17 @@ export interface Subscription {
 export interface ObservableArray<T> extends Observable<T[]> {
 	push(item: T): void;
 	remove(item: T): void;
+	splice(from: number, count: number, ...replacement: T[]): T[];
 }
 
 export interface ObservableArrayEx<T> {
 	get(): T[];
+	get(index: number): T;
 	set(value: T[]): void;
 	
 	push(item: T): void;
 	remove(item: T): void;
+	removeMany(from: number, count?: number): void;
 	removeByPredicate(predicate: (item: T) => boolean): void;
 
 	pushed: Events.Event<T>;
@@ -38,8 +41,19 @@ export class ObservableArrayExtender<T> implements ObservableArrayEx<T> {
 		this.innerObservable = innerObservable;
 	}
 	
-	public get(): T[] {
+	public get(index?: number): any {
+		if(arguments.length >= 1) return this.getSingle(index);
+		else return this.getAll();
+	}
+	
+	private getAll(): T[] {
 		return this.innerObservable();
+	}
+	
+	private getSingle(index: number): T {
+		console.log('getSingle');
+		if(index >= 0) return this.innerObservable()[index];
+		else return this.innerObservable()[this.innerObservable().length+index];
 	}
 	
 	public set(value: T[]): void {
@@ -56,6 +70,15 @@ export class ObservableArrayExtender<T> implements ObservableArrayEx<T> {
 	public remove(item: T): void {
 		this.innerObservable.remove(item);
 		this.removed.raise(item);
+	}
+	
+	public removeMany(from: number, count?: number) {
+		var spliced: T[];
+		if(count != null)
+			spliced = this.innerObservable.splice(from, count);
+		else
+			spliced = this.innerObservable.splice(from, this.innerObservable().length);
+		spliced.forEach(removed => this.removed.raise(removed));
 	}
 	
 	public removeByPredicate(predicate: (item: T) => boolean) {

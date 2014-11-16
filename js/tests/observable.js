@@ -23,6 +23,14 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../observable'], fu
                 return ctr == 1;
             });
         };
+
+        Tests.prototype.removeMany = function () {
+            var arr = new Obs.ObservableArrayExtender(ko.observableArray([1, 2]));
+            arr.removeMany(1);
+            test.assert(function () {
+                return arr.get(-1) == 1;
+            });
+        };
         return Tests;
     })(unit.TestClass);
     exports.Tests = Tests;

@@ -6,8 +6,23 @@ define(["require", "exports", 'event'], function(require, exports, Events) {
             this.changed = new Events.EventImpl();
             this.innerObservable = innerObservable;
         }
-        ObservableArrayExtender.prototype.get = function () {
+        ObservableArrayExtender.prototype.get = function (index) {
+            if (arguments.length >= 1)
+                return this.getSingle(index);
+            else
+                return this.getAll();
+        };
+
+        ObservableArrayExtender.prototype.getAll = function () {
             return this.innerObservable();
+        };
+
+        ObservableArrayExtender.prototype.getSingle = function (index) {
+            console.log('getSingle');
+            if (index >= 0)
+                return this.innerObservable()[index];
+            else
+                return this.innerObservable()[this.innerObservable().length + index];
         };
 
         ObservableArrayExtender.prototype.set = function (value) {
@@ -24,6 +39,18 @@ define(["require", "exports", 'event'], function(require, exports, Events) {
         ObservableArrayExtender.prototype.remove = function (item) {
             this.innerObservable.remove(item);
             this.removed.raise(item);
+        };
+
+        ObservableArrayExtender.prototype.removeMany = function (from, count) {
+            var _this = this;
+            var spliced;
+            if (count != null)
+                spliced = this.innerObservable.splice(from, count);
+            else
+                spliced = this.innerObservable.splice(from, this.innerObservable().length);
+            spliced.forEach(function (removed) {
+                return _this.removed.raise(removed);
+            });
         };
 
         ObservableArrayExtender.prototype.removeByPredicate = function (predicate) {

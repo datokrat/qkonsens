@@ -1,9 +1,13 @@
 <h1>Themen</h1>
+<div>
+<!-- ko with: navigation -->
+	<ul data-bind="foreach: breadcrumb">
+		<li class="clickable" data-bind="text: $data"></li>
+	</ul>
+<!-- /ko -->
+</div>
 <!-- ko with: parentTopic -->
 <div>
-	<!--ul data-bind="foreach: breadcrumb">
-		<li class="clickable" data-bind="text: caption, click: click"></li>
-	</ul-->
 	
 	<b data-bind="text: caption"></b>
 	<p data-bind="text: description"></p>

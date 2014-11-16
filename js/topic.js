@@ -1,4 +1,4 @@
-define(["require", "exports"], function(require, exports) {
+define(["require", "exports", 'observable', 'synchronizers/tsynchronizers'], function(require, exports, Obs, TSync) {
     var ParentController = (function () {
         function ParentController(model, viewModel) {
             var _this = this;
@@ -6,17 +6,25 @@ define(["require", "exports"], function(require, exports) {
             this.viewModel = viewModel;
 
             this.viewModel.caption = ko.computed(function () {
-                return _this.model.properties().title() || _this.model.properties().text().substr(0, 255);
+                return _this.model.properties().title() || _this.getShortenedText();
             });
             this.viewModel.description = ko.computed(function () {
-                return !_this.model.properties().title() && _this.model.properties().text();
+                return _this.model.properties().title() && _this.model.properties().text();
             });
+            this.viewModel.children = ko.observableArray();
+            this.childTopicSync = new TSync.ChildTopicSync().setModelObservable(this.model.children).setViewModelObservable(this.viewModel.children);
+
             this.viewModel.click = function () {
             };
         }
+        ParentController.prototype.getShortenedText = function () {
+            return this.model.properties().text() && this.model.properties().text().substr(0, 255);
+        };
+
         ParentController.prototype.dispose = function () {
             this.viewModel.caption.dispose();
             this.viewModel.description.dispose();
+            this.childTopicSync.dispose();
         };
         return ParentController;
     })();
@@ -29,7 +37,7 @@ define(["require", "exports"], function(require, exports) {
             this.viewModel = viewModel;
 
             this.viewModel.caption = ko.computed(function () {
-                return _this.model.title() || _this.model.text().substr(0, 255);
+                return _this.model.title() || (_this.model.text() && _this.model.text().substr(0, 255));
             });
             this.viewModel.click = function () {
             };
@@ -43,8 +51,8 @@ define(["require", "exports"], function(require, exports) {
 
     var ParentModel = (function () {
         function ParentModel() {
-            this.properties = ko.observable();
-            this.children = ko.observableArray();
+            this.properties = ko.observable(new Model);
+            this.children = new Obs.ObservableArrayExtender(ko.observableArray());
         }
         return ParentModel;
     })();

@@ -12,7 +12,6 @@ define(["require", "exports", 'factories/konsenskistecontroller', '../konsenskis
             var _this = this;
             this.window = win;
             this.window.setState = function (state) {
-                console.log(new Error('setState'), state);
                 if (state) {
                     var typedState = state;
                     var kk = _this.communicator.query(typedState.kokiId);

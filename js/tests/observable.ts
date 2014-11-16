@@ -11,4 +11,10 @@ export class Tests extends unit.TestClass {
 		o.push(1);
 		test.assert( () => ctr == 1 );
 	}
+	
+	removeMany() {
+		var arr = new Obs.ObservableArrayExtender(ko.observableArray<number>([1,2]));
+		arr.removeMany(1);
+		test.assert(() => arr.get(-1) == 1);
+	}
 }

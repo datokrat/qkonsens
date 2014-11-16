@@ -7,6 +7,7 @@ import DiscussionSynchronizer = require('tests/discussionsynchronizer');
 import TestRatingCommunicator = require('tests/ratingcommunicator');
 import topicNavigationModel = require('tests/topicnavigationmodel')
 import topicNavigation = require('tests/topicnavigation')
+import topic = require('tests/topic');
 import controller = require('tests/controller')
 import kokiModel = require('tests/konsenskistemodel')
 import kaModel = require('tests/kernaussage')
@@ -43,6 +44,7 @@ test.addTestClass(new kokiModel.Tests(), 'KonsenskisteModel')
 test.addTestClass(new kokiController.Tests(), 'KonsenskisteController')
 test.addTestClass(new topicNavigationModel.Tests(), 'TopicNavigationModelImpl')
 test.addTestClass(new topicNavigation.Tests(), 'TopicNavigation')
+test.addTestClass(new topic.Tests(), 'Topic');
 
 test.addTestClass(new winKoki.Tests(), 'Window: Konsenskiste')
 

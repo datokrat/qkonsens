@@ -1,22 +1,37 @@
 import Obs = require('observable');
+import TSync = require('synchronizers/tsynchronizers');
+import TopicNavigationModel = require('topicnavigationmodel');
+import TopicNavigationViewModel = require('topicnavigationviewmodel');
+import TopicNavigationController = require('topicnavigationcontroller');
 
 export class ParentController {
 	constructor(model: ParentModel, viewModel: ParentViewModel) {
 		this.model = model;
 		this.viewModel = viewModel;
 		
-		this.viewModel.caption = ko.computed<string>(() => this.model.properties().title() || this.model.properties().text().substr(0,255));
-		this.viewModel.description = ko.computed<string>(() => !this.model.properties().title() && this.model.properties().text());
+		this.viewModel.caption = ko.computed<string>(() => this.model.properties().title() || this.getShortenedText());
+		this.viewModel.description = ko.computed<string>(() => this.model.properties().title() && this.model.properties().text());
+		this.viewModel.children = ko.observableArray<ChildViewModel>();
+		this.childTopicSync = new TSync.ChildTopicSync()
+			.setModelObservable(this.model.children)
+			.setViewModelObservable(this.viewModel.children);
+		
 		this.viewModel.click = () => {};
+	}
+	
+	private getShortenedText(): string {
+		return this.model.properties().text() && this.model.properties().text().substr(0, 255);
 	}
 	
 	public dispose() {
 		this.viewModel.caption.dispose();
 		this.viewModel.description.dispose();
+		this.childTopicSync.dispose();
 	}
 	
 	private model: ParentModel;
 	private viewModel: ParentViewModel;
+	private childTopicSync: TSync.ChildTopicSync;
 }
 
 export class ChildController {
@@ -25,7 +40,7 @@ export class ChildController {
 		this.viewModel = viewModel;
 		
 		this.viewModel.caption = ko.computed<string>(() => {
-			return this.model.title() || this.model.text().substr(0,255);
+			return this.model.title() || (this.model.text() && this.model.text().substr(0,255));
 		});
 		this.viewModel.click = () => {};
 	}
@@ -39,8 +54,8 @@ export class ChildController {
 }
 
 export class ParentModel {
-	public properties = ko.observable<Model>();
-	public children = ko.observableArray<Model>();
+	public properties = ko.observable<Model>(new Model);
+	public children = new Obs.ObservableArrayExtender(ko.observableArray<Model>());
 }
 
 export class Model {

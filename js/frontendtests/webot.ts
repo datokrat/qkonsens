@@ -70,7 +70,7 @@ export class WebotElement {
 		return this.el.length;
 	}
 	
-	public filter(predicate: () => boolean) {
+	public filter(predicate: (index: number, element: Element) => boolean) {
 		return new WebotElement( this.frame, this.el.filter(predicate) );
 	}
 	

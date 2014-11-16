@@ -24,7 +24,6 @@ export class Controller {
 	private initWindow(win: winVm.Win) {
 		this.window = win;
 		this.window.setState = (state: any) => {
-			console.log(new Error('setState'), state);
 			if(state) {
 				var typedState = <State>state;
 				var kk = this.communicator.query(typedState.kokiId);

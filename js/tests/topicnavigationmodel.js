@@ -19,8 +19,8 @@ define(["require", "exports", 'tests/tsunit', '../topicnavigationmodel', '../top
             navi.appendChild(this.topicFactory.create('root'));
             navi.appendChild(this.topicFactory.create('child'));
 
-            this.areIdentical(navi.getSelectedTopic().title(), 'child');
-            this.areIdentical(navi.getBreadcrumbTopics().length, 2);
+            this.areIdentical(navi.selectedTopic().title(), 'child');
+            this.areIdentical(navi.breadcrumbTopics.get().length, 2);
         };
 
         Tests.prototype.testGoBackToBreadcrumbTopic = function () {
@@ -30,8 +30,9 @@ define(["require", "exports", 'tests/tsunit', '../topicnavigationmodel', '../top
 
             navi.goBackToBreadcrumbTopic(0);
 
-            this.areIdentical(navi.getSelectedTopic().title(), 'root');
-            this.areIdentical(navi.getBreadcrumbTopics().length, 1);
+            console.log(navi.breadcrumbTopics.get());
+            this.areIdentical(navi.selectedTopic().title(), 'root');
+            this.areIdentical(navi.breadcrumbTopics.get().length, 1);
         };
         return Tests;
     })(unit.TestClass);

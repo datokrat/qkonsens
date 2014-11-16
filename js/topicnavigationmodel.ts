@@ -1,14 +1,21 @@
-///<reference path="../typings/knockout.d.ts" />
-///<reference path="array.ts" />
-
-import Topic = require('topic')
+import Topic = require('topic');
+import Evt = require('event');
+import Obs = require('observable');
 
 export interface Model {
 	appendChild(child: Topic.Model);
 	goBackToBreadcrumbTopic(index: number);
 	
-	getSelectedTopic(): Topic.Model;
-	getBreadcrumbTopics(): Topic.Model[];
+	breadcrumbTopics: Obs.ObservableArrayEx<Topic.Model>;
+	selectedTopic: Obs.Observable<Topic.Model>;
+}
+
+export interface SelectedTopicChangedArgs {
+	oldValue: Topic.Model;
+	newValue: Topic.Model;
+}
+
+export interface BreadcrumbTopicsChangedArgs {
 }
 
 export class ModelImpl implements Model {
@@ -17,16 +24,9 @@ export class ModelImpl implements Model {
 	}
 	
 	public goBackToBreadcrumbTopic(index: number) {
-		this.breadcrumbTopics.splice(index + 1);
+		this.breadcrumbTopics.removeMany(index + 1);
 	}
 	
-	public getSelectedTopic() {
-		return this.breadcrumbTopics().get(-1);
-	}
-	
-	public getBreadcrumbTopics() {
-		return this.breadcrumbTopics();
-	}
-
-	public breadcrumbTopics = ko.observableArray<Topic.Model>()
+	public breadcrumbTopics = new Obs.ObservableArrayExtender(ko.observableArray<Topic.Model>());
+	public selectedTopic = ko.computed<Topic.Model>(() => this.breadcrumbTopics && this.breadcrumbTopics.get(-1));
 }
