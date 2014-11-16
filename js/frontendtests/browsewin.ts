@@ -19,13 +19,14 @@ export class Tests extends unit.TestClass {
 		common.Callbacks.batch([
 			r => {
 				win.navigation = ko.observable(new TopicNavigationViewModel.ViewModel);
-				win.navigation().breadcrumb = ko.observable<string[]>([]);
+				win.navigation().breadcrumb = ko.observableArray<Topic.ViewModel>([]);
 				win.parentTopic = ko.observable<Topic.ParentViewModel>(new Topic.ParentViewModel);
 				win.parentTopic().caption = ko.observable<string>('Topic 1');
 				win.parentTopic().description = ko.observable<string>('Description');
-				win.parentTopic().children = ko.observableArray([new Topic.ChildViewModel]);
+				win.parentTopic().children = ko.observableArray([new Topic.ViewModel]);
 				
 				win.parentTopic().children()[0].caption = ko.observable('Child 1');
+				win.parentTopic().children()[0].click = () => {};
 					
 				reloader.viewModel().right.win(win);
 				setTimeout(r);
@@ -49,7 +50,7 @@ export class Tests extends unit.TestClass {
 				
 				var win = new Win.Win();
 				win.navigation = ko.observable(new TopicNavigationViewModel.ViewModel);
-				win.navigation().breadcrumb = ko.observableArray<string>([]);
+				win.navigation().breadcrumb = ko.observableArray<Topic.ViewModel>([]);
 				win.parentTopic = ko.observable(topicViewModel);
 				
 				reloader.viewModel().right.win(win);
@@ -73,7 +74,9 @@ export class Tests extends unit.TestClass {
 				topicModel.properties().title('Parent Title');
 				win.navigation = ko.observable<TopicNavigationViewModel.ViewModel>();
 				win.navigation(new TopicNavigationModel.ModelImpl());
-				win.navigation().breadcrumb = ko.observableArray(['Breadcrumb Topic 1']);
+				win.navigation().breadcrumb = ko.observableArray([new Topic.ViewModel]);
+				win.navigation().breadcrumb()[0].caption = ko.observable('Breadcrumb Topic 1');
+				win.navigation().breadcrumb()[0].click = () => {};
 				win.parentTopic = ko.observable(topicViewModel);
 				reloader.viewModel().right.win(win);
 				setTimeout(r);

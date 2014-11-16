@@ -11,7 +11,7 @@ export class ParentController {
 		
 		this.viewModel.caption = ko.computed<string>(() => this.model.properties().title() || this.getShortenedText());
 		this.viewModel.description = ko.computed<string>(() => this.model.properties().title() && this.model.properties().text());
-		this.viewModel.children = ko.observableArray<ChildViewModel>();
+		this.viewModel.children = ko.observableArray<ViewModel>();
 		this.childTopicSync = new TSync.ChildTopicSync()
 			.setModelObservable(this.model.children)
 			.setViewModelObservable(this.viewModel.children);
@@ -35,7 +35,7 @@ export class ParentController {
 }
 
 export class ChildController {
-	constructor(model: Model, viewModel: ChildViewModel) {
+	constructor(model: Model, viewModel: ViewModel) {
 		this.model = model;
 		this.viewModel = viewModel;
 		
@@ -50,7 +50,7 @@ export class ChildController {
 	}
 	
 	private model: Model;
-	private viewModel: ChildViewModel;
+	private viewModel: ViewModel;
 }
 
 export class ParentModel {
@@ -73,12 +73,12 @@ export class Model {
 export class ParentViewModel {
 	public caption: Obs.Observable<string>;
 	public description: Obs.Observable<string>;
-	public children: Obs.ObservableArray<ChildViewModel>;
+	public children: Obs.ObservableArray<ViewModel>;
 	
 	public click: () => void;
 }
 
-export class ChildViewModel {
+export class ViewModel {
 	public caption: Obs.Observable<string>;
 	public click: () => void;
 }

@@ -77,10 +77,10 @@ define(["require", "exports", 'observable', 'synchronizers/tsynchronizers'], fun
     })();
     exports.ParentViewModel = ParentViewModel;
 
-    var ChildViewModel = (function () {
-        function ChildViewModel() {
+    var ViewModel = (function () {
+        function ViewModel() {
         }
-        return ChildViewModel;
+        return ViewModel;
     })();
-    exports.ChildViewModel = ChildViewModel;
+    exports.ViewModel = ViewModel;
 });

@@ -9,7 +9,7 @@ define(["require", "exports", 'factories/constructorbased', 'synchronizers/child
         __extends(ChildTopicSync, _super);
         function ChildTopicSync() {
             _super.call(this);
-            this.setViewModelFactory(new Factory.Factory(Topic.ChildViewModel));
+            this.setViewModelFactory(new Factory.Factory(Topic.ViewModel));
             this.setControllerFactory(new Factory.ControllerFactory(Topic.ChildController));
         }
         return ChildTopicSync;

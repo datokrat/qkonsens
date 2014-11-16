@@ -2,7 +2,7 @@
 <div>
 <!-- ko with: navigation -->
 	<ul data-bind="foreach: breadcrumb">
-		<li class="clickable" data-bind="text: $data"></li>
+		<li class="clickable" data-bind="text: caption, click: click"></li>
 	</ul>
 <!-- /ko -->
 </div>

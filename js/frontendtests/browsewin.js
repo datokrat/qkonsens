@@ -18,13 +18,15 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', 'frontendtests/re
             common.Callbacks.batch([
                 function (r) {
                     win.navigation = ko.observable(new TopicNavigationViewModel.ViewModel);
-                    win.navigation().breadcrumb = ko.observable([]);
+                    win.navigation().breadcrumb = ko.observableArray([]);
                     win.parentTopic = ko.observable(new Topic.ParentViewModel);
                     win.parentTopic().caption = ko.observable('Topic 1');
                     win.parentTopic().description = ko.observable('Description');
-                    win.parentTopic().children = ko.observableArray([new Topic.ChildViewModel]);
+                    win.parentTopic().children = ko.observableArray([new Topic.ViewModel]);
 
                     win.parentTopic().children()[0].caption = ko.observable('Child 1');
+                    win.parentTopic().children()[0].click = function () {
+                    };
 
                     reloader.viewModel().right.win(win);
                     setTimeout(r);
@@ -80,7 +82,10 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', 'frontendtests/re
                     topicModel.properties().title('Parent Title');
                     win.navigation = ko.observable();
                     win.navigation(new TopicNavigationModel.ModelImpl());
-                    win.navigation().breadcrumb = ko.observableArray(['Breadcrumb Topic 1']);
+                    win.navigation().breadcrumb = ko.observableArray([new Topic.ViewModel]);
+                    win.navigation().breadcrumb()[0].caption = ko.observable('Breadcrumb Topic 1');
+                    win.navigation().breadcrumb()[0].click = function () {
+                    };
                     win.parentTopic = ko.observable(topicViewModel);
                     reloader.viewModel().right.win(win);
                     setTimeout(r);
