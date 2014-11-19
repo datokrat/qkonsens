@@ -1,2 +1,3 @@
 * teils ko.computed durch ko.function ersetzen
 * synchronizer disposable machen
+* Neue KAs als Quintessence erstellen

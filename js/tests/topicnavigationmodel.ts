@@ -11,23 +11,23 @@ export class Tests extends unit.TestClass {
 	testSelectChildTopic() {
 		var navi = this.factory.create();
 		
-		navi.appendChild( this.topicFactory.create('root') );
-		navi.appendChild( this.topicFactory.create('child') );
+		navi.history.push( this.topicFactory.create('root') );
+		navi.history.push( this.topicFactory.create('child') );
 		
 		this.areIdentical(navi.selectedTopic().title(), 'child');
-		this.areIdentical(navi.breadcrumbTopics.get().length, 2);
+		this.areIdentical(navi.history.get().length, 2);
 	}
 	
 	testGoBackToBreadcrumbTopic() {
 		var navi = this.factory.create();
-		navi.appendChild( this.topicFactory.create('root') );
-		navi.appendChild( this.topicFactory.create('democracy') );
+		navi.history.push( this.topicFactory.create('root') );
+		navi.history.push( this.topicFactory.create('democracy') );
 		
 		navi.goBackToBreadcrumbTopic(0);
 		
-		console.log(navi.breadcrumbTopics.get());
+		console.log(navi.history.get());
 		this.areIdentical(navi.selectedTopic().title(), 'root');
-		this.areIdentical(navi.breadcrumbTopics.get().length, 1);
+		this.areIdentical(navi.history.get().length, 1);
 	}
 }
 

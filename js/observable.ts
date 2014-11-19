@@ -19,19 +19,24 @@ export interface ObservableArray<T> extends Observable<T[]> {
 	splice(from: number, count: number, ...replacement: T[]): T[];
 }
 
-export interface ObservableArrayEx<T> {
+export interface ReadonlyObservableArrayEx<T> {
 	get(): T[];
 	get(index: number): T;
+
+	pushed: Events.Event<T>;
+	removed: Events.Event<T>;
+	changed: Events.Event<T[]>;
+	
+	dispose(): void;
+}
+
+export interface ObservableArrayEx<T> extends ReadonlyObservableArrayEx<T> {
 	set(value: T[]): void;
 	
 	push(item: T): void;
 	remove(item: T): void;
 	removeMany(from: number, count?: number): void;
 	removeByPredicate(predicate: (item: T) => boolean): void;
-
-	pushed: Events.Event<T>;
-	removed: Events.Event<T>;
-	changed: Events.Event<T[]>;
 	
 	dispose(): void;
 }

@@ -74,8 +74,9 @@ define(["require", "exports", 'observable', 'comment', 'synchronizers/comment'],
                 _this.communicator.removeComment({ discussableId: _this.discussableModel.id(), commentId: comment.id });
             };
 
-            this.commentSynchronizer = new CommentSynchronizer(this.communicator.content).setViewModelObservable(this.viewModel.comments).setModelObservable(this.model.comments).setInitializationHandler(function (m, v, c) {
-                c.setCommentableModel(_this.model);
+            this.commentSynchronizer = new CommentSynchronizer(this.communicator.content).setViewModelObservable(this.viewModel.comments).setModelObservable(this.model.comments);
+            this.commentSynchronizer.itemCreated.subscribe(function (args) {
+                args.controller.setCommentableModel(_this.model);
             });
 
             this.communicatorSubscriptions = [

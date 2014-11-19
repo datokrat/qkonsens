@@ -20,12 +20,6 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../model', '../view
             this.cxt.controller.dispose();
         };
 
-        Tests.prototype.testTopicNavigation = function () {
-            this.cxt.model.topicNavigation.appendChild(this.topicFactory.create('root'));
-
-            this.areIdentical(this.cxt.viewModel.topicNavigation.breadcrumb()[0], 'root');
-        };
-
         Tests.prototype.testLeftWinContainer = function () {
             var _this = this;
             test.assert(function () {

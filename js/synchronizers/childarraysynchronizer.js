@@ -1,8 +1,9 @@
-define(["require", "exports"], function(require, exports) {
+define(["require", "exports", '../event'], function(require, exports, Events) {
     var ObservingChildArraySynchronizer = (function () {
         function ObservingChildArraySynchronizer() {
             this.modelSubscriptions = [];
             this.innerSync = new ChildArraySynchronizer();
+            this.itemCreated = this.innerSync.itemCreated;
         }
         ObservingChildArraySynchronizer.prototype.setViewModelFactory = function (fty) {
             this.innerSync.setViewModelFactory(fty);
@@ -44,11 +45,6 @@ define(["require", "exports"], function(require, exports) {
             return this;
         };
 
-        ObservingChildArraySynchronizer.prototype.setInitializationHandler = function (handler) {
-            this.innerSync.setInitializationHandler(handler);
-            return this;
-        };
-
         ObservingChildArraySynchronizer.prototype.initState = function () {
             if (this.models && this.viewModels)
                 this.innerSync.setInitialState(this.models.get());
@@ -75,6 +71,7 @@ define(["require", "exports"], function(require, exports) {
 
     var ChildArraySynchronizer = (function () {
         function ChildArraySynchronizer() {
+            this.itemCreated = new Events.EventImpl();
             this.entryKeys = [];
             this.entryValues = [];
             this.modelResolverMap = {};
@@ -101,12 +98,6 @@ define(["require", "exports"], function(require, exports) {
             return this;
         };
 
-        ChildArraySynchronizer.prototype.setInitializationHandler = function (handler) {
-            this.initializationHandler = handler || (function (v) {
-            });
-            return this;
-        };
-
         ChildArraySynchronizer.prototype.setInitialState = function (models) {
             this.clear();
             models.forEach(this.inserted.bind(this));
@@ -120,7 +111,7 @@ define(["require", "exports"], function(require, exports) {
                 this.entryKeys.push(m);
                 this.entryValues.push({ model: m, viewModel: v, controller: c });
                 this.viewModelInsertionHandler(v);
-                this.initializationHandler && this.initializationHandler(m, v, c);
+                this.itemCreated.raise({ model: m, viewModel: v, controller: c });
             } else
                 throw new DuplicateInsertionException();
         };

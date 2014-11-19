@@ -25,12 +25,6 @@ export class Tests extends unit.TestClass {
 		this.cxt.controller.dispose();
 	}
 	
-	testTopicNavigation() {
-		this.cxt.model.topicNavigation.appendChild( this.topicFactory.create('root') );
-		
-		this.areIdentical( this.cxt.viewModel.topicNavigation.breadcrumb()[0], 'root' );
-	}
-	
 	testLeftWinContainer() {
 		test.assert( () => this.cxt.viewModel.left != null );
 		test.assert( () => this.cxt.viewModel.right != null );

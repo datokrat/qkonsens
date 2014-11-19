@@ -3,7 +3,7 @@ define(["require", "exports", 'topicnavigationcontroller', 'locationhash', 'fram
         function Controller(model, viewModel, communicator) {
             var _this = this;
             this.subscriptions = [];
-            var topicNavigationController = new topicNavigationCtr.Controller(model.topicNavigation, viewModel.topicNavigation);
+            var topicNavigationController = new topicNavigationCtr.Controller(model.topicNavigation, viewModel.topicNavigation, communicator.topic);
 
             this.kkWin = new kokiWin.Win();
 

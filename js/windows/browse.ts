@@ -9,5 +9,4 @@ export class Win extends Frame.Win {
 	}
 	
 	public navigation: Obs.Observable<TopicNavigationViewModel.ViewModel>;
-	public parentTopic: Obs.Observable<Topic.ParentViewModel>;
 }

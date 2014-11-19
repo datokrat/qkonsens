@@ -4,6 +4,7 @@ import Events = require('../event')
 export class ObservingChildArraySynchronizer<Model, ViewModel, Controller extends { dispose: () => void }> {
 	constructor() {
 		this.innerSync = new ChildArraySynchronizer<Model, ViewModel, Controller>();
+		this.itemCreated = this.innerSync.itemCreated;
 	}
 	
 	public setViewModelFactory(fty: Factory<ViewModel>) {
@@ -37,11 +38,6 @@ export class ObservingChildArraySynchronizer<Model, ViewModel, Controller extend
 		return this;
 	}
 	
-	public setInitializationHandler(handler: (m: Model, v: ViewModel, c: Controller) => void) {
-		this.innerSync.setInitializationHandler(handler);
-		return this;
-	}
-	
 	public initState() {
 		if(this.models && this.viewModels)
 			this.innerSync.setInitialState(this.models.get());
@@ -60,6 +56,8 @@ export class ObservingChildArraySynchronizer<Model, ViewModel, Controller extend
 		this.disposeModelSubscriptions();
 		this.innerSync.dispose();
 	}
+	
+	public itemCreated: Events.EventImpl<ItemCreatedArgs<Model, ViewModel, Controller>>;
 	
 	public models: Obs.ObservableArrayEx<Model>;
 	public viewModels: Obs.ObservableArray<ViewModel>;
@@ -88,11 +86,6 @@ export class ChildArraySynchronizer<Model, ViewModel, Controller extends { dispo
 		return this;
 	}
 	
-	public setInitializationHandler(handler: (m: Model, v: ViewModel, c: Controller) => void) {
-		this.initializationHandler = handler || (v => {});
-		return this;
-	}
-	
 	public setInitialState( models: Model[] ) {
 		this.clear();
 		models.forEach(this.inserted.bind(this));
@@ -106,7 +99,7 @@ export class ChildArraySynchronizer<Model, ViewModel, Controller extends { dispo
 			this.entryKeys.push(m);
 			this.entryValues.push({ model: m, viewModel: v, controller: c });
 			this.viewModelInsertionHandler(v);
-			this.initializationHandler && this.initializationHandler(m, v, c);
+			this.itemCreated.raise({ model: m, viewModel: v, controller: c });
 		}
 		else
 			throw new DuplicateInsertionException();
@@ -140,16 +133,23 @@ export class ChildArraySynchronizer<Model, ViewModel, Controller extends { dispo
 		this.entryValues.forEach(value => cb(value.controller));
 	}
 	
+	public itemCreated = new Events.EventImpl<ItemCreatedArgs<Model, ViewModel, Controller>>();
+	
 	private viewModelFactory: Factory<ViewModel>;
 	private controllerFactory: ControllerFactory<Model, ViewModel, Controller>;
 	
 	private viewModelInsertionHandler: (v: ViewModel) => void;
 	private viewModelRemovalHandler: (v: ViewModel) => void;
-	private initializationHandler: (m: Model, v: ViewModel, c: Controller) => void;
 	
 	private entryKeys: Model[] = [];
 	private entryValues: { model: Model; viewModel: ViewModel; controller: Controller }[] = [];
 	private modelResolverMap: any = {};
+}
+
+export interface ItemCreatedArgs<Model, ViewModel, Controller> {
+	model: Model;
+	viewModel: ViewModel;
+	controller: Controller;
 }
 
 export interface Factory<T> {

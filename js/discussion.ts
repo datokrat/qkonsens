@@ -60,10 +60,10 @@ export class Controller {
 		
 		this.commentSynchronizer = new CommentSynchronizer(this.communicator.content)
 			.setViewModelObservable(this.viewModel.comments)
-			.setModelObservable(this.model.comments)
-			.setInitializationHandler((m, v, c) => {
-				c.setCommentableModel(this.model);
-			});
+			.setModelObservable(this.model.comments);
+		this.commentSynchronizer.itemCreated.subscribe(args => {
+			args.controller.setCommentableModel(this.model);
+		});
 		
 		this.communicatorSubscriptions = [
 			this.communicator.commentsReceived.subscribe(this.onCommentsReceived),

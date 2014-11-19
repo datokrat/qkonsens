@@ -1,8 +1,10 @@
 import Communicator = require('../communicator')
-import TestKokiCommunicator = require('tests/testkonsenskistecommunicator')
+import KokiCommunicator = require('tests/testkonsenskistecommunicator')
+import TopicCommunicator = require('tests/testtopiccommunicator');
 
 class TestCommunicator implements Communicator.Main {
-	public konsenskiste = new TestKokiCommunicator;
+	public konsenskiste = new KokiCommunicator;
+	public topic = new TopicCommunicator.Main();
 }
 
 export = TestCommunicator;

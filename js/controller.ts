@@ -16,7 +16,7 @@ import ViewModelContext = require('viewmodelcontext')
 
 export class Controller {
 	constructor(model: mdl.Model, viewModel: vm.ViewModel, communicator: Communicator.Main) {
-		var topicNavigationController = new topicNavigationCtr.Controller(model.topicNavigation, viewModel.topicNavigation);
+		var topicNavigationController = new topicNavigationCtr.Controller(model.topicNavigation, viewModel.topicNavigation, communicator.topic);
 		
 		this.kkWin = new kokiWin.Win();
 		

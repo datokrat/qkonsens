@@ -11,12 +11,12 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../topic'], functio
             _super.apply(this, arguments);
         }
         Tests.prototype.properties = function () {
-            var model = new Topic.ParentModel();
-            var viewModel = new Topic.ParentViewModel();
-            var controller = new Topic.ParentController(model, viewModel);
+            var model = new Topic.Model();
+            var viewModel = new Topic.ViewModel();
+            var controller = new Topic.ChildController(model, viewModel);
 
-            model.properties().title('Parent Title');
-            model.properties().text('Parent Text');
+            model.title('Parent Title');
+            model.text('Parent Text');
 
             test.assert(function () {
                 return viewModel.caption() == 'Parent Title';
@@ -24,24 +24,8 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../topic'], functio
             test.assert(function () {
                 return viewModel.description() == 'Parent Text';
             });
-            test.assert(function () {
-                return viewModel.children() != null;
-            });
 
-            viewModel.click();
-        };
-
-        Tests.prototype.children = function () {
-            var model = new Topic.ParentModel();
-            var viewModel = new Topic.ParentViewModel();
-            var controller = new Topic.ParentController(model, viewModel);
-
-            model.children.push(new Topic.Model);
-            model.children.get()[0].title('Child Title');
-
-            test.assert(function () {
-                return viewModel.children().length == 1;
-            });
+            viewModel.click.raise();
         };
         return Tests;
     })(unit.TestClass);

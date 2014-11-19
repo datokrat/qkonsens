@@ -1,21 +1,16 @@
-<h1>Themen</h1>
-<div>
 <!-- ko with: navigation -->
+<h1>Themen</h1>
 	<ul data-bind="foreach: breadcrumb">
-		<li class="clickable" data-bind="text: caption, click: click"></li>
+		<li class="clickable" data-bind="text: caption, click: click.raise.bind(click)"></li>
 	</ul>
-<!-- /ko -->
-</div>
-<!-- ko with: parentTopic -->
-<div>
-	
+<!-- ko with: selected -->
 	<b data-bind="text: caption"></b>
 	<p data-bind="text: description"></p>
+<!-- /ko -->
 	
 	<ul data-bind="foreach: children">
-		<li class="clickable" data-bind="text: caption, click: click"></li>
+		<li class="clickable" data-bind="text: caption, click: click.raise.bind(click)"></li>
 	</ul>
-</div>
 <!--h1>Konsenskisten zum Thema</h1>
 <div>
 		<ul data-bind="">

@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/asyncunit', 'tests/test', 'frontendtests/reloader', 'frontendtests/webot', '../common', 'windows/browse', '../topic', '../topicnavigationmodel', '../topicnavigationviewmodel'], function(require, exports, unit, test, reloader, webot, common, Win, Topic, TopicNavigationModel, TopicNavigationViewModel) {
+define(["require", "exports", 'tests/asyncunit', 'tests/test', 'frontendtests/reloader', 'frontendtests/webot', '../common', '../event', 'windows/browse', '../topic', 'factories/topic', 'tests/testtopiccommunicator', '../topicnavigationmodel', '../topicnavigationviewmodel', '../topicnavigationcontroller'], function(require, exports, unit, test, reloader, webot, common, Evt, Win, Topic, TopicFactory, TopicCommunicator, TopicNavigationModel, TopicNavigationViewModel, TopicNavigationController) {
     var Tests = (function (_super) {
         __extends(Tests, _super);
         function Tests() {
@@ -19,14 +19,13 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', 'frontendtests/re
                 function (r) {
                     win.navigation = ko.observable(new TopicNavigationViewModel.ViewModel);
                     win.navigation().breadcrumb = ko.observableArray([]);
-                    win.parentTopic = ko.observable(new Topic.ParentViewModel);
-                    win.parentTopic().caption = ko.observable('Topic 1');
-                    win.parentTopic().description = ko.observable('Description');
-                    win.parentTopic().children = ko.observableArray([new Topic.ViewModel]);
+                    win.navigation().selected = ko.observable(new Topic.ViewModel);
+                    win.navigation().selected().caption = ko.observable('Topic 1');
+                    win.navigation().selected().description = ko.observable('Description');
 
-                    win.parentTopic().children()[0].caption = ko.observable('Child 1');
-                    win.parentTopic().children()[0].click = function () {
-                    };
+                    win.navigation().children = ko.observableArray([new Topic.ViewModel]);
+                    win.navigation().children()[0].caption = ko.observable('Child 1');
+                    win.navigation().children()[0].click = new Evt.EventImpl();
 
                     reloader.viewModel().right.win(win);
                     setTimeout(r);
@@ -45,18 +44,19 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', 'frontendtests/re
 
         Tests.prototype.viewMVC = function (cxt, r) {
             var _this = this;
-            var topicModel = new Topic.ParentModel();
-            var topicViewModel = new Topic.ParentViewModel();
-            var topicController = new Topic.ParentController(topicModel, topicViewModel);
+            var topicModel = new Topic.Model();
+            var topicViewModel = new Topic.ViewModel();
+            var topicController = new Topic.ChildController(topicModel, topicViewModel);
 
             common.Callbacks.batch([
                 function (r) {
-                    topicModel.properties().title('Parent Title');
+                    topicModel.title('Parent Title');
 
                     var win = new Win.Win();
                     win.navigation = ko.observable(new TopicNavigationViewModel.ViewModel);
                     win.navigation().breadcrumb = ko.observableArray([]);
-                    win.parentTopic = ko.observable(topicViewModel);
+                    win.navigation().selected = ko.observable(topicViewModel);
+                    win.navigation().children = ko.observableArray([]);
 
                     reloader.viewModel().right.win(win);
                     setTimeout(r);
@@ -73,26 +73,63 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', 'frontendtests/re
         Tests.prototype.navigation = function (cxt, r) {
             var _this = this;
             var win = new Win.Win();
-            var topicModel = new Topic.ParentModel();
-            var topicViewModel = new Topic.ParentViewModel();
-            var topicController = new Topic.ParentController(topicModel, topicViewModel);
+            var topicModel = new Topic.Model();
+            var topicViewModel = new Topic.ViewModel();
+            var topicController = new Topic.ChildController(topicModel, topicViewModel);
 
             common.Callbacks.batch([
                 function (r) {
-                    topicModel.properties().title('Parent Title');
+                    topicModel.title('Parent Title');
                     win.navigation = ko.observable();
-                    win.navigation(new TopicNavigationModel.ModelImpl());
+                    win.navigation(new TopicNavigationViewModel.ViewModel());
                     win.navigation().breadcrumb = ko.observableArray([new Topic.ViewModel]);
                     win.navigation().breadcrumb()[0].caption = ko.observable('Breadcrumb Topic 1');
-                    win.navigation().breadcrumb()[0].click = function () {
-                    };
-                    win.parentTopic = ko.observable(topicViewModel);
+                    win.navigation().breadcrumb()[0].click = new Evt.EventImpl();
+                    win.navigation().selected = ko.observable(topicViewModel);
+                    win.navigation().children = ko.observableArray([]);
                     reloader.viewModel().right.win(win);
                     setTimeout(r);
                 },
                 function (r) {
                     test.assert(function () {
                         return _this.webot.query('.win:contains("Themen")').child('*').text('Breadcrumb Topic 1').exists();
+                    });
+                    r();
+                }
+            ], r);
+        };
+
+        Tests.prototype.navigationUseCase = function (cxt, r) {
+            var _this = this;
+            var win = new Win.Win();
+            var topicCommunicator = new TopicCommunicator.Main();
+            var topicNavigationModel = new TopicNavigationModel.ModelImpl();
+            var topicNavigationViewModel = new TopicNavigationViewModel.ViewModel();
+            var topicNavigationController = new TopicNavigationController.Controller(topicNavigationModel, topicNavigationViewModel, topicCommunicator);
+
+            topicCommunicator.setTestChildren(3, [TopicFactory.Main.create({ id: 5, text: 'Topic 5' })]);
+
+            var topic0 = TopicFactory.Main.create({ id: 0, text: 'Topic 0' });
+            var topic3 = TopicFactory.Main.create({ id: 3, text: 'Topic 3' });
+            topicNavigationModel.history.set([topic3, topic0]);
+
+            win.navigation = ko.observable(topicNavigationViewModel);
+            common.Callbacks.batch([
+                function (r) {
+                    reloader.viewModel().right.win(win);
+                    setTimeout(r);
+                }, function (r) {
+                    _this.webot.query('.win').contains('Themen').child('*').text('Topic 3').click();
+                    setTimeout(r);
+                }, function (r) {
+                    test.assert(function () {
+                        return _this.webot.query('.win').contains('Themen').child('*').text('Topic 3').exists();
+                    });
+                    test.assert(function () {
+                        return _this.webot.query('.win').contains('Themen').child('*').text('Topic 5').exists();
+                    });
+                    test.assert(function () {
+                        return _this.webot.query('.win').contains('Themen').child('*').text('Topic 0').exists(false);
                     });
                     r();
                 }
