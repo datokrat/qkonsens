@@ -5,13 +5,18 @@ import Topic = require('../topic');
 export class Main implements Topic.Communicator {
 	public childrenReceived = new Evt.EventImpl<Topic.ChildrenReceivedArgs>();
 	
-	public setTestChildren(id: number, children: Topic.Model[]) {
-		this.testTopics.set(id, children);
+	public setTestChildren(id: Topic.TopicIdentifier, children: Topic.Model[]) {
+		if(id.root)
+			this.testRootTopic = children;
+		else
+			this.testTopics.set(id.id, children);
 	}
 	
-	public queryChildren(id: number) {
+	public queryChildren(id: Topic.TopicIdentifier) {
 		try {
-			var children = this.testTopics.get(id);
+			if(id.root)
+				this.childrenReceived.raise({ id: id, children: this.testRootTopic });
+			var children = this.testTopics.get(id.id);
 			this.childrenReceived.raise({ id: id, children: children });
 		}
 		catch(e) {
@@ -20,11 +25,12 @@ export class Main implements Topic.Communicator {
 	}
 	
 	private testTopics = new ItemContainer.Main<Topic.Model[]>();
+	private testRootTopic: Topic.Model[] = [];
 }
 
 export class Stub implements Topic.Communicator {
 	public childrenReceived = new Evt.EventImpl<Topic.ChildrenReceivedArgs>();
 	
-	public queryChildren(id: number): void {
+	public queryChildren(id: Topic.TopicIdentifier): void {
 	}
 }

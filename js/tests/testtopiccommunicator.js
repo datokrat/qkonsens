@@ -3,14 +3,20 @@ define(["require", "exports", '../event', '../itemcontainer'], function(require,
         function Main() {
             this.childrenReceived = new Evt.EventImpl();
             this.testTopics = new ItemContainer.Main();
+            this.testRootTopic = [];
         }
         Main.prototype.setTestChildren = function (id, children) {
-            this.testTopics.set(id, children);
+            if (id.root)
+                this.testRootTopic = children;
+            else
+                this.testTopics.set(id.id, children);
         };
 
         Main.prototype.queryChildren = function (id) {
             try  {
-                var children = this.testTopics.get(id);
+                if (id.root)
+                    this.childrenReceived.raise({ id: id, children: this.testRootTopic });
+                var children = this.testTopics.get(id.id);
                 this.childrenReceived.raise({ id: id, children: children });
             } catch (e) {
                 //TODO

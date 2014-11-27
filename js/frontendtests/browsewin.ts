@@ -101,7 +101,7 @@ export class Tests extends unit.TestClass {
 		var topicNavigationViewModel = new TopicNavigationViewModel.ViewModel();
 		var topicNavigationController = new TopicNavigationController.Controller(topicNavigationModel, topicNavigationViewModel, topicCommunicator);
 		
-		topicCommunicator.setTestChildren(3, [TopicFactory.Main.create({ id: 5, text: 'Topic 5' })]);
+		topicCommunicator.setTestChildren({ id: 3 }, [TopicFactory.Main.create({ id: 5, text: 'Topic 5' })]);
 		
 		var topic0 = TopicFactory.Main.create({ id: 0, text: 'Topic 0' });
 		var topic3 = TopicFactory.Main.create({ id: 3, text: 'Topic 3' });

@@ -39,11 +39,11 @@ export class Tests extends unit.TestClass {
 	getChildrenFromCommunicator() {
 		var model = new mdl.ModelImpl();
 		model.history.push(new Topic.Model);
-		model.selectedTopic().id = 3;
+		model.selectedTopic().id = { id: 3 };
 		var communicator = new TopicCommunicator.Main();
 		var controller = new ctr.ModelCommunicatorController(model, communicator);
 		
-		communicator.childrenReceived.raise({ id: 3, children: [new Topic.Model] });
+		communicator.childrenReceived.raise({ id: { id: 3 }, children: [new Topic.Model] });
 		
 		test.assert(() => model.children.get().length == 1);
 	}
@@ -57,7 +57,7 @@ export class Tests extends unit.TestClass {
 		communicator.queryChildren = () => ++queryCtr;
 		
 		var topic = new Topic.Model;
-		topic.id = 13;
+		topic.id = { id: 13 };
 		model.history.push(topic);
 		
 		test.assert(() => queryCtr == 1);
@@ -120,6 +120,16 @@ export class Tests extends unit.TestClass {
 		test.assert(() => changeCtr == 0);
 		test.assert(() => pushCtr == 1);
 		test.assert(() => removeCtr == 0);
+	}
+	
+	root() {
+		var model = new mdl.ModelImpl();
+		var communicator = new TopicCommunicator.Stub();
+		var controller = new ctr.ModelCommunicatorController(model, communicator);
+		
+		var topic = new Topic.Model();
+		topic.id = { id: null, root: true };
+		model.history.push(topic);
 	}
 }
 

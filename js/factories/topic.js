@@ -4,7 +4,7 @@ define(["require", "exports", '../topic'], function(require, exports, Topic) {
         }
         Main.create = function (args) {
             var ret = new Topic.Model();
-            ret.id = args.id;
+            ret.id = { id: args.id };
             ret.title(args.title);
             ret.title(args.text);
             return ret;

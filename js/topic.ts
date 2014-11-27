@@ -66,7 +66,7 @@ export class ChildController {
 }*/
 
 export class Model {
-	public id: number;
+	public id: TopicIdentifier;
 	
 	//public parent = ko.observable<Model>();
 	//public children = ko.observableArray<TopicModel>();
@@ -99,11 +99,16 @@ export class ViewModel {
 }
 
 export interface Communicator {
-	queryChildren(id: number): void;
+	queryChildren(id: TopicIdentifier): void;
 	childrenReceived: Evt.Event<ChildrenReceivedArgs>;
 }
 
-export interface ChildrenReceivedArgs {
+export interface TopicIdentifier {
 	id: number;
+	root?: boolean;
+}
+
+export interface ChildrenReceivedArgs {
+	id: TopicIdentifier;
 	children: Model[];
 }
