@@ -46,7 +46,7 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', 'frontendtests/re
             var _this = this;
             var topicModel = new Topic.Model();
             var topicViewModel = new Topic.ViewModel();
-            var topicController = new Topic.ChildController(topicModel, topicViewModel);
+            var topicController = new Topic.ModelViewModelController(topicModel, topicViewModel);
 
             common.Callbacks.batch([
                 function (r) {
@@ -75,7 +75,7 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', 'frontendtests/re
             var win = new Win.Win();
             var topicModel = new Topic.Model();
             var topicViewModel = new Topic.ViewModel();
-            var topicController = new Topic.ChildController(topicModel, topicViewModel);
+            var topicController = new Topic.ModelViewModelController(topicModel, topicViewModel);
 
             common.Callbacks.batch([
                 function (r) {

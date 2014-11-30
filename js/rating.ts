@@ -65,7 +65,7 @@ export class Controller {
 	}
 	
 	public dispose() {
-		this.subscriptions.forEach(s => s.undo());
+		this.subscriptions.forEach(s => s.dispose());
 	}
 	
 	private ratableModel: RatableModel;

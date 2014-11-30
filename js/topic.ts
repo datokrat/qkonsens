@@ -3,35 +3,23 @@ import Evt = require('event');
 import TopicNavigationModel = require('topicnavigationmodel');
 import TopicNavigationViewModel = require('topicnavigationviewmodel');
 import TopicNavigationController = require('topicnavigationcontroller');
+import Topic = require('topic');
 
-/*export class ParentController {
-	constructor(model: ExtendedModel, viewModel: ParentViewModel, communicator: Communicator) {
-		this.model = model;
-		this.viewModel = viewModel;
-		
-		this.viewModel.caption = ko.computed<string>(() => this.model.properties().title() || this.getShortenedText());
-		this.viewModel.description = ko.computed<string>(() => this.model.properties().title() && this.model.properties().text());
-
-		this.viewModel.click = () => {};
-	}
-	
-	private getShortenedText(): string {
-		return this.model.properties().text() && this.model.properties().text().substr(0, 255);
+export class Controller {
+	constructor(model: Model, viewModel: ViewModel, communicator: Topic.Communicator) {
+		this.modelViewModelController = new ModelViewModelController(model, viewModel);
+		this.modelCommunicatorController = new ModelCommunicatorController(model, communicator);
 	}
 	
 	public dispose() {
-		this.viewModel.caption.dispose();
-		this.viewModel.description.dispose();
-		this.subscriptions.forEach(s => s.undo());
+		this.modelViewModelController.dispose();
 	}
 	
-	private model: ExtendedModel;
-	private viewModel: ParentViewModel;
-	
-	private subscriptions: Evt.Subscription[] = [];
-}*/
+	private modelViewModelController: ModelViewModelController;
+	private modelCommunicatorController: ModelCommunicatorController;
+}
 
-export class ChildController {
+export class ModelViewModelController {
 	constructor(model: Model, viewModel: ViewModel) {
 		this.model = model;
 		this.viewModel = viewModel;
@@ -54,23 +42,24 @@ export class ChildController {
 	private viewModel: ViewModel;
 }
 
-/*export class ExtendedModel {
-	public properties = ko.observable<Model>(new Model);
-	public children: Obs.ObservableArrayEx<Model> = new Obs.ObservableArrayExtender(ko.observableArray<Model>());
-	
-	public set(other: ExtendedModel): ExtendedModel {
-		this.properties().set(other.properties());
-		this.children.set(other.children.get().map(child => new Model().set(child)));
-		return this;
+export class ModelCommunicatorController {
+	constructor(model: Model, communicator: Communicator) {
 	}
-}*/
+	
+	dispose() {
+		this.communicatorSubscriptions.forEach(s => s.dispose());
+		this.communicatorSubscriptions = [];
+		
+		this.modelSubscriptions.forEach(s => s.dispose());
+		this.modelSubscriptions = [];
+	}
+	
+	private communicatorSubscriptions: Evt.Subscription[] = [];
+	private modelSubscriptions: Evt.Subscription[] = [];
+}
 
 export class Model {
 	public id: TopicIdentifier;
-	
-	//public parent = ko.observable<Model>();
-	//public children = ko.observableArray<TopicModel>();
-	//public kks = ko.observableArray<Konsenskiste>();
 	
 	public title = ko.observable<string>();
 	public text = ko.observable<string>();
@@ -82,15 +71,6 @@ export class Model {
 		return this;
 	}
 }
-
-
-/*export class ParentViewModel {
-	public caption: Obs.Observable<string>;
-	public description: Obs.Observable<string>;
-	//public children: Obs.ObservableArray<ViewModel>;
-	
-	public click: () => void;
-}*/
 
 export class ViewModel {
 	public caption: Obs.Observable<string>;

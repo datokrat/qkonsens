@@ -50,7 +50,7 @@ define(["require", "exports", 'event', 'observable'], function(require, exports,
 
         ParentTopicArray.prototype.disposeHistory = function () {
             this.historySubscriptions.forEach(function (s) {
-                return s.undo();
+                return s.dispose();
             });
             this.historySubscriptions = [];
         };

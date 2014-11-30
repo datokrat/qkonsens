@@ -13,7 +13,7 @@ define(["require", "exports", 'event', 'synchronizers/tsynchronizers'], function
         }
         ModelCommunicatorController.prototype.dispose = function () {
             this.subscriptions.forEach(function (s) {
-                return s.undo();
+                return s.dispose();
             });
         };
         return ModelCommunicatorController;
@@ -30,7 +30,8 @@ define(["require", "exports", 'event', 'synchronizers/tsynchronizers'], function
             viewModel.selected = ko.computed(function () {
                 return _this.viewModelHistory().get(-1);
             });
-            this.breadcrumbSync = new TSync.TopicSync().setModelObservable(model.history).setViewModelObservable(this.viewModelHistory);
+            this.breadcrumbSync = new TSync.TopicViewModelSync();
+            this.breadcrumbSync.setModelObservable(model.history).setViewModelObservable(this.viewModelHistory);
 
             this.breadcrumbSync.itemCreated.subscribe(function (args) {
                 args.viewModel.click.subscribe(function () {
@@ -39,7 +40,8 @@ define(["require", "exports", 'event', 'synchronizers/tsynchronizers'], function
             });
 
             viewModel.children = ko.observableArray();
-            this.childrenSync = new TSync.TopicSync().setModelObservable(model.children).setViewModelObservable(viewModel.children);
+            this.childrenSync = new TSync.TopicViewModelSync();
+            this.childrenSync.setModelObservable(model.children).setViewModelObservable(viewModel.children);
 
             this.childrenSync.itemCreated.subscribe(function (args) {
                 args.viewModel.click.subscribe(function () {

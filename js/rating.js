@@ -64,7 +64,7 @@ define(["require", "exports"], function(require, exports) {
 
         Controller.prototype.dispose = function () {
             this.subscriptions.forEach(function (s) {
-                return s.undo();
+                return s.dispose();
             });
         };
         Controller.idCtr = 0;

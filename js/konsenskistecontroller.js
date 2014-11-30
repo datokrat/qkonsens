@@ -81,10 +81,10 @@ define(["require", "exports", 'factories/kernaussagemodel', 'synchronizers/kokis
             KElement.Controller.prototype.dispose.apply(this, arguments);
 
             this.modelSubscriptions.forEach(function (s) {
-                return s.undo();
+                return s.dispose();
             });
             this.communicatorSubscriptions.forEach(function (s) {
-                return s.undo();
+                return s.dispose();
             });
         };
         return ControllerImpl;

@@ -46,7 +46,7 @@ export class Tests extends unit.TestClass {
 	viewMVC(cxt, r) {
 		var topicModel = new Topic.Model();
 		var topicViewModel = new Topic.ViewModel();
-		var topicController = new Topic.ChildController(topicModel, topicViewModel);
+		var topicController = new Topic.ModelViewModelController(topicModel, topicViewModel);
 		
 		common.Callbacks.batch([
 			r => {
@@ -72,7 +72,7 @@ export class Tests extends unit.TestClass {
 		var win = new Win.Win();
 		var topicModel = new Topic.Model();
 		var topicViewModel = new Topic.ViewModel();
-		var topicController = new Topic.ChildController(topicModel, topicViewModel);
+		var topicController = new Topic.ModelViewModelController(topicModel, topicViewModel);
 		
 		common.Callbacks.batch([
 			r => {

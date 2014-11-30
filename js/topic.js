@@ -1,32 +1,18 @@
 define(["require", "exports", 'event'], function(require, exports, Evt) {
-    /*export class ParentController {
-    constructor(model: ExtendedModel, viewModel: ParentViewModel, communicator: Communicator) {
-    this.model = model;
-    this.viewModel = viewModel;
-    
-    this.viewModel.caption = ko.computed<string>(() => this.model.properties().title() || this.getShortenedText());
-    this.viewModel.description = ko.computed<string>(() => this.model.properties().title() && this.model.properties().text());
-    
-    this.viewModel.click = () => {};
-    }
-    
-    private getShortenedText(): string {
-    return this.model.properties().text() && this.model.properties().text().substr(0, 255);
-    }
-    
-    public dispose() {
-    this.viewModel.caption.dispose();
-    this.viewModel.description.dispose();
-    this.subscriptions.forEach(s => s.undo());
-    }
-    
-    private model: ExtendedModel;
-    private viewModel: ParentViewModel;
-    
-    private subscriptions: Evt.Subscription[] = [];
-    }*/
-    var ChildController = (function () {
-        function ChildController(model, viewModel) {
+    var Controller = (function () {
+        function Controller(model, viewModel, communicator) {
+            this.modelViewModelController = new ModelViewModelController(model, viewModel);
+            this.modelCommunicatorController = new ModelCommunicatorController(model, communicator);
+        }
+        Controller.prototype.dispose = function () {
+            this.modelViewModelController.dispose();
+        };
+        return Controller;
+    })();
+    exports.Controller = Controller;
+
+    var ModelViewModelController = (function () {
+        function ModelViewModelController(model, viewModel) {
             var _this = this;
             this.model = model;
             this.viewModel = viewModel;
@@ -39,29 +25,36 @@ define(["require", "exports", 'event'], function(require, exports, Evt) {
             });
             this.viewModel.click = new Evt.EventImpl();
         }
-        ChildController.prototype.dispose = function () {
+        ModelViewModelController.prototype.dispose = function () {
             this.viewModel.caption.dispose();
             this.viewModel.description.dispose();
         };
-        return ChildController;
+        return ModelViewModelController;
     })();
-    exports.ChildController = ChildController;
+    exports.ModelViewModelController = ModelViewModelController;
 
-    /*export class ExtendedModel {
-    public properties = ko.observable<Model>(new Model);
-    public children: Obs.ObservableArrayEx<Model> = new Obs.ObservableArrayExtender(ko.observableArray<Model>());
-    
-    public set(other: ExtendedModel): ExtendedModel {
-    this.properties().set(other.properties());
-    this.children.set(other.children.get().map(child => new Model().set(child)));
-    return this;
-    }
-    }*/
+    var ModelCommunicatorController = (function () {
+        function ModelCommunicatorController(model, communicator) {
+            this.communicatorSubscriptions = [];
+            this.modelSubscriptions = [];
+        }
+        ModelCommunicatorController.prototype.dispose = function () {
+            this.communicatorSubscriptions.forEach(function (s) {
+                return s.dispose();
+            });
+            this.communicatorSubscriptions = [];
+
+            this.modelSubscriptions.forEach(function (s) {
+                return s.dispose();
+            });
+            this.modelSubscriptions = [];
+        };
+        return ModelCommunicatorController;
+    })();
+    exports.ModelCommunicatorController = ModelCommunicatorController;
+
     var Model = (function () {
         function Model() {
-            //public parent = ko.observable<Model>();
-            //public children = ko.observableArray<TopicModel>();
-            //public kks = ko.observableArray<Konsenskiste>();
             this.title = ko.observable();
             this.text = ko.observable();
         }
@@ -75,13 +68,6 @@ define(["require", "exports", 'event'], function(require, exports, Evt) {
     })();
     exports.Model = Model;
 
-    /*export class ParentViewModel {
-    public caption: Obs.Observable<string>;
-    public description: Obs.Observable<string>;
-    //public children: Obs.ObservableArray<ViewModel>;
-    
-    public click: () => void;
-    }*/
     var ViewModel = (function () {
         function ViewModel() {
         }

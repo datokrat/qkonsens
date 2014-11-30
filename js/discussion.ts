@@ -135,7 +135,7 @@ export class Controller {
 	
 	public dispose() {
 		this.commentSynchronizer.dispose();
-		this.communicatorSubscriptions.forEach(s => s.undo());
+		this.communicatorSubscriptions.forEach(s => s.dispose());
 	}
 	
 	private discussionClick = () => {

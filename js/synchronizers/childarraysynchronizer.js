@@ -1,4 +1,64 @@
 define(["require", "exports", '../event'], function(require, exports, Events) {
+    var PureModelArraySynchronizer = (function () {
+        function PureModelArraySynchronizer() {
+            var _this = this;
+            this.onModelsChanged = function (models) {
+                _this.models = models;
+                _this.disposeControllers();
+                _this.controllers = _this.models.map(function (m) {
+                    return _this.controllerFactory.create(m);
+                });
+            };
+            this.modelSubscriptions = [];
+            this.models = [];
+            this.controllers = [];
+        }
+        PureModelArraySynchronizer.prototype.setControllerFactory = function (fty) {
+            return this;
+        };
+
+        PureModelArraySynchronizer.prototype.setModelObservable = function (models) {
+            var _this = this;
+            this.onModelsChanged(models.get());
+
+            this.disposeModelObservable();
+            this.disposeControllers();
+
+            this.modelSubscriptions = [
+                models.pushed.subscribe(function (model) {
+                    _this.models.push(model);
+                    _this.controllers.push(_this.controllerFactory.create(model));
+                }),
+                models.removed.subscribe(function (model) {
+                    var index = _this.models.indexOf(model);
+                    _this.models.splice(index, 1);
+                    _this.controllers.splice(index, 1).forEach(function (c) {
+                        return c.dispose();
+                    });
+                }),
+                models.changed.subscribe(this.onModelsChanged)
+            ];
+            return this;
+        };
+
+        PureModelArraySynchronizer.prototype.disposeModelObservable = function () {
+            this.modelSubscriptions.forEach(function (s) {
+                return s.dispose();
+            });
+            this.modelSubscriptions = [];
+            this.models = [];
+        };
+
+        PureModelArraySynchronizer.prototype.disposeControllers = function () {
+            this.controllers.forEach(function (c) {
+                return c.dispose();
+            });
+            this.controllers = [];
+        };
+        return PureModelArraySynchronizer;
+    })();
+    exports.PureModelArraySynchronizer = PureModelArraySynchronizer;
+
     var ObservingChildArraySynchronizer = (function () {
         function ObservingChildArraySynchronizer() {
             this.modelSubscriptions = [];
@@ -52,7 +112,7 @@ define(["require", "exports", '../event'], function(require, exports, Events) {
 
         ObservingChildArraySynchronizer.prototype.disposeModelSubscriptions = function () {
             this.modelSubscriptions.forEach(function (s) {
-                return s.undo();
+                return s.dispose();
             });
             this.modelSubscriptions = [];
         };

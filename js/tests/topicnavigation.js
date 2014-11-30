@@ -179,9 +179,18 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../topicnavigationc
             var communicator = new TopicCommunicator.Stub();
             var controller = new ctr.ModelCommunicatorController(model, communicator);
 
+            var queryCtr = 0;
+            communicator.queryChildren = function (id) {
+                ++queryCtr;
+            };
+
             var topic = new Topic.Model();
             topic.id = { id: null, root: true };
             model.history.push(topic);
+
+            test.assert(function () {
+                return queryCtr == 1;
+            });
         };
         return Tests;
     })(unit.TestClass);

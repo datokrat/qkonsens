@@ -66,7 +66,7 @@ export class ParentTopicArray implements Obs.ReadonlyObservableArrayEx<Topic.Mod
 	}
 	
 	public disposeHistory() {
-		this.historySubscriptions.forEach(s => s.undo());
+		this.historySubscriptions.forEach(s => s.dispose());
 		this.historySubscriptions = [];
 	}
 	

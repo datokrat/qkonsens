@@ -14,11 +14,11 @@ export interface Listener<Args> {
 }
 
 export class Subscription {
-	undo: () => void;
+	dispose: () => void;
 	
 	public static fromDisposable(disposable: { dispose: () => void }): Subscription {
 		var s = new Subscription();
-		s.undo = () => disposable.dispose();
+		s.dispose = () => disposable.dispose();
 		return s;
 	}
 }
@@ -32,14 +32,14 @@ export class EventImpl<Args> implements Event<Args> {
 		if(!this.isListener(cb))
 			this.listeners.push(cb);
 		
-		return { undo: () => this.unsubscribe(cb) };
+		return { dispose: () => this.unsubscribe(cb) };
 	}
 	
 	public subscribeUntil(cb: (args: Args) => boolean, timeout?: number): Subscription {
 		var subscription: Subscription;
-		var handler = (args: Args) => { if(cb(args)) subscription.undo() };
+		var handler = (args: Args) => { if(cb(args)) subscription.dispose() };
 		subscription = this.subscribe(handler);
-		if(typeof timeout === 'number') setTimeout(() => subscription.undo(), timeout);
+		if(typeof timeout === 'number') setTimeout(() => subscription.dispose(), timeout);
 		return subscription;
 	}
 

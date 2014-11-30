@@ -102,8 +102,8 @@ export class ControllerImpl extends KElement.Controller<mdl.Model, vm.ViewModel,
 	public dispose() {
 		KElement.Controller.prototype.dispose.apply(this, arguments);
 		
-		this.modelSubscriptions.forEach( s => s.undo() );
-		this.communicatorSubscriptions.forEach( s => s.undo() );
+		this.modelSubscriptions.forEach( s => s.dispose() );
+		this.communicatorSubscriptions.forEach( s => s.dispose() );
 	}
 	
 	private kaSynchronizer: KokiSync.KaSynchronizer;

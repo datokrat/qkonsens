@@ -133,7 +133,7 @@ define(["require", "exports", 'observable', 'comment', 'synchronizers/comment'],
         Controller.prototype.dispose = function () {
             this.commentSynchronizer.dispose();
             this.communicatorSubscriptions.forEach(function (s) {
-                return s.undo();
+                return s.dispose();
             });
         };
         return Controller;

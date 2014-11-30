@@ -35,7 +35,7 @@ define(["require", "exports", 'topicnavigationcontroller', 'locationhash', 'fram
         Controller.prototype.dispose = function () {
             this.kkWinController.dispose();
             this.subscriptions.forEach(function (s) {
-                return s.undo();
+                return s.dispose();
             });
         };
 

@@ -7,7 +7,7 @@ define(["require", "exports"], function(require, exports) {
         }
         Subscription.fromDisposable = function (disposable) {
             var s = new Subscription();
-            s.undo = function () {
+            s.dispose = function () {
                 return disposable.dispose();
             };
             return s;
@@ -26,7 +26,7 @@ define(["require", "exports"], function(require, exports) {
             if (!this.isListener(cb))
                 this.listeners.push(cb);
 
-            return { undo: function () {
+            return { dispose: function () {
                     return _this.unsubscribe(cb);
                 } };
         };
@@ -35,12 +35,12 @@ define(["require", "exports"], function(require, exports) {
             var subscription;
             var handler = function (args) {
                 if (cb(args))
-                    subscription.undo();
+                    subscription.dispose();
             };
             subscription = this.subscribe(handler);
             if (typeof timeout === 'number')
                 setTimeout(function () {
-                    return subscription.undo();
+                    return subscription.dispose();
                 }, timeout);
             return subscription;
         };

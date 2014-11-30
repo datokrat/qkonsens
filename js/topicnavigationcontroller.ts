@@ -18,7 +18,7 @@ export class ModelCommunicatorController {
 	}
 	
 	public dispose() {
-		this.subscriptions.forEach(s => s.undo());
+		this.subscriptions.forEach(s => s.dispose());
 	}
 	
 	private subscriptions: Evt.Subscription[] = [];
@@ -29,7 +29,8 @@ export class ModelViewModelController {
 		this.viewModelHistory = ko.observableArray<Topic.ViewModel>();
 		viewModel.breadcrumb = ko.computed<Topic.ViewModel[]>(() => this.viewModelHistory().slice(0,-1));
 		viewModel.selected = ko.computed<Topic.ViewModel>(() => this.viewModelHistory().get(-1));
-		this.breadcrumbSync = new TSync.TopicSync()
+		this.breadcrumbSync = new TSync.TopicViewModelSync();
+		this.breadcrumbSync
 			.setModelObservable(model.history)
 			.setViewModelObservable(this.viewModelHistory);
 		
@@ -40,7 +41,8 @@ export class ModelViewModelController {
 		});
 		
 		viewModel.children = ko.observableArray<Topic.ViewModel>();
-		this.childrenSync = new TSync.TopicSync()
+		this.childrenSync = new TSync.TopicViewModelSync();
+		this.childrenSync
 			.setModelObservable(model.children)
 			.setViewModelObservable(viewModel.children);
 		
@@ -56,8 +58,8 @@ export class ModelViewModelController {
 		this.childrenSync.dispose();
 	}
 	
-	private breadcrumbSync: TSync.TopicSync;
-	private childrenSync: TSync.TopicSync;
+	private breadcrumbSync: TSync.TopicViewModelSync;
+	private childrenSync: TSync.TopicViewModelSync;
 	private viewModelHistory: Obs.ObservableArray<Topic.ViewModel>;
 }
 

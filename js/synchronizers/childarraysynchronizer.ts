@@ -1,6 +1,58 @@
 import Obs = require('../observable')
 import Events = require('../event')
 
+export class PureModelArraySynchronizer<Model, Controller extends { dispose: () => void }> {
+	constructor() {
+	}
+	
+	public setControllerFactory(fty: PureModelControllerFactory<Model, Controller>) {
+		return this;
+	}
+	
+	public setModelObservable(models: Obs.ObservableArrayEx<Model>) {
+		this.onModelsChanged(models.get());
+		
+		this.disposeModelObservable();
+		this.disposeControllers();
+		
+		this.modelSubscriptions = [
+			models.pushed.subscribe(model => {
+				this.models.push(model);
+				this.controllers.push(this.controllerFactory.create(model));
+			}),
+			models.removed.subscribe(model => {
+				var index = this.models.indexOf(model);
+				this.models.splice(index, 1);
+				this.controllers.splice(index, 1).forEach(c => c.dispose());
+			}),
+			models.changed.subscribe(this.onModelsChanged)
+		];
+		return this;
+	}
+	
+	private onModelsChanged = models => {
+		this.models = models;
+		this.disposeControllers();
+		this.controllers = this.models.map(m => this.controllerFactory.create(m));
+	}
+	
+	private disposeModelObservable() {
+		this.modelSubscriptions.forEach(s => s.dispose());
+		this.modelSubscriptions = [];
+		this.models = [];
+	}
+	
+	private disposeControllers() {
+		this.controllers.forEach(c => c.dispose());
+		this.controllers = [];
+	}
+	
+	private modelSubscriptions: Events.Subscription[] = [];
+	private controllerFactory: PureModelControllerFactory<Model, Controller>;
+	private models: Model[] = [];
+	private controllers: Controller[] = [];
+}
+
 export class ObservingChildArraySynchronizer<Model, ViewModel, Controller extends { dispose: () => void }> {
 	constructor() {
 		this.innerSync = new ChildArraySynchronizer<Model, ViewModel, Controller>();
@@ -44,7 +96,7 @@ export class ObservingChildArraySynchronizer<Model, ViewModel, Controller extend
 	}
 	
 	private disposeModelSubscriptions() {
-		this.modelSubscriptions.forEach(s => s.undo());
+		this.modelSubscriptions.forEach(s => s.dispose());
 		this.modelSubscriptions = [];
 	}
 	
@@ -158,6 +210,10 @@ export interface Factory<T> {
 
 export interface ControllerFactory<Model, ViewModel, Controller> {
 	create(m: Model, v: ViewModel): Controller;
+}
+
+export interface PureModelControllerFactory<Model, Controller> {
+	create(m: Model): Controller;
 }
 
 export class DuplicateInsertionException {

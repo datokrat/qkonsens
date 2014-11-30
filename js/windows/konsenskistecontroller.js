@@ -57,7 +57,7 @@ define(["require", "exports", 'factories/konsenskistecontroller', '../konsenskis
         Controller.prototype.dispose = function () {
             this.konsenskisteController.dispose();
             this.subscriptions.forEach(function (s) {
-                return s.undo();
+                return s.dispose();
             });
         };
         return Controller;

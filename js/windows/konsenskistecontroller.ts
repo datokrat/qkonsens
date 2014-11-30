@@ -68,7 +68,7 @@ export class Controller {
 	
 	public dispose() {
 		this.konsenskisteController.dispose();
-		this.subscriptions.forEach(s => s.undo());
+		this.subscriptions.forEach(s => s.dispose());
 	}
 	
 	private cxt: ViewModelContext;

@@ -31,7 +31,7 @@ define(["require", "exports", 'tests/tsunit', '../event'], function(require, exp
             var _this = this;
             this.listenerCtr++;
             this.event.subscribe(cb);
-            return { undo: function () {
+            return { dispose: function () {
                     return _this.unsubscribe(cb);
                 } };
         };
@@ -40,12 +40,12 @@ define(["require", "exports", 'tests/tsunit', '../event'], function(require, exp
             var subscription;
             var handler = function (args) {
                 if (cb(args))
-                    subscription.undo();
+                    subscription.dispose();
             };
             subscription = this.subscribe(handler);
             if (typeof timeout === 'number')
                 setTimeout(function () {
-                    return subscription.undo();
+                    return subscription.dispose();
                 }, timeout);
             return subscription;
         };

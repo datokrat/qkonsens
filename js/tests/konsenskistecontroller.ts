@@ -188,14 +188,14 @@ class TestEvent<Args> implements Event.Event<Args> {
 	public subscribe(cb: Event.Listener<Args>): Event.Subscription {
 		this.listenerCtr++;
 		this.event.subscribe(cb);
-		return { undo: () => this.unsubscribe(cb) };
+		return { dispose: () => this.unsubscribe(cb) };
 	}
 	
 	public subscribeUntil(cb: Event.Listener<Args>, timeout?: number): Event.Subscription {
 		var subscription: Event.Subscription;
-		var handler = (args: Args) => { if(cb(args)) subscription.undo() };
+		var handler = (args: Args) => { if(cb(args)) subscription.dispose() };
 		subscription = this.subscribe(handler);
-		if(typeof timeout === 'number') setTimeout(() => subscription.undo(), timeout);
+		if(typeof timeout === 'number') setTimeout(() => subscription.dispose(), timeout);
 		return subscription;
 	}
 	
