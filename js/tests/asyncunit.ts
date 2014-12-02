@@ -1,5 +1,3 @@
-//Modified version of: https://tsunit.codeplex.com/
-
 import common = require('common')
 
  export interface ITestClass {
@@ -39,14 +37,31 @@ import common = require('common')
          					else r();
          				},
          				r => {
-         					testClass[prop](testContext, err => {
-         						if(!err) testResult.passes.push( new TestDescription(testName, prop, 'OK') );
-         						else {
-         							testResult.errors.push( new TestDescription(testName, prop, err.toString()) );
-         							console.log('asyncunit', err);
-         						}
-         						r();
-         					});
+							var async = false;
+							var ready = false;
+							var then = err => {
+								if(!ready) {
+									ready = true;
+	         						if(!err) testResult.passes.push( new TestDescription(testName, prop, 'OK') );
+	         						else {
+	         							testResult.errors.push( new TestDescription(testName, prop, err.toString()) );
+	         							console.log('asyncunit', err);
+	         						}
+	         						r();
+								}
+         					};
+							var cb = <T extends { apply: (subject, ...args) => void }>(cb: T): T => {
+								return <any>function(...args) {
+									try { return cb.apply(this, arguments) }
+									catch(e) {
+										then(e);
+									}
+								}
+							}
+							try { testClass[prop](() => async = true, then, cb, testContext); }
+							catch(e) { then(e); }
+							
+							if(!async) then(null);
          				},
          				r => {
          					if(typeof testClass['tearDown'] === 'function') testClass['tearDown'](r);
@@ -64,7 +79,7 @@ import common = require('common')
          	});
          	common.Callbacks.batch(functionBatch, r);
          });
-         common.Callbacks.batch( unitBatch, () => then(testResult) );
+         common.Callbacks.atOnce( unitBatch, () => then(testResult) );
 
          /*for (var i = 0; i < this.tests.length; ++i) {
              var testClass = this.tests[i].testClass;

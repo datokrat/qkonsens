@@ -1,6 +1,33 @@
 ///reference path='./typings/knockout.d.ts' />
 declare var $;
 
+export class Counter {
+	public inc(key: string) {
+		this.data[key] ? ++this.data[key] : this.data[key] = 1;
+	}
+	
+	public get(key: string) {
+		return this.data[key] || 0;
+	}
+	
+	private data = {};
+}
+
+export class NumberCounter {
+	public inc(key: number) {
+		this.data[key] ? ++this.data[key] : this.data[key] = 1;
+	}
+	
+	public get(key: number) {
+		return this.data[key] || 0;
+	}
+	
+	public getAll() {
+		return this.data;
+	}
+	
+	private data: number[] = [];
+}
 
 export class Coll {
 	public static single(collection: any[], predicate: (item: any, index: number) => boolean ): any  {
@@ -49,6 +76,18 @@ export class Coll {
 		if(where.length > 0)
 			collection.removeAll(where);
 		return where;
+	}
+	
+	public static randomChoice<T>(collection: T[], amount: number): T[] {
+		var coll = collection.slice(0);
+		var ret = [];
+		for(var i = 0; i < amount; ++i) {
+			if(coll.length == 0) break;
+			var index = Math.floor(Math.random() * coll.length);
+			ret.push(coll[index]);
+			coll.splice(index, 1);
+		}
+		return ret;
 	}
 }
 

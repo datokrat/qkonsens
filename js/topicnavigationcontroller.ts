@@ -11,9 +11,9 @@ export class ModelCommunicatorController {
 			communicator.childrenReceived.subscribe(args => {
 				model.children.set(args.children);
 			}),
-			Evt.Subscription.fromDisposable(model.selectedTopic.subscribe(topic => {
+			model.selectedTopic.subscribe(topic => {
 				communicator.queryChildren(model.selectedTopic().id);
-			}))
+			})
 		];
 	}
 	

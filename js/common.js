@@ -1,6 +1,40 @@
 define(["require", "exports"], function(require, exports) {
     
 
+    var Counter = (function () {
+        function Counter() {
+            this.data = {};
+        }
+        Counter.prototype.inc = function (key) {
+            this.data[key] ? ++this.data[key] : this.data[key] = 1;
+        };
+
+        Counter.prototype.get = function (key) {
+            return this.data[key] || 0;
+        };
+        return Counter;
+    })();
+    exports.Counter = Counter;
+
+    var NumberCounter = (function () {
+        function NumberCounter() {
+            this.data = [];
+        }
+        NumberCounter.prototype.inc = function (key) {
+            this.data[key] ? ++this.data[key] : this.data[key] = 1;
+        };
+
+        NumberCounter.prototype.get = function (key) {
+            return this.data[key] || 0;
+        };
+
+        NumberCounter.prototype.getAll = function () {
+            return this.data;
+        };
+        return NumberCounter;
+    })();
+    exports.NumberCounter = NumberCounter;
+
     var Coll = (function () {
         function Coll() {
         }
@@ -51,6 +85,19 @@ define(["require", "exports"], function(require, exports) {
             if (where.length > 0)
                 collection.removeAll(where);
             return where;
+        };
+
+        Coll.randomChoice = function (collection, amount) {
+            var coll = collection.slice(0);
+            var ret = [];
+            for (var i = 0; i < amount; ++i) {
+                if (coll.length == 0)
+                    break;
+                var index = Math.floor(Math.random() * coll.length);
+                ret.push(coll[index]);
+                coll.splice(index, 1);
+            }
+            return ret;
         };
         return Coll;
     })();

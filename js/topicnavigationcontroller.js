@@ -1,4 +1,4 @@
-define(["require", "exports", 'event', 'synchronizers/tsynchronizers'], function(require, exports, Evt, TSync) {
+define(["require", "exports", 'synchronizers/tsynchronizers'], function(require, exports, TSync) {
     var ModelCommunicatorController = (function () {
         function ModelCommunicatorController(model, communicator) {
             this.subscriptions = [];
@@ -6,9 +6,9 @@ define(["require", "exports", 'event', 'synchronizers/tsynchronizers'], function
                 communicator.childrenReceived.subscribe(function (args) {
                     model.children.set(args.children);
                 }),
-                Evt.Subscription.fromDisposable(model.selectedTopic.subscribe(function (topic) {
+                model.selectedTopic.subscribe(function (topic) {
                     communicator.queryChildren(model.selectedTopic().id);
-                }))
+                })
             ];
         }
         ModelCommunicatorController.prototype.dispose = function () {

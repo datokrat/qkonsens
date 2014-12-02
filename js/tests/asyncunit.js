@@ -1,4 +1,3 @@
-//Modified version of: https://tsunit.codeplex.com/
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -46,15 +45,43 @@ define(["require", "exports", 'common'], function(require, exports, common) {
                                             r();
                                     },
                                     function (r) {
-                                        testClass[prop](testContext, function (err) {
-                                            if (!err)
-                                                testResult.passes.push(new TestDescription(testName, prop, 'OK'));
-                                            else {
-                                                testResult.errors.push(new TestDescription(testName, prop, err.toString()));
-                                                console.log('asyncunit', err);
+                                        var async = false;
+                                        var ready = false;
+                                        var then = function (err) {
+                                            if (!ready) {
+                                                ready = true;
+                                                if (!err)
+                                                    testResult.passes.push(new TestDescription(testName, prop, 'OK'));
+                                                else {
+                                                    testResult.errors.push(new TestDescription(testName, prop, err.toString()));
+                                                    console.log('asyncunit', err);
+                                                }
+                                                r();
                                             }
-                                            r();
-                                        });
+                                        };
+                                        var cb = function (cb) {
+                                            return function () {
+                                                var args = [];
+                                                for (var _i = 0; _i < (arguments.length - 0); _i++) {
+                                                    args[_i] = arguments[_i + 0];
+                                                }
+                                                try  {
+                                                    return cb.apply(this, arguments);
+                                                } catch (e) {
+                                                    then(e);
+                                                }
+                                            };
+                                        };
+                                        try  {
+                                            testClass[prop](function () {
+                                                return async = true;
+                                            }, then, cb, testContext);
+                                        } catch (e) {
+                                            then(e);
+                                        }
+
+                                        if (!async)
+                                            then(null);
                                     },
                                     function (r) {
                                         if (typeof testClass['tearDown'] === 'function')
@@ -76,7 +103,7 @@ define(["require", "exports", 'common'], function(require, exports, common) {
                     common.Callbacks.batch(functionBatch, r);
                 };
             });
-            common.Callbacks.batch(unitBatch, function () {
+            common.Callbacks.atOnce(unitBatch, function () {
                 return then(testResult);
             });
             /*for (var i = 0; i < this.tests.length; ++i) {

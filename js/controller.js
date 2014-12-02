@@ -1,14 +1,15 @@
-define(["require", "exports", 'topicnavigationcontroller', 'locationhash', 'frame', 'windows/none', 'windows/konsenskiste', 'windows/discussion', 'windows/konsenskistecontroller', 'viewmodelcontext'], function(require, exports, topicNavigationCtr, LocationHash, frame, noneWin, kokiWin, DiscussionWindow, kokiWinCtr, ViewModelContext) {
+define(["require", "exports", 'topicnavigationcontroller', 'locationhash', 'frame', 'windows/none', 'windows/konsenskiste', 'windows/browse', 'windows/discussion', 'windows/konsenskistecontroller', 'viewmodelcontext', 'topic'], function(require, exports, topicNavigationCtr, LocationHash, frame, noneWin, KokiWin, BrowseWin, DiscussionWindow, kokiWinCtr, ViewModelContext, Topic) {
     var Controller = (function () {
         function Controller(model, viewModel, communicator) {
             var _this = this;
             this.subscriptions = [];
             var topicNavigationController = new topicNavigationCtr.Controller(model.topicNavigation, viewModel.topicNavigation, communicator.topic);
 
-            this.kkWin = new kokiWin.Win();
+            this.kkWin = new KokiWin.Win();
+            this.browseWin = new BrowseWin.Win();
 
             viewModel.left = new frame.WinContainer(new noneWin.Win());
-            viewModel.right = new frame.WinContainer(new noneWin.Win());
+            viewModel.right = new frame.WinContainer(this.browseWin);
             viewModel.center = new frame.WinContainer(this.kkWin);
 
             var globalContext = new ViewModelContext(viewModel.left, viewModel.right, viewModel.center);
@@ -18,11 +19,18 @@ define(["require", "exports", 'topicnavigationcontroller', 'locationhash', 'fram
 
             this.kkWinController = new kokiWinCtr.Controller(model.konsenskiste(), this.kkWin, communicator.konsenskiste).setContext(globalContext);
 
+            this.browseWinController = new BrowseWin.Controller(model.topicNavigation, this.browseWin, communicator.topic);
+
             this.communicator = communicator;
 
             model.konsenskiste.subscribe(function (newKoki) {
                 return _this.kkWinController.setKonsenskisteModel(newKoki);
             });
+
+            var rootTopic = new Topic.Model();
+            rootTopic.id = { root: true, id: undefined };
+            rootTopic.text('[root]');
+            model.topicNavigation.history.push(rootTopic);
 
             this.kkWin.state.subscribe(function (state) {
                 return LocationHash.set(JSON.stringify(state), false);

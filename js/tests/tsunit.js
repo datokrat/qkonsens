@@ -1,4 +1,3 @@
-//Modified version of: https://tsunit.codeplex.com/
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -6,8 +5,6 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 define(["require", "exports"], function(require, exports) {
-    
-
     var Test = (function () {
         function Test() {
             this.tests = [];

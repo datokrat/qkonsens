@@ -29,10 +29,29 @@ define(["require", "exports"], function(require, exports) {
     exports.TestError = TestError;
 
     function assert(condition) {
-        if (!condition())
-            throw new TestError("assert: " + getFnBody(condition));
+        var valueCollector = new ValueCollector();
+        if (!condition(valueCollector)) {
+            throw new TestError("assert[" + valueCollector.values.toString() + "]: " + getFnBody(condition).replace("v.val", ""));
+        }
     }
     exports.assert = assert;
+
+    var ValueCollector = (function () {
+        function ValueCollector() {
+            this.values = [];
+        }
+        ValueCollector.prototype.val = function (value) {
+            this.values.push(value);
+            return value;
+        };
+
+        ValueCollector.prototype.str = function (value) {
+            this.values.push(JSON.stringify(value));
+            return value;
+        };
+        return ValueCollector;
+    })();
+    exports.ValueCollector = ValueCollector;
 
     function assertThrows(action) {
         var throwed = false;
@@ -47,7 +66,7 @@ define(["require", "exports"], function(require, exports) {
     exports.assertThrows = assertThrows;
 
     function getFnBody(fn) {
-        var str = fn.toString();
-        return str.substr(37, str.length - 52);
+        var entire = fn.toString();
+        return entire.slice(entire.indexOf(" return ") + 8, entire.lastIndexOf("}"));
     }
 });

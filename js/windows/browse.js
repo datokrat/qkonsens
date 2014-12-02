@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", '../frame'], function(require, exports, Frame) {
+define(["require", "exports", '../frame', '../topicnavigationviewmodel', '../topicnavigationcontroller'], function(require, exports, Frame, TopicNavigationViewModel, TopicNavigationController) {
     var Win = (function (_super) {
         __extends(Win, _super);
         function Win() {
@@ -13,4 +13,13 @@ define(["require", "exports", '../frame'], function(require, exports, Frame) {
         return Win;
     })(Frame.Win);
     exports.Win = Win;
+
+    var Controller = (function () {
+        function Controller(model, win, communicator) {
+            win.navigation = ko.observable(new TopicNavigationViewModel.ViewModel);
+            this.navigationController = new TopicNavigationController.Controller(model, win.navigation(), communicator);
+        }
+        return Controller;
+    })();
+    exports.Controller = Controller;
 });
