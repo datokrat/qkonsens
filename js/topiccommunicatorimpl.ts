@@ -1,8 +1,9 @@
 import Evt = require('event');
 import Topic = require('topic');
+import discoContext = require('discocontext');
 
 export class Main implements Topic.Communicator {
-	childrenReceived: Evt.Event<Topic.ChildrenReceivedArgs> = new Evt.EventImpl<Topic.ChildrenReceivedArgs>();
+	public childrenReceived: Evt.Event<Topic.ChildrenReceivedArgs> = new Evt.EventImpl<Topic.ChildrenReceivedArgs>();
 	
 	public queryChildren(id: Topic.TopicIdentifier): void {
 		if(id.root) this.queryRootChildren();
@@ -10,10 +11,42 @@ export class Main implements Topic.Communicator {
 	}
 	
 	private queryRootChildren(): void {
-		throw new Error('not implemented');
+		var parentlessFilter = discoContext.PostReferences.filter(function(it) { return it.ReferenceType.Description.Name != 'Child'});
+		
+		discoContext.Posts.filter(
+			function(it) { return it.PostType.Description.Name == 'Topic' && it.RefersTo.every(this.parentlessFilter) },
+			{ parentlessFilter: parentlessFilter })
+			.include('Content')
+			.toArray().then(topics => {
+				var rootChildren = topics.map(raw => this.parser.parseTopic(raw));
+				this.childrenReceived.raise({ id: { root: true, id: undefined }, children: rootChildren });
+			});
 	}
 	
 	private queryNonRootChildren(id: number): void {
-		throw new Error('not implemented');
+		var childFilter = discoContext.PostReferences.filter(
+			function(it) { return it.ReferenceType.Description.Name == 'Child' && it.ReferreeId == this.Id },
+			{ Id: id });
+		
+		discoContext.Posts.filter(
+			function(it) { return it.PostType.Description.Name == 'Topic' && it.RefersTo.some(this.childFilter) },
+			{ childFilter: childFilter })
+			.include('Content')
+			.toArray().then(topics => {
+				var rootChildren = topics.map(raw => this.parser.parseTopic(raw));
+				this.childrenReceived.raise({ id: { id: id }, children: rootChildren });
+			});
+	}
+	
+	private parser = new Parser();
+}
+
+export class Parser {
+	public parseTopic(discoTopic: Disco.Ontology.Post): Topic.Model {
+		var topic = new Topic.Model();
+		topic.id = { id: parseInt(discoTopic.Id) };
+		topic.title(discoTopic.Content.Title);
+		topic.text(discoTopic.Content.Text);
+		return topic;
 	}
 }
