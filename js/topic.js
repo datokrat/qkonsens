@@ -74,4 +74,14 @@ define(["require", "exports", 'event'], function(require, exports, Evt) {
         return ViewModel;
     })();
     exports.ViewModel = ViewModel;
+
+    var IdentifierHelper = (function () {
+        function IdentifierHelper() {
+        }
+        IdentifierHelper.equals = function (id1, id2) {
+            return (id1.root && id2.root) || (!id1.root && !id1.root && id1.id == id2.id);
+        };
+        return IdentifierHelper;
+    })();
+    exports.IdentifierHelper = IdentifierHelper;
 });

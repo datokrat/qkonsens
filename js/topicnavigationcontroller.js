@@ -1,13 +1,19 @@
-define(["require", "exports", 'synchronizers/tsynchronizers'], function(require, exports, TSync) {
+define(["require", "exports", 'topic', 'synchronizers/tsynchronizers'], function(require, exports, Topic, TSync) {
     var ModelCommunicatorController = (function () {
         function ModelCommunicatorController(model, communicator) {
             this.subscriptions = [];
             this.subscriptions = [
                 communicator.childrenReceived.subscribe(function (args) {
-                    model.children.set(args.children);
+                    if (Topic.IdentifierHelper.equals(args.id, model.selectedTopic().id))
+                        model.children.set(args.children);
+                }),
+                communicator.containedKokisReceived.subscribe(function (args) {
+                    if (Topic.IdentifierHelper.equals(args.id, model.selectedTopic().id))
+                        model.kokis.set(args.kokis);
                 }),
                 model.selectedTopic.subscribe(function (topic) {
                     communicator.queryChildren(model.selectedTopic().id);
+                    communicator.queryContainedKokis(model.selectedTopic().id);
                 })
             ];
         }

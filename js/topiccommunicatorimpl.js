@@ -2,6 +2,7 @@ define(["require", "exports", 'event', 'topic', 'discocontext'], function(requir
     var Main = (function () {
         function Main() {
             this.childrenReceived = new Evt.EventImpl();
+            this.containedKokisReceived = new Evt.EventImpl();
             this.parser = new Parser();
         }
         Main.prototype.queryChildren = function (id) {
@@ -41,6 +42,9 @@ define(["require", "exports", 'event', 'topic', 'discocontext'], function(requir
                 });
                 _this.childrenReceived.raise({ id: { id: id }, children: rootChildren });
             });
+        };
+
+        Main.prototype.queryContainedKokis = function (id) {
         };
         return Main;
     })();

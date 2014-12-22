@@ -1,11 +1,13 @@
 import unit = require('tests/tsunit');
 import test = require('tests/test');
+import common = require('../common');
 import ctr = require('../topicnavigationcontroller')
 import mdl = require('../topicnavigationmodel')
 import vm = require('../topicnavigationviewmodel')
 import Obs = require('../observable');
 import Topic = require('../topic')
 import TopicCommunicator = require('tests/testtopiccommunicator');
+import KonsenskisteModel = require('../konsenskistemodel');
 
 export class Tests extends unit.TestClass {
 	private topicFactory = new TopicFactory();
@@ -36,7 +38,7 @@ export class Tests extends unit.TestClass {
 		test.assert(() => viewModel.children().length == 1);
 	}
 	
-	getChildrenFromCommunicator() {
+	getFromCommunicator() {
 		var model = new mdl.ModelImpl();
 		model.history.push(new Topic.Model);
 		model.selectedTopic().id = { id: 3 };
@@ -44,23 +46,34 @@ export class Tests extends unit.TestClass {
 		var controller = new ctr.ModelCommunicatorController(model, communicator);
 		
 		communicator.childrenReceived.raise({ id: { id: 3 }, children: [new Topic.Model] });
+		communicator.containedKokisReceived.raise({ id: { id: 3 }, kokis: [new KonsenskisteModel.Model] });
 		
 		test.assert(() => model.children.get().length == 1);
+		test.assert(v => v.val(model.kokis.get().length) == 1);
+		
+		//Wrong id - should be ignored
+		communicator.containedKokisReceived.raise({ id: { id: 2 }, kokis: [] });
+		communicator.childrenReceived.raise({ id: { id: 2 }, children: [] });
+		
+		test.assert(v => v.val(model.children.get().length) == 1);
+		test.assert(v => v.val(model.kokis.get().length) == 1);
 	}
 	
-	queryChildrenWhenSelectedTopicChanged() {
+	queriesWhenSelectedTopicChanged() {
+		var counter = new common.Counter();
 		var model = new mdl.ModelImpl();
 		var communicator = new TopicCommunicator.Stub();
 		var controller = new ctr.ModelCommunicatorController(model, communicator);
 		
-		var queryCtr = 0;
-		communicator.queryChildren = () => ++queryCtr;
+		communicator.queryChildren = () => counter.inc('queryChildren');
+		communicator.queryContainedKokis = () => counter.inc('queryContainedKokis');
 		
 		var topic = new Topic.Model;
 		topic.id = { id: 13 };
 		model.history.push(topic);
 		
-		test.assert(() => queryCtr == 1);
+		test.assert(() => counter.get('queryChildren') == 1);
+		test.assert(() => counter.get('queryContainedKokis') == 1);
 	}
 	
 	clickChild() {

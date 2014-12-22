@@ -4,6 +4,7 @@ import TopicNavigationModel = require('topicnavigationmodel');
 import TopicNavigationViewModel = require('topicnavigationviewmodel');
 import TopicNavigationController = require('topicnavigationcontroller');
 import Topic = require('topic');
+import KonsenskisteModel = require('konsenskistemodel');
 
 export class Controller {
 	constructor(model: Model, viewModel: ViewModel, communicator: Topic.Communicator) {
@@ -80,7 +81,9 @@ export class ViewModel {
 
 export interface Communicator {
 	queryChildren(id: TopicIdentifier): void;
+	queryContainedKokis(id: TopicIdentifier): void;
 	childrenReceived: Evt.Event<ChildrenReceivedArgs>;
+	containedKokisReceived: Evt.Event<ContainedKokisReceivedArgs>;
 }
 
 export interface TopicIdentifier {
@@ -88,7 +91,18 @@ export interface TopicIdentifier {
 	root?: boolean;
 }
 
+export class IdentifierHelper {
+	public static equals(id1: TopicIdentifier, id2: TopicIdentifier) {
+		return (id1.root && id2.root) || (!id1.root && !id1.root && id1.id == id2.id);
+	}
+}
+
 export interface ChildrenReceivedArgs {
 	id: TopicIdentifier;
 	children: Model[];
+}
+
+export interface ContainedKokisReceivedArgs {
+	id: TopicIdentifier;
+	kokis: KonsenskisteModel.Model[];
 }

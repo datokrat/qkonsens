@@ -4,6 +4,7 @@ import discoContext = require('discocontext');
 
 export class Main implements Topic.Communicator {
 	public childrenReceived: Evt.Event<Topic.ChildrenReceivedArgs> = new Evt.EventImpl<Topic.ChildrenReceivedArgs>();
+	public containedKokisReceived = new Evt.EventImpl<Topic.ContainedKokisReceivedArgs>();
 	
 	public queryChildren(id: Topic.TopicIdentifier): void {
 		if(id.root) this.queryRootChildren();
@@ -17,7 +18,8 @@ export class Main implements Topic.Communicator {
 			function(it) { return it.PostType.Description.Name == 'Topic' && it.RefersTo.every(this.parentlessFilter) },
 			{ parentlessFilter: parentlessFilter })
 			.include('Content')
-			.toArray().then(topics => {
+			.toArray()
+			.then(topics => {
 				var rootChildren = topics.map(raw => this.parser.parseTopic(raw));
 				this.childrenReceived.raise({ id: { root: true, id: undefined }, children: rootChildren });
 			});
@@ -36,6 +38,9 @@ export class Main implements Topic.Communicator {
 				var rootChildren = topics.map(raw => this.parser.parseTopic(raw));
 				this.childrenReceived.raise({ id: { id: id }, children: rootChildren });
 			});
+	}
+	
+	public queryContainedKokis(id: Topic.TopicIdentifier) {
 	}
 	
 	private parser = new Parser();

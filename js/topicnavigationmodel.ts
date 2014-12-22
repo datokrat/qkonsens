@@ -1,4 +1,5 @@
 import Topic = require('topic');
+import KonsenskisteModel = require('konsenskistemodel');
 import Evt = require('event');
 import Obs = require('observable');
 
@@ -12,6 +13,8 @@ export interface Model {
 	
 	children: Obs.ObservableArrayEx<Topic.Model>;
 	selectChild(child: Topic.Model);
+	
+	kokis: Obs.ObservableArrayEx<KonsenskisteModel.Model>;
 }
 
 export class ParentTopicArray implements Obs.ReadonlyObservableArrayEx<Topic.Model> {
@@ -100,4 +103,5 @@ export class ModelImpl implements Model {
 	public history: Obs.ObservableArrayEx<Topic.Model> = new Obs.ObservableArrayExtender(ko.observableArray<Topic.Model>());
 	public selectedTopic = ko.computed<Topic.Model>(() => this.history && this.history.get(-1));
 	public children: Obs.ObservableArrayEx<Topic.Model> = new Obs.ObservableArrayExtender(ko.observableArray<Topic.Model>());
+	public kokis: Obs.ObservableArrayEx<KonsenskisteModel.Model> = new Obs.ObservableArrayExtender(ko.observableArray<KonsenskisteModel.Model>());
 }

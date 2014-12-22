@@ -70,6 +70,7 @@ define(["require", "exports", 'event', 'observable'], function(require, exports,
                 return _this.history && _this.history.get(-1);
             });
             this.children = new Obs.ObservableArrayExtender(ko.observableArray());
+            this.kokis = new Obs.ObservableArrayExtender(ko.observableArray());
         }
         ModelImpl.prototype.goBackToBreadcrumbTopic = function (index) {
             this.history.removeMany(index + 1);

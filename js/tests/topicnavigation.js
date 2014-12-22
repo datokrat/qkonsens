@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/tsunit', 'tests/test', '../topicnavigationcontroller', '../topicnavigationmodel', '../topicnavigationviewmodel', '../observable', '../topic', 'tests/testtopiccommunicator'], function(require, exports, unit, test, ctr, mdl, vm, Obs, Topic, TopicCommunicator) {
+define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../topicnavigationcontroller', '../topicnavigationmodel', '../topicnavigationviewmodel', '../observable', '../topic', 'tests/testtopiccommunicator', '../konsenskistemodel'], function(require, exports, unit, test, common, ctr, mdl, vm, Obs, Topic, TopicCommunicator, KonsenskisteModel) {
     var Tests = (function (_super) {
         __extends(Tests, _super);
         function Tests() {
@@ -47,7 +47,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../topicnavigationc
             });
         };
 
-        Tests.prototype.getChildrenFromCommunicator = function () {
+        Tests.prototype.getFromCommunicator = function () {
             var model = new mdl.ModelImpl();
             model.history.push(new Topic.Model);
             model.selectedTopic().id = { id: 3 };
@@ -55,20 +55,38 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../topicnavigationc
             var controller = new ctr.ModelCommunicatorController(model, communicator);
 
             communicator.childrenReceived.raise({ id: { id: 3 }, children: [new Topic.Model] });
+            communicator.containedKokisReceived.raise({ id: { id: 3 }, kokis: [new KonsenskisteModel.Model] });
 
             test.assert(function () {
                 return model.children.get().length == 1;
             });
+            test.assert(function (v) {
+                return v.val(model.kokis.get().length) == 1;
+            });
+
+            //Wrong id - should be ignored
+            communicator.containedKokisReceived.raise({ id: { id: 2 }, kokis: [] });
+            communicator.childrenReceived.raise({ id: { id: 2 }, children: [] });
+
+            test.assert(function (v) {
+                return v.val(model.children.get().length) == 1;
+            });
+            test.assert(function (v) {
+                return v.val(model.kokis.get().length) == 1;
+            });
         };
 
-        Tests.prototype.queryChildrenWhenSelectedTopicChanged = function () {
+        Tests.prototype.queriesWhenSelectedTopicChanged = function () {
+            var counter = new common.Counter();
             var model = new mdl.ModelImpl();
             var communicator = new TopicCommunicator.Stub();
             var controller = new ctr.ModelCommunicatorController(model, communicator);
 
-            var queryCtr = 0;
             communicator.queryChildren = function () {
-                return ++queryCtr;
+                return counter.inc('queryChildren');
+            };
+            communicator.queryContainedKokis = function () {
+                return counter.inc('queryContainedKokis');
             };
 
             var topic = new Topic.Model;
@@ -76,7 +94,10 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../topicnavigationc
             model.history.push(topic);
 
             test.assert(function () {
-                return queryCtr == 1;
+                return counter.get('queryChildren') == 1;
+            });
+            test.assert(function () {
+                return counter.get('queryContainedKokis') == 1;
             });
         };
 

@@ -2,6 +2,7 @@ define(["require", "exports", '../event', '../itemcontainer'], function(require,
     var Main = (function () {
         function Main() {
             this.childrenReceived = new Evt.EventImpl();
+            this.containedKokisReceived = new Evt.EventImpl();
             this.testTopics = new ItemContainer.Main();
             this.testRootTopic = [];
         }
@@ -22,6 +23,9 @@ define(["require", "exports", '../event', '../itemcontainer'], function(require,
                 //TODO
             }
         };
+
+        Main.prototype.queryContainedKokis = function (id) {
+        };
         return Main;
     })();
     exports.Main = Main;
@@ -29,8 +33,11 @@ define(["require", "exports", '../event', '../itemcontainer'], function(require,
     var Stub = (function () {
         function Stub() {
             this.childrenReceived = new Evt.EventImpl();
+            this.containedKokisReceived = new Evt.EventImpl();
         }
         Stub.prototype.queryChildren = function (id) {
+        };
+        Stub.prototype.queryContainedKokis = function (id) {
         };
         return Stub;
     })();

@@ -9,11 +9,17 @@ export class ModelCommunicatorController {
 	constructor(model: Model.Model, communicator: Topic.Communicator) {
 		this.subscriptions = [
 			communicator.childrenReceived.subscribe(args => {
-				model.children.set(args.children);
+				if(Topic.IdentifierHelper.equals(args.id, model.selectedTopic().id))
+					model.children.set(args.children);
+			}),
+			communicator.containedKokisReceived.subscribe(args => {
+				if(Topic.IdentifierHelper.equals(args.id, model.selectedTopic().id))
+					model.kokis.set(args.kokis);
 			}),
 			model.selectedTopic.subscribe(topic => {
 				communicator.queryChildren(model.selectedTopic().id);
-			})
+				communicator.queryContainedKokis(model.selectedTopic().id);
+			}),
 		];
 	}
 	
