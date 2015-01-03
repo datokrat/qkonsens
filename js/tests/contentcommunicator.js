@@ -34,8 +34,9 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', '../common', 'tes
             r();
         };
 
-        TestClass.prototype.queryContent = function (cxt, r) {
+        TestClass.prototype.queryContent = function (async, r) {
             var _this = this;
+            async();
             common.Callbacks.batch([
                 function (r) {
                     _this.generalModel.id = 1;

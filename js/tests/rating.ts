@@ -5,7 +5,8 @@ import Rating = require('../rating');
 import RatingCommunicator = require('tests/testratingcommunicator');
 
 export class TestClass extends unit.TestClass {
-	submitRating(cxt, r) {
+	submitRating(async, r) {
+		async();
 		var mdl = new Rating.Model();
 		var vm = new Rating.ViewModel();
 		var com = new RatingCommunicator.Main();
@@ -34,7 +35,8 @@ export class TestClass extends unit.TestClass {
 		}, 100);
 	}
 	
-	queryRating(cxt, r) {
+	queryRating(async, r) {
+		async();
 		var mdl = new Rating.Model();
 		var vm = new Rating.ViewModel();
 		var com = new RatingCommunicator.Main();

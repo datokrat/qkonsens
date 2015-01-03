@@ -50,7 +50,8 @@ class TestClass extends unit.TestClass {
 		r();
 	}
 	
-	queryContent(cxt, r) {
+	queryContent(async, r) {
+		async();
 		common.Callbacks.batch([
 			r => {
 				this.generalModel.id = 1;

@@ -18,8 +18,9 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', '../common', 'tes
             r();
         };
 
-        TestClass.prototype.queryKoki = function (cxt, r) {
+        TestClass.prototype.queryKoki = function (async, r) {
             var _this = this;
+            async();
             common.Callbacks.batch([
                 function (r) {
                     var koki1 = new KonsenskisteModel.Model;
@@ -59,8 +60,9 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', '../common', 'tes
             ], r);
         };
 
-        TestClass.prototype.queryComments = function (cxt, r) {
+        TestClass.prototype.queryComments = function (async, r) {
             var _this = this;
+            async();
             common.Callbacks.batch([
                 function (r) {
                     _this.mdl.id(1);
@@ -86,8 +88,9 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', '../common', 'tes
             ], r);
         };
 
-        TestClass.prototype.receiveCommentsFromCommunicator = function (cxt, r) {
+        TestClass.prototype.receiveCommentsFromCommunicator = function (async, r) {
             var _this = this;
+            async();
             common.Callbacks.batch([
                 function (r) {
                     _this.mdl.id(1);
@@ -100,7 +103,8 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', '../common', 'tes
             ], r);
         };
 
-        TestClass.prototype.communicator = function (cxt, r) {
+        TestClass.prototype.communicator = function (async, r) {
+            async();
             var communicator = new TestKokiCommunicator();
             communicator.discussion.commentsReceived.subscribe(function (args) {
                 return test.assert(function () {
@@ -117,7 +121,8 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', '../common', 'tes
             r();
         };
 
-        TestClass.prototype.queryNonExistantKoki = function (cxt, r) {
+        TestClass.prototype.queryNonExistantKoki = function (async, r) {
+            async();
             var errorCtr = 0;
             var successCtr = 0;
             var koki;

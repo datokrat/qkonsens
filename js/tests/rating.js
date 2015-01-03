@@ -10,7 +10,8 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', '../rating', 'tes
         function TestClass() {
             _super.apply(this, arguments);
         }
-        TestClass.prototype.submitRating = function (cxt, r) {
+        TestClass.prototype.submitRating = function (async, r) {
+            async();
             var mdl = new Rating.Model();
             var vm = new Rating.ViewModel();
             var com = new RatingCommunicator.Main();
@@ -48,7 +49,8 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', '../rating', 'tes
             }, 100);
         };
 
-        TestClass.prototype.queryRating = function (cxt, r) {
+        TestClass.prototype.queryRating = function (async, r) {
+            async();
             var mdl = new Rating.Model();
             var vm = new Rating.ViewModel();
             var com = new RatingCommunicator.Main();

@@ -23,7 +23,8 @@ class TestClass extends unit.TestClass {
 		r();
 	}
 	
-	queryKoki(cxt, r) {
+	queryKoki(async, r) {
+		async();
 		common.Callbacks.batch([
 			r => {
 				var koki1 = new KonsenskisteModel.Model;
@@ -55,7 +56,8 @@ class TestClass extends unit.TestClass {
 		], r);
 	}
 	
-	queryComments(cxt, r) {
+	queryComments(async, r) {
+		async();
 		common.Callbacks.batch([
 			r => {
 				this.mdl.id(1);
@@ -77,7 +79,8 @@ class TestClass extends unit.TestClass {
 		], r);
 	}
 	
-	receiveCommentsFromCommunicator(cxt, r) {
+	receiveCommentsFromCommunicator(async, r) {
+		async();
 		common.Callbacks.batch([
 			r => {
 				this.mdl.id(1);
@@ -88,7 +91,8 @@ class TestClass extends unit.TestClass {
 		], r);
 	}
 	
-	communicator(cxt, r) {
+	communicator(async, r) {
+		async();
 		var communicator = new TestKokiCommunicator();
 		communicator.discussion.commentsReceived.subscribe(args => test.assert(() => args.comments.length == 1) );
 		
@@ -101,7 +105,8 @@ class TestClass extends unit.TestClass {
 		r();
 	}
 	
-	queryNonExistantKoki(cxt, r) {
+	queryNonExistantKoki(async, r) {
+		async();
 		var errorCtr = 0;
 		var successCtr = 0;
 		var koki: KonsenskisteModel.Model;
