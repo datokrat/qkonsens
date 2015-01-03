@@ -43,6 +43,7 @@ export class Main implements Topic.Communicator {
 	
 	public queryContainedKokis(id: Topic.TopicIdentifier) {
 		if(!id.root) this.queryContainedKokisOfNonRoot(id.id);
+		else this.containedKokisReceived.raise({ id: id, kokis: [] });
 	}
 	
 	private queryContainedKokisOfNonRoot(id: number) {

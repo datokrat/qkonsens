@@ -48,6 +48,8 @@ define(["require", "exports", 'event', 'topic', 'konsenskistecommunicatorimpl', 
         Main.prototype.queryContainedKokis = function (id) {
             if (!id.root)
                 this.queryContainedKokisOfNonRoot(id.id);
+            else
+                this.containedKokisReceived.raise({ id: id, kokis: [] });
         };
 
         Main.prototype.queryContainedKokisOfNonRoot = function (id) {
