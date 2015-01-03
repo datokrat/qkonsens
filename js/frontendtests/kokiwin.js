@@ -31,16 +31,16 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
             setTimeout(r, 0);
         };
 
-        Tests.prototype.testTitle = function (cxt, r) {
+        Tests.prototype.testTitle = function (asnyc, r) {
             var _this = this;
             test.assert(function () {
                 return _this.webot.query('h1').text('Konsenskiste').exists();
             });
-            r();
         };
 
-        Tests.prototype.testDocumentView = function (cxt, r) {
+        Tests.prototype.testDocumentView = function (async, r) {
             var _this = this;
+            async();
             common.Callbacks.batch([
                 function (r) {
                     _this.webot.query('*').text('wechseln').click();
@@ -81,8 +81,9 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
             });
         };
 
-        Tests.prototype.testKokiContent = function (cxt, r) {
+        Tests.prototype.testKokiContent = function (async, r) {
             var _this = this;
+            async();
             test.assert(function () {
                 return _this.webot.query('h1').text('Konsenskisten-Titel').exists();
             });
@@ -92,8 +93,9 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
             r();
         };
 
-        Tests.prototype.testKokiContext = function (cxt, r) {
+        Tests.prototype.testKokiContext = function (async, r) {
             var _this = this;
+            async();
             common.Callbacks.batch([
                 function (r) {
                     _this.webot.queryContains('.kk', 'Konsenskisten-Titel').child('*').text('Klärtext aufklappen').click();
@@ -115,8 +117,9 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
             ], r);
         };
 
-        Tests.prototype.testKaContext = function (cxt, r) {
+        Tests.prototype.testKaContext = function (async, r) {
             var _this = this;
+            async();
             common.Callbacks.batch([
                 function (r) {
                     _this.webot.queryContains('.ka', 'Kernaussagen-Titel').child('*').text('Klärtext aufklappen').click();
@@ -139,8 +142,9 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
             ], r);
         };
 
-        Tests.prototype.testKaContent = function (cxt, r) {
+        Tests.prototype.testKaContent = function (async, r) {
             var _this = this;
+            async();
             test.assert(function () {
                 return _this.webot.query('h1').text('Kernaussagen-Titel').exists();
             });
@@ -150,8 +154,9 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
             r();
         };
 
-        Tests.prototype.testCommunicator = function (cxt, r) {
+        Tests.prototype.testCommunicator = function (async, r) {
             var _this = this;
+            async();
             common.Callbacks.batch([
                 function (r) {
                     var model = reloader.model();
@@ -183,8 +188,9 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
             ], r);
         };
 
-        Tests.prototype.konsenskisteComments = function (cxt, r) {
+        Tests.prototype.konsenskisteComments = function (async, r) {
             var _this = this;
+            async();
             common.Callbacks.batch([
                 function (r) {
                     var model = reloader.model();
@@ -211,8 +217,9 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
             ], r);
         };
 
-        Tests.prototype.kernaussageComments = function (cxt, r) {
+        Tests.prototype.kernaussageComments = function (async, r) {
             var _this = this;
+            async();
             var serverKa = new KernaussageModel.Model();
             common.Callbacks.batch([
                 function (r) {
@@ -249,8 +256,9 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
             ], r);
         };
 
-        Tests.prototype.commentsLoading = function (cxt, r) {
+        Tests.prototype.commentsLoading = function (async, r) {
             var _this = this;
+            async();
             var model = reloader.model();
             common.Callbacks.batch([
                 function (r) {
@@ -270,8 +278,9 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
             ], r);
         };
 
-        Tests.prototype.rating = function (cxt, r) {
+        Tests.prototype.rating = function (async, r) {
             var _this = this;
+            async();
             var ratingButtons = this.webot.query('.kk>.controls .rating input[type="radio"]');
             var ratingLabels = this.webot.query('.kk>.controls .rating input[type="radio"] ~ label');
 
@@ -299,7 +308,8 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
             ], r);
         };
 
-        Tests.prototype.newKaButtonExists = function (cxt, r) {
+        Tests.prototype.newKaButtonExists = function (async, r) {
+            async();
             var newKaButton = this.helper.getNewKaButton();
 
             test.assert(function () {
@@ -308,8 +318,9 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
             r();
         };
 
-        Tests.prototype.newKa = function (cxt, r) {
+        Tests.prototype.newKa = function (async, r) {
             var _this = this;
+            async();
             common.Callbacks.batch([
                 function (r) {
                     _this.helper.getNewKaButton().click();
@@ -324,8 +335,9 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
             ], r);
         };
 
-        Tests.prototype.doubleClickNewKa = function (cxt, r) {
+        Tests.prototype.doubleClickNewKa = function (async, r) {
             var _this = this;
+            async();
             common.Callbacks.batch([
                 function (r) {
                     _this.helper.getNewKaButton().click();
@@ -341,8 +353,9 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
             ], r);
         };
 
-        Tests.prototype.submitNewKa = function (cxt, r) {
+        Tests.prototype.submitNewKa = function (async, r) {
             var _this = this;
+            async();
             common.Callbacks.batch([
                 function (r) {
                     _this.helper.getNewKaButton().click();
@@ -368,8 +381,9 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
             ], r);
         };
 
-        Tests.prototype.history = function (cxt, r) {
+        Tests.prototype.history = function (async, r) {
             var _this = this;
+            async();
             var communicator = reloader.communicator().konsenskiste;
             var viewModel = reloader.viewModel();
 
@@ -410,7 +424,8 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
             ], r);
         };
 
-        Tests.prototype.permaLink = function (cxt, r) {
+        Tests.prototype.permaLink = function (async, r) {
+            async();
             var hash = JSON.parse(location.hash.slice(1));
             test.assert(function () {
                 return hash.kokiId == 1;
@@ -418,8 +433,9 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
             r();
         };
 
-        Tests.prototype.changePermaLink = function (cxt, r) {
+        Tests.prototype.changePermaLink = function (async, r) {
             var _this = this;
+            async();
             var com = reloader.communicator();
             var testKoki = new KonsenskisteModel.Model();
             testKoki.id(111);
@@ -440,8 +456,9 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
             ], r);
         };
 
-        Tests.prototype.initialRatings = function (cxt, r) {
+        Tests.prototype.initialRatings = function (async, r) {
             var _this = this;
+            async();
             common.Callbacks.batch([
                 function (r) {
                     var serverKa = new KernaussageModel.Model();
@@ -473,8 +490,9 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
             ], r);
         };
 
-        Tests.prototype.appendComment = function (cxt, r) {
+        Tests.prototype.appendComment = function (async, r) {
             var _this = this;
+            async();
             common.Callbacks.batch([
                 function (r) {
                     _this.webot.query('.kk>.controls').child('*').contains('Diskussion').click();

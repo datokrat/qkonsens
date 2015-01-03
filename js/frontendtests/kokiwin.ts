@@ -49,12 +49,12 @@ export class Tests {
 		setTimeout(r, 0);
 	}
 
-	testTitle(cxt, r) {
+	testTitle(asnyc, r) {
 		test.assert( () => this.webot.query('h1').text('Konsenskiste').exists() );
-		r();
 	}
 
-	testDocumentView(cxt, r) {
+	testDocumentView(async, r) {
+		async();
 		common.Callbacks.batch([
 			r => {
 				this.webot.query('*').text('wechseln').click();
@@ -81,13 +81,15 @@ export class Tests {
 		], (err?: any) => { r(err) });
 	}
 	
-	testKokiContent(cxt, r) {
+	testKokiContent(async, r) {
+		async();
 		test.assert( () => this.webot.query('h1').text('Konsenskisten-Titel').exists() );
 		test.assert( () => this.webot.query('*').text('Lorem ipsum dolor sit amet').exists() );
 		r();
 	}
 	
-	testKokiContext(cxt, r) {
+	testKokiContext(async, r) {
+		async();
 		common.Callbacks.batch([
 			r => {
 				this.webot.queryContains('.kk', 'Konsenskisten-Titel').child('*').text('Klärtext aufklappen').click();
@@ -105,7 +107,8 @@ export class Tests {
 		], r);
 	}
 	
-	testKaContext(cxt, r) {
+	testKaContext(async, r) {
+		async();
 		common.Callbacks.batch([
 			r => {
 				this.webot.queryContains('.ka', 'Kernaussagen-Titel').child('*').text('Klärtext aufklappen').click();
@@ -124,13 +127,15 @@ export class Tests {
 		], r);
 	}
 	
-	testKaContent(cxt, r) {
+	testKaContent(async, r) {
+		async();
 		test.assert( () => this.webot.query('h1').text('Kernaussagen-Titel').exists() );
 		test.assert( () => this.webot.query('*').text('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.').exists() );
 		r();
 	}
 	
-	testCommunicator(cxt, r) {
+	testCommunicator(async, r) {
+		async();
 		common.Callbacks.batch([
 			r => {
 				var model = reloader.model();
@@ -156,7 +161,8 @@ export class Tests {
 		], r);
 	}
 	
-	konsenskisteComments(cxt, r) {
+	konsenskisteComments(async, r) {
+		async();
 		common.Callbacks.batch([
 			r => {
 				var model = reloader.model();
@@ -181,7 +187,8 @@ export class Tests {
 		], r);
 	}
 	
-	kernaussageComments(cxt, r) {
+	kernaussageComments(async, r) {
+		async();
 		var serverKa = new KernaussageModel.Model();
 		common.Callbacks.batch([
 			r => {
@@ -214,7 +221,8 @@ export class Tests {
 		], r);
 	}
 	
-	commentsLoading(cxt, r) {
+	commentsLoading(async, r) {
+		async();
 		var model = reloader.model();
 		common.Callbacks.batch([
 			r => {
@@ -232,7 +240,8 @@ export class Tests {
 		], r);
 	}
 	
-	rating(cxt, r) {
+	rating(async, r) {
+		async();
 		var ratingButtons = this.webot.query('.kk>.controls .rating input[type="radio"]');
 		var ratingLabels = this.webot.query('.kk>.controls .rating input[type="radio"] ~ label');
 		
@@ -254,14 +263,16 @@ export class Tests {
 		], r);
 	}
 	
-	newKaButtonExists(cxt, r) {
+	newKaButtonExists(async, r) {
+		async();
 		var newKaButton = this.helper.getNewKaButton();
 		
 		test.assert(() => newKaButton.exists());
 		r();
 	}
 	
-	newKa(cxt, r) {
+	newKa(async, r) {
+		async();
 		common.Callbacks.batch([
 			r => {
 				this.helper.getNewKaButton().click();
@@ -274,7 +285,8 @@ export class Tests {
 		], r);
 	}
 	
-	doubleClickNewKa(cxt, r) {
+	doubleClickNewKa(async, r) {
+		async();
 		common.Callbacks.batch([
 			r => {
 				this.helper.getNewKaButton().click();
@@ -288,7 +300,8 @@ export class Tests {
 		], r);
 	}
 	
-	submitNewKa(cxt, r) {
+	submitNewKa(async, r) {
+		async();
 		common.Callbacks.batch([
 			r => {
 				this.helper.getNewKaButton().click();
@@ -310,7 +323,8 @@ export class Tests {
 		], r);
 	}
 	
-	history(cxt, r) {
+	history(async, r) {
+		async();
 		var communicator = reloader.communicator().konsenskiste;
 		var viewModel = reloader.viewModel();
 		
@@ -345,13 +359,15 @@ export class Tests {
 		], r);
 	}
 	
-	permaLink(cxt, r) {
+	permaLink(async, r) {
+		async();
 		var hash = JSON.parse(location.hash.slice(1));
 		test.assert(() => hash.kokiId == 1);
 		r();
 	}
 	
-	changePermaLink(cxt, r) {
+	changePermaLink(async, r) {
+		async();
 		var com = reloader.communicator();
 		var testKoki = new KonsenskisteModel.Model();
 		testKoki.id(111);
@@ -370,7 +386,8 @@ export class Tests {
 		], r);
 	}
 	
-	initialRatings(cxt, r) {
+	initialRatings(async, r) {
+		async();
 		common.Callbacks.batch([
 			r => {
 				var serverKa = new KernaussageModel.Model();
@@ -398,7 +415,8 @@ export class Tests {
 		], r);
 	}
 	
-	appendComment(cxt, r) {
+	appendComment(async, r) {
+		async();
 		common.Callbacks.batch([
 			r => {
 				this.webot.query('.kk>.controls').child('*').contains('Diskussion').click();

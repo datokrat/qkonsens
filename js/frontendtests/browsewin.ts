@@ -19,7 +19,8 @@ import ContentViewModel = require('../contentviewmodel');
 export class Tests extends unit.TestClass {
 	private webot = new webot.Webot();
 	
-	view(cxt, r) {
+	view(async, r) {
+		async();
 		var win = new Win.Win();
 		
 		common.Callbacks.batch([
@@ -45,7 +46,8 @@ export class Tests extends unit.TestClass {
 		], r);
 	}
 	
-	viewMVC(cxt, r) {
+	viewMVC(async, r) {
+		async();
 		var topicModel = new Topic.Model();
 		var topicViewModel = new Topic.ViewModel();
 		var topicController = new Topic.ModelViewModelController(topicModel, topicViewModel);
@@ -70,7 +72,8 @@ export class Tests extends unit.TestClass {
 		], r);
 	}
 	
-	navigation(cxt, r) {
+	navigation(async, r) {
+		async();
 		var win = new Win.Win();
 		var topicModel = new Topic.Model();
 		var topicViewModel = new Topic.ViewModel();
@@ -97,13 +100,11 @@ export class Tests extends unit.TestClass {
 				test.assert(() => this.webot.query('.win:contains("Themen")').child('*').text('KoKi im Thema').exists());
 				r();
 			}
-		], (err?: any) => {
-			if(err) throw err;
-			else r();
-		});
+		], r);
 	}
 	
-	navigationUseCase(cxt, r) {
+	navigationUseCase(async, r) {
+		async();
 		var win = new Win.Win();
 		var topicCommunicator = new TopicCommunicator.Main();
 		var topicNavigationModel = new TopicNavigationModel.ModelImpl();

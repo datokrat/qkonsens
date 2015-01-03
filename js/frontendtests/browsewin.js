@@ -11,8 +11,9 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', 'frontendtests/re
             _super.apply(this, arguments);
             this.webot = new webot.Webot();
         }
-        Tests.prototype.view = function (cxt, r) {
+        Tests.prototype.view = function (async, r) {
             var _this = this;
+            async();
             var win = new Win.Win();
 
             common.Callbacks.batch([
@@ -42,8 +43,9 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', 'frontendtests/re
             ], r);
         };
 
-        Tests.prototype.viewMVC = function (cxt, r) {
+        Tests.prototype.viewMVC = function (async, r) {
             var _this = this;
+            async();
             var topicModel = new Topic.Model();
             var topicViewModel = new Topic.ViewModel();
             var topicController = new Topic.ModelViewModelController(topicModel, topicViewModel);
@@ -70,8 +72,9 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', 'frontendtests/re
             ], r);
         };
 
-        Tests.prototype.navigation = function (cxt, r) {
+        Tests.prototype.navigation = function (async, r) {
             var _this = this;
+            async();
             var win = new Win.Win();
             var topicModel = new Topic.Model();
             var topicViewModel = new Topic.ViewModel();
@@ -102,16 +105,12 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', 'frontendtests/re
                     });
                     r();
                 }
-            ], function (err) {
-                if (err)
-                    throw err;
-                else
-                    r();
-            });
+            ], r);
         };
 
-        Tests.prototype.navigationUseCase = function (cxt, r) {
+        Tests.prototype.navigationUseCase = function (async, r) {
             var _this = this;
+            async();
             var win = new Win.Win();
             var topicCommunicator = new TopicCommunicator.Main();
             var topicNavigationModel = new TopicNavigationModel.ModelImpl();
