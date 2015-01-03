@@ -147,14 +147,15 @@ export class Parser {
 		out.id(parseInt(rawKoki.Id));
 		this.parseGeneralContent(rawKoki, out.general());
 		this.parseContext(rawKoki, out.context());
-		this.ratingParser.parse(rawKoki.Ratings, out.rating());
+		if(rawKoki.Ratings) this.ratingParser.parse(rawKoki.Ratings, out.rating());
 		
-		rawKoki.ReferredFrom.forEach(reference => {
-			if(reference.ReferenceType.Description.Name == 'Part') {
-				var ka = this.parseKa(reference.Referrer);
-				out.childKas.push(ka);
-			}
-		});
+		if(rawKoki.ReferredFrom)
+			rawKoki.ReferredFrom.forEach(reference => {
+				if(reference.ReferenceType.Description.Name == 'Part') {
+					var ka = this.parseKa(reference.Referrer);
+					out.childKas.push(ka);
+				}
+			});
 		
 		return out;
 	}
@@ -185,6 +186,7 @@ export class Parser {
 	}
 	
 	public extractRawContext(rawPost: Disco.Ontology.Post): Disco.Ontology.Post {
+		if(!rawPost.RefersTo) return null;
 		var ret: Disco.Ontology.Post;
 		rawPost.RefersTo.forEach(reference => {
 			if(reference.ReferenceType.Description.Name == 'Context') {

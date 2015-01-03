@@ -144,14 +144,16 @@ define(["require", "exports", 'event', 'common', 'discocontext', 'contentcommuni
             out.id(parseInt(rawKoki.Id));
             this.parseGeneralContent(rawKoki, out.general());
             this.parseContext(rawKoki, out.context());
-            this.ratingParser.parse(rawKoki.Ratings, out.rating());
+            if (rawKoki.Ratings)
+                this.ratingParser.parse(rawKoki.Ratings, out.rating());
 
-            rawKoki.ReferredFrom.forEach(function (reference) {
-                if (reference.ReferenceType.Description.Name == 'Part') {
-                    var ka = _this.parseKa(reference.Referrer);
-                    out.childKas.push(ka);
-                }
-            });
+            if (rawKoki.ReferredFrom)
+                rawKoki.ReferredFrom.forEach(function (reference) {
+                    if (reference.ReferenceType.Description.Name == 'Part') {
+                        var ka = _this.parseKa(reference.Referrer);
+                        out.childKas.push(ka);
+                    }
+                });
 
             return out;
         };
@@ -182,6 +184,8 @@ define(["require", "exports", 'event', 'common', 'discocontext', 'contentcommuni
         };
 
         Parser.prototype.extractRawContext = function (rawPost) {
+            if (!rawPost.RefersTo)
+                return null;
             var ret;
             rawPost.RefersTo.forEach(function (reference) {
                 if (reference.ReferenceType.Description.Name == 'Context') {
