@@ -5,6 +5,7 @@ import ViewModel = require('topicnavigationviewmodel');
 import Topic = require('topic');
 import TSync = require('synchronizers/tsynchronizers');
 import ContentModel = require('contentmodel');
+import Commands = require('command');
 
 export class Controller {
 	constructor(model: Model.Model, viewModel: ViewModel.ViewModel, communicator: Topic.Communicator) {
@@ -47,32 +48,23 @@ export class ModelCommunicatorController {
 }
 
 export class ModelViewModelController {
-	constructor(model: Model.Model, viewModel: ViewModel.ViewModel) {
+	constructor(private model: Model.Model, private viewModel: ViewModel.ViewModel) {
+		this.childTopicCommandControl.commandProcessor.chain.append(cmd => this.handleChildTopicCommand(cmd));
+		this.breadcrumbTopicCommandControl.commandProcessor.chain.append(cmd => this.handleBreadcrumbTopicCommand(cmd));
+		
 		this.viewModelHistory = ko.observableArray<Topic.ViewModel>();
 		viewModel.breadcrumb = ko.computed<Topic.ViewModel[]>(() => this.viewModelHistory().slice(0,-1));
 		viewModel.selected = ko.computed<Topic.ViewModel>(() => this.viewModelHistory().get(-1));
-		this.breadcrumbSync = new TSync.TopicViewModelSync();
+		this.breadcrumbSync = new TSync.TopicViewModelSync({ commandControl: this.breadcrumbTopicCommandControl });
 		this.breadcrumbSync
 			.setModelObservable(model.history)
 			.setViewModelObservable(this.viewModelHistory);
 		
-		this.breadcrumbSync.itemCreated.subscribe(args => {
-			args.viewModel.click.subscribe(() => {
-				model.selectTopicFromHistory(args.model);
-			});
-		});
-		
 		viewModel.children = ko.observableArray<Topic.ViewModel>();
-		this.childrenSync = new TSync.TopicViewModelSync();
+		this.childrenSync = new TSync.TopicViewModelSync({ commandControl: this.childTopicCommandControl });
 		this.childrenSync
 			.setModelObservable(model.children)
 			.setViewModelObservable(viewModel.children);
-		
-		this.childrenSync.itemCreated.subscribe(args => {
-			args.viewModel.click.subscribe(() => {
-				model.selectChild(args.model);
-			});
-		});
 		
 		viewModel.kokis = ko.observableArray<Topic.ViewModel>();
 		this.kokiSync = new TSync.KokiItemViewModelSync();
@@ -81,11 +73,30 @@ export class ModelViewModelController {
 			.setModelObservable(model.kokis);
 	}
 	
+	private handleChildTopicCommand(cmd: Commands.Command) {
+		if(cmd instanceof Topic.TopicSelectedCommand) {
+			this.model.selectChild((<Topic.TopicSelectedCommand>cmd).model);
+			return true;
+		}
+		return false;
+	}
+	
+	private handleBreadcrumbTopicCommand(cmd: Commands.Command) {
+		if(cmd instanceof Topic.TopicSelectedCommand) {
+			this.model.selectTopicFromHistory((<Topic.TopicSelectedCommand>cmd).model);
+			return true;
+		}
+		return false;
+	}
+	
 	public dispose() {
 		this.breadcrumbSync.dispose();
 		this.childrenSync.dispose();
 		this.kokiSync.dispose();
 	}
+	
+	public childTopicCommandControl: Commands.CommandControl = { commandProcessor: new Commands.CommandProcessor() };
+	public breadcrumbTopicCommandControl: Commands.CommandControl = { commandProcessor: new Commands.CommandProcessor() };
 	
 	private breadcrumbSync: TSync.TopicViewModelSync;
 	private childrenSync: TSync.TopicViewModelSync;

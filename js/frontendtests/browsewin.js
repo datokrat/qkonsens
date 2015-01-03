@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/asyncunit', 'tests/test', 'frontendtests/reloader', 'frontendtests/webot', '../common', '../event', 'windows/browse', '../topic', 'factories/topic', 'tests/testtopiccommunicator', '../topicnavigationmodel', '../topicnavigationviewmodel', '../topicnavigationcontroller'], function(require, exports, unit, test, reloader, webot, common, Evt, Win, Topic, TopicFactory, TopicCommunicator, TopicNavigationModel, TopicNavigationViewModel, TopicNavigationController) {
+define(["require", "exports", 'tests/asyncunit', 'tests/test', 'frontendtests/reloader', 'frontendtests/webot', '../common', 'windows/browse', '../topic', 'factories/topic', 'tests/testtopiccommunicator', '../topicnavigationmodel', '../topicnavigationviewmodel', '../topicnavigationcontroller'], function(require, exports, unit, test, reloader, webot, common, Win, Topic, TopicFactory, TopicCommunicator, TopicNavigationModel, TopicNavigationViewModel, TopicNavigationController) {
     var Tests = (function (_super) {
         __extends(Tests, _super);
         function Tests() {
@@ -26,7 +26,8 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', 'frontendtests/re
 
                     win.navigation().children = ko.observableArray([new Topic.ViewModel]);
                     win.navigation().children()[0].caption = ko.observable('Child 1');
-                    win.navigation().children()[0].click = new Evt.EventImpl();
+                    win.navigation().children()[0].click = function () {
+                    };
                     win.navigation().kokis = ko.observableArray([]);
 
                     reloader.viewModel().right.win(win);
@@ -89,7 +90,8 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', 'frontendtests/re
                     win.navigation(new TopicNavigationViewModel.ViewModel());
                     win.navigation().breadcrumb = ko.observableArray([new Topic.ViewModel]);
                     win.navigation().breadcrumb()[0].caption = ko.observable('Breadcrumb Topic 1');
-                    win.navigation().breadcrumb()[0].click = new Evt.EventImpl();
+                    win.navigation().breadcrumb()[0].click = function () {
+                    };
                     win.navigation().selected = ko.observable(topicViewModel);
                     win.navigation().children = ko.observableArray([]);
                     win.navigation().kokis = ko.observableArray([new TopicNavigationViewModel.KokiItem]);

@@ -1,4 +1,10 @@
-define(["require", "exports", 'event'], function(require, exports, Evt) {
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+define(["require", "exports", 'command'], function(require, exports, Commands) {
     var Controller = (function () {
         function Controller(model, viewModel, communicator) {
             this.modelViewModelController = new ModelViewModelController(model, viewModel);
@@ -12,7 +18,7 @@ define(["require", "exports", 'event'], function(require, exports, Evt) {
     exports.Controller = Controller;
 
     var ModelViewModelController = (function () {
-        function ModelViewModelController(model, viewModel) {
+        function ModelViewModelController(model, viewModel, parent) {
             var _this = this;
             this.model = model;
             this.viewModel = viewModel;
@@ -23,7 +29,11 @@ define(["require", "exports", 'event'], function(require, exports, Evt) {
             this.viewModel.description = ko.computed(function () {
                 return _this.model.title() && _this.model.text();
             });
-            this.viewModel.click = new Evt.EventImpl();
+
+            //this.viewModel.click = new Evt.EventImpl<void>();
+            this.viewModel.click = function () {
+                parent && parent.commandProcessor.processCommand(new TopicSelectedCommand(model, viewModel));
+            };
         }
         ModelViewModelController.prototype.dispose = function () {
             this.viewModel.caption.dispose();
@@ -32,6 +42,17 @@ define(["require", "exports", 'event'], function(require, exports, Evt) {
         return ModelViewModelController;
     })();
     exports.ModelViewModelController = ModelViewModelController;
+
+    var TopicSelectedCommand = (function (_super) {
+        __extends(TopicSelectedCommand, _super);
+        function TopicSelectedCommand(model, viewModel) {
+            _super.call(this);
+            this.model = model;
+            this.viewModel = viewModel;
+        }
+        return TopicSelectedCommand;
+    })(Commands.Command);
+    exports.TopicSelectedCommand = TopicSelectedCommand;
 
     var ModelCommunicatorController = (function () {
         function ModelCommunicatorController(model, communicator) {

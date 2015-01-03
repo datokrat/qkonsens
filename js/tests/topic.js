@@ -25,7 +25,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../topic'], functio
                 return viewModel.description() == 'Parent Text';
             });
 
-            viewModel.click.raise();
+            viewModel.click();
         };
         return Tests;
     })(unit.TestClass);

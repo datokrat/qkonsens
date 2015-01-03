@@ -2,7 +2,7 @@
 <h1>Themen</h1>
 <section>
 	<ul data-bind="foreach: breadcrumb">
-		<li class="clickable" data-bind="text: caption, click: click.raise.bind(click)"></li>
+		<li class="clickable" data-bind="text: caption, click: click"></li>
 	</ul>
 <!-- ko with: selected -->
 	<b data-bind="text: caption"></b>
@@ -10,7 +10,7 @@
 <!-- /ko -->
 	
 	<ul data-bind="foreach: children">
-		<li class="clickable" data-bind="text: caption, click: click.raise.bind(click)"></li>
+		<li class="clickable" data-bind="text: caption, click: click"></li>
 	</ul>
 <!-- ko if: kokis().length -->
 <h1>Konsenskisten zum Thema:</h1>

@@ -5,6 +5,7 @@ import TopicNavigationViewModel = require('topicnavigationviewmodel');
 import TopicNavigationController = require('topicnavigationcontroller');
 import Topic = require('topic');
 import KonsenskisteModel = require('konsenskistemodel');
+import Commands = require('command');
 
 export class Controller {
 	constructor(model: Model, viewModel: ViewModel, communicator: Topic.Communicator) {
@@ -21,7 +22,7 @@ export class Controller {
 }
 
 export class ModelViewModelController {
-	constructor(model: Model, viewModel: ViewModel) {
+	constructor(model: Model, viewModel: ViewModel, parent?: Commands.CommandControl) {
 		this.model = model;
 		this.viewModel = viewModel;
 		
@@ -31,7 +32,10 @@ export class ModelViewModelController {
 		this.viewModel.description = ko.computed<string>(() => {
 			return this.model.title() && this.model.text();
 		});
-		this.viewModel.click = new Evt.EventImpl<void>();
+		//this.viewModel.click = new Evt.EventImpl<void>();
+		this.viewModel.click = () => {
+			parent && parent.commandProcessor.processCommand(new TopicSelectedCommand(model, viewModel));
+		};
 	}
 	
 	public dispose() {
@@ -41,6 +45,12 @@ export class ModelViewModelController {
 	
 	private model: Model;
 	private viewModel: ViewModel;
+}
+
+export class TopicSelectedCommand extends Commands.Command {
+	constructor(public model?: Model, public viewModel?: ViewModel) {
+		super();
+	}
 }
 
 export class ModelCommunicatorController {
@@ -76,7 +86,7 @@ export class Model {
 export class ViewModel {
 	public caption: Obs.Observable<string>;
 	public description: Obs.Observable<string>;
-	public click: Evt.Event<void>;
+	public click: () => void;
 }
 
 export interface Communicator {

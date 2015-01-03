@@ -1,4 +1,4 @@
-define(["require", "exports", 'topic', 'synchronizers/tsynchronizers'], function(require, exports, Topic, TSync) {
+define(["require", "exports", 'topic', 'synchronizers/tsynchronizers', 'command'], function(require, exports, Topic, TSync, Commands) {
     var Controller = (function () {
         function Controller(model, viewModel, communicator) {
             this.modelViewModelController = new ModelViewModelController(model, viewModel);
@@ -44,6 +44,17 @@ define(["require", "exports", 'topic', 'synchronizers/tsynchronizers'], function
     var ModelViewModelController = (function () {
         function ModelViewModelController(model, viewModel) {
             var _this = this;
+            this.model = model;
+            this.viewModel = viewModel;
+            this.childTopicCommandControl = { commandProcessor: new Commands.CommandProcessor() };
+            this.breadcrumbTopicCommandControl = { commandProcessor: new Commands.CommandProcessor() };
+            this.childTopicCommandControl.commandProcessor.chain.append(function (cmd) {
+                return _this.handleChildTopicCommand(cmd);
+            });
+            this.breadcrumbTopicCommandControl.commandProcessor.chain.append(function (cmd) {
+                return _this.handleBreadcrumbTopicCommand(cmd);
+            });
+
             this.viewModelHistory = ko.observableArray();
             viewModel.breadcrumb = ko.computed(function () {
                 return _this.viewModelHistory().slice(0, -1);
@@ -51,29 +62,33 @@ define(["require", "exports", 'topic', 'synchronizers/tsynchronizers'], function
             viewModel.selected = ko.computed(function () {
                 return _this.viewModelHistory().get(-1);
             });
-            this.breadcrumbSync = new TSync.TopicViewModelSync();
+            this.breadcrumbSync = new TSync.TopicViewModelSync({ commandControl: this.breadcrumbTopicCommandControl });
             this.breadcrumbSync.setModelObservable(model.history).setViewModelObservable(this.viewModelHistory);
 
-            this.breadcrumbSync.itemCreated.subscribe(function (args) {
-                args.viewModel.click.subscribe(function () {
-                    model.selectTopicFromHistory(args.model);
-                });
-            });
-
             viewModel.children = ko.observableArray();
-            this.childrenSync = new TSync.TopicViewModelSync();
+            this.childrenSync = new TSync.TopicViewModelSync({ commandControl: this.childTopicCommandControl });
             this.childrenSync.setModelObservable(model.children).setViewModelObservable(viewModel.children);
-
-            this.childrenSync.itemCreated.subscribe(function (args) {
-                args.viewModel.click.subscribe(function () {
-                    model.selectChild(args.model);
-                });
-            });
 
             viewModel.kokis = ko.observableArray();
             this.kokiSync = new TSync.KokiItemViewModelSync();
             this.kokiSync.setViewModelObservable(viewModel.kokis).setModelObservable(model.kokis);
         }
+        ModelViewModelController.prototype.handleChildTopicCommand = function (cmd) {
+            if (cmd instanceof Topic.TopicSelectedCommand) {
+                this.model.selectChild(cmd.model);
+                return true;
+            }
+            return false;
+        };
+
+        ModelViewModelController.prototype.handleBreadcrumbTopicCommand = function (cmd) {
+            if (cmd instanceof Topic.TopicSelectedCommand) {
+                this.model.selectTopicFromHistory(cmd.model);
+                return true;
+            }
+            return false;
+        };
+
         ModelViewModelController.prototype.dispose = function () {
             this.breadcrumbSync.dispose();
             this.childrenSync.dispose();

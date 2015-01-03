@@ -32,7 +32,7 @@ export class Tests extends unit.TestClass {
 				
 				win.navigation().children = ko.observableArray([new Topic.ViewModel]);
 				win.navigation().children()[0].caption = ko.observable('Child 1');
-				win.navigation().children()[0].click = new Evt.EventImpl<void>();
+				win.navigation().children()[0].click = () => {};
 				win.navigation().kokis = ko.observableArray([]);
 					
 				reloader.viewModel().right.win(win);
@@ -87,7 +87,7 @@ export class Tests extends unit.TestClass {
 				win.navigation(new TopicNavigationViewModel.ViewModel());
 				win.navigation().breadcrumb = ko.observableArray([new Topic.ViewModel]);
 				win.navigation().breadcrumb()[0].caption = ko.observable('Breadcrumb Topic 1');
-				win.navigation().breadcrumb()[0].click = new Evt.EventImpl<void>();
+				win.navigation().breadcrumb()[0].click = () => {}
 				win.navigation().selected = ko.observable(topicViewModel);
 				win.navigation().children = ko.observableArray([]);
 				win.navigation().kokis = ko.observableArray([new TopicNavigationViewModel.KokiItem]);

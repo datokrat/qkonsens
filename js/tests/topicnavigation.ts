@@ -100,7 +100,7 @@ export class Tests extends unit.TestClass {
 		model.children.set([new Topic.Model]);
 		model.children.get(0).title('Child');
 		
-		viewModel.children()[0].click.raise();
+		viewModel.children()[0].click();
 		
 		test.assert(() => model.history.get().length == 2);
 		test.assert(() => model.children.get().length == 0);
@@ -115,7 +115,7 @@ export class Tests extends unit.TestClass {
 		model.history.push(new Topic.Model); model.history.get(0).title('Parent');
 		model.history.push(new Topic.Model);
 		
-		viewModel.breadcrumb()[0].click.raise();
+		viewModel.breadcrumb()[0].click();
 		
 		test.assert(() => model.history.get().length == 1);
 		test.assert(() => model.selectedTopic().title() == 'Parent');

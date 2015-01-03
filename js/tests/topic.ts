@@ -15,7 +15,7 @@ export class Tests extends unit.TestClass {
 		test.assert(() => viewModel.caption() == 'Parent Title');
 		test.assert(() => viewModel.description() == 'Parent Text');
 		
-		viewModel.click.raise();
+		viewModel.click();
 	}
 	
 	/*childrenFromCommunicator() {

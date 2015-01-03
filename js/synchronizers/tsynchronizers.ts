@@ -4,14 +4,15 @@ import Topic = require('../topic');
 import ContentModel = require('../contentmodel');
 import TopicNavigationViewModel = require('../topicnavigationviewmodel');
 import TopicNavigationController = require('../topicnavigationcontroller');
+import Commands = require('../command');
 
 export class TopicViewModelSync extends Sync.ObservingChildArraySynchronizer<Topic.Model, Topic.ViewModel, Topic.ModelViewModelController> {
-	constructor() {
+	constructor(args: { commandControl: Commands.CommandControl }) {
 		super();
 		this.fty = new ModelViewModelControllerFactory();
 		
 		this.setViewModelFactory(new Factory.Factory(Topic.ViewModel));
-		this.setControllerFactory(this.fty);
+		this.setControllerFactory(new Factory.ControllerFactoryEx(Topic.ModelViewModelController, args.commandControl));
 	}
 	
 	private fty: ModelViewModelControllerFactory;

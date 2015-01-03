@@ -7,12 +7,12 @@ var __extends = this.__extends || function (d, b) {
 define(["require", "exports", 'factories/constructorbased', 'synchronizers/childarraysynchronizer', '../topic', '../topicnavigationviewmodel', '../topicnavigationcontroller'], function(require, exports, Factory, Sync, Topic, TopicNavigationViewModel, TopicNavigationController) {
     var TopicViewModelSync = (function (_super) {
         __extends(TopicViewModelSync, _super);
-        function TopicViewModelSync() {
+        function TopicViewModelSync(args) {
             _super.call(this);
             this.fty = new ModelViewModelControllerFactory();
 
             this.setViewModelFactory(new Factory.Factory(Topic.ViewModel));
-            this.setControllerFactory(this.fty);
+            this.setControllerFactory(new Factory.ControllerFactoryEx(Topic.ModelViewModelController, args.commandControl));
         }
         return TopicViewModelSync;
     })(Sync.ObservingChildArraySynchronizer);
