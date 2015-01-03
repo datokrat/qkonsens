@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'factories/constructorbased', 'synchronizers/childarraysynchronizer', '../topic'], function(require, exports, Factory, Sync, Topic) {
+define(["require", "exports", 'factories/constructorbased', 'synchronizers/childarraysynchronizer', '../topic', '../topicnavigationviewmodel', '../topicnavigationcontroller'], function(require, exports, Factory, Sync, Topic, TopicNavigationViewModel, TopicNavigationController) {
     var TopicViewModelSync = (function (_super) {
         __extends(TopicViewModelSync, _super);
         function TopicViewModelSync() {
@@ -30,9 +30,17 @@ define(["require", "exports", 'factories/constructorbased', 'synchronizers/child
     })(Sync.PureModelArraySynchronizer);
     exports.TopicCommunicatorSync = TopicCommunicatorSync;
 
-    /*class ModelCommunicatorControllerFactory {
-    public create(model: Topic.Model, communicator: Topic.Communicator)
-    }*/
+    var KokiItemViewModelSync = (function (_super) {
+        __extends(KokiItemViewModelSync, _super);
+        function KokiItemViewModelSync() {
+            _super.call(this);
+            this.setViewModelFactory(new Factory.Factory(TopicNavigationViewModel.KokiItem));
+            this.setControllerFactory(new Factory.ControllerFactory(TopicNavigationController.KokiItemViewModelController));
+        }
+        return KokiItemViewModelSync;
+    })(Sync.ObservingChildArraySynchronizer);
+    exports.KokiItemViewModelSync = KokiItemViewModelSync;
+
     var ModelCommunicatorControllerFactory = (function () {
         function ModelCommunicatorControllerFactory(communicator) {
             this.communicator = communicator;

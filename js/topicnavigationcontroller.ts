@@ -4,6 +4,22 @@ import Model = require('topicnavigationmodel');
 import ViewModel = require('topicnavigationviewmodel');
 import Topic = require('topic');
 import TSync = require('synchronizers/tsynchronizers');
+import ContentModel = require('contentmodel');
+
+export class Controller {
+	constructor(model: Model.Model, viewModel: ViewModel.ViewModel, communicator: Topic.Communicator) {
+		this.modelViewModelController = new ModelViewModelController(model, viewModel);
+		this.modelCommunicatorController = new ModelCommunicatorController(model, communicator);
+	}
+	
+	public dispose() {
+		this.modelViewModelController.dispose();
+		this.modelCommunicatorController.dispose();
+	}
+	
+	private modelViewModelController: ModelViewModelController;
+	private modelCommunicatorController: ModelCommunicatorController;
+}
 
 export class ModelCommunicatorController {
 	constructor(model: Model.Model, communicator: Topic.Communicator) {
@@ -14,7 +30,7 @@ export class ModelCommunicatorController {
 			}),
 			communicator.containedKokisReceived.subscribe(args => {
 				if(Topic.IdentifierHelper.equals(args.id, model.selectedTopic().id))
-					model.kokis.set(args.kokis);
+					model.kokis.set(args.kokis.map(k => k.general()));
 			}),
 			model.selectedTopic.subscribe(topic => {
 				communicator.queryChildren(model.selectedTopic().id);
@@ -57,29 +73,32 @@ export class ModelViewModelController {
 				model.selectChild(args.model);
 			});
 		});
+		
+		viewModel.kokis = ko.observableArray<Topic.ViewModel>();
+		this.kokiSync = new TSync.KokiItemViewModelSync();
+		this.kokiSync
+			.setViewModelObservable(viewModel.kokis)
+			.setModelObservable(model.kokis);
 	}
 	
 	public dispose() {
 		this.breadcrumbSync.dispose();
 		this.childrenSync.dispose();
+		this.kokiSync.dispose();
 	}
 	
 	private breadcrumbSync: TSync.TopicViewModelSync;
 	private childrenSync: TSync.TopicViewModelSync;
+	private kokiSync: TSync.KokiItemViewModelSync;
 	private viewModelHistory: Obs.ObservableArray<Topic.ViewModel>;
 }
 
-export class Controller {
-	constructor(model: Model.Model, viewModel: ViewModel.ViewModel, communicator: Topic.Communicator) {
-		this.modelViewModelController = new ModelViewModelController(model, viewModel);
-		this.modelCommunicatorController = new ModelCommunicatorController(model, communicator);
+export class KokiItemViewModelController {
+	constructor(model: ContentModel.General, private viewModel: ViewModel.KokiItem) {
+		this.viewModel.caption = ko.computed(() => model.title() ? model.title() : model.text());
 	}
 	
 	public dispose() {
-		this.modelViewModelController.dispose();
-		this.modelCommunicatorController.dispose();
+		this.viewModel.caption.dispose();
 	}
-	
-	private modelViewModelController: ModelViewModelController;
-	private modelCommunicatorController: ModelCommunicatorController;
 }

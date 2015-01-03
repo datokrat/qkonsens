@@ -14,7 +14,6 @@ import TopicNavigationModel = require('../topicnavigationmodel');
 import TopicNavigationViewModel = require('../topicnavigationviewmodel');
 import TopicNavigationController = require('../topicnavigationcontroller');
 import KonsenskisteViewModel = require('../konsenskisteviewmodel');
-import ContentViewModel = require('../contentviewmodel');
 
 export class Tests extends unit.TestClass {
 	private webot = new webot.Webot();
@@ -34,6 +33,7 @@ export class Tests extends unit.TestClass {
 				win.navigation().children = ko.observableArray([new Topic.ViewModel]);
 				win.navigation().children()[0].caption = ko.observable('Child 1');
 				win.navigation().children()[0].click = new Evt.EventImpl<void>();
+				win.navigation().kokis = ko.observableArray([]);
 					
 				reloader.viewModel().right.win(win);
 				setTimeout(r);
@@ -61,6 +61,7 @@ export class Tests extends unit.TestClass {
 				win.navigation().breadcrumb = ko.observableArray<Topic.ViewModel>([]);
 				win.navigation().selected = ko.observable(topicViewModel);
 				win.navigation().children = ko.observableArray([]);
+				win.navigation().kokis = ko.observableArray([]);
 				
 				reloader.viewModel().right.win(win);
 				setTimeout(r);
@@ -89,9 +90,8 @@ export class Tests extends unit.TestClass {
 				win.navigation().breadcrumb()[0].click = new Evt.EventImpl<void>();
 				win.navigation().selected = ko.observable(topicViewModel);
 				win.navigation().children = ko.observableArray([]);
-				win.navigation().kokis = ko.observableArray<KonsenskisteViewModel.ViewModel>([new KonsenskisteViewModel.ViewModel]);
-				win.navigation().kokis()[0].general = ko.observable<ContentViewModel.General>(new ContentViewModel.General);
-				win.navigation().kokis()[0].general().title = ko.observable<string>('KoKi im Thema');
+				win.navigation().kokis = ko.observableArray([new TopicNavigationViewModel.KokiItem]);
+				win.navigation().kokis()[0].caption = ko.observable<string>('KoKi im Thema');
 				reloader.viewModel().right.win(win);
 				setTimeout(r);
 			},

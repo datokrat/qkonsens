@@ -1,6 +1,9 @@
 import Factory = require('factories/constructorbased');
 import Sync = require('synchronizers/childarraysynchronizer');
 import Topic = require('../topic');
+import ContentModel = require('../contentmodel');
+import TopicNavigationViewModel = require('../topicnavigationviewmodel');
+import TopicNavigationController = require('../topicnavigationcontroller');
 
 export class TopicViewModelSync extends Sync.ObservingChildArraySynchronizer<Topic.Model, Topic.ViewModel, Topic.ModelViewModelController> {
 	constructor() {
@@ -24,9 +27,13 @@ export class TopicCommunicatorSync extends Sync.PureModelArraySynchronizer<Topic
 	}
 }
 
-/*class ModelCommunicatorControllerFactory {
-	public create(model: Topic.Model, communicator: Topic.Communicator)
-}*/
+export class KokiItemViewModelSync extends Sync.ObservingChildArraySynchronizer<ContentModel.General, TopicNavigationViewModel.KokiItem, TopicNavigationController.KokiItemViewModelController> {
+	constructor() {
+		super();
+		this.setViewModelFactory(new Factory.Factory(TopicNavigationViewModel.KokiItem));
+		this.setControllerFactory(new Factory.ControllerFactory(TopicNavigationController.KokiItemViewModelController));
+	}
+}
 
 class ModelCommunicatorControllerFactory {
 	constructor(communicator: Topic.Communicator) {

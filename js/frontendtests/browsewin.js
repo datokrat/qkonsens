@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/asyncunit', 'tests/test', 'frontendtests/reloader', 'frontendtests/webot', '../common', '../event', 'windows/browse', '../topic', 'factories/topic', 'tests/testtopiccommunicator', '../topicnavigationmodel', '../topicnavigationviewmodel', '../topicnavigationcontroller', '../konsenskisteviewmodel', '../contentviewmodel'], function(require, exports, unit, test, reloader, webot, common, Evt, Win, Topic, TopicFactory, TopicCommunicator, TopicNavigationModel, TopicNavigationViewModel, TopicNavigationController, KonsenskisteViewModel, ContentViewModel) {
+define(["require", "exports", 'tests/asyncunit', 'tests/test', 'frontendtests/reloader', 'frontendtests/webot', '../common', '../event', 'windows/browse', '../topic', 'factories/topic', 'tests/testtopiccommunicator', '../topicnavigationmodel', '../topicnavigationviewmodel', '../topicnavigationcontroller'], function(require, exports, unit, test, reloader, webot, common, Evt, Win, Topic, TopicFactory, TopicCommunicator, TopicNavigationModel, TopicNavigationViewModel, TopicNavigationController) {
     var Tests = (function (_super) {
         __extends(Tests, _super);
         function Tests() {
@@ -27,6 +27,7 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', 'frontendtests/re
                     win.navigation().children = ko.observableArray([new Topic.ViewModel]);
                     win.navigation().children()[0].caption = ko.observable('Child 1');
                     win.navigation().children()[0].click = new Evt.EventImpl();
+                    win.navigation().kokis = ko.observableArray([]);
 
                     reloader.viewModel().right.win(win);
                     setTimeout(r);
@@ -59,6 +60,7 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', 'frontendtests/re
                     win.navigation().breadcrumb = ko.observableArray([]);
                     win.navigation().selected = ko.observable(topicViewModel);
                     win.navigation().children = ko.observableArray([]);
+                    win.navigation().kokis = ko.observableArray([]);
 
                     reloader.viewModel().right.win(win);
                     setTimeout(r);
@@ -90,9 +92,8 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', 'frontendtests/re
                     win.navigation().breadcrumb()[0].click = new Evt.EventImpl();
                     win.navigation().selected = ko.observable(topicViewModel);
                     win.navigation().children = ko.observableArray([]);
-                    win.navigation().kokis = ko.observableArray([new KonsenskisteViewModel.ViewModel]);
-                    win.navigation().kokis()[0].general = ko.observable(new ContentViewModel.General);
-                    win.navigation().kokis()[0].general().title = ko.observable('KoKi im Thema');
+                    win.navigation().kokis = ko.observableArray([new TopicNavigationViewModel.KokiItem]);
+                    win.navigation().kokis()[0].caption = ko.observable('KoKi im Thema');
                     reloader.viewModel().right.win(win);
                     setTimeout(r);
                 },

@@ -7,6 +7,7 @@ import vm = require('../topicnavigationviewmodel')
 import Obs = require('../observable');
 import Topic = require('../topic')
 import TopicCommunicator = require('tests/testtopiccommunicator');
+import ContentModel = require('../contentmodel');
 import KonsenskisteModel = require('../konsenskistemodel');
 
 export class Tests extends unit.TestClass {
@@ -36,6 +37,20 @@ export class Tests extends unit.TestClass {
 		model.children.get()[0].title('Child Title');
 		
 		test.assert(() => viewModel.children().length == 1);
+	}
+	
+	kokis() {
+		var model = new mdl.ModelImpl();
+		var viewModel = new vm.ViewModel();
+		var controller = new ctr.ModelViewModelController(model, viewModel);
+		
+		test.assert(() => model.kokis.get() != null);
+		
+		model.kokis.push(new ContentModel.General);
+		model.kokis.get()[0].title('KoKi Title');
+		
+		test.assert(() => viewModel.kokis().length == 1);
+		test.assert(() => viewModel.kokis()[0].caption() == 'KoKi Title');
 	}
 	
 	getFromCommunicator() {

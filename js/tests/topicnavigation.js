@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../topicnavigationcontroller', '../topicnavigationmodel', '../topicnavigationviewmodel', '../observable', '../topic', 'tests/testtopiccommunicator', '../konsenskistemodel'], function(require, exports, unit, test, common, ctr, mdl, vm, Obs, Topic, TopicCommunicator, KonsenskisteModel) {
+define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../topicnavigationcontroller', '../topicnavigationmodel', '../topicnavigationviewmodel', '../observable', '../topic', 'tests/testtopiccommunicator', '../contentmodel', '../konsenskistemodel'], function(require, exports, unit, test, common, ctr, mdl, vm, Obs, Topic, TopicCommunicator, ContentModel, KonsenskisteModel) {
     var Tests = (function (_super) {
         __extends(Tests, _super);
         function Tests() {
@@ -44,6 +44,26 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../top
 
             test.assert(function () {
                 return viewModel.children().length == 1;
+            });
+        };
+
+        Tests.prototype.kokis = function () {
+            var model = new mdl.ModelImpl();
+            var viewModel = new vm.ViewModel();
+            var controller = new ctr.ModelViewModelController(model, viewModel);
+
+            test.assert(function () {
+                return model.kokis.get() != null;
+            });
+
+            model.kokis.push(new ContentModel.General);
+            model.kokis.get()[0].title('KoKi Title');
+
+            test.assert(function () {
+                return viewModel.kokis().length == 1;
+            });
+            test.assert(function () {
+                return viewModel.kokis()[0].caption() == 'KoKi Title';
             });
         };
 

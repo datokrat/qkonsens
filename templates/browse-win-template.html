@@ -1,5 +1,6 @@
 <!-- ko with: navigation -->
 <h1>Themen</h1>
+<section>
 	<ul data-bind="foreach: breadcrumb">
 		<li class="clickable" data-bind="text: caption, click: click.raise.bind(click)"></li>
 	</ul>
@@ -11,16 +12,19 @@
 	<ul data-bind="foreach: children">
 		<li class="clickable" data-bind="text: caption, click: click.raise.bind(click)"></li>
 	</ul>
-<!--h1>Konsenskisten zum Thema</h1>
+<!-- ko if: kokis().length -->
+<h1>Konsenskisten zum Thema:</h1>
 <div>
 		<ul data-bind="">
-			<!-- ko foreach: kks ->
-				<li class="clickable" data-bind="text: caption, click: click"></li>
-			<!-- /ko ->
-			<li data-bind="if: true || $root.isAdmin">
+			<!-- ko foreach: kokis -->
+				<li class="clickable" data-bind="text: caption"></li>
+			<!-- /ko -->
+			<!--li data-bind="if: true || $root.isAdmin">
 				<a data-bind="click: newKk.onClick">Neu</a>
-			</li>
+			</li-->
 		</ul>
 	</div>
-</div-->
+</div>
+<!-- /ko -->
+</section>
 <!-- /ko -->
