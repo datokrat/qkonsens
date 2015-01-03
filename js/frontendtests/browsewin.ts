@@ -13,6 +13,8 @@ import TopicCommunicator = require('tests/testtopiccommunicator');
 import TopicNavigationModel = require('../topicnavigationmodel');
 import TopicNavigationViewModel = require('../topicnavigationviewmodel');
 import TopicNavigationController = require('../topicnavigationcontroller');
+import KonsenskisteViewModel = require('../konsenskisteviewmodel');
+import ContentViewModel = require('../contentviewmodel');
 
 export class Tests extends unit.TestClass {
 	private webot = new webot.Webot();
@@ -84,14 +86,21 @@ export class Tests extends unit.TestClass {
 				win.navigation().breadcrumb()[0].click = new Evt.EventImpl<void>();
 				win.navigation().selected = ko.observable(topicViewModel);
 				win.navigation().children = ko.observableArray([]);
+				win.navigation().kokis = ko.observableArray<KonsenskisteViewModel.ViewModel>([new KonsenskisteViewModel.ViewModel]);
+				win.navigation().kokis()[0].general = ko.observable<ContentViewModel.General>(new ContentViewModel.General);
+				win.navigation().kokis()[0].general().title = ko.observable<string>('KoKi im Thema');
 				reloader.viewModel().right.win(win);
 				setTimeout(r);
 			},
 			r => {
 				test.assert(() => this.webot.query('.win:contains("Themen")').child('*').text('Breadcrumb Topic 1').exists());
+				test.assert(() => this.webot.query('.win:contains("Themen")').child('*').text('KoKi im Thema').exists());
 				r();
 			}
-		], r);
+		], (err?: any) => {
+			if(err) throw err;
+			else r();
+		});
 	}
 	
 	navigationUseCase(cxt, r) {
