@@ -26,14 +26,14 @@ export class Controller {
 		this.window.setState = (state: any) => {
 			if(state) {
 				var typedState = <State>state;
-				var kk = this.communicator.query(typedState.kokiId);
-				this.setKonsenskisteModel(kk);
+				this.setKonsenskisteModelById(typedState.kokiId);
 			}
 		}
 	}
 	
 	public setKonsenskisteModelById(id: number) {
-		this.cxt.konsenskisteModel(this.communicator.query(id));
+		if(this.cxt.konsenskisteModel().id() != id)
+			this.cxt.konsenskisteModel(this.communicator.query(id));
 	}
 	
 	private initKonsenskiste(konsenskisteModel: kokiMdl.Model) {

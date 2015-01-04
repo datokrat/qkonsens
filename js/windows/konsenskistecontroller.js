@@ -14,14 +14,14 @@ define(["require", "exports", 'factories/konsenskistecontroller', '../konsenskis
             this.window.setState = function (state) {
                 if (state) {
                     var typedState = state;
-                    var kk = _this.communicator.query(typedState.kokiId);
-                    _this.setKonsenskisteModel(kk);
+                    _this.setKonsenskisteModelById(typedState.kokiId);
                 }
             };
         };
 
         Controller.prototype.setKonsenskisteModelById = function (id) {
-            this.cxt.konsenskisteModel(this.communicator.query(id));
+            if (this.cxt.konsenskisteModel().id() != id)
+                this.cxt.konsenskisteModel(this.communicator.query(id));
         };
 
         Controller.prototype.initKonsenskiste = function (konsenskisteModel) {
