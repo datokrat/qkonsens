@@ -147,13 +147,15 @@ define(["require", "exports", 'event', 'common', 'discocontext', 'contentcommuni
             if (rawKoki.Ratings)
                 this.ratingParser.parse(rawKoki.Ratings, out.rating());
 
-            if (rawKoki.ReferredFrom)
+            if (rawKoki.ReferredFrom) {
+                out.childKas.set([]);
                 rawKoki.ReferredFrom.forEach(function (reference) {
                     if (reference.ReferenceType.Description.Name == 'Part') {
                         var ka = _this.parseKa(reference.Referrer);
                         out.childKas.push(ka);
                     }
                 });
+            }
 
             return out;
         };

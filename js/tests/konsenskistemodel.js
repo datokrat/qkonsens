@@ -94,6 +94,29 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../konsenskistemode
                 return removalCtr == 1;
             });
         };
+
+        Tests.prototype.set = function () {
+            var kModel = this.factory.create('Test');
+            kModel.childKas.push(this.kaFactory.create('Ka'));
+
+            var kModel2 = this.factory.create('Test');
+
+            kModel2.set(kModel);
+            test.assert(function () {
+                return kModel.childKas.get().length == 1;
+            });
+            test.assert(function () {
+                return kModel2.childKas.get().length == 1;
+            });
+
+            kModel2.set(kModel);
+            test.assert(function () {
+                return kModel.childKas.get().length == 1;
+            });
+            test.assert(function () {
+                return kModel2.childKas.get().length == 1;
+            });
+        };
         return Tests;
     })(unit.TestClass);
     exports.Tests = Tests;

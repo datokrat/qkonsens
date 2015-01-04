@@ -14,4 +14,7 @@ import ContentViewModel = require('contentviewmodel')
 import KElement = require('kelement');
 
 export class Controller extends KElement.Controller<mdl.Model, vm.ViewModel, com.Main> {
+	constructor(model: mdl.Model, viewModel: vm.ViewModel, communicator: com.Main) {
+		super(model, viewModel, communicator);
+	}
 }

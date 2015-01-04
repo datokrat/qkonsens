@@ -155,6 +155,7 @@ export class ChildArraySynchronizer<Model, ViewModel, Controller extends { dispo
 		}
 		else
 			throw new DuplicateInsertionException();
+		if(this.entryKeys.length != this.entryValues.length) console.error('!!!!!!');
 	}
 	
 	public removed( m: Model ) {

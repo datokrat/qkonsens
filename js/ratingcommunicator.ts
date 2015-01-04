@@ -2,6 +2,7 @@ import Events = require('event');
 import Rating = require('rating');
 import discoContext = require('discocontext');
 import common = require('common');
+import Obs = require('observable');
 
 export interface Base {
 	submitRating(ratableId: number, rating: string, then?: () => void): void;
@@ -14,8 +15,7 @@ export interface Base {
 }
 
 export class Main implements Base {
-	public submitRating(ratableId: number, rating: string): void {
-		throw new Error('TODO: add then?: () => void argument');
+	public submitRating(ratableId: number, rating: string, then?: () => void): void {
 		var ratings: Disco.Ontology.Rating[];
 		var discoRating: Disco.Ontology.Rating;
 		common.Callbacks.batch([
@@ -55,6 +55,7 @@ export class Main implements Base {
 				}
 			}
 		], () => {
+			then && then();
 			this.ratingSubmitted.raise({ ratableId: ratableId, rating: ScoreParser.fromDisco(discoRating.Score) });
 		});
 	}
@@ -71,9 +72,13 @@ export class Parser {
 		out = out || new Rating.Model();
 		out.personalRating('none');
 		rawRatings.forEach(rawRating => {
+			var ratingValue = ScoreParser.fromDisco(rawRating.Score);
 			if(rawRating.ModifiedBy.AuthorId == '12') {
-				out.personalRating(ScoreParser.fromDisco(rawRating.Score));
+				out.personalRating(ratingValue);
 			}
+			var summaryObservable: Obs.Observable<number> = out.summarizedRatings()[ratingValue];
+			console.log(summaryObservable());
+			summaryObservable(summaryObservable() ? summaryObservable()+1 : 1);
 		});
 		return out;
 	}

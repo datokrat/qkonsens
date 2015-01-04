@@ -14,6 +14,7 @@ export class Model {
 	
 	public set(other: Model) {
 		this.personalRating(other.personalRating());
+		this.summarizedRatings().set(other.summarizedRatings());
 	}
 }
 
@@ -74,9 +75,16 @@ export class SummarizedRatingCollectionViewModel {
 }
 
 export class SummarizedRatingCollectionModel {
-	public stronglike = ko.observable<number>();
-	public like = ko.observable<number>();
-	public neutral = ko.observable<number>();
-	public dislike = ko.observable<number>();
-	public strongdislike = ko.observable<number>();
+	public stronglike = ko.observable<number>(0);
+	public like = ko.observable<number>(0);
+	public neutral = ko.observable<number>(0);
+	public dislike = ko.observable<number>(0);
+	public strongdislike = ko.observable<number>(0);
+	public set(rhs: SummarizedRatingCollectionViewModel) {
+		this.stronglike(rhs.stronglike());
+		this.like(rhs.like());
+		this.neutral(rhs.neutral());
+		this.dislike(rhs.dislike());
+		this.strongdislike(rhs.strongdislike());
+	}
 }

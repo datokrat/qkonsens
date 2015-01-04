@@ -13,7 +13,6 @@ import ContentViewModel = require('contentviewmodel')
 import Discussion = require('discussion')
 import DiscussionCommunicator = require('discussioncommunicator')
 
-import Rating = require('rating')
 import Comment = require('comment')
 import KernaussageFactory = require('factories/kernaussagemodel')
 
@@ -91,6 +90,8 @@ export class ControllerImpl extends KElement.Controller<mdl.Model, vm.ViewModel,
 	private onKokiReceived = (args: KokiCommunicator.ReceivedArgs) => {
 		if(this.model.id() == args.konsenskiste.id())
 			this.model.set( args.konsenskiste );
+		console.log(args.konsenskiste);
+		console.log(this.model.childKas.get().length, 'Elemente');
 	}
 	
 	private onKaAppended = (args: KokiCommunicator.KaAppendedArgs) => {

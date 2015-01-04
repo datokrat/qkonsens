@@ -13,6 +13,8 @@ define(["require", "exports", 'factories/kernaussagemodel', 'synchronizers/kokis
             this.onKokiReceived = function (args) {
                 if (_this.model.id() == args.konsenskiste.id())
                     _this.model.set(args.konsenskiste);
+                console.log(args.konsenskiste);
+                console.log(_this.model.childKas.get().length, 'Elemente');
             };
             this.onKaAppended = function (args) {
                 if (_this.model.id() == args.konsenskisteId)

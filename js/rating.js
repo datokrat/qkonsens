@@ -6,6 +6,7 @@ define(["require", "exports"], function(require, exports) {
         }
         Model.prototype.set = function (other) {
             this.personalRating(other.personalRating());
+            this.summarizedRatings().set(other.summarizedRatings());
         };
         return Model;
     })();
@@ -74,12 +75,19 @@ define(["require", "exports"], function(require, exports) {
 
     var SummarizedRatingCollectionModel = (function () {
         function SummarizedRatingCollectionModel() {
-            this.stronglike = ko.observable();
-            this.like = ko.observable();
-            this.neutral = ko.observable();
-            this.dislike = ko.observable();
-            this.strongdislike = ko.observable();
+            this.stronglike = ko.observable(0);
+            this.like = ko.observable(0);
+            this.neutral = ko.observable(0);
+            this.dislike = ko.observable(0);
+            this.strongdislike = ko.observable(0);
         }
+        SummarizedRatingCollectionModel.prototype.set = function (rhs) {
+            this.stronglike(rhs.stronglike());
+            this.like(rhs.like());
+            this.neutral(rhs.neutral());
+            this.dislike(rhs.dislike());
+            this.strongdislike(rhs.strongdislike());
+        };
         return SummarizedRatingCollectionModel;
     })();
     exports.SummarizedRatingCollectionModel = SummarizedRatingCollectionModel;

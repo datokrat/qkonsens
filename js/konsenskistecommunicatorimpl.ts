@@ -99,7 +99,7 @@ export class Main implements IKonsenskisteCommunicator.Main {
 			out.error(message);
 			out.loading(false);
 			this.receiptError.raise({ id: id, message: message, konsenskiste: out });
-		};
+		}; 
 		var out = new KonsenskisteModel.Model();
 		out.loading(true);
 		out.id(id);
@@ -149,13 +149,15 @@ export class Parser {
 		this.parseContext(rawKoki, out.context());
 		if(rawKoki.Ratings) this.ratingParser.parse(rawKoki.Ratings, out.rating());
 		
-		if(rawKoki.ReferredFrom)
+		if(rawKoki.ReferredFrom) {
+			out.childKas.set([]);
 			rawKoki.ReferredFrom.forEach(reference => {
 				if(reference.ReferenceType.Description.Name == 'Part') {
 					var ka = this.parseKa(reference.Referrer);
 					out.childKas.push(ka);
 				}
 			});
+		}
 		
 		return out;
 	}

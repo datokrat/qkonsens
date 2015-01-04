@@ -5,9 +5,8 @@ define(["require", "exports", 'event', 'rating', 'discocontext', 'common'], func
             this.ratingReceived = new Events.EventImpl();
             this.submissionFailed = new Events.EventImpl();
         }
-        Main.prototype.submitRating = function (ratableId, rating) {
+        Main.prototype.submitRating = function (ratableId, rating, then) {
             var _this = this;
-            throw new Error('TODO: add then?: () => void argument');
             var ratings;
             var discoRating;
             common.Callbacks.batch([
@@ -48,6 +47,7 @@ define(["require", "exports", 'event', 'rating', 'discocontext', 'common'], func
                     }
                 }
             ], function () {
+                then && then();
                 _this.ratingSubmitted.raise({ ratableId: ratableId, rating: ScoreParser.fromDisco(discoRating.Score) });
             });
         };
@@ -64,9 +64,13 @@ define(["require", "exports", 'event', 'rating', 'discocontext', 'common'], func
             out = out || new Rating.Model();
             out.personalRating('none');
             rawRatings.forEach(function (rawRating) {
+                var ratingValue = ScoreParser.fromDisco(rawRating.Score);
                 if (rawRating.ModifiedBy.AuthorId == '12') {
-                    out.personalRating(ScoreParser.fromDisco(rawRating.Score));
+                    out.personalRating(ratingValue);
                 }
+                var summaryObservable = out.summarizedRatings()[ratingValue];
+                console.log(summaryObservable());
+                summaryObservable(summaryObservable() ? summaryObservable() + 1 : 1);
             });
             return out;
         };

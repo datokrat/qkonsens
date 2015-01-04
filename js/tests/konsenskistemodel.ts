@@ -67,6 +67,21 @@ export class Tests extends unit.TestClass {
 		test.assert(() => removalCtr == 1);
 		
 	}
+	
+	set() {
+		var kModel = this.factory.create('Test');
+		kModel.childKas.push(this.kaFactory.create('Ka'));
+		
+		var kModel2 = this.factory.create('Test');
+		
+		kModel2.set(kModel);
+		test.assert(() => kModel.childKas.get().length == 1);
+		test.assert(() => kModel2.childKas.get().length == 1);
+		
+		kModel2.set(kModel);
+		test.assert(() => kModel.childKas.get().length == 1);
+		test.assert(() => kModel2.childKas.get().length == 1);
+	}
 }
 
 class KonsenskisteFactory {

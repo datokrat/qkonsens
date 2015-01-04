@@ -174,6 +174,8 @@ define(["require", "exports", '../event'], function(require, exports, Events) {
                 this.itemCreated.raise({ model: m, viewModel: v, controller: c });
             } else
                 throw new DuplicateInsertionException();
+            if (this.entryKeys.length != this.entryValues.length)
+                console.error('!!!!!!');
         };
 
         ChildArraySynchronizer.prototype.removed = function (m) {

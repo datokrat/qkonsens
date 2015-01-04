@@ -16,10 +16,12 @@ define(["require", "exports", 'kernaussagemodel', 'kelement', 'factories/event',
             this.factoryContext = context;
         }
         Model.prototype.set = function (model) {
+            console.log('begin set');
             KElement.Model.prototype.set.apply(this, arguments);
             this.setChildKas(model.childKas.get());
             this.loading(model.loading());
             this.error(model.error());
+            console.log('end set');
         };
 
         Model.prototype.setChildKas = function (other) {

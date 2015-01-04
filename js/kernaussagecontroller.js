@@ -7,8 +7,8 @@ var __extends = this.__extends || function (d, b) {
 define(["require", "exports", 'kelement'], function(require, exports, KElement) {
     var Controller = (function (_super) {
         __extends(Controller, _super);
-        function Controller() {
-            _super.apply(this, arguments);
+        function Controller(model, viewModel, communicator) {
+            _super.call(this, model, viewModel, communicator);
         }
         return Controller;
     })(KElement.Controller);
