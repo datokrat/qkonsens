@@ -6,6 +6,7 @@ import ContentModel = require('contentmodel');
 import ContentViewModel = require('contentviewmodel');
 import Rating = require('rating');
 import Discussion = require('discussion');
+import Commands = require('command');
 
 import ContentCommunicator = require('contentcommunicator');
 import DiscussionCommunicator = require('discussioncommunicator');
@@ -59,6 +60,8 @@ export interface ReceiptErrorArgs {
 
 export class Controller<Mdl extends Model, Vm extends ViewModel, Com extends Communicator> {
 	constructor(model: Mdl, viewModel: Vm, communicator: Com) {
+		this.initCommandProcessor();
+		
 		this.model = model;
 		this.viewModel = viewModel;
 		this.communicator = communicator;
@@ -67,6 +70,17 @@ export class Controller<Mdl extends Model, Vm extends ViewModel, Com extends Com
 		this.initGeneralContent();
 		this.initContext();
 		this.initRating();
+	}
+	
+	private initCommandProcessor() {
+		this.commandProcessor.chain.append(cmd => {
+			if(cmd instanceof Rating.SelectRatingCommand) {
+				var castCmd = <Rating.SelectRatingCommand>cmd;
+				this.communicator.rating.submitRating(this.model.id(), castCmd.ratingValue, castCmd.then);
+				return true;
+			}
+			return false;
+		});
 	}
 	
 	public dispose() {
@@ -105,7 +119,7 @@ export class Controller<Mdl extends Model, Vm extends ViewModel, Com extends Com
 	private initRating() {
 		this.viewModel.rating = ko.observable<Rating.ViewModel>();
 		
-		this.ratingSynchronizer = new KSync.RatingSynchronizer(this.communicator.rating);
+		this.ratingSynchronizer = new KSync.RatingSynchronizer({ communicator: this.communicator.rating, commandProcessor: this.commandProcessor });
 		this.ratingSynchronizer
 			.setRatableModel(this.model);
 		this.ratingSynchronizer
@@ -123,6 +137,8 @@ export class Controller<Mdl extends Model, Vm extends ViewModel, Com extends Com
 	public viewModel: Vm;
 	public communicator: Com;
 	public cxt: ViewModelContext;
+	
+	public commandProcessor = new Commands.CommandProcessor();
 		
 	public generalContentSynchronizer: KSync.GeneralContentSynchronizer;
 	public contextSynchronizer: KSync.ContextSynchronizer;

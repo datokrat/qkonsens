@@ -13,7 +13,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../konsenskistemode
         Tests.prototype.setUp = function () {
             this.konsenskisteModel = new kokiMdl.Model();
             this.window = new win.Win();
-            this.controller = new ctr.Controller(this.konsenskisteModel, this.window, new KokiCommunicator);
+            this.controller = new ctr.Controller(this.konsenskisteModel, this.window, new KokiCommunicator.Main);
         };
 
         Tests.prototype.tearDown = function () {
@@ -55,7 +55,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../konsenskistemode
         Tests.prototype.testNullModel = function () {
             try  {
                 var window = new win.Win;
-                var controller = new ctr.Controller(null, window, new KokiCommunicator);
+                var controller = new ctr.Controller(null, window, new KokiCommunicator.Main);
             } finally {
                 controller && controller.dispose();
             }

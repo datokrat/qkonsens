@@ -4,6 +4,19 @@ import ItemContainer = require('../itemcontainer');
 import RatingCommunicator = require('../ratingcommunicator');
 import Rating = require('../rating');
 
+
+
+export class Stub implements RatingCommunicator.Base {
+	public submitRating(ratableId: number, rating: string): void {}
+	
+	public queryRating(ratableId: number): void {}
+	
+	public ratingSubmitted: Events.Event<RatingCommunicator.SubmittedArgs> = new Events.EventImpl<RatingCommunicator.SubmittedArgs>();
+	public ratingReceived: Events.Event<RatingCommunicator.ReceivedArgs> = new Events.EventImpl<RatingCommunicator.ReceivedArgs>();
+	
+	public submissionFailed: Events.Event<RatingCommunicator.SubmissionFailedArgs> = new Events.EventImpl<RatingCommunicator.SubmissionFailedArgs>();
+}
+
 export class Main implements RatingCommunicator.Base {
 	constructor(private testItems: ItemContainer.Base<Rating.RatableModel> = new ItemContainer.Main<Rating.RatableModel>()) {
 	}
@@ -12,7 +25,7 @@ export class Main implements RatingCommunicator.Base {
 	public ratingReceived = new Events.EventImpl<RatingCommunicator.ReceivedArgs>();
 	public submissionFailed = new Events.EventImpl<RatingCommunicator.SubmissionFailedArgs>();
 	
-	public submitRating(ratableId: number, rating: string): void {
+	public submitRating(ratableId: number, rating: string, then?: () => void): void {
 		try {
 			var ratable = this.testItems.get(ratableId);
 			ratable.rating().personalRating(rating);
@@ -23,6 +36,7 @@ export class Main implements RatingCommunicator.Base {
 			this.submissionFailed.raise({ ratableId: ratableId, error: error});
 			return;
 		}
+		then && then();
 		this.ratingSubmitted.raise({ ratableId: ratableId, rating: rating });
 	}
 	

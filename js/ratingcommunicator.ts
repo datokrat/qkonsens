@@ -4,7 +4,7 @@ import discoContext = require('discocontext');
 import common = require('common');
 
 export interface Base {
-	submitRating(ratableId: number, rating: string): void;
+	submitRating(ratableId: number, rating: string, then?: () => void): void;
 	queryRating(ratableId: number): void;
 	
 	ratingSubmitted: Events.Event<SubmittedArgs>;
@@ -15,6 +15,7 @@ export interface Base {
 
 export class Main implements Base {
 	public submitRating(ratableId: number, rating: string): void {
+		throw new Error('TODO: add then?: () => void argument');
 		var ratings: Disco.Ontology.Rating[];
 		var discoRating: Disco.Ontology.Rating;
 		common.Callbacks.batch([

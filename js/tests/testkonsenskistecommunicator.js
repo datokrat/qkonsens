@@ -1,6 +1,6 @@
 define(["require", "exports", '../id', 'event', 'itemcontainer', 'tests/testcontentcommunicator', 'tests/testkernaussagecommunicator', 'tests/testdiscussioncommunicator', 'tests/testratingcommunicator', '../konsenskistemodel'], function(require, exports, newId, Events, ItemContainer, TestContentCommunicator, TestKaCommunicator, TestDiscussionCommunicator, TestRatingCommunicator, KonsenskisteModel) {
-    var TestKokiCommunicator = (function () {
-        function TestKokiCommunicator() {
+    var Main = (function () {
+        function Main() {
             this.received = new Events.EventImpl();
             this.receiptError = new Events.EventImpl();
             this.kernaussageAppended = new Events.EventImpl();
@@ -12,14 +12,14 @@ define(["require", "exports", '../id', 'event', 'itemcontainer', 'tests/testcont
             this.content = new TestContentCommunicator();
             this.kernaussage = new TestKaCommunicator({ content: this.content });
         }
-        TestKokiCommunicator.prototype.setTestKoki = function (koki) {
+        Main.prototype.setTestKoki = function (koki) {
             if (typeof koki.id() === 'number') {
                 this.testItems.set(koki.id(), koki);
             } else
                 throw new Error('TestKokiCommunicator.setTestKoki: koki.id is not a number');
         };
 
-        TestKokiCommunicator.prototype.query = function (id, out) {
+        Main.prototype.query = function (id, out) {
             try  {
                 out = out || new KonsenskisteModel.Model();
                 out.id(id);
@@ -37,7 +37,7 @@ define(["require", "exports", '../id', 'event', 'itemcontainer', 'tests/testcont
             return out;
         };
 
-        TestKokiCommunicator.prototype.createAndAppendKa = function (kokiId, ka) {
+        Main.prototype.createAndAppendKa = function (kokiId, ka) {
             try  {
                 var koki = this.testItems.get(kokiId);
             } catch (e) {
@@ -49,9 +49,28 @@ define(["require", "exports", '../id', 'event', 'itemcontainer', 'tests/testcont
             koki.childKas.push(ka);
             this.kernaussageAppended.raise({ konsenskisteId: kokiId, kernaussage: ka });
         };
-        return TestKokiCommunicator;
+        return Main;
     })();
+    exports.Main = Main;
 
-    
-    return TestKokiCommunicator;
+    var Stub = (function () {
+        function Stub() {
+            this.content = new TestContentCommunicator();
+            this.kernaussage = new TestKaCommunicator();
+            this.received = new Events.EventImpl();
+            this.receiptError = new Events.EventImpl();
+            this.kernaussageAppended = new Events.EventImpl();
+            this.kernaussageAppendingError = new Events.EventImpl();
+            this.discussion = new TestDiscussionCommunicator();
+            this.rating = new TestRatingCommunicator.Stub();
+        }
+        Stub.prototype.query = function (id, out) {
+            throw new Error('not implemented');
+        };
+        Stub.prototype.createAndAppendKa = function (kokiId, ka) {
+            throw new Error('not implemented');
+        };
+        return Stub;
+    })();
+    exports.Stub = Stub;
 });

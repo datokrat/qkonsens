@@ -22,6 +22,7 @@ import ContentCommunicator = require('tests/contentcommunicator')
 import KokiCommunicator = require('tests/konsenskistecommunicator')
 import ContentModelTests = require('tests/contentmodel')
 import CommandTests = require('tests/commands');
+import KElementTests = require('tests/kelement');
 
 var test = new unit.Test()
 var asyncTest = new asyncunit.Test();
@@ -38,8 +39,9 @@ test.addTestClass(new context.Tests(), 'Context');
 test.addTestClass(new Discussion(), 'Discussion');
 test.addTestClass(new TestRatingCommunicator(), 'TestRatingCommunicator');
 test.addTestClass(new DiscussionSynchronizer(), 'DiscussionSynchronizer');
-test.addTestClass(new synchronizer.Tests(), 'ChildArraySynchronizer')
-test.addTestClass(new commentSynchronizer.Tests, 'CommentSynchronizer')
+test.addTestClass(new synchronizer.Tests(), 'ChildArraySynchronizer');
+test.addTestClass(new commentSynchronizer.Tests, 'CommentSynchronizer');
+test.addTestClass(new KElementTests.Main(), 'KElement');
 test.addTestClass(new kaModel.Tests(), 'Kernaussage')
 test.addTestClass(new kokiModel.Tests(), 'KonsenskisteModel')
 test.addTestClass(new kokiController.Tests(), 'KonsenskisteController')

@@ -12,7 +12,7 @@ import KonsenskisteModel = require('../konsenskistemodel');
 import KernaussageModel = require('../kernaussagemodel');
 
 
-class TestKokiCommunicator implements KokiCommunicator.Main {
+export class Main implements KokiCommunicator.Main {
 	public content: TestContentCommunicator;
 	public kernaussage: TestKaCommunicator;
 	
@@ -72,4 +72,17 @@ class TestKokiCommunicator implements KokiCommunicator.Main {
 	}
 }
 
-export = TestKokiCommunicator;
+export class Stub implements KokiCommunicator.Main {
+	public content = new TestContentCommunicator();
+	public kernaussage = new TestKaCommunicator();
+	
+	public received = new Events.EventImpl<KokiCommunicator.ReceivedArgs>();
+	public receiptError = new Events.EventImpl<KokiCommunicator.ReceiptErrorArgs>();
+	public kernaussageAppended = new Events.EventImpl<KokiCommunicator.KaAppendedArgs>();
+	public kernaussageAppendingError = new Events.EventImpl<KokiCommunicator.KaAppendingErrorArgs>();
+	public discussion = new TestDiscussionCommunicator();
+	public rating = new TestRatingCommunicator.Stub();
+	
+	public query(id: number, out?: KonsenskisteModel.Model): KonsenskisteModel.Model { throw new Error('not implemented') }
+	public createAndAppendKa(kokiId: number, ka: KernaussageModel.Model) { throw new Error('not implemented') }
+}

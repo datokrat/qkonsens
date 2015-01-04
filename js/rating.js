@@ -19,7 +19,7 @@ define(["require", "exports"], function(require, exports) {
     exports.ViewModel = ViewModel;
 
     var Controller = (function () {
-        function Controller(model, viewModel, communicator) {
+        function Controller(model, viewModel, args) {
             var _this = this;
             this.subscriptions = [];
             this.model = model;
@@ -36,23 +36,25 @@ define(["require", "exports"], function(require, exports) {
                 return function () {
                     return setTimeout(function () {
                         //viewModel.personalRating(rating);
-                        if (_this.ratableModel) {
-                            communicator.submitRating(_this.ratableModel.id(), rating);
-                        } else {
-                            throw new Error('cannot submit rating - no ratableModel set');
+                        /*if(this.ratableModel) {
+                        args.communicator.submitRating(this.ratableModel.id(), rating);
                         }
+                        else {
+                        throw new Error('cannot submit rating - no ratableModel set');
+                        }*/
+                        args.commandProcessor.processCommand(new SelectRatingCommand(rating, function () {
+                            return _this.onRatingSubmitted(rating);
+                        }));
                     });
                 };
             };
-
-            this.subscriptions = [
-                communicator.ratingSubmitted.subscribe(this.onRatingSubmitted.bind(this)),
-                communicator.ratingReceived.subscribe(this.onRatingChanged.bind(this))
-            ];
+            /*this.subscriptions = [
+            args.communicator.ratingSubmitted.subscribe(this.onRatingSubmitted.bind(this)),
+            args.communicator.ratingReceived.subscribe(this.onRatingChanged.bind(this))
+            ];*/
         }
-        Controller.prototype.onRatingSubmitted = function (args) {
-            if (this.ratableModel && (args.ratableId == this.ratableModel.id()))
-                this.model.personalRating(args.rating);
+        Controller.prototype.onRatingSubmitted = function (rating) {
+            this.model.personalRating(rating);
         };
 
         Controller.prototype.onRatingChanged = function (args) {
@@ -73,6 +75,15 @@ define(["require", "exports"], function(require, exports) {
         return Controller;
     })();
     exports.Controller = Controller;
+
+    var SelectRatingCommand = (function () {
+        function SelectRatingCommand(ratingValue, then) {
+            this.ratingValue = ratingValue;
+            this.then = then;
+        }
+        return SelectRatingCommand;
+    })();
+    exports.SelectRatingCommand = SelectRatingCommand;
 
     var SummarizedRatingCollectionViewModel = (function () {
         function SummarizedRatingCollectionViewModel() {

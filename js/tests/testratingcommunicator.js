@@ -1,4 +1,19 @@
 define(["require", "exports", '../event', '../itemcontainer'], function(require, exports, Events, ItemContainer) {
+    var Stub = (function () {
+        function Stub() {
+            this.ratingSubmitted = new Events.EventImpl();
+            this.ratingReceived = new Events.EventImpl();
+            this.submissionFailed = new Events.EventImpl();
+        }
+        Stub.prototype.submitRating = function (ratableId, rating) {
+        };
+
+        Stub.prototype.queryRating = function (ratableId) {
+        };
+        return Stub;
+    })();
+    exports.Stub = Stub;
+
     var Main = (function () {
         function Main(testItems) {
             if (typeof testItems === "undefined") { testItems = new ItemContainer.Main(); }
@@ -7,7 +22,7 @@ define(["require", "exports", '../event', '../itemcontainer'], function(require,
             this.ratingReceived = new Events.EventImpl();
             this.submissionFailed = new Events.EventImpl();
         }
-        Main.prototype.submitRating = function (ratableId, rating) {
+        Main.prototype.submitRating = function (ratableId, rating, then) {
             try  {
                 var ratable = this.testItems.get(ratableId);
                 ratable.rating().personalRating(rating);
@@ -17,6 +32,7 @@ define(["require", "exports", '../event', '../itemcontainer'], function(require,
                 this.submissionFailed.raise({ ratableId: ratableId, error: error });
                 return;
             }
+            then && then();
             this.ratingSubmitted.raise({ ratableId: ratableId, rating: rating });
         };
 

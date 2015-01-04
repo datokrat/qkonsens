@@ -11,7 +11,7 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', '../common', 'tes
             _super.apply(this, arguments);
         }
         TestClass.prototype.setUp = function (r) {
-            this.com = new TestKokiCommunicator;
+            this.com = new TestKokiCommunicator.Main();
             this.mdl = new KonsenskisteModel.Model;
             this.vm = new KokiViewModel.ViewModel;
             this.ctr = new KokiController.ControllerImpl(this.mdl, this.vm, this.com);
@@ -105,7 +105,7 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', '../common', 'tes
 
         TestClass.prototype.communicator = function (async, r) {
             async();
-            var communicator = new TestKokiCommunicator();
+            var communicator = new TestKokiCommunicator.Main();
             communicator.discussion.commentsReceived.subscribe(function (args) {
                 return test.assert(function () {
                     return args.comments.length == 1;

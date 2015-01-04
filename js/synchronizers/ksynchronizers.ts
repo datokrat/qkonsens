@@ -41,12 +41,12 @@ export class RatingSynchronizer
 		this.controllerFty.setRatableModel(ratableModel);
 	}
 	
-	constructor(communicator: RatingCommunicator.Base) {
+	constructor(args: Rating.ControllerArgs) {
 		super();
 		
 		this.setViewModelFactory( new Factories.Factory(Rating.ViewModel) );
 		
-		this.controllerFty = new RatingControllerFactory(communicator);
+		this.controllerFty = new RatingControllerFactory(args);
 		this.setControllerFactory( this.controllerFty );
 	}
 	
@@ -54,12 +54,12 @@ export class RatingSynchronizer
 }
 
 export class RatingControllerFactory {
-	constructor(communicator: RatingCommunicator.Base) {
-		this.communicator = communicator;
+	constructor(args: Rating.ControllerArgs) {
+		this.args = args;
 	}
 	
 	public create(m: Rating.Model, v: Rating.ViewModel) {
-		var ret = new Rating.Controller(m, v, this.communicator);
+		var ret = new Rating.Controller(m, v, this.args);
 		ret.setRatableModel(this.ratableModel);
 		return ret;
 	}
@@ -68,7 +68,7 @@ export class RatingControllerFactory {
 		this.ratableModel = ratableModel;
 	}
 	
-	private communicator: RatingCommunicator.Base;
+	private args: Rating.ControllerArgs;
 	private ratableModel: Rating.RatableModel;
 }
 

@@ -10,13 +10,13 @@ import KokiController = require('../konsenskistecontroller')
 import Comment = require('comment')
 
 class TestClass extends unit.TestClass {
-	private com: TestKokiCommunicator;
+	private com: TestKokiCommunicator.Main;
 	private mdl: KonsenskisteModel.Model;
 	private vm: KokiViewModel.ViewModel;
 	private ctr: KokiController.Controller;
 
 	setUp(r) {
-		this.com = new TestKokiCommunicator;
+		this.com = new TestKokiCommunicator.Main();
 		this.mdl = new KonsenskisteModel.Model;
 		this.vm = new KokiViewModel.ViewModel;
 		this.ctr = new KokiController.ControllerImpl( this.mdl, this.vm, this.com );
@@ -93,7 +93,7 @@ class TestClass extends unit.TestClass {
 	
 	communicator(async, r) {
 		async();
-		var communicator = new TestKokiCommunicator();
+		var communicator = new TestKokiCommunicator.Main();
 		communicator.discussion.commentsReceived.subscribe(args => test.assert(() => args.comments.length == 1) );
 		
 		var koki = new KonsenskisteModel.Model();

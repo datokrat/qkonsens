@@ -1,4 +1,4 @@
-define(["require", "exports", 'contentmodel', 'rating', 'discussion', 'synchronizers/ksynchronizers'], function(require, exports, ContentModel, Rating, Discussion, KSync) {
+define(["require", "exports", 'contentmodel', 'rating', 'discussion', 'command', 'synchronizers/ksynchronizers'], function(require, exports, ContentModel, Rating, Discussion, Commands, KSync) {
     var Model = (function () {
         function Model() {
             this.id = ko.observable();
@@ -27,6 +27,9 @@ define(["require", "exports", 'contentmodel', 'rating', 'discussion', 'synchroni
 
     var Controller = (function () {
         function Controller(model, viewModel, communicator) {
+            this.commandProcessor = new Commands.CommandProcessor();
+            this.initCommandProcessor();
+
             this.model = model;
             this.viewModel = viewModel;
             this.communicator = communicator;
@@ -36,6 +39,18 @@ define(["require", "exports", 'contentmodel', 'rating', 'discussion', 'synchroni
             this.initContext();
             this.initRating();
         }
+        Controller.prototype.initCommandProcessor = function () {
+            var _this = this;
+            this.commandProcessor.chain.append(function (cmd) {
+                if (cmd instanceof Rating.SelectRatingCommand) {
+                    var castCmd = cmd;
+                    _this.communicator.rating.submitRating(_this.model.id(), castCmd.ratingValue, castCmd.then);
+                    return true;
+                }
+                return false;
+            });
+        };
+
         Controller.prototype.dispose = function () {
             this.generalContentSynchronizer.dispose();
             this.contextSynchronizer.dispose();
@@ -71,7 +86,7 @@ define(["require", "exports", 'contentmodel', 'rating', 'discussion', 'synchroni
             var _this = this;
             this.viewModel.rating = ko.observable();
 
-            this.ratingSynchronizer = new KSync.RatingSynchronizer(this.communicator.rating);
+            this.ratingSynchronizer = new KSync.RatingSynchronizer({ communicator: this.communicator.rating, commandProcessor: this.commandProcessor });
             this.ratingSynchronizer.setRatableModel(this.model);
             this.ratingSynchronizer.setViewModelChangedHandler(function (value) {
                 return _this.viewModel.rating(value);

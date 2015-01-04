@@ -29,12 +29,12 @@ define(["require", "exports", 'synchronizers/childsynchronizer', 'factories/cons
 
     var RatingSynchronizer = (function (_super) {
         __extends(RatingSynchronizer, _super);
-        function RatingSynchronizer(communicator) {
+        function RatingSynchronizer(args) {
             _super.call(this);
 
             this.setViewModelFactory(new Factories.Factory(Rating.ViewModel));
 
-            this.controllerFty = new RatingControllerFactory(communicator);
+            this.controllerFty = new RatingControllerFactory(args);
             this.setControllerFactory(this.controllerFty);
         }
         RatingSynchronizer.prototype.createViewModelObservable = function () {
@@ -49,11 +49,11 @@ define(["require", "exports", 'synchronizers/childsynchronizer', 'factories/cons
     exports.RatingSynchronizer = RatingSynchronizer;
 
     var RatingControllerFactory = (function () {
-        function RatingControllerFactory(communicator) {
-            this.communicator = communicator;
+        function RatingControllerFactory(args) {
+            this.args = args;
         }
         RatingControllerFactory.prototype.create = function (m, v) {
-            var ret = new Rating.Controller(m, v, this.communicator);
+            var ret = new Rating.Controller(m, v, this.args);
             ret.setRatableModel(this.ratableModel);
             return ret;
         };

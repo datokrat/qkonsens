@@ -23,7 +23,7 @@ export class Tests extends unit.TestClass {
 	testContent() {
 		var model = this.kkModelFactory.create( 'Basisdemokratie', 'Beschreibung' );
 		var viewModel = new vm.ViewModel();
-		var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator);
+		var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator.Main);
 		
 		model.context().text('Der Klärtext');
 		
@@ -35,7 +35,7 @@ export class Tests extends unit.TestClass {
 	testContentObservables() {
 		var model = this.kkModelFactory.create( 'Basisdemokratie', 'Beschreibung' );
 		var viewModel = new vm.ViewModel();
-		var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator);
+		var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator.Main);
 		var titleTracker: string[] = [];
 		var textTracker: string[] = [];
 		
@@ -57,7 +57,7 @@ export class Tests extends unit.TestClass {
 	testChildKas() {
 		var model = this.kkModelFactory.create( 'Basisdemokratie (Konzept)', 'Beispiel-Konsenskiste' );
 		var viewModel = new vm.ViewModel();
-		var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator);
+		var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator.Main);
 		
 		model.childKas.push( this.kaModelFactory.create('', 'Begriff Basisdemokratie') );
 		
@@ -68,7 +68,7 @@ export class Tests extends unit.TestClass {
 	testRemoveChildKa() {
 		var model = this.kkModelFactory.create( 'Basisdemokratie (Konzept)' );
 		var viewModel = new vm.ViewModel();
-		var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator);
+		var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator.Main);
 		var ka = this.kaModelFactory.create('', 'Begriff Basisdemokratie');
 		
 		model.childKas.push( ka );
@@ -80,7 +80,7 @@ export class Tests extends unit.TestClass {
 	testDispose() {
 		var model = this.kkModelFactory.create( 'Basisdemokratie' );
 		var viewModel = new vm.ViewModel();
-		var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator);
+		var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator.Main);
 		
 		controller.dispose();
 		
@@ -99,7 +99,7 @@ export class Tests extends unit.TestClass {
 	testRating() {
 		var model = this.kkModelFactory.create('Basisdemokratie');
 		var viewModel = new vm.ViewModel;
-		var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator);
+		var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator.Main);
 		
 		model.rating().personalRating('like');
 		
@@ -109,7 +109,7 @@ export class Tests extends unit.TestClass {
 	testChangingFields() {
 		var model = this.kkModelFactory.create('Basisdemokratie');
 		var viewModel = new vm.ViewModel();
-		var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator);
+		var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator.Main);
 		
 		model.general().title('title');
 		model.general(new ContentModel.General);
@@ -128,7 +128,7 @@ export class Tests extends unit.TestClass {
 	testComments() {
 		var model = this.kkModelFactory.create('Basisdemokratie');
 		var viewModel = new vm.ViewModel();
-		var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator);
+		var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator.Main);
 		
 		var comment = new Comment.Model();
 		comment.content().text('A Comment');
@@ -143,7 +143,7 @@ export class Tests extends unit.TestClass {
 		var model = this.kkModelFactory.create('Basisdemokratie');
 		model.id(2);
 		var viewModel = new vm.ViewModel();
-		var communicator = new KokiCommunicator();
+		var communicator = new KokiCommunicator.Main();
 		var controller = new ctr.ControllerImpl(model, viewModel, communicator);
 		
 		var serverKoki = this.kkModelFactory.create('Basisdemokratie');
@@ -163,7 +163,7 @@ export class Tests extends unit.TestClass {
 		var model = this.kkModelFactory.create('Title', 'Text', 2);
 		var serverKoki = this.kkModelFactory.create('Title', 'Text', 3);
 		var viewModel = new vm.ViewModel();
-		var communicator = new KokiCommunicator();
+		var communicator = new KokiCommunicator.Main();
 		var controller = new ctr.ControllerImpl(model, viewModel, communicator);
 		
 		communicator.setTestKoki(serverKoki);

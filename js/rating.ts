@@ -1,6 +1,7 @@
 import Obs = require('observable');
 import Evt = require('event');
 import RatingCommunicator = require('ratingcommunicator');
+import Commands = require('command');
 
 export interface RatableModel {
 	id: Obs.Observable<number>;
@@ -27,7 +28,7 @@ export class ViewModel {
 export class Controller {
 	private static idCtr = 0;
 	
-	constructor(model: Model, viewModel: ViewModel, communicator: RatingCommunicator.Base) {
+	constructor(model: Model, viewModel: ViewModel, args: ControllerArgs) {
 		this.model = model;
 		viewModel.id = Controller.idCtr++;
 		viewModel.personalRating = model.personalRating;
@@ -40,22 +41,23 @@ export class Controller {
 		
 		viewModel.select = (rating: string) => () => setTimeout(() =>{
 			//viewModel.personalRating(rating);
-			if(this.ratableModel) {
-				communicator.submitRating(this.ratableModel.id(), rating);
+			/*if(this.ratableModel) {
+				args.communicator.submitRating(this.ratableModel.id(), rating);
 			}
 			else {
 				throw new Error('cannot submit rating - no ratableModel set');
-			}
+			}*/
+			args.commandProcessor.processCommand(new SelectRatingCommand(rating, () => this.onRatingSubmitted(rating)));
 		});
 		
-		this.subscriptions = [
-			communicator.ratingSubmitted.subscribe(this.onRatingSubmitted.bind(this)),
-			communicator.ratingReceived.subscribe(this.onRatingChanged.bind(this))
-		];
+		/*this.subscriptions = [
+			args.communicator.ratingSubmitted.subscribe(this.onRatingSubmitted.bind(this)),
+			args.communicator.ratingReceived.subscribe(this.onRatingChanged.bind(this))
+		];*/
 	}
 	
-	private onRatingSubmitted(args: RatingCommunicator.SubmittedArgs) {
-		if(this.ratableModel && (args.ratableId == this.ratableModel.id())) this.model.personalRating(args.rating);
+	private onRatingSubmitted(rating: string) {
+		this.model.personalRating(rating);
 	}
 	
 	private onRatingChanged(args: RatingCommunicator.ReceivedArgs) {
@@ -73,6 +75,14 @@ export class Controller {
 	private ratableModel: RatableModel;
 	private model: Model;
 	private subscriptions: Evt.Subscription[] = [];
+}
+
+export interface ControllerArgs {
+	communicator: RatingCommunicator.Base; commandProcessor: Commands.CommandProcessor;
+}
+
+export class SelectRatingCommand {
+	constructor(public ratingValue: string, public then: () => void) {}
 }
 
 export class SummarizedRatingCollectionViewModel {

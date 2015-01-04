@@ -15,7 +15,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenski
         Tests.prototype.testContent = function () {
             var model = this.kkModelFactory.create('Basisdemokratie', 'Beschreibung');
             var viewModel = new vm.ViewModel();
-            var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator);
+            var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator.Main);
 
             model.context().text('Der Klärtext');
 
@@ -33,7 +33,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenski
         Tests.prototype.testContentObservables = function () {
             var model = this.kkModelFactory.create('Basisdemokratie', 'Beschreibung');
             var viewModel = new vm.ViewModel();
-            var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator);
+            var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator.Main);
             var titleTracker = [];
             var textTracker = [];
 
@@ -63,7 +63,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenski
         Tests.prototype.testChildKas = function () {
             var model = this.kkModelFactory.create('Basisdemokratie (Konzept)', 'Beispiel-Konsenskiste');
             var viewModel = new vm.ViewModel();
-            var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator);
+            var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator.Main);
 
             model.childKas.push(this.kaModelFactory.create('', 'Begriff Basisdemokratie'));
 
@@ -78,7 +78,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenski
         Tests.prototype.testRemoveChildKa = function () {
             var model = this.kkModelFactory.create('Basisdemokratie (Konzept)');
             var viewModel = new vm.ViewModel();
-            var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator);
+            var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator.Main);
             var ka = this.kaModelFactory.create('', 'Begriff Basisdemokratie');
 
             model.childKas.push(ka);
@@ -92,7 +92,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenski
         Tests.prototype.testDispose = function () {
             var model = this.kkModelFactory.create('Basisdemokratie');
             var viewModel = new vm.ViewModel();
-            var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator);
+            var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator.Main);
 
             controller.dispose();
 
@@ -112,7 +112,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenski
         Tests.prototype.testRating = function () {
             var model = this.kkModelFactory.create('Basisdemokratie');
             var viewModel = new vm.ViewModel;
-            var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator);
+            var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator.Main);
 
             model.rating().personalRating('like');
 
@@ -124,7 +124,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenski
         Tests.prototype.testChangingFields = function () {
             var model = this.kkModelFactory.create('Basisdemokratie');
             var viewModel = new vm.ViewModel();
-            var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator);
+            var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator.Main);
 
             model.general().title('title');
             model.general(new ContentModel.General);
@@ -149,7 +149,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenski
         Tests.prototype.testComments = function () {
             var model = this.kkModelFactory.create('Basisdemokratie');
             var viewModel = new vm.ViewModel();
-            var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator);
+            var controller = new ctr.ControllerImpl(model, viewModel, new KokiCommunicator.Main);
 
             var comment = new Comment.Model();
             comment.content().text('A Comment');
@@ -168,7 +168,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenski
             var model = this.kkModelFactory.create('Basisdemokratie');
             model.id(2);
             var viewModel = new vm.ViewModel();
-            var communicator = new KokiCommunicator();
+            var communicator = new KokiCommunicator.Main();
             var controller = new ctr.ControllerImpl(model, viewModel, communicator);
 
             var serverKoki = this.kkModelFactory.create('Basisdemokratie');
@@ -192,7 +192,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenski
             var model = this.kkModelFactory.create('Title', 'Text', 2);
             var serverKoki = this.kkModelFactory.create('Title', 'Text', 3);
             var viewModel = new vm.ViewModel();
-            var communicator = new KokiCommunicator();
+            var communicator = new KokiCommunicator.Main();
             var controller = new ctr.ControllerImpl(model, viewModel, communicator);
 
             communicator.setTestKoki(serverKoki);

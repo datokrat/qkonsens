@@ -7,6 +7,7 @@ define(["require", "exports", 'event', 'rating', 'discocontext', 'common'], func
         }
         Main.prototype.submitRating = function (ratableId, rating) {
             var _this = this;
+            throw new Error('TODO: add then?: () => void argument');
             var ratings;
             var discoRating;
             common.Callbacks.batch([
