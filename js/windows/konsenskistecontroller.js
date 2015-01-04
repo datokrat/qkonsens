@@ -20,7 +20,7 @@ define(["require", "exports", 'factories/konsenskistecontroller', '../konsenskis
         };
 
         Controller.prototype.setKonsenskisteModelById = function (id) {
-            if (this.cxt.konsenskisteModel().id() != id)
+            if (!this.cxt.konsenskisteModel() || this.cxt.konsenskisteModel().id() != id)
                 this.cxt.konsenskisteModel(this.communicator.query(id));
         };
 

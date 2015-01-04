@@ -64,6 +64,7 @@ define(["require", "exports", 'topicnavigationcontroller', 'locationhash', 'fram
         };
 
         Controller.prototype.onHashChanged = function () {
+            console.log('onHashChanged');
             var hash = LocationHash.get().slice(1);
             try  {
                 var hashObj = JSON.parse(hash);

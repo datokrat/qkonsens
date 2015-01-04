@@ -32,7 +32,7 @@ export class Controller {
 	}
 	
 	public setKonsenskisteModelById(id: number) {
-		if(this.cxt.konsenskisteModel().id() != id)
+		if(!this.cxt.konsenskisteModel() || this.cxt.konsenskisteModel().id() != id)
 			this.cxt.konsenskisteModel(this.communicator.query(id));
 	}
 	
