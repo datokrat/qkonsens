@@ -9,6 +9,8 @@ import Topic = require('../topic')
 import TopicCommunicator = require('tests/testtopiccommunicator');
 import ContentModel = require('../contentmodel');
 import KonsenskisteModel = require('../konsenskistemodel');
+import KonsenskisteViewModel = require('../konsenskisteviewmodel');
+import Commands = require('../command');
 
 export class Tests extends unit.TestClass {
 	private topicFactory = new TopicFactory();
@@ -46,8 +48,9 @@ export class Tests extends unit.TestClass {
 		
 		test.assert(() => model.kokis.get() != null);
 		
-		model.kokis.push(new ContentModel.General);
-		model.kokis.get()[0].title('KoKi Title');
+		model.kokis.push(new KonsenskisteModel.Model);
+		model.kokis.get(0).general(new ContentModel.General);
+		model.kokis.get(0).general().title('KoKi Title');
 		
 		test.assert(() => viewModel.kokis().length == 1);
 		test.assert(() => viewModel.kokis()[0].caption() == 'KoKi Title');
@@ -105,6 +108,49 @@ export class Tests extends unit.TestClass {
 		test.assert(() => model.history.get().length == 2);
 		test.assert(() => model.children.get().length == 0);
 		test.assert(() => model.selectedTopic().title() == 'Child');
+	}
+	
+	clickKoki() {
+		var counter = new common.Counter();
+		var commandControl: Commands.CommandControl = { commandProcessor: new Commands.CommandProcessor };
+		commandControl.commandProcessor.chain.append(cmd => {
+			counter.inc('command');
+			test.assert(() => cmd instanceof ctr.SelectKokiCommand);
+			var castCmd = <ctr.SelectKokiCommand>cmd;
+			test.assert(() => castCmd.model.id() == 3);
+			return true;
+		});
+		
+		var kokiModel = new KonsenskisteModel.Model(); kokiModel.id(3);
+		var kokiViewModel = new vm.KokiItem();
+		var kokiController = new ctr.KokiItemViewModelController(kokiModel, kokiViewModel, commandControl);
+		
+		kokiViewModel.click();
+		
+		test.assert(() => counter.get('command') == 1);
+	}
+	
+	receiveCommandToSelectKoki() {
+		var counter = new common.Counter();
+		var commandControl: Commands.CommandControl = { commandProcessor: new Commands.CommandProcessor };
+		commandControl.commandProcessor.chain.append(cmd => {
+			counter.inc('command');
+			test.assert(() => cmd instanceof ctr.SelectKokiCommand);
+			var castCmd = <ctr.SelectKokiCommand>cmd;
+			test.assert(() => castCmd.model.id() == 3);
+			return true;
+		});
+		
+		var model = new mdl.ModelImpl();
+		var viewModel = new vm.ViewModel();
+		var controller = new ctr.ModelViewModelController(model, viewModel, commandControl);
+		var kokiModel = new KonsenskisteModel.Model(); kokiModel.id(3);
+		var kokiViewModel = new vm.KokiItem();
+		
+		var cmd = new ctr.SelectKokiCommand(kokiModel);
+		controller.kokiCommandControl.commandProcessor.processCommand(cmd);
+		
+		test.assert(() => counter.get('command') == 1);
 	}
 	
 	clickBreadcrumbTopic() {

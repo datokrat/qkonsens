@@ -103,7 +103,7 @@ define(["require", "exports", 'common'], function(require, exports, common) {
                     common.Callbacks.batch(functionBatch, r);
                 };
             });
-            common.Callbacks.atOnce(unitBatch, function () {
+            common.Callbacks.batch(unitBatch, function () {
                 return then(testResult);
             });
             /*for (var i = 0; i < this.tests.length; ++i) {

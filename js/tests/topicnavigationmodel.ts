@@ -25,7 +25,6 @@ export class Tests extends unit.TestClass {
 		
 		navi.goBackToBreadcrumbTopic(0);
 		
-		console.log(navi.history.get());
 		this.areIdentical(navi.selectedTopic().title(), 'root');
 		this.areIdentical(navi.history.get().length, 1);
 	}

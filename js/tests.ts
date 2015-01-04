@@ -21,6 +21,7 @@ import winKoki = require('tests/winkonsenskiste')
 import ContentCommunicator = require('tests/contentcommunicator')
 import KokiCommunicator = require('tests/konsenskistecommunicator')
 import ContentModelTests = require('tests/contentmodel')
+import CommandTests = require('tests/commands');
 
 var test = new unit.Test()
 var asyncTest = new asyncunit.Test();
@@ -45,6 +46,7 @@ test.addTestClass(new kokiController.Tests(), 'KonsenskisteController')
 test.addTestClass(new topicNavigationModel.Tests(), 'TopicNavigationModelImpl')
 test.addTestClass(new topicNavigation.Tests(), 'TopicNavigation')
 test.addTestClass(new topic.Tests(), 'Topic');
+test.addTestClass(new CommandTests.Main(), 'Commands');
 
 test.addTestClass(new winKoki.Tests(), 'Window: Konsenskiste')
 

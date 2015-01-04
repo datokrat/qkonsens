@@ -18,7 +18,6 @@ define(["require", "exports", 'event'], function(require, exports, Events) {
         };
 
         ObservableArrayExtender.prototype.getSingle = function (index) {
-            console.log('getSingle');
             if (index >= 0)
                 return this.innerObservable()[index];
             else

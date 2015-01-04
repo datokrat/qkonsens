@@ -15,10 +15,12 @@ import Communicator = require('communicator')
 import KokiCommunicator = require('konsenskistecommunicator')
 import ViewModelContext = require('viewmodelcontext')
 import Topic = require('topic');
+import Commands = require('command');
 
 export class Controller {
-	constructor(model: mdl.Model, viewModel: vm.ViewModel, communicator: Communicator.Main) {
-		var topicNavigationController = new topicNavigationCtr.Controller(model.topicNavigation, viewModel.topicNavigation, communicator.topic);
+	constructor(model: mdl.Model, viewModel: vm.ViewModel, communicator: Communicator.Main, commandControl?: Commands.CommandControl) {
+		/*var topicNavigationController = new topicNavigationCtr.Controller(model.topicNavigation, viewModel.topicNavigation, { communicator: communicator.topic });*/
+		this.initCommandControl(commandControl);
 		
 		this.kkWin = new KokiWin.Win();
 		this.browseWin = new BrowseWin.Win();
@@ -26,6 +28,8 @@ export class Controller {
 		viewModel.left = new frame.WinContainer( new noneWin.Win() );
 		viewModel.right = new frame.WinContainer( this.browseWin );
 		viewModel.center = new frame.WinContainer( this.kkWin );
+		viewModel.browseWin = this.browseWin;
+		viewModel.kkWin = this.kkWin;
 		
 		var globalContext = new ViewModelContext(viewModel.left, viewModel.right, viewModel.center);
 		globalContext.konsenskisteWindow = this.kkWin;
@@ -35,7 +39,7 @@ export class Controller {
 		this.kkWinController = new kokiWinCtr.Controller(model.konsenskiste(), this.kkWin, communicator.konsenskiste)
 			.setContext(globalContext);
 		
-		this.browseWinController = new BrowseWin.Controller(model.topicNavigation, this.browseWin, communicator.topic);
+		this.browseWinController = new BrowseWin.Controller(model.topicNavigation, this.browseWin, communicator.topic, this.commandControl);
 		
 		this.communicator = communicator;
 		
@@ -56,6 +60,17 @@ export class Controller {
 		this.subscriptions.forEach(s => s.dispose());
 	}
 	
+	private initCommandControl(parent: Commands.CommandControl) {
+		this.commandControl.commandProcessor.parent = parent && parent.commandProcessor;
+		this.commandControl.commandProcessor.chain.append(cmd => {
+			if(cmd instanceof topicNavigationCtr.SelectKokiCommand) {
+				this.kkWinController.setKonsenskisteModelById((<topicNavigationCtr.SelectKokiCommand>cmd).model.id());
+				return true;
+			}
+			return false;
+		});
+	}
+	
 	private onHashChanged() {
 		var hash = LocationHash.get().slice(1);
 		try {
@@ -66,6 +81,8 @@ export class Controller {
 			this.kkWin.setState({ kokiId: 12 });
 		}
 	}
+	
+	public commandControl: Commands.CommandControl = { commandProcessor: new Commands.CommandProcessor() };
 	
 	private kkWin: KokiWin.Win;
 	private kkWinController: kokiWinCtr.Controller;

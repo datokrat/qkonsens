@@ -1,7 +1,7 @@
 import Factory = require('factories/constructorbased');
 import Sync = require('synchronizers/childarraysynchronizer');
 import Topic = require('../topic');
-import ContentModel = require('../contentmodel');
+import KonsenskisteModel = require('../konsenskistemodel');
 import TopicNavigationViewModel = require('../topicnavigationviewmodel');
 import TopicNavigationController = require('../topicnavigationcontroller');
 import Commands = require('../command');
@@ -28,11 +28,11 @@ export class TopicCommunicatorSync extends Sync.PureModelArraySynchronizer<Topic
 	}
 }
 
-export class KokiItemViewModelSync extends Sync.ObservingChildArraySynchronizer<ContentModel.General, TopicNavigationViewModel.KokiItem, TopicNavigationController.KokiItemViewModelController> {
-	constructor() {
+export class KokiItemViewModelSync extends Sync.ObservingChildArraySynchronizer<KonsenskisteModel.Model, TopicNavigationViewModel.KokiItem, TopicNavigationController.KokiItemViewModelController> {
+	constructor(args: { commandControl: Commands.CommandControl }) {
 		super();
 		this.setViewModelFactory(new Factory.Factory(TopicNavigationViewModel.KokiItem));
-		this.setControllerFactory(new Factory.ControllerFactory(TopicNavigationController.KokiItemViewModelController));
+		this.setControllerFactory(new Factory.ControllerFactoryEx(TopicNavigationController.KokiItemViewModelController, args.commandControl));
 	}
 }
 

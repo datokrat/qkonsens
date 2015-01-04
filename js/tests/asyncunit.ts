@@ -79,7 +79,7 @@ import common = require('common')
          	});
          	common.Callbacks.batch(functionBatch, r);
          });
-         common.Callbacks.atOnce( unitBatch, () => then(testResult) );
+         common.Callbacks.batch( unitBatch, () => then(testResult) );
 
          /*for (var i = 0; i < this.tests.length; ++i) {
              var testClass = this.tests[i].testClass;

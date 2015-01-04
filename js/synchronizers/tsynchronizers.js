@@ -32,10 +32,10 @@ define(["require", "exports", 'factories/constructorbased', 'synchronizers/child
 
     var KokiItemViewModelSync = (function (_super) {
         __extends(KokiItemViewModelSync, _super);
-        function KokiItemViewModelSync() {
+        function KokiItemViewModelSync(args) {
             _super.call(this);
             this.setViewModelFactory(new Factory.Factory(TopicNavigationViewModel.KokiItem));
-            this.setControllerFactory(new Factory.ControllerFactory(TopicNavigationController.KokiItemViewModelController));
+            this.setControllerFactory(new Factory.ControllerFactoryEx(TopicNavigationController.KokiItemViewModelController, args.commandControl));
         }
         return KokiItemViewModelSync;
     })(Sync.ObservingChildArraySynchronizer);

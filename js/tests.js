@@ -1,4 +1,4 @@
-define(["require", "exports", 'tests/tsunit', 'tests/asyncunit', 'tests/rating', 'tests/discussion', 'tests/discussionsynchronizer', 'tests/ratingcommunicator', 'tests/topicnavigationmodel', 'tests/topicnavigation', 'tests/topic', 'tests/controller', 'tests/konsenskistemodel', 'tests/kernaussage', 'tests/konsenskistecontroller', 'tests/childarraysynchronizer', 'tests/commentsynchronizer', 'tests/observable', 'tests/content', 'tests/context', 'tests/winkonsenskiste', 'tests/contentcommunicator', 'tests/konsenskistecommunicator', 'tests/contentmodel'], function(require, exports, unit, asyncunit, Rating, Discussion, DiscussionSynchronizer, TestRatingCommunicator, topicNavigationModel, topicNavigation, topic, controller, kokiModel, kaModel, kokiController, synchronizer, commentSynchronizer, observable, content, context, winKoki, ContentCommunicator, KokiCommunicator, ContentModelTests) {
+define(["require", "exports", 'tests/tsunit', 'tests/asyncunit', 'tests/rating', 'tests/discussion', 'tests/discussionsynchronizer', 'tests/ratingcommunicator', 'tests/topicnavigationmodel', 'tests/topicnavigation', 'tests/topic', 'tests/controller', 'tests/konsenskistemodel', 'tests/kernaussage', 'tests/konsenskistecontroller', 'tests/childarraysynchronizer', 'tests/commentsynchronizer', 'tests/observable', 'tests/content', 'tests/context', 'tests/winkonsenskiste', 'tests/contentcommunicator', 'tests/konsenskistecommunicator', 'tests/contentmodel', 'tests/commands'], function(require, exports, unit, asyncunit, Rating, Discussion, DiscussionSynchronizer, TestRatingCommunicator, topicNavigationModel, topicNavigation, topic, controller, kokiModel, kaModel, kokiController, synchronizer, commentSynchronizer, observable, content, context, winKoki, ContentCommunicator, KokiCommunicator, ContentModelTests, CommandTests) {
     var test = new unit.Test();
     var asyncTest = new asyncunit.Test();
 
@@ -22,6 +22,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/asyncunit', 'tests/rating',
     test.addTestClass(new topicNavigationModel.Tests(), 'TopicNavigationModelImpl');
     test.addTestClass(new topicNavigation.Tests(), 'TopicNavigation');
     test.addTestClass(new topic.Tests(), 'Topic');
+    test.addTestClass(new CommandTests.Main(), 'Commands');
 
     test.addTestClass(new winKoki.Tests(), 'Window: Konsenskiste');
 

@@ -10,4 +10,5 @@ export class ViewModel {
 
 export class KokiItem {
 	public caption: Obs.Observable<string>;
+	public click: () => void;
 }

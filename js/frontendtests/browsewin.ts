@@ -14,6 +14,7 @@ import TopicNavigationModel = require('../topicnavigationmodel');
 import TopicNavigationViewModel = require('../topicnavigationviewmodel');
 import TopicNavigationController = require('../topicnavigationcontroller');
 import KonsenskisteViewModel = require('../konsenskisteviewmodel');
+import KonsenskisteModel = require('../konsenskistemodel');
 
 export class Tests extends unit.TestClass {
 	private webot = new webot.Webot();
@@ -73,43 +74,13 @@ export class Tests extends unit.TestClass {
 		], r);
 	}
 	
-	navigation(async, r) {
-		async();
-		var win = new Win.Win();
-		var topicModel = new Topic.Model();
-		var topicViewModel = new Topic.ViewModel();
-		var topicController = new Topic.ModelViewModelController(topicModel, topicViewModel);
-		
-		common.Callbacks.batch([
-			r => {
-				topicModel.title('Parent Title');
-				win.navigation = ko.observable<TopicNavigationViewModel.ViewModel>();
-				win.navigation(new TopicNavigationViewModel.ViewModel());
-				win.navigation().breadcrumb = ko.observableArray([new Topic.ViewModel]);
-				win.navigation().breadcrumb()[0].caption = ko.observable('Breadcrumb Topic 1');
-				win.navigation().breadcrumb()[0].click = () => {}
-				win.navigation().selected = ko.observable(topicViewModel);
-				win.navigation().children = ko.observableArray([]);
-				win.navigation().kokis = ko.observableArray([new TopicNavigationViewModel.KokiItem]);
-				win.navigation().kokis()[0].caption = ko.observable<string>('KoKi im Thema');
-				reloader.viewModel().right.win(win);
-				setTimeout(r);
-			},
-			r => {
-				test.assert(() => this.webot.query('.win:contains("Themen")').child('*').text('Breadcrumb Topic 1').exists());
-				test.assert(() => this.webot.query('.win:contains("Themen")').child('*').text('KoKi im Thema').exists());
-				r();
-			}
-		], r);
-	}
-	
 	navigationUseCase(async, r) {
 		async();
 		var win = new Win.Win();
 		var topicCommunicator = new TopicCommunicator.Main();
 		var topicNavigationModel = new TopicNavigationModel.ModelImpl();
 		var topicNavigationViewModel = new TopicNavigationViewModel.ViewModel();
-		var topicNavigationController = new TopicNavigationController.Controller(topicNavigationModel, topicNavigationViewModel, topicCommunicator);
+		var topicNavigationController = new TopicNavigationController.Controller(topicNavigationModel, topicNavigationViewModel, { communicator: topicCommunicator });
 		
 		topicCommunicator.setTestChildren({ id: 3 }, [TopicFactory.Main.create({ id: 5, text: 'Topic 5' })]);
 		
@@ -129,6 +100,66 @@ export class Tests extends unit.TestClass {
 				test.assert(() => this.webot.query('.win').contains('Themen').child('*').text('Topic 3').exists());
 				test.assert(() => this.webot.query('.win').contains('Themen').child('*').text('Topic 5').exists());
 				test.assert(() => this.webot.query('.win').contains('Themen').child('*').text('Topic 0').exists(false));
+				r();
+			}
+		], r);
+	}
+	
+	navigation(async, r) {
+		async();
+		var win = new Win.Win();
+		var topicModel = new Topic.Model();
+		var topicViewModel = new Topic.ViewModel();
+		var topicController = new Topic.ModelViewModelController(topicModel, topicViewModel);
+		
+		common.Callbacks.batch([
+			r => {
+				topicModel.title('Parent Title');
+				win.navigation = ko.observable<TopicNavigationViewModel.ViewModel>();
+				win.navigation(new TopicNavigationViewModel.ViewModel());
+				win.navigation().breadcrumb = ko.observableArray([new Topic.ViewModel]);
+				win.navigation().breadcrumb()[0].caption = ko.observable('Breadcrumb Topic 1');
+				win.navigation().breadcrumb()[0].click = () => {};
+				win.navigation().selected = ko.observable(topicViewModel);
+				win.navigation().children = ko.observableArray([]);
+				win.navigation().kokis = ko.observableArray([new TopicNavigationViewModel.KokiItem]);
+				win.navigation().kokis()[0].caption = ko.observable<string>('KoKi im Thema');
+				win.navigation().kokis()[0].click = () => {};
+				reloader.viewModel().right.win(win);
+				setTimeout(r);
+			},
+			r => {
+				test.assert(() => this.webot.query('.win:contains("Themen")').child('*').text('Breadcrumb Topic 1').exists());
+				test.assert(() => this.webot.query('.win:contains("Themen")').child('*').text('KoKi im Thema').exists());
+				r();
+			}
+		], r);
+	}
+	
+	clickKokiInTopic(async, r) {
+		async();
+		var win = new Win.Win();
+		var topicCommunicator = new TopicCommunicator.Main();
+		var topicNavigationModel = new TopicNavigationModel.ModelImpl();
+		var topicNavigationViewModel = new TopicNavigationViewModel.ViewModel();
+		var topicNavigationController = new TopicNavigationController.Controller(topicNavigationModel, topicNavigationViewModel, { communicator: topicCommunicator, commandControl: reloader.controller().commandControl });
+		
+		common.Callbacks.batch([
+			r => {
+				var koki = new KonsenskisteModel.Model(); koki.id(19); koki.general().title('Bitte hier klicken!');
+				topicNavigationModel.kokis.push(koki);
+				win.navigation = ko.observable(topicNavigationViewModel);
+				reloader.viewModel().right.win(win);
+				setTimeout(r);
+			},
+			r => {
+				var kokiItem = this.webot.query('.win:contains("Themen")').child('*').text('Bitte hier klicken!');
+				test.assert(() => kokiItem.exists());
+				kokiItem.click();
+				setTimeout(r);
+			},
+			r => {
+				test.assert(() => reloader.model().konsenskiste().id() == 19);
 				r();
 			}
 		], r);

@@ -17,10 +17,10 @@
 <div>
 		<ul data-bind="">
 			<!-- ko foreach: kokis -->
-				<li class="clickable" data-bind="text: caption"></li>
+				<li class="clickable" data-bind="text: caption, click: click"></li>
 			<!-- /ko -->
 			<!--li data-bind="if: true || $root.isAdmin">
-				<a data-bind="click: newKk.onClick">Neu</a>
+				<a data-bind="click: click">Neu</a>
 			</li-->
 		</ul>
 	</div>

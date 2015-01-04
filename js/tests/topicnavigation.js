@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../topicnavigationcontroller', '../topicnavigationmodel', '../topicnavigationviewmodel', '../observable', '../topic', 'tests/testtopiccommunicator', '../contentmodel', '../konsenskistemodel'], function(require, exports, unit, test, common, ctr, mdl, vm, Obs, Topic, TopicCommunicator, ContentModel, KonsenskisteModel) {
+define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../topicnavigationcontroller', '../topicnavigationmodel', '../topicnavigationviewmodel', '../observable', '../topic', 'tests/testtopiccommunicator', '../contentmodel', '../konsenskistemodel', '../command'], function(require, exports, unit, test, common, ctr, mdl, vm, Obs, Topic, TopicCommunicator, ContentModel, KonsenskisteModel, Commands) {
     var Tests = (function (_super) {
         __extends(Tests, _super);
         function Tests() {
@@ -56,8 +56,9 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../top
                 return model.kokis.get() != null;
             });
 
-            model.kokis.push(new ContentModel.General);
-            model.kokis.get()[0].title('KoKi Title');
+            model.kokis.push(new KonsenskisteModel.Model);
+            model.kokis.get(0).general(new ContentModel.General);
+            model.kokis.get(0).general().title('KoKi Title');
 
             test.assert(function () {
                 return viewModel.kokis().length == 1;
@@ -140,6 +141,63 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../top
             });
             test.assert(function () {
                 return model.selectedTopic().title() == 'Child';
+            });
+        };
+
+        Tests.prototype.clickKoki = function () {
+            var counter = new common.Counter();
+            var commandControl = { commandProcessor: new Commands.CommandProcessor };
+            commandControl.commandProcessor.chain.append(function (cmd) {
+                counter.inc('command');
+                test.assert(function () {
+                    return cmd instanceof ctr.SelectKokiCommand;
+                });
+                var castCmd = cmd;
+                test.assert(function () {
+                    return castCmd.model.id() == 3;
+                });
+                return true;
+            });
+
+            var kokiModel = new KonsenskisteModel.Model();
+            kokiModel.id(3);
+            var kokiViewModel = new vm.KokiItem();
+            var kokiController = new ctr.KokiItemViewModelController(kokiModel, kokiViewModel, commandControl);
+
+            kokiViewModel.click();
+
+            test.assert(function () {
+                return counter.get('command') == 1;
+            });
+        };
+
+        Tests.prototype.receiveCommandToSelectKoki = function () {
+            var counter = new common.Counter();
+            var commandControl = { commandProcessor: new Commands.CommandProcessor };
+            commandControl.commandProcessor.chain.append(function (cmd) {
+                counter.inc('command');
+                test.assert(function () {
+                    return cmd instanceof ctr.SelectKokiCommand;
+                });
+                var castCmd = cmd;
+                test.assert(function () {
+                    return castCmd.model.id() == 3;
+                });
+                return true;
+            });
+
+            var model = new mdl.ModelImpl();
+            var viewModel = new vm.ViewModel();
+            var controller = new ctr.ModelViewModelController(model, viewModel, commandControl);
+            var kokiModel = new KonsenskisteModel.Model();
+            kokiModel.id(3);
+            var kokiViewModel = new vm.KokiItem();
+
+            var cmd = new ctr.SelectKokiCommand(kokiModel);
+            controller.kokiCommandControl.commandProcessor.processCommand(cmd);
+
+            test.assert(function () {
+                return counter.get('command') == 1;
             });
         };
 

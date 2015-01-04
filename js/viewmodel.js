@@ -1,7 +1,6 @@
-define(["require", "exports", 'topicnavigationviewmodel'], function(require, exports, topicNavigation) {
+define(["require", "exports"], function(require, exports) {
     var ViewModel = (function () {
         function ViewModel() {
-            this.topicNavigation = new topicNavigation.ViewModel();
         }
         return ViewModel;
     })();

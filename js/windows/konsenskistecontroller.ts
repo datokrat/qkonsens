@@ -32,12 +32,11 @@ export class Controller {
 		}
 	}
 	
-	private setKonsenskisteModelById(id: number) {
+	public setKonsenskisteModelById(id: number) {
 		this.cxt.konsenskisteModel(this.communicator.query(id));
 	}
 	
 	private initKonsenskiste(konsenskisteModel: kokiMdl.Model) {
-		console.log('initKonsenskiste', konsenskisteModel);
 		this.disposeKonsenskiste();
 			
 		var konsenskisteViewModel = new kokiVm.ViewModel;

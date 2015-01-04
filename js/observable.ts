@@ -56,7 +56,6 @@ export class ObservableArrayExtender<T> implements ObservableArrayEx<T> {
 	}
 	
 	private getSingle(index: number): T {
-		console.log('getSingle');
 		if(index >= 0) return this.innerObservable()[index];
 		else return this.innerObservable()[this.innerObservable().length+index];
 	}
