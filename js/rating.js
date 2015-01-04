@@ -2,6 +2,7 @@ define(["require", "exports"], function(require, exports) {
     var Model = (function () {
         function Model() {
             this.personalRating = ko.observable('none');
+            this.summarizedRatings = ko.observable(new SummarizedRatingCollectionModel);
         }
         Model.prototype.set = function (other) {
             this.personalRating(other.personalRating());
@@ -25,10 +26,11 @@ define(["require", "exports"], function(require, exports) {
             viewModel.id = Controller.idCtr++;
             viewModel.personalRating = model.personalRating;
 
-            viewModel.summarizedRatings = ko.observable({
-                stronglike: ko.observable(0), like: ko.observable(0), neutral: ko.observable(0),
-                dislike: ko.observable(0), strongdislike: ko.observable(0)
-            });
+            /*viewModel.summarizedRatings = ko.observable({
+            stronglike: ko.observable(0), like: ko.observable(0), neutral: ko.observable(0),
+            dislike: ko.observable(0), strongdislike: ko.observable(0)
+            });*/
+            viewModel.summarizedRatings = model.summarizedRatings;
 
             viewModel.select = function (rating) {
                 return function () {
@@ -72,10 +74,22 @@ define(["require", "exports"], function(require, exports) {
     })();
     exports.Controller = Controller;
 
-    var SummarizedRatingCollection = (function () {
-        function SummarizedRatingCollection() {
+    var SummarizedRatingCollectionViewModel = (function () {
+        function SummarizedRatingCollectionViewModel() {
         }
-        return SummarizedRatingCollection;
+        return SummarizedRatingCollectionViewModel;
     })();
-    exports.SummarizedRatingCollection = SummarizedRatingCollection;
+    exports.SummarizedRatingCollectionViewModel = SummarizedRatingCollectionViewModel;
+
+    var SummarizedRatingCollectionModel = (function () {
+        function SummarizedRatingCollectionModel() {
+            this.stronglike = ko.observable();
+            this.like = ko.observable();
+            this.neutral = ko.observable();
+            this.dislike = ko.observable();
+            this.strongdislike = ko.observable();
+        }
+        return SummarizedRatingCollectionModel;
+    })();
+    exports.SummarizedRatingCollectionModel = SummarizedRatingCollectionModel;
 });

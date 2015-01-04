@@ -35,8 +35,7 @@ export class TestClass extends unit.TestClass {
 		}, 100);
 	}
 	
-	queryRating(async, r) {
-		async();
+	queryRating() {
 		var mdl = new Rating.Model();
 		var vm = new Rating.ViewModel();
 		var com = new RatingCommunicator.Main();
@@ -58,6 +57,16 @@ export class TestClass extends unit.TestClass {
 		
 		test.assert(() => successCtr == 1);
 		test.assert(() => mdl.personalRating() == 'stronglike');
-		r();
+	}
+	
+	summarizedRatings() {
+		var mdl = new Rating.Model();
+		var vm = new Rating.ViewModel();
+		var com = new RatingCommunicator.Main();
+		var ctr = new Rating.Controller(mdl, vm, com);
+		
+		mdl.summarizedRatings().like(3);
+		
+		test.assert(() => vm.summarizedRatings().like() == 3);
 	}
 }

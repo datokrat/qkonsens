@@ -49,8 +49,7 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', '../rating', 'tes
             }, 100);
         };
 
-        TestClass.prototype.queryRating = function (async, r) {
-            async();
+        TestClass.prototype.queryRating = function () {
             var mdl = new Rating.Model();
             var vm = new Rating.ViewModel();
             var com = new RatingCommunicator.Main();
@@ -80,7 +79,19 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', '../rating', 'tes
             test.assert(function () {
                 return mdl.personalRating() == 'stronglike';
             });
-            r();
+        };
+
+        TestClass.prototype.summarizedRatings = function () {
+            var mdl = new Rating.Model();
+            var vm = new Rating.ViewModel();
+            var com = new RatingCommunicator.Main();
+            var ctr = new Rating.Controller(mdl, vm, com);
+
+            mdl.summarizedRatings().like(3);
+
+            test.assert(function () {
+                return vm.summarizedRatings().like() == 3;
+            });
         };
         return TestClass;
     })(unit.TestClass);
