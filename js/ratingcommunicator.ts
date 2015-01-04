@@ -32,13 +32,14 @@ export class Main implements Base {
 					console.warn('More than one Rating was found for Ratable #' + ratableId);
 				if(ratings.length >= 1) {
 					discoRating = ratings[0];
+					discoContext.Ratings.attach(discoRating);
 				}
 				r();
 			},
 			r => {
 				if(rating != 'none') {
-					discoContext.Ratings.attach(discoRating);
 					discoRating.Score = ScoreParser.toDisco(rating);
+					discoRating.UserId = '12';
 					discoContext.saveChanges()
 						.then(r)
 						.fail(args => this.submissionFailed.raise({ ratableId: ratableId, error: args }));
