@@ -8,6 +8,11 @@ export interface RatableModel {
 	rating: Obs.Observable<Model>;
 }
 
+export interface LikeRatableModel {
+	id: Obs.Observable<number>;
+	rating: Obs.Observable<LikeRatingModel>;
+}
+
 export class Model {
 	public personalRating: Obs.Observable<string> = ko.observable<string>('none');
 	public summarizedRatings: Obs.Observable<SummarizedRatingCollectionModel> = ko.observable(new SummarizedRatingCollectionModel);

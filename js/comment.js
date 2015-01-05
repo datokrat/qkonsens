@@ -41,8 +41,7 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'contentmodel', 'r
             this.commandProcessor.chain.append(function (cmd) {
                 if (cmd instanceof Rating.SelectLikeRatingCommand) {
                     var typedCmd = cmd;
-                    _this.communicator.rating.submitLikeRating(_this.model.id, typedCmd.ratingValue, function () {
-                    });
+                    _this.communicator.rating.submitLikeRating(_this.model.id, typedCmd.ratingValue, typedCmd.then);
                     return true;
                 }
                 return false;

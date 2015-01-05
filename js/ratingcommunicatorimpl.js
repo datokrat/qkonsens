@@ -7,6 +7,38 @@ define(["require", "exports", 'event', 'rating', 'discocontext', 'common'], func
         }
         Main.prototype.submitRating = function (ratableId, rating, then) {
             var _this = this;
+            var onSuccess = function () {
+                then && then();
+                _this.ratingSubmitted.raise({ ratableId: ratableId, rating: rating });
+            };
+            var onError = function (err) {
+                _this.ratingSubmissionFailed.raise({ ratableId: ratableId, error: err });
+            };
+
+            if (rating != 'none') {
+                this.submitDiscoRating(ratableId, ScoreParser.fromRatingToDisco(rating), { then: onSuccess, fail: onError });
+            } else {
+                onError(new Error('rating deletion not implemented'));
+            }
+        };
+        Main.prototype.submitLikeRating = function (ratableId, rating, then) {
+            var onSuccess = function () {
+                then && then();
+                //this.ratingSubmitted.raise({ ratableId: ratableId, rating: rating });
+            };
+            var onError = function (err) {
+                //this.ratingSubmissionFailed.raise({ ratableId: ratableId, error: err });
+            };
+
+            if (rating != 'none') {
+                this.submitDiscoRating(ratableId, ScoreParser.fromLikeRatingToDisco(rating), { then: onSuccess, fail: onError });
+            } else {
+                onError(new Error('rating deletion not implemented'));
+            }
+        };
+
+        Main.prototype.submitDiscoRating = function (ratableId, score, callbacks) {
+            if (typeof callbacks === "undefined") { callbacks = {}; }
             var ratings;
             var discoRating;
             common.Callbacks.batch([
@@ -19,7 +51,7 @@ define(["require", "exports", 'event', 'rating', 'discocontext', 'common'], func
                     });
                 },
                 function (r) {
-                    if (ratings.length == 0 && rating != 'none') {
+                    if (ratings.length == 0) {
                         discoRating = new Disco.Ontology.Rating({ PostId: ratableId.toString() });
                         discoContext.Ratings.add(discoRating);
                     }
@@ -32,27 +64,15 @@ define(["require", "exports", 'event', 'rating', 'discocontext', 'common'], func
                     r();
                 },
                 function (r) {
-                    if (rating != 'none') {
-                        discoRating.Score = ScoreParser.toDisco(rating);
-                        discoRating.UserId = '12';
-                        discoContext.saveChanges().then(r).fail(function (args) {
-                            return _this.ratingSubmissionFailed.raise({ ratableId: ratableId, error: args });
-                        });
-                    } else if (discoRating) {
-                        //discoContext.Ratings.remove(discoRating);
-                        _this.ratingSubmissionFailed.raise({ ratableId: ratableId, error: new Error('rating deletion not implemented') });
-                        r();
-                    } else {
-                        r();
-                    }
+                    discoRating.Score = score;
+                    discoRating.UserId = '12';
+                    discoContext.saveChanges().then(r).fail(function (args) {
+                        return callbacks.fail && callbacks.fail(args);
+                    });
                 }
             ], function () {
-                then && then();
-                _this.ratingSubmitted.raise({ ratableId: ratableId, rating: ScoreParser.fromDisco(discoRating.Score) });
+                callbacks.then && callbacks.then();
             });
-        };
-        Main.prototype.submitLikeRating = function (ratableId, rating, then) {
-            throw new Error('not implemented');
         };
         Main.prototype.queryRating = function (ratableId) {
         };
@@ -83,11 +103,14 @@ define(["require", "exports", 'event', 'rating', 'discocontext', 'common'], func
     var ScoreParser = (function () {
         function ScoreParser() {
         }
-        ScoreParser.toDisco = function (qkRating) {
+        ScoreParser.fromRatingToDisco = function (qkRating) {
             var index = ScoreParser.strings.indexOf(qkRating);
             if (index >= 0)
                 return (index - 2) * 3;
             return null;
+        };
+        ScoreParser.fromLikeRatingToDisco = function (qkRating) {
+            return ScoreParser.fromRatingToDisco(qkRating);
         };
 
         ScoreParser.fromDisco = function (discoRating) {

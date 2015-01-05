@@ -7,6 +7,39 @@ import Obs = require('observable');
 
 export class Main implements RatingCommunicator.Base {
 	public submitRating(ratableId: number, rating: string, then?: () => void): void {
+		var onSuccess = () => {
+			then && then();
+			this.ratingSubmitted.raise({ ratableId: ratableId, rating: rating });
+		};
+		var onError = err => {
+			this.ratingSubmissionFailed.raise({ ratableId: ratableId, error: err });
+		};
+		
+		if(rating != 'none') {
+			this.submitDiscoRating(ratableId, ScoreParser.fromRatingToDisco(rating), { then: onSuccess, fail: onError });
+		}
+		else {
+			onError(new Error('rating deletion not implemented'));
+		}
+	}
+	public submitLikeRating(ratableId: number, rating: string, then?: () => void): void {
+		var onSuccess = () => {
+			then && then();
+			//this.ratingSubmitted.raise({ ratableId: ratableId, rating: rating });
+		};
+		var onError = err => {
+			//this.ratingSubmissionFailed.raise({ ratableId: ratableId, error: err });
+		};
+		
+		if(rating != 'none') {
+			this.submitDiscoRating(ratableId, ScoreParser.fromLikeRatingToDisco(rating), { then: onSuccess, fail: onError });
+		}
+		else {
+			onError(new Error('rating deletion not implemented'));
+		}
+	}
+	
+	private submitDiscoRating(ratableId: number, score: number, callbacks: { then?: () => void; fail?: (err) => void } = {}): void {
 		var ratings: Disco.Ontology.Rating[];
 		var discoRating: Disco.Ontology.Rating;
 		common.Callbacks.batch([
@@ -16,7 +49,7 @@ export class Main implements RatingCommunicator.Base {
 				.toArray().then(results => { ratings = results; r() });
 			},
 			r => {
-				if(ratings.length == 0 && rating != 'none') {
+				if(ratings.length == 0) {
 					discoRating = new Disco.Ontology.Rating({ PostId: ratableId.toString() });
 					discoContext.Ratings.add(discoRating);
 				}
@@ -29,29 +62,15 @@ export class Main implements RatingCommunicator.Base {
 				r();
 			},
 			r => {
-				if(rating != 'none') {
-					discoRating.Score = ScoreParser.toDisco(rating);
-					discoRating.UserId = '12';
-					discoContext.saveChanges()
-						.then(r)
-						.fail(args => this.ratingSubmissionFailed.raise({ ratableId: ratableId, error: args }));
-				}
-				else if(discoRating) {
-					//discoContext.Ratings.remove(discoRating);
-					this.ratingSubmissionFailed.raise({ ratableId: ratableId, error: new Error('rating deletion not implemented') });
-					r();
-				}
-				else {
-					r();
-				}
+				discoRating.Score = score;
+				discoRating.UserId = '12';
+				discoContext.saveChanges()
+					.then(r)
+					.fail(args => callbacks.fail && callbacks.fail(args));
 			}
 		], () => {
-			then && then();
-			this.ratingSubmitted.raise({ ratableId: ratableId, rating: ScoreParser.fromDisco(discoRating.Score) });
+			callbacks.then && callbacks.then();
 		});
-	}
-	public submitLikeRating(ratableId: number, rating: string, then?: () => void): void {
-		throw new Error('not implemented');
 	}
 	public queryRating(ratableId: number): void {}
 	
@@ -78,10 +97,13 @@ export class Parser {
 }
 
 export class ScoreParser {
-	public static toDisco(qkRating: string): number {
+	public static fromRatingToDisco(qkRating: string): number {
 		var index = ScoreParser.strings.indexOf(qkRating);
 		if(index >= 0) return (index - 2) * 3;
 		return null;
+	}
+	public static fromLikeRatingToDisco(qkRating: string): number {
+		return ScoreParser.fromRatingToDisco(qkRating);
 	}
 	
 	public static fromDisco(discoRating: number): string {

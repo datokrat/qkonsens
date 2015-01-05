@@ -17,9 +17,11 @@ define(["require", "exports", '../event', '../itemcontainer'], function(require,
     exports.Stub = Stub;
 
     var Main = (function () {
-        function Main(testItems) {
+        function Main(testItems, testLikeRatingItems) {
             if (typeof testItems === "undefined") { testItems = new ItemContainer.Main(); }
+            if (typeof testLikeRatingItems === "undefined") { testLikeRatingItems = new ItemContainer.Main(); }
             this.testItems = testItems;
+            this.testLikeRatingItems = testLikeRatingItems;
             this.ratingSubmitted = new Events.EventImpl();
             this.ratingReceived = new Events.EventImpl();
             this.ratingSubmissionFailed = new Events.EventImpl();
@@ -38,7 +40,18 @@ define(["require", "exports", '../event', '../itemcontainer'], function(require,
             this.ratingSubmitted.raise({ ratableId: ratableId, rating: rating });
         };
         Main.prototype.submitLikeRating = function (ratableId, rating, then) {
-            throw new Error('not implemented');
+            try  {
+                var ratable = this.testLikeRatingItems.get(ratableId);
+                ratable.rating().personalRating(rating);
+            } catch (e) {
+                var error = new Error('could not submit rating.');
+                error['innerError'] = e;
+
+                //this.ratingSubmissionFailed.raise({ ratableId: ratableId, error: error});
+                return;
+            }
+            then && then();
+            //this.ratingSubmitted.raise({ ratableId: ratableId, rating: rating });
         };
 
         Main.prototype.queryRating = function (ratableId) {

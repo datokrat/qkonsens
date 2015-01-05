@@ -52,7 +52,7 @@ export class Controller {
 		this.commandProcessor.chain.append(cmd => {
 			if(cmd instanceof Rating.SelectLikeRatingCommand) {
 				var typedCmd = <Rating.SelectLikeRatingCommand>cmd;
-				this.communicator.rating.submitLikeRating(this.model.id, typedCmd.ratingValue, () => {});
+				this.communicator.rating.submitLikeRating(this.model.id, typedCmd.ratingValue, typedCmd.then);
 				return true;
 			}
 			return false;

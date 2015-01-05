@@ -19,7 +19,9 @@ export class Stub implements RatingCommunicator.Base {
 }
 
 export class Main implements RatingCommunicator.Base {
-	constructor(private testItems: ItemContainer.Base<Rating.RatableModel> = new ItemContainer.Main<Rating.RatableModel>()) {
+	constructor(
+		private testItems: ItemContainer.Base<Rating.RatableModel> = new ItemContainer.Main<Rating.RatableModel>(),
+		private testLikeRatingItems: ItemContainer.Base<Rating.LikeRatableModel> = new ItemContainer.Main<Rating.LikeRatableModel>()) {
 	}
 	
 	public ratingSubmitted = new Events.EventImpl<RatingCommunicator.SubmittedArgs>();
@@ -41,7 +43,18 @@ export class Main implements RatingCommunicator.Base {
 		this.ratingSubmitted.raise({ ratableId: ratableId, rating: rating });
 	}
 	public submitLikeRating(ratableId: number, rating: string, then?: () => void): void {
-		throw new Error('not implemented');
+		try {
+			var ratable = this.testLikeRatingItems.get(ratableId);
+			ratable.rating().personalRating(rating);
+		}
+		catch(e) {
+			var error = new Error('could not submit rating.');
+			error['innerError'] = e;
+			//this.ratingSubmissionFailed.raise({ ratableId: ratableId, error: error});
+			return;
+		}
+		then && then();
+		//this.ratingSubmitted.raise({ ratableId: ratableId, rating: rating });
 	}
 	
 	public queryRating(ratableId: number): void {
