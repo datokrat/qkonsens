@@ -10,7 +10,7 @@ class TestClass extends unit.TestClass {
 		var com = new TestRatingCommunicator.Main();
 		var ctr = 0;
 		
-		com.submissionFailed.subscribe((args: RatingCommunicator.SubmissionFailedArgs) => {
+		com.ratingSubmissionFailed.subscribe((args: RatingCommunicator.SubmissionFailedArgs) => {
 			test.assert( () => args.ratableId == 2 );
 			++ctr;
 		});

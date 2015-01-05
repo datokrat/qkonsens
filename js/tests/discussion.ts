@@ -31,6 +31,10 @@ class TestClass extends unit.TestClass {
 		this.controller.dispose();
 	}
 	
+	discussionCommunicator() {
+		test.assert(v => v.val(this.communicator.content) != null);
+	}
+	
 	queryComments() {
 		var ctr = 0;
 		this.communicator.setTestDiscussable(this.discussable);

@@ -6,7 +6,9 @@ import IKonsenskisteCommunicator = require('konsenskistecommunicator')
 import ContentCommunicator = require('contentcommunicatorimpl')
 import KernaussageCommunicator = require('kernaussagecommunicatorimpl')
 import DiscussionCommunicator = require('discussioncommunicator')
+import DiscussionCommunicatorImpl = require('discussioncommunicatorimpl')
 import RatingCommunicator = require('ratingcommunicator')
+import RatingCommunicatorImpl = require('ratingcommunicatorimpl')
 import IContentCommunicator = require('contentcommunicator')
 import IKernaussageCommunicator = require('kernaussagecommunicator')
 
@@ -27,10 +29,10 @@ export class Main implements IKonsenskisteCommunicator.Main {
 	
 	constructor() {
 		this.content = new ContentCommunicator;
-		this.discussion = new DiscussionCommunicator.Main();
+		this.discussion = new DiscussionCommunicatorImpl.Main();
 		this.discussion.content = this.content;
 		this.kernaussage = new KernaussageCommunicator.Main({ content: this.content });
-		this.rating = new RatingCommunicator.Main();
+		this.rating = new RatingCommunicatorImpl.Main();
 	}
 	
 	public createAndAppendKa(kokiId: number, ka: KernaussageModel.Model) {
@@ -198,5 +200,5 @@ export class Parser {
 		return ret;
 	}
 	
-	private ratingParser = new RatingCommunicator.Parser();
+	private ratingParser = new RatingCommunicatorImpl.Parser();
 }

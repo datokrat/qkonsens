@@ -1,9 +1,9 @@
-define(["require", "exports", 'discussioncommunicator', 'ratingcommunicator', 'contentcommunicatorimpl', 'event'], function(require, exports, DiscussionCommunicator, RatingCommunicator, ContentCommunicatorImpl, Events) {
+define(["require", "exports", 'discussioncommunicatorimpl', 'ratingcommunicatorimpl', 'contentcommunicatorimpl', 'event'], function(require, exports, DiscussionCommunicatorImpl, RatingCommunicatorImpl, ContentCommunicatorImpl, Events) {
     var Main = (function () {
         function Main(cxt) {
             if (typeof cxt === "undefined") { cxt = { content: new ContentCommunicatorImpl }; }
-            this.discussion = new DiscussionCommunicator.Main;
-            this.rating = new RatingCommunicator.Main;
+            this.discussion = new DiscussionCommunicatorImpl.Main;
+            this.rating = new RatingCommunicatorImpl.Main;
             this.received = new Events.EventImpl();
             this.content = cxt.content;
             this.discussion.content = this.content;

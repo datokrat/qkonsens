@@ -90,8 +90,6 @@ export class ControllerImpl extends KElement.Controller<mdl.Model, vm.ViewModel,
 	private onKokiReceived = (args: KokiCommunicator.ReceivedArgs) => {
 		if(this.model.id() == args.konsenskiste.id())
 			this.model.set( args.konsenskiste );
-		console.log(args.konsenskiste);
-		console.log(this.model.childKas.get().length, 'Elemente');
 	}
 	
 	private onKaAppended = (args: KokiCommunicator.KaAppendedArgs) => {

@@ -3,7 +3,7 @@ import test = require('tests/test')
 
 import Obs = require('../observable')
 import Comment = require('../comment')
-import ContentCommunicatorImpl = require('../contentcommunicatorimpl')
+import DiscussionCommunicator = require('tests/testdiscussioncommunicator')
 import CommentSynchronizer = require('synchronizers/comment')
 
 export class Tests extends unit.TestClass {
@@ -11,7 +11,7 @@ export class Tests extends unit.TestClass {
 		var models = new Obs.ObservableArrayExtender<Comment.Model>(ko.observableArray<Comment.Model>());
 		var viewModels = ko.observableArray<Comment.ViewModel>();
 		
-		var sync = new CommentSynchronizer(new ContentCommunicatorImpl)
+		var sync = new CommentSynchronizer(new DiscussionCommunicator)
 			.setViewModelObservable(viewModels)
 			.setModelObservable(models);
 			
@@ -26,7 +26,7 @@ export class Tests extends unit.TestClass {
 		var viewModels = ko.observableArray<Comment.ViewModel>();
 		var viewModels2 = ko.observableArray<Comment.ViewModel>();
 		
-		var sync = new CommentSynchronizer(new ContentCommunicatorImpl)
+		var sync = new CommentSynchronizer(new DiscussionCommunicator)
 			.setViewModelObservable(viewModels)
 			.setModelObservable(models)
 			.setViewModelObservable(viewModels2);

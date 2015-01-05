@@ -15,12 +15,10 @@ export class Model extends KElement.Model {
 	public loading: Obs.Observable<boolean> = ko.observable<boolean>();
 	
 	public set(model: Model) {
-		console.log('begin set');
 		KElement.Model.prototype.set.apply(this, arguments);
 		this.setChildKas(model.childKas.get())
 		this.loading(model.loading());
 		this.error(model.error());
-		console.log('end set');
 	}
 	
 	private setChildKas(other: KernaussageModel.Model[]) {

@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/asyncunit', 'tests/test', '../common', 'tests/testkonsenskistecommunicator', '../konsenskistemodel', '../konsenskisteviewmodel', '../konsenskistecontroller', 'comment'], function(require, exports, unit, test, common, TestKokiCommunicator, KonsenskisteModel, KokiViewModel, KokiController, Comment) {
+define(["require", "exports", 'tests/asyncunit', 'tests/test', '../common', 'tests/testkonsenskistecommunicator', '../konsenskistemodel', '../konsenskisteviewmodel', '../konsenskistecontroller', '../comment'], function(require, exports, unit, test, common, TestKokiCommunicator, KonsenskisteModel, KokiViewModel, KokiController, Comment) {
     var TestClass = (function (_super) {
         __extends(TestClass, _super);
         function TestClass() {

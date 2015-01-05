@@ -8,7 +8,7 @@ import RatingCommunicatorBase = require('../ratingcommunicator');
 import RatingCommunicator = require('tests/testratingcommunicator');
 
 export class TestClass extends unit.TestClass {
-	submitRating(async, r) {
+	submitRating(async, r, cb) {
 		async();
 		var counter = new common.Counter();
 		var mdl = new Rating.Model();
@@ -17,7 +17,7 @@ export class TestClass extends unit.TestClass {
 		var commandProcessor = new Commands.CommandProcessor();
 		var ctr = new Rating.Controller(mdl, vm, { communicator: com, commandProcessor: commandProcessor });
 		
-		commandProcessor.chain.append(cmd => {
+		commandProcessor.chain.append(cb(cmd => {
 			counter.inc('command');
 			test.assert(() => cmd instanceof Rating.SelectRatingCommand);
 			
@@ -27,14 +27,38 @@ export class TestClass extends unit.TestClass {
 			castCmd.then();
 			test.assert(() => mdl.personalRating() == 'like');
 			return true;
-		});
+		}));
 		
 		vm.select('like')();
 		
-		setTimeout(() => {
+		setTimeout(cb(() => {
 			test.assert(() => counter.get('command') == 1);
 			r();
-		});
+		}));
+	}
+	
+	submitLikeRating(async, r, cb) {
+		async();
+		var counter = new common.Counter();
+		var mdl = new Rating.LikeRatingModel();
+		var vm = new Rating.LikeRatingViewModel();
+		var commandProcessor = new Commands.CommandProcessor();
+		var ctr = new Rating.LikeRatingController(mdl, vm, commandProcessor);
+		
+		commandProcessor.chain.append(cb(cmd => {
+			counter.inc('command');
+			test.assert(v => cmd instanceof Rating.SelectLikeRatingCommand);
+			var typedCmd = <Rating.SelectLikeRatingCommand>cmd;
+			test.assert(v => typedCmd.ratingValue == 'dislike');
+			typedCmd.then && typedCmd.then();
+			test.assert(v => v.val(mdl.personalRating()) == 'dislike');
+			return true;
+		}));
+		vm.select('dislike')();
+		setTimeout(cb(() => {
+			test.assert(() => counter.get('command') == 1);
+			r();
+		}));
 	}
 	
 	summarizedRatingsMVSync() {

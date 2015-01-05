@@ -6,12 +6,15 @@ import ItemContainer = require('../itemcontainer')
 import Comment = require('../comment')
 import TestContentCommunicator = require('tests/testcontentcommunicator')
 import ContentCommunicator = require('../contentcommunicator')
+import RatingCommunicator = require('../ratingcommunicator');
+import TestRatingCommunicator = require('tests/testratingcommunicator');
 
 import Discussion = require('../discussion')
 import DiscussionCommunicator = require('../discussioncommunicator')
 
 class TestDiscussableCommunicator implements DiscussionCommunicator.Base {
 	public content: ContentCommunicator.Main = new TestContentCommunicator();
+	public rating: RatingCommunicator.Base = new TestRatingCommunicator.Main();
 	public commentsReceived = new Events.EventImpl<DiscussionCommunicator.ReceivedArgs>();
 	public commentsReceiptError = new Events.EventImpl<DiscussionCommunicator.CommentsReceiptErrorArgs>();
 	public commentAppended: Events.Event<DiscussionCommunicator.AppendedArgs> = new Events.EventImpl<DiscussionCommunicator.AppendedArgs>();

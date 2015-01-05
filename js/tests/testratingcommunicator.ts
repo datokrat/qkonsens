@@ -8,13 +8,14 @@ import Rating = require('../rating');
 
 export class Stub implements RatingCommunicator.Base {
 	public submitRating(ratableId: number, rating: string): void {}
+	public submitLikeRating(ratableId: number, rating: string): void {}
 	
 	public queryRating(ratableId: number): void {}
 	
 	public ratingSubmitted: Events.Event<RatingCommunicator.SubmittedArgs> = new Events.EventImpl<RatingCommunicator.SubmittedArgs>();
 	public ratingReceived: Events.Event<RatingCommunicator.ReceivedArgs> = new Events.EventImpl<RatingCommunicator.ReceivedArgs>();
 	
-	public submissionFailed: Events.Event<RatingCommunicator.SubmissionFailedArgs> = new Events.EventImpl<RatingCommunicator.SubmissionFailedArgs>();
+	public ratingSubmissionFailed: Events.Event<RatingCommunicator.SubmissionFailedArgs> = new Events.EventImpl<RatingCommunicator.SubmissionFailedArgs>();
 }
 
 export class Main implements RatingCommunicator.Base {
@@ -23,7 +24,7 @@ export class Main implements RatingCommunicator.Base {
 	
 	public ratingSubmitted = new Events.EventImpl<RatingCommunicator.SubmittedArgs>();
 	public ratingReceived = new Events.EventImpl<RatingCommunicator.ReceivedArgs>();
-	public submissionFailed = new Events.EventImpl<RatingCommunicator.SubmissionFailedArgs>();
+	public ratingSubmissionFailed = new Events.EventImpl<RatingCommunicator.SubmissionFailedArgs>();
 	
 	public submitRating(ratableId: number, rating: string, then?: () => void): void {
 		try {
@@ -33,11 +34,14 @@ export class Main implements RatingCommunicator.Base {
 		catch(e) {
 			var error = new Error('could not submit rating.');
 			error['innerError'] = e;
-			this.submissionFailed.raise({ ratableId: ratableId, error: error});
+			this.ratingSubmissionFailed.raise({ ratableId: ratableId, error: error});
 			return;
 		}
 		then && then();
 		this.ratingSubmitted.raise({ ratableId: ratableId, rating: rating });
+	}
+	public submitLikeRating(ratableId: number, rating: string, then?: () => void): void {
+		throw new Error('not implemented');
 	}
 	
 	public queryRating(ratableId: number): void {

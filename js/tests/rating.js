@@ -10,7 +10,7 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', '../common', '../
         function TestClass() {
             _super.apply(this, arguments);
         }
-        TestClass.prototype.submitRating = function (async, r) {
+        TestClass.prototype.submitRating = function (async, r, cb) {
             async();
             var counter = new common.Counter();
             var mdl = new Rating.Model();
@@ -19,7 +19,7 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', '../common', '../
             var commandProcessor = new Commands.CommandProcessor();
             var ctr = new Rating.Controller(mdl, vm, { communicator: com, commandProcessor: commandProcessor });
 
-            commandProcessor.chain.append(function (cmd) {
+            commandProcessor.chain.append(cb(function (cmd) {
                 counter.inc('command');
                 test.assert(function () {
                     return cmd instanceof Rating.SelectRatingCommand;
@@ -35,16 +35,48 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', '../common', '../
                     return mdl.personalRating() == 'like';
                 });
                 return true;
-            });
+            }));
 
             vm.select('like')();
 
-            setTimeout(function () {
+            setTimeout(cb(function () {
                 test.assert(function () {
                     return counter.get('command') == 1;
                 });
                 r();
-            });
+            }));
+        };
+
+        TestClass.prototype.submitLikeRating = function (async, r, cb) {
+            async();
+            var counter = new common.Counter();
+            var mdl = new Rating.LikeRatingModel();
+            var vm = new Rating.LikeRatingViewModel();
+            var commandProcessor = new Commands.CommandProcessor();
+            var ctr = new Rating.LikeRatingController(mdl, vm, commandProcessor);
+
+            commandProcessor.chain.append(cb(function (cmd) {
+                counter.inc('command');
+                test.assert(function (v) {
+                    return cmd instanceof Rating.SelectLikeRatingCommand;
+                });
+                var typedCmd = cmd;
+                test.assert(function (v) {
+                    return typedCmd.ratingValue == 'dislike';
+                });
+                typedCmd.then && typedCmd.then();
+                test.assert(function (v) {
+                    return v.val(mdl.personalRating()) == 'dislike';
+                });
+                return true;
+            }));
+            vm.select('dislike')();
+            setTimeout(cb(function () {
+                test.assert(function () {
+                    return counter.get('command') == 1;
+                });
+                r();
+            }));
         };
 
         TestClass.prototype.summarizedRatingsMVSync = function () {

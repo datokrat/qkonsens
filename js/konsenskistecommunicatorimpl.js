@@ -1,4 +1,4 @@
-define(["require", "exports", 'event', 'common', 'discocontext', 'contentcommunicatorimpl', 'kernaussagecommunicatorimpl', 'discussioncommunicator', 'ratingcommunicator', 'konsenskistemodel', 'kernaussagemodel', 'contentmodel'], function(require, exports, Events, Common, discoContext, ContentCommunicator, KernaussageCommunicator, DiscussionCommunicator, RatingCommunicator, KonsenskisteModel, KernaussageModel, ContentModel) {
+define(["require", "exports", 'event', 'common', 'discocontext', 'contentcommunicatorimpl', 'kernaussagecommunicatorimpl', 'discussioncommunicatorimpl', 'ratingcommunicatorimpl', 'konsenskistemodel', 'kernaussagemodel', 'contentmodel'], function(require, exports, Events, Common, discoContext, ContentCommunicator, KernaussageCommunicator, DiscussionCommunicatorImpl, RatingCommunicatorImpl, KonsenskisteModel, KernaussageModel, ContentModel) {
     var Main = (function () {
         function Main() {
             this.received = new Events.EventImpl();
@@ -7,10 +7,10 @@ define(["require", "exports", 'event', 'common', 'discocontext', 'contentcommuni
             this.kernaussageAppendingError = new Events.EventImpl();
             this.parser = new Parser();
             this.content = new ContentCommunicator;
-            this.discussion = new DiscussionCommunicator.Main();
+            this.discussion = new DiscussionCommunicatorImpl.Main();
             this.discussion.content = this.content;
             this.kernaussage = new KernaussageCommunicator.Main({ content: this.content });
-            this.rating = new RatingCommunicator.Main();
+            this.rating = new RatingCommunicatorImpl.Main();
         }
         Main.prototype.createAndAppendKa = function (kokiId, ka) {
             var _this = this;
@@ -136,7 +136,7 @@ define(["require", "exports", 'event', 'common', 'discocontext', 'contentcommuni
 
     var Parser = (function () {
         function Parser() {
-            this.ratingParser = new RatingCommunicator.Parser();
+            this.ratingParser = new RatingCommunicatorImpl.Parser();
         }
         Parser.prototype.parse = function (rawKoki, out) {
             var _this = this;

@@ -48,6 +48,20 @@ define(["require", "exports", 'synchronizers/childsynchronizer', 'factories/cons
     })(Base.ChildSynchronizer);
     exports.RatingSynchronizer = RatingSynchronizer;
 
+    var LikeRatingSynchronizer = (function (_super) {
+        __extends(LikeRatingSynchronizer, _super);
+        function LikeRatingSynchronizer(commandProcessor) {
+            this.setViewModelFactory(new Factories.Factory(Rating.LikeRatingViewModel));
+            this.setControllerFactory(new Factories.ControllerFactoryEx(Rating.LikeRatingController, commandProcessor));
+            _super.call(this);
+        }
+        LikeRatingSynchronizer.prototype.createViewModelObservable = function () {
+            return ko.observable();
+        };
+        return LikeRatingSynchronizer;
+    })(Base.ChildSynchronizer);
+    exports.LikeRatingSynchronizer = LikeRatingSynchronizer;
+
     var RatingControllerFactory = (function () {
         function RatingControllerFactory(args) {
             this.args = args;

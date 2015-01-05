@@ -1,4 +1,10 @@
-define(["require", "exports"], function(require, exports) {
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+define(["require", "exports", 'command'], function(require, exports, Commands) {
     var Model = (function () {
         function Model() {
             this.personalRating = ko.observable('none');
@@ -12,12 +18,30 @@ define(["require", "exports"], function(require, exports) {
     })();
     exports.Model = Model;
 
+    var LikeRatingModel = (function () {
+        function LikeRatingModel() {
+            this.personalRating = ko.observable('none');
+        }
+        LikeRatingModel.prototype.set = function (other) {
+            this.personalRating(other.personalRating());
+        };
+        return LikeRatingModel;
+    })();
+    exports.LikeRatingModel = LikeRatingModel;
+
     var ViewModel = (function () {
         function ViewModel() {
         }
         return ViewModel;
     })();
     exports.ViewModel = ViewModel;
+
+    var LikeRatingViewModel = (function () {
+        function LikeRatingViewModel() {
+        }
+        return LikeRatingViewModel;
+    })();
+    exports.LikeRatingViewModel = LikeRatingViewModel;
 
     var Controller = (function () {
         function Controller(model, viewModel, args) {
@@ -56,6 +80,45 @@ define(["require", "exports"], function(require, exports) {
         return Controller;
     })();
     exports.Controller = Controller;
+
+    var LikeRatingController = (function () {
+        function LikeRatingController(model, viewModel, commandProcessor) {
+            var _this = this;
+            this.model = model;
+            viewModel.id = LikeRatingController.idCtr++;
+            viewModel.personalRating = model.personalRating;
+
+            viewModel.select = function (ratingValue) {
+                return function () {
+                    return setTimeout(function () {
+                        commandProcessor.processCommand(new SelectLikeRatingCommand(ratingValue, function () {
+                            return _this.onRatingSubmitted(ratingValue);
+                        }));
+                    });
+                };
+            };
+        }
+        LikeRatingController.prototype.onRatingSubmitted = function (ratingValue) {
+            this.model.personalRating(ratingValue);
+        };
+
+        LikeRatingController.prototype.dispose = function () {
+        };
+        LikeRatingController.idCtr = 0;
+        return LikeRatingController;
+    })();
+    exports.LikeRatingController = LikeRatingController;
+
+    var SelectLikeRatingCommand = (function (_super) {
+        __extends(SelectLikeRatingCommand, _super);
+        function SelectLikeRatingCommand(ratingValue, then) {
+            _super.call(this);
+            this.ratingValue = ratingValue;
+            this.then = then;
+        }
+        return SelectLikeRatingCommand;
+    })(Commands.Command);
+    exports.SelectLikeRatingCommand = SelectLikeRatingCommand;
 
     var SelectRatingCommand = (function () {
         function SelectRatingCommand(ratingValue, then) {

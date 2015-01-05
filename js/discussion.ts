@@ -58,7 +58,7 @@ export class Controller {
 			this.communicator.removeComment({ discussableId: this.discussableModel.id(), commentId: comment.id });
 		};
 		
-		this.commentSynchronizer = new CommentSynchronizer(this.communicator.content)
+		this.commentSynchronizer = new CommentSynchronizer(this.communicator)
 			.setViewModelObservable(this.viewModel.comments)
 			.setModelObservable(this.model.comments);
 		this.commentSynchronizer.itemCreated.subscribe(args => {

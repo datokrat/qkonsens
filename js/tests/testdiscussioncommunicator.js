@@ -1,7 +1,8 @@
-define(["require", "exports", '../event', '../common', '../itemcontainer', 'tests/testcontentcommunicator'], function(require, exports, Events, Common, ItemContainer, TestContentCommunicator) {
+define(["require", "exports", '../event', '../common', '../itemcontainer', 'tests/testcontentcommunicator', 'tests/testratingcommunicator'], function(require, exports, Events, Common, ItemContainer, TestContentCommunicator, TestRatingCommunicator) {
     var TestDiscussableCommunicator = (function () {
         function TestDiscussableCommunicator() {
             this.content = new TestContentCommunicator();
+            this.rating = new TestRatingCommunicator.Main();
             this.commentsReceived = new Events.EventImpl();
             this.commentsReceiptError = new Events.EventImpl();
             this.commentAppended = new Events.EventImpl();

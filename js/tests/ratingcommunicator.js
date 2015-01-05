@@ -14,7 +14,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', 'tests/testratingcom
             var com = new TestRatingCommunicator.Main();
             var ctr = 0;
 
-            com.submissionFailed.subscribe(function (args) {
+            com.ratingSubmissionFailed.subscribe(function (args) {
                 test.assert(function () {
                     return args.ratableId == 2;
                 });

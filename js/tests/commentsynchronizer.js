@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/tsunit', 'tests/test', '../observable', '../comment', '../contentcommunicatorimpl', 'synchronizers/comment'], function(require, exports, unit, test, Obs, Comment, ContentCommunicatorImpl, CommentSynchronizer) {
+define(["require", "exports", 'tests/tsunit', 'tests/test', '../observable', '../comment', 'tests/testdiscussioncommunicator', 'synchronizers/comment'], function(require, exports, unit, test, Obs, Comment, DiscussionCommunicator, CommentSynchronizer) {
     var Tests = (function (_super) {
         __extends(Tests, _super);
         function Tests() {
@@ -14,7 +14,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../observable', '..
             var models = new Obs.ObservableArrayExtender(ko.observableArray());
             var viewModels = ko.observableArray();
 
-            var sync = new CommentSynchronizer(new ContentCommunicatorImpl).setViewModelObservable(viewModels).setModelObservable(models);
+            var sync = new CommentSynchronizer(new DiscussionCommunicator).setViewModelObservable(viewModels).setModelObservable(models);
 
             models.push(new Comment.Model);
 
@@ -29,7 +29,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../observable', '..
             var viewModels = ko.observableArray();
             var viewModels2 = ko.observableArray();
 
-            var sync = new CommentSynchronizer(new ContentCommunicatorImpl).setViewModelObservable(viewModels).setModelObservable(models).setViewModelObservable(viewModels2);
+            var sync = new CommentSynchronizer(new DiscussionCommunicator).setViewModelObservable(viewModels).setModelObservable(models).setViewModelObservable(viewModels2);
 
             test.assert(function () {
                 return viewModels2().length == 1;

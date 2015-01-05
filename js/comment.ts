@@ -4,6 +4,9 @@ import ContentModel = require('contentmodel')
 import ContentViewModel = require('contentviewmodel')
 import ContentController = require('contentcontroller')
 import ContentCommunicator = require('contentcommunicator')
+import DiscussionCommunicator = require('discussioncommunicator');
+import Rating = require('rating');
+import Commands = require('command');
 
 export interface CommentableModel {
 	comments: Obs.ObservableArrayEx<Model>;
@@ -13,26 +16,47 @@ export interface CommentableModel {
 export class Model {
 	public id: number;
 	public content: Obs.Observable<ContentModel.General> = ko.observable( new ContentModel.General );
+	public rating: Obs.Observable<Rating.LikeRatingModel> = ko.observable(new Rating.LikeRatingModel);
 }
 
 var idCtr = 0;
 export class ViewModel {
 	public id = idCtr++;
 	public content: Obs.Observable<ContentViewModel.General>;
+	public rating: Obs.Observable<Rating.LikeRatingViewModel>;
 	
 	public removeClick: () => void;
 }
 
 export class Controller {
-	constructor(model: Model, viewModel: ViewModel, communicator: ContentCommunicator.Main) {
+	constructor(private model: Model, viewModel: ViewModel, private communicator: DiscussionCommunicator.Base) {
+		this.initCommandProcessor();
+		
 		viewModel.content = ko.observable<ContentViewModel.General>();
 		viewModel.removeClick = () => {
 			this.commentableModel && this.commentableModel.removeComment(model);
 		};
 	
-		this.contentSynchronizer = new KSync.GeneralContentSynchronizer(communicator)
-			.setViewModelChangedHandler( content => viewModel.content(content) )
+		this.contentSynchronizer = new KSync.GeneralContentSynchronizer(communicator.content)
+			.setViewModelObservable(viewModel.content)
 			.setModelObservable(model.content);
+		
+		viewModel.rating = ko.observable<Rating.LikeRatingViewModel>();
+		this.ratingSynchronizer = new KSync.LikeRatingSynchronizer(this.commandProcessor);
+		this.ratingSynchronizer
+			.setViewModelObservable(viewModel.rating)
+			.setModelObservable(model.rating);
+	}
+	
+	public initCommandProcessor() {
+		this.commandProcessor.chain.append(cmd => {
+			if(cmd instanceof Rating.SelectLikeRatingCommand) {
+				var typedCmd = <Rating.SelectLikeRatingCommand>cmd;
+				this.communicator.rating.submitLikeRating(this.model.id, typedCmd.ratingValue, () => {});
+				return true;
+			}
+			return false;
+		});
 	}
 	
 	public setCommentableModel(commentableModel: CommentableModel) {
@@ -41,8 +65,12 @@ export class Controller {
 	
 	public dispose() {
 		this.contentSynchronizer.dispose();
+		this.ratingSynchronizer.dispose();
 	}
 	
+	public commandProcessor = new Commands.CommandProcessor();
+	
 	private contentSynchronizer: KSync.GeneralContentSynchronizer;
+	private ratingSynchronizer: KSync.LikeRatingSynchronizer;
 	private commentableModel: CommentableModel;
 }

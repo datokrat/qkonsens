@@ -7,7 +7,7 @@ import TestKokiCommunicator = require('tests/testkonsenskistecommunicator')
 import KonsenskisteModel = require('../konsenskistemodel')
 import KokiViewModel = require('../konsenskisteviewmodel')
 import KokiController = require('../konsenskistecontroller')
-import Comment = require('comment')
+import Comment = require('../comment')
 
 class TestClass extends unit.TestClass {
 	private com: TestKokiCommunicator.Main;

@@ -27,6 +27,13 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../discussion', 'te
             this.controller.dispose();
         };
 
+        TestClass.prototype.discussionCommunicator = function () {
+            var _this = this;
+            test.assert(function (v) {
+                return v.val(_this.communicator.content) != null;
+            });
+        };
+
         TestClass.prototype.queryComments = function () {
             var ctr = 0;
             this.communicator.setTestDiscussable(this.discussable);

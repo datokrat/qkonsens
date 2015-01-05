@@ -3,13 +3,15 @@ import Factories = require('factories/constructorbased')
 import Events = require('../event')
 import Obs = require('../observable')
 import Comment = require('../comment')
-import ContentCommunicator = require('../contentcommunicator')
+import DiscussionCommunicator = require('../discussioncommunicator')
 
 class Synchronizer extends Base.ObservingChildArraySynchronizer<Comment.Model, Comment.ViewModel, Comment.Controller> {
-	constructor(communicator: ContentCommunicator.Main) {
+	constructor(communicator: DiscussionCommunicator.Base) {
 		super();
 		this.setViewModelFactory( new Factories.Factory(Comment.ViewModel) );
-		this.setControllerFactory( new Factories.ControllerFactoryEx(Comment.Controller, communicator) );
+		this.setControllerFactory(
+			new Factories.ControllerFactoryEx<Comment.Model, Comment.ViewModel, DiscussionCommunicator.Base, Comment.Controller>
+				(Comment.Controller, communicator) );
 	}
 }
 

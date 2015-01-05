@@ -18,11 +18,25 @@ export class Model {
 	}
 }
 
+export class LikeRatingModel {
+	public personalRating: Obs.Observable<string> = ko.observable<string>('none');
+	
+	public set(other: LikeRatingModel) {
+		this.personalRating(other.personalRating());
+	}
+}
+
 export class ViewModel {
 	public id: number;
 	public personalRating: Obs.Observable<string>;
 	public summarizedRatings: Obs.Observable<SummarizedRatingCollectionViewModel>;
 	
+	public select: (rating: string) => () => void;
+}
+
+export class LikeRatingViewModel {
+	public id: number;
+	public personalRating: Obs.Observable<string>;
 	public select: (rating: string) => () => void;
 }
 
@@ -56,6 +70,30 @@ export class Controller {
 	private ratableModel: RatableModel;
 	private model: Model;
 	private subscriptions: Evt.Subscription[] = [];
+}
+
+export class LikeRatingController {
+	private static idCtr = 0;
+	
+	constructor(private model: LikeRatingModel, viewModel: LikeRatingViewModel, commandProcessor: Commands.CommandProcessor) {
+		viewModel.id = LikeRatingController.idCtr++;
+		viewModel.personalRating = model.personalRating;
+		
+		viewModel.select = (ratingValue: string) => () => setTimeout(() => {
+			commandProcessor.processCommand(new SelectLikeRatingCommand(ratingValue, () => this.onRatingSubmitted(ratingValue)));
+		});
+	}
+	
+	private onRatingSubmitted(ratingValue: string) {
+		this.model.personalRating(ratingValue);
+	}
+	
+	public dispose() {
+	}
+}
+
+export class SelectLikeRatingCommand extends Commands.Command {
+	constructor(public ratingValue: string, public then: () => void) { super() }
 }
 
 export interface ControllerArgs {

@@ -1,4 +1,4 @@
-define(["require", "exports", 'tests/tsunit', 'tests/asyncunit', 'tests/rating', 'tests/discussion', 'tests/discussionsynchronizer', 'tests/ratingcommunicator', 'tests/topicnavigationmodel', 'tests/topicnavigation', 'tests/topic', 'tests/controller', 'tests/konsenskistemodel', 'tests/kernaussage', 'tests/konsenskistecontroller', 'tests/childarraysynchronizer', 'tests/commentsynchronizer', 'tests/observable', 'tests/content', 'tests/context', 'tests/winkonsenskiste', 'tests/contentcommunicator', 'tests/konsenskistecommunicator', 'tests/contentmodel', 'tests/commands', 'tests/kelement'], function(require, exports, unit, asyncunit, Rating, Discussion, DiscussionSynchronizer, TestRatingCommunicator, topicNavigationModel, topicNavigation, topic, controller, kokiModel, kaModel, kokiController, synchronizer, commentSynchronizer, observable, content, context, winKoki, ContentCommunicator, KokiCommunicator, ContentModelTests, CommandTests, KElementTests) {
+define(["require", "exports", 'tests/tsunit', 'tests/asyncunit', 'tests/rating', 'tests/comment', 'tests/discussion', 'tests/discussionsynchronizer', 'tests/ratingcommunicator', 'tests/topicnavigationmodel', 'tests/topicnavigation', 'tests/topic', 'tests/controller', 'tests/konsenskistemodel', 'tests/kernaussage', 'tests/konsenskistecontroller', 'tests/childarraysynchronizer', 'tests/commentsynchronizer', 'tests/observable', 'tests/content', 'tests/context', 'tests/winkonsenskiste', 'tests/contentcommunicator', 'tests/konsenskistecommunicator', 'tests/contentmodel', 'tests/commands', 'tests/kelement'], function(require, exports, unit, asyncunit, Rating, Comment, Discussion, DiscussionSynchronizer, TestRatingCommunicator, topicNavigationModel, topicNavigation, topic, controller, kokiModel, kaModel, kokiController, synchronizer, commentSynchronizer, observable, content, context, winKoki, ContentCommunicator, KokiCommunicator, ContentModelTests, CommandTests, KElementTests) {
     var test = new unit.Test();
     var asyncTest = new asyncunit.Test();
 
@@ -11,6 +11,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/asyncunit', 'tests/rating',
     test.addTestClass(new content.General(), 'General Content');
     test.addTestClass(new content.Context(), 'Context');
     test.addTestClass(new context.Tests(), 'Context');
+    test.addTestClass(new Comment.Main(), 'Comment');
     test.addTestClass(new Discussion(), 'Discussion');
     test.addTestClass(new TestRatingCommunicator(), 'TestRatingCommunicator');
     test.addTestClass(new DiscussionSynchronizer(), 'DiscussionSynchronizer');

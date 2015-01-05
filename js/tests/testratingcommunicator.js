@@ -3,9 +3,11 @@ define(["require", "exports", '../event', '../itemcontainer'], function(require,
         function Stub() {
             this.ratingSubmitted = new Events.EventImpl();
             this.ratingReceived = new Events.EventImpl();
-            this.submissionFailed = new Events.EventImpl();
+            this.ratingSubmissionFailed = new Events.EventImpl();
         }
         Stub.prototype.submitRating = function (ratableId, rating) {
+        };
+        Stub.prototype.submitLikeRating = function (ratableId, rating) {
         };
 
         Stub.prototype.queryRating = function (ratableId) {
@@ -20,7 +22,7 @@ define(["require", "exports", '../event', '../itemcontainer'], function(require,
             this.testItems = testItems;
             this.ratingSubmitted = new Events.EventImpl();
             this.ratingReceived = new Events.EventImpl();
-            this.submissionFailed = new Events.EventImpl();
+            this.ratingSubmissionFailed = new Events.EventImpl();
         }
         Main.prototype.submitRating = function (ratableId, rating, then) {
             try  {
@@ -29,11 +31,14 @@ define(["require", "exports", '../event', '../itemcontainer'], function(require,
             } catch (e) {
                 var error = new Error('could not submit rating.');
                 error['innerError'] = e;
-                this.submissionFailed.raise({ ratableId: ratableId, error: error });
+                this.ratingSubmissionFailed.raise({ ratableId: ratableId, error: error });
                 return;
             }
             then && then();
             this.ratingSubmitted.raise({ ratableId: ratableId, rating: rating });
+        };
+        Main.prototype.submitLikeRating = function (ratableId, rating, then) {
+            throw new Error('not implemented');
         };
 
         Main.prototype.queryRating = function (ratableId) {

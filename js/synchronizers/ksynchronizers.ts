@@ -9,6 +9,7 @@ import Discussion = require('../discussion')
 import DiscussionCommunicator = require('../discussioncommunicator')
 import ViewModelContext = require('../viewmodelcontext')
 import RatingCommunicator = require('../ratingcommunicator')
+import Commands = require('../command');
 
 export class GeneralContentSynchronizer 
 	extends Base.ChildSynchronizer<ContentModel.General, ContentViewModel.General, ContentController.General>
@@ -51,6 +52,20 @@ export class RatingSynchronizer
 	}
 	
 	private controllerFty: RatingControllerFactory;
+}
+
+export class LikeRatingSynchronizer 
+	extends Base.ChildSynchronizer<Rating.LikeRatingModel, Rating.LikeRatingViewModel, Rating.LikeRatingController>
+{
+	constructor(commandProcessor: Commands.CommandProcessor) {
+		this.setViewModelFactory(new Factories.Factory(Rating.LikeRatingViewModel));
+		this.setControllerFactory(new Factories.ControllerFactoryEx(Rating.LikeRatingController, commandProcessor));
+		super();
+	}
+	
+	public createViewModelObservable() {
+		return ko.observable<Rating.LikeRatingViewModel>();
+	}
 }
 
 export class RatingControllerFactory {
