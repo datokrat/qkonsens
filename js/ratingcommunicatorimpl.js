@@ -96,6 +96,13 @@ define(["require", "exports", 'event', 'rating', 'discocontext', 'common'], func
             });
             return out;
         };
+
+        Parser.prototype.parseLikeRating = function (rawRatings, out) {
+            var rating = this.parse(rawRatings);
+            out = out || new Rating.LikeRatingModel();
+            out.personalRating(ScoreParser.fromRatingToLikeRating(rating.personalRating()));
+            return out;
+        };
         return Parser;
     })();
     exports.Parser = Parser;
@@ -111,6 +118,15 @@ define(["require", "exports", 'event', 'rating', 'discocontext', 'common'], func
         };
         ScoreParser.fromLikeRatingToDisco = function (qkRating) {
             return ScoreParser.fromRatingToDisco(qkRating);
+        };
+
+        ScoreParser.fromRatingToLikeRating = function (rating) {
+            if (rating == 'like' || rating == 'stronglike')
+                return 'like';
+            else if (rating == 'dislike' || rating == 'strongdislike')
+                return 'dislike';
+            else
+                return rating;
         };
 
         ScoreParser.fromDisco = function (discoRating) {

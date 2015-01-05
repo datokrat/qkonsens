@@ -9,6 +9,7 @@ define(["require", "exports", 'event', 'common', 'comment', 'contentcommunicator
             this.commentAppendingError = new Events.EventImpl();
             this.commentRemoved = new Events.EventImpl();
             this.commentRemovalError = new Events.EventImpl();
+            this.ratingParser = new RatingCommunicatorImpl.Parser();
         }
         Main.prototype.queryCommentsOf = function (discussableId, err) {
             var _this = this;
@@ -127,7 +128,7 @@ define(["require", "exports", 'event', 'common', 'comment', 'contentcommunicator
             return discoContext.PostReferences.filter('it.ReferenceType.Description.Name != "Part" \
 			&& it.ReferenceType.Description.Name != "Child" \
 			&& it.ReferenceType.Description.Name != "Context" \
-			&& it.Referree.Id == this.Id', { Id: discussableId }).include('Referrer.Content').toArray();
+			&& it.Referree.Id == this.Id', { Id: discussableId }).include('Referrer.Content').include('Referrer.Ratings.ModifiedBy').toArray();
         };
 
         Main.prototype.parseComments = function (rawComments) {
@@ -145,6 +146,7 @@ define(["require", "exports", 'event', 'common', 'comment', 'contentcommunicator
             ret.id = parseInt(comment.Id);
             ret.content().title(comment.Content.Title);
             ret.content().text(comment.Content.Text);
+            this.ratingParser.parseLikeRating(comment.Ratings, ret.rating());
             return ret;
         };
         return Main;

@@ -94,6 +94,13 @@ export class Parser {
 		});
 		return out;
 	}
+	
+	public parseLikeRating(rawRatings: Disco.Ontology.Rating[], out?: Rating.LikeRatingModel): Rating.LikeRatingModel {
+		var rating = this.parse(rawRatings);
+		out = out || new Rating.LikeRatingModel();
+		out.personalRating(ScoreParser.fromRatingToLikeRating(rating.personalRating()));
+		return out;
+	}
 }
 
 export class ScoreParser {
@@ -104,6 +111,14 @@ export class ScoreParser {
 	}
 	public static fromLikeRatingToDisco(qkRating: string): number {
 		return ScoreParser.fromRatingToDisco(qkRating);
+	}
+	
+	public static fromRatingToLikeRating(rating: string): string {
+		if(rating == 'like' || rating == 'stronglike')
+			return 'like';
+		else if(rating == 'dislike' || rating == 'strongdislike')
+			return 'dislike';
+		else return rating;
 	}
 	
 	public static fromDisco(discoRating: number): string {
