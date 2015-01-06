@@ -25,6 +25,9 @@ define(["require", "exports", '../frame', '../topicnavigationviewmodel', '../top
             win.navigation = ko.observable(new TopicNavigationViewModel.ViewModel);
             this.navigationController = new TopicNavigationController.Controller(model, win.navigation(), { communicator: communicator, commandControl: this.commandControl });
         }
+        Controller.prototype.dispose = function () {
+            this.navigationController.dispose();
+        };
         return Controller;
     })();
     exports.Controller = Controller;

@@ -128,7 +128,7 @@ define(["require", "exports", 'event', 'common', 'comment', 'contentcommunicator
             return discoContext.PostReferences.filter('it.ReferenceType.Description.Name != "Part" \
 			&& it.ReferenceType.Description.Name != "Child" \
 			&& it.ReferenceType.Description.Name != "Context" \
-			&& it.Referree.Id == this.Id', { Id: discussableId }).include('Referrer.Content').include('Referrer.Ratings.ModifiedBy').toArray();
+			&& it.Referree.Id == this.Id', { Id: discussableId }).include('Referrer.Content').include('Referrer.Ratings.ModifiedBy.Author').toArray();
         };
 
         Main.prototype.parseComments = function (rawComments) {

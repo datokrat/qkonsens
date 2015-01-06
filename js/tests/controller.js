@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/tsunit', 'tests/test', '../model', '../viewmodel', '../controller', '../konsenskistemodel', '../topic', '../windows/konsenskiste', 'tests/testcommunicator'], function(require, exports, unit, test, mdl, vm, ctr, koki, tpc, kokiWin, TestCommunicator) {
+define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../model', '../viewmodel', '../controller', '../konsenskistemodel', '../topic', '../windows/konsenskiste', '../communicator', 'tests/testcommunicator'], function(require, exports, unit, test, common, mdl, vm, ctr, koki, tpc, kokiWin, Communicator, TestCommunicator) {
     var Tests = (function (_super) {
         __extends(Tests, _super);
         function Tests() {
@@ -82,6 +82,63 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../model', '../view
         Tests.prototype.testCommunicatorDisposal = function () {
             test.assert(function () {
                 return !"not implemented";
+            });
+        };
+
+        Tests.prototype.loginAfterChangingAccount = function () {
+            var counter = new common.Counter();
+            var model = new mdl.ModelImpl();
+            var viewModel = new vm.ViewModel();
+            var communicator = new TestCommunicator();
+            communicator.commandProcessor.chain.insertAtBeginning(function (cmd) {
+                test.assert(function (v) {
+                    return cmd instanceof Communicator.LoginCommand;
+                });
+                counter.inc('login command');
+                return true;
+            });
+            var controller = new ctr.Controller(model, viewModel, communicator);
+            communicator.commandProcessor.chain.insertAtBeginning(function (cmd) {
+                test.assert(function (v) {
+                    return v.val(cmd.userName) == 'TheUnnamed';
+                });
+                return false;
+            });
+
+            test.assert(function (v) {
+                return v.val(counter.get('login command')) == 1;
+            });
+
+            model.account(new mdl.Account({ userName: 'TheUnnamed' }));
+
+            test.assert(function (v) {
+                return v.val(counter.get('login command')) == 2;
+            });
+        };
+
+        Tests.prototype.updateViewModelAfterChangingAccount = function () {
+            var _this = this;
+            this.cxt.model.account(new mdl.Account({ userName: 'TheUnnamed' }));
+
+            test.assert(function (v) {
+                return _this.cxt.viewModel.userName() == 'TheUnnamed';
+            });
+        };
+
+        Tests.prototype.updateAccountModelAfterChangingAccountViewModel = function () {
+            var _this = this;
+            var counter = new common.Counter();
+            this.cxt.model.account.subscribe(function () {
+                return counter.inc('account changed');
+            });
+
+            this.cxt.viewModel.userName('TheUnnamed');
+
+            test.assert(function (v) {
+                return v.val(_this.cxt.model.account().userName) == 'TheUnnamed';
+            });
+            test.assert(function (v) {
+                return v.val(counter.get('account changed')) == 1;
             });
         };
         return Tests;

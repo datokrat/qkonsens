@@ -1,4 +1,4 @@
-define(["require", "exports", 'event', 'rating', 'discocontext', 'common'], function(require, exports, Events, Rating, discoContext, common) {
+define(["require", "exports", 'event', 'rating', 'discocontext', 'disco', 'common'], function(require, exports, Events, Rating, discoContext, disco, common) {
     var Main = (function () {
         function Main() {
             this.ratingSubmitted = new Events.EventImpl();
@@ -41,11 +41,12 @@ define(["require", "exports", 'event', 'rating', 'discocontext', 'common'], func
             if (typeof callbacks === "undefined") { callbacks = {}; }
             var ratings;
             var discoRating;
+            var userName = disco.AuthData().user;
             common.Callbacks.batch([
                 function (r) {
                     discoContext.Ratings.filter(function (it) {
-                        return it.ModifiedBy.AuthorId == '12' && it.PostId == this.ratableId.toString();
-                    }, { ratableId: ratableId }).toArray().then(function (results) {
+                        return it.ModifiedBy.Author.Alias == this.userName && it.PostId == this.ratableId.toString();
+                    }, { userName: userName, ratableId: ratableId }).toArray().then(function (results) {
                         ratings = results;
                         r();
                     });
@@ -84,11 +85,12 @@ define(["require", "exports", 'event', 'rating', 'discocontext', 'common'], func
         function Parser() {
         }
         Parser.prototype.parse = function (rawRatings, out) {
+            var userName = disco.AuthData().user;
             out = out || new Rating.Model();
             out.personalRating('none');
             rawRatings.forEach(function (rawRating) {
                 var ratingValue = ScoreParser.fromDisco(rawRating.Score);
-                if (rawRating.ModifiedBy.AuthorId == '12') {
+                if (rawRating.ModifiedBy.Author.Alias == userName) {
                     out.personalRating(ratingValue);
                 }
                 var summaryObservable = out.summarizedRatings()[ratingValue];

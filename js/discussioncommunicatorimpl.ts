@@ -116,7 +116,7 @@ export class Main implements DiscussionCommunicator.Base {
 			&& it.ReferenceType.Description.Name != "Context" \
 			&& it.Referree.Id == this.Id', { Id: discussableId })
 		.include('Referrer.Content')
-		.include('Referrer.Ratings.ModifiedBy')
+		.include('Referrer.Ratings.ModifiedBy.Author')
 		.toArray();
 	}
 	

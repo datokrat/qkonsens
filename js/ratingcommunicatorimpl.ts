@@ -2,6 +2,7 @@ import RatingCommunicator = require('ratingcommunicator');
 import Events = require('event');
 import Rating = require('rating');
 import discoContext = require('discocontext');
+import disco = require('disco');
 import common = require('common');
 import Obs = require('observable');
 
@@ -42,10 +43,12 @@ export class Main implements RatingCommunicator.Base {
 	private submitDiscoRating(ratableId: number, score: number, callbacks: { then?: () => void; fail?: (err) => void } = {}): void {
 		var ratings: Disco.Ontology.Rating[];
 		var discoRating: Disco.Ontology.Rating;
+		var userName = disco.AuthData().user;
 		common.Callbacks.batch([
 			r => {
 				discoContext.Ratings.filter(function(it) {
-					return it.ModifiedBy.AuthorId == '12' && it.PostId == this.ratableId.toString() }, { ratableId: ratableId })
+					return it.ModifiedBy.Author.Alias == this.userName && it.PostId == this.ratableId.toString() }, 
+						{ userName: userName, ratableId: ratableId })
 				.toArray().then(results => { ratings = results; r() });
 			},
 			r => {
@@ -82,11 +85,12 @@ export class Main implements RatingCommunicator.Base {
 
 export class Parser {
 	public parse(rawRatings: Disco.Ontology.Rating[], out?: Rating.Model): Rating.Model {
+		var userName = disco.AuthData().user;
 		out = out || new Rating.Model();
 		out.personalRating('none');
 		rawRatings.forEach(rawRating => {
 			var ratingValue = ScoreParser.fromDisco(rawRating.Score);
-			if(rawRating.ModifiedBy.AuthorId == '12') {
+			if(rawRating.ModifiedBy.Author.Alias == userName) {
 				out.personalRating(ratingValue);
 			}
 			var summaryObservable: Obs.Observable<number> = out.summarizedRatings()[ratingValue];

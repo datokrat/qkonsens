@@ -26,6 +26,10 @@ export class Controller {
 			{ communicator: communicator, commandControl: this.commandControl });
 	}
 	
+	public dispose() {
+		this.navigationController.dispose();
+	}
+	
 	public commandControl: Commands.CommandControl = { commandProcessor: new Commands.CommandProcessor() };
 	
 	private navigationController: TopicNavigationController.Controller;

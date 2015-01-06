@@ -18,7 +18,7 @@ import Topic = require('topic');
 import Commands = require('command');
 
 export class Controller {
-	constructor(model: mdl.Model, viewModel: vm.ViewModel, communicator: Communicator.Main, commandControl?: Commands.CommandControl) {
+	constructor(private model: mdl.Model, private viewModel: vm.ViewModel, private communicator: Communicator.Main, commandControl?: Commands.CommandControl) {
 		/*var topicNavigationController = new topicNavigationCtr.Controller(model.topicNavigation, viewModel.topicNavigation, { communicator: communicator.topic });*/
 		this.initCommandControl(commandControl);
 		
@@ -41,8 +41,6 @@ export class Controller {
 		
 		this.browseWinController = new BrowseWin.Controller(model.topicNavigation, this.browseWin, communicator.topic, this.commandControl);
 		
-		this.communicator = communicator;
-		
 		model.konsenskiste.subscribe( newKoki => this.kkWinController.setKonsenskisteModel(newKoki) );
 		
 		var rootTopic = new Topic.Model();
@@ -52,12 +50,40 @@ export class Controller {
 		
 		this.kkWin.state.subscribe(state => LocationHash.set(JSON.stringify(state), false));
 		this.subscriptions = [ LocationHash.changed.subscribe(() => this.onHashChanged()) ];
+		
+		this.initAccount();
+		
 		this.onHashChanged();
 	}
 	
 	public dispose() {
 		this.kkWinController.dispose();
+		this.browseWinController.dispose();
 		this.subscriptions.forEach(s => s.dispose());
+	}
+	
+	private initAccount() {
+		this.model.account.subscribe(account => {
+			this.updateAccountViewModel();
+			this.login();
+		});
+		
+		this.viewModel.userName = ko.observable<string>();
+		this.viewModel.userName.subscribe(userName => {
+			if(this.model.account().userName != userName)
+				this.model.account(new mdl.Account({ userName: userName }));
+		});
+		
+		this.updateAccountViewModel();
+		this.login();
+	}
+	
+	private login() {
+		this.communicator.commandProcessor.processCommand(new Communicator.LoginCommand(this.model.account().userName));
+	}
+	
+	private updateAccountViewModel() {
+		if(this.viewModel.userName() != this.model.account().userName) this.viewModel.userName(this.model.account().userName);
 	}
 	
 	private initCommandControl(parent: Commands.CommandControl) {
@@ -88,7 +114,6 @@ export class Controller {
 	private kkWinController: kokiWinCtr.Controller;
 	private browseWin: BrowseWin.Win;
 	private browseWinController: BrowseWin.Controller;
-	private communicator: Communicator.Main;
 	
 	private subscriptions: Evt.Subscription[] = [];
 }

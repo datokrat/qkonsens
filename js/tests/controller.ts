@@ -1,5 +1,6 @@
 import unit = require('tests/tsunit')
 import test = require('tests/test')
+import common = require('../common');
 
 import mdl = require('../model')
 import vm = require('../viewmodel')
@@ -10,6 +11,7 @@ import tpc = require('../topic')
 
 import kokiWin = require('../windows/konsenskiste')
 
+import Communicator = require('../communicator')
 import TestCommunicator = require('tests/testcommunicator')
 
 export class Tests extends unit.TestClass {
@@ -71,6 +73,45 @@ export class Tests extends unit.TestClass {
 	
 	testCommunicatorDisposal() {
 		test.assert( () => !"not implemented" );
+	}
+	
+	loginAfterChangingAccount() {
+		var counter = new common.Counter();
+		var model: mdl.Model = new mdl.ModelImpl();
+		var viewModel = new vm.ViewModel();
+		var communicator = new TestCommunicator();
+		communicator.commandProcessor.chain.insertAtBeginning(cmd => {
+			test.assert(v => cmd instanceof Communicator.LoginCommand);
+			counter.inc('login command');
+			return true;
+		});
+		var controller = new ctr.Controller(model, viewModel, communicator);
+		communicator.commandProcessor.chain.insertAtBeginning(cmd => {
+			test.assert(v => v.val((<Communicator.LoginCommand>cmd).userName) == 'TheUnnamed');
+			return false;
+		});
+		
+		test.assert(v => v.val(counter.get('login command')) == 1);
+		
+		model.account(new mdl.Account({ userName: 'TheUnnamed' }));
+		
+		test.assert(v => v.val(counter.get('login command')) == 2);
+	}
+	
+	updateViewModelAfterChangingAccount() {
+		this.cxt.model.account(new mdl.Account({ userName: 'TheUnnamed' }));
+		
+		test.assert(v => this.cxt.viewModel.userName() == 'TheUnnamed');
+	}
+	
+	updateAccountModelAfterChangingAccountViewModel() {
+		var counter = new common.Counter();
+		this.cxt.model.account.subscribe(() => counter.inc('account changed'));
+		
+		this.cxt.viewModel.userName('TheUnnamed');
+		
+		test.assert(v => v.val(this.cxt.model.account().userName) == 'TheUnnamed');
+		test.assert(v => v.val(counter.get('account changed')) == 1);
 	}
 }
 

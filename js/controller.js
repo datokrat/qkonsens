@@ -1,7 +1,10 @@
-define(["require", "exports", 'topicnavigationcontroller', 'locationhash', 'frame', 'windows/none', 'windows/konsenskiste', 'windows/browse', 'windows/discussion', 'windows/konsenskistecontroller', 'viewmodelcontext', 'topic', 'command'], function(require, exports, topicNavigationCtr, LocationHash, frame, noneWin, KokiWin, BrowseWin, DiscussionWindow, kokiWinCtr, ViewModelContext, Topic, Commands) {
+define(["require", "exports", 'model', 'topicnavigationcontroller', 'locationhash', 'frame', 'windows/none', 'windows/konsenskiste', 'windows/browse', 'windows/discussion', 'windows/konsenskistecontroller', 'communicator', 'viewmodelcontext', 'topic', 'command'], function(require, exports, mdl, topicNavigationCtr, LocationHash, frame, noneWin, KokiWin, BrowseWin, DiscussionWindow, kokiWinCtr, Communicator, ViewModelContext, Topic, Commands) {
     var Controller = (function () {
         function Controller(model, viewModel, communicator, commandControl) {
             var _this = this;
+            this.model = model;
+            this.viewModel = viewModel;
+            this.communicator = communicator;
             this.commandControl = { commandProcessor: new Commands.CommandProcessor() };
             this.subscriptions = [];
             /*var topicNavigationController = new topicNavigationCtr.Controller(model.topicNavigation, viewModel.topicNavigation, { communicator: communicator.topic });*/
@@ -25,8 +28,6 @@ define(["require", "exports", 'topicnavigationcontroller', 'locationhash', 'fram
 
             this.browseWinController = new BrowseWin.Controller(model.topicNavigation, this.browseWin, communicator.topic, this.commandControl);
 
-            this.communicator = communicator;
-
             model.konsenskiste.subscribe(function (newKoki) {
                 return _this.kkWinController.setKonsenskisteModel(newKoki);
             });
@@ -42,13 +43,43 @@ define(["require", "exports", 'topicnavigationcontroller', 'locationhash', 'fram
             this.subscriptions = [LocationHash.changed.subscribe(function () {
                     return _this.onHashChanged();
                 })];
+
+            this.initAccount();
+
             this.onHashChanged();
         }
         Controller.prototype.dispose = function () {
             this.kkWinController.dispose();
+            this.browseWinController.dispose();
             this.subscriptions.forEach(function (s) {
                 return s.dispose();
             });
+        };
+
+        Controller.prototype.initAccount = function () {
+            var _this = this;
+            this.model.account.subscribe(function (account) {
+                _this.updateAccountViewModel();
+                _this.login();
+            });
+
+            this.viewModel.userName = ko.observable();
+            this.viewModel.userName.subscribe(function (userName) {
+                if (_this.model.account().userName != userName)
+                    _this.model.account(new mdl.Account({ userName: userName }));
+            });
+
+            this.updateAccountViewModel();
+            this.login();
+        };
+
+        Controller.prototype.login = function () {
+            this.communicator.commandProcessor.processCommand(new Communicator.LoginCommand(this.model.account().userName));
+        };
+
+        Controller.prototype.updateAccountViewModel = function () {
+            if (this.viewModel.userName() != this.model.account().userName)
+                this.viewModel.userName(this.model.account().userName);
         };
 
         Controller.prototype.initCommandControl = function (parent) {
