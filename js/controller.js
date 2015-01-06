@@ -61,6 +61,7 @@ define(["require", "exports", 'model', 'topicnavigationcontroller', 'locationhas
             this.model.account.subscribe(function (account) {
                 _this.updateAccountViewModel();
                 _this.login();
+                _this.reloadKk();
             });
 
             this.viewModel.userName = ko.observable();
@@ -71,6 +72,10 @@ define(["require", "exports", 'model', 'topicnavigationcontroller', 'locationhas
 
             this.updateAccountViewModel();
             this.login();
+        };
+
+        Controller.prototype.reloadKk = function () {
+            this.model.konsenskiste(this.communicator.konsenskiste.query(this.model.konsenskiste().id()));
         };
 
         Controller.prototype.login = function () {

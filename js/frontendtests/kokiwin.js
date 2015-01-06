@@ -249,7 +249,7 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
                 },
                 function (r) {
                     test.assert(function () {
-                        return _this.webot.query('.cmt').child('*').text('Comment2').exists(false);
+                        return _this.webot.query('.cmt').child('*').text('Comment2').exists();
                     });
                     r();
                 }

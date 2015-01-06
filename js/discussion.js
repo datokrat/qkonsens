@@ -40,7 +40,7 @@ define(["require", "exports", 'observable', 'comment', 'synchronizers/comment'],
             };
             this.discussionClick = function () {
                 if (_this.viewModelContext) {
-                    if (_this.discussableModel && !_this.model.commentsLoading() && !_this.model.commentsLoaded()) {
+                    if (_this.discussableModel && !_this.model.commentsLoading()) {
                         _this.model.commentsLoading(true);
                         _this.communicator.queryCommentsOf(_this.discussableModel.id());
                     }

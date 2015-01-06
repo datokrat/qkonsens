@@ -140,7 +140,7 @@ export class Controller {
 	
 	private discussionClick = () => {
 		if(this.viewModelContext) {
-			if(this.discussableModel && !this.model.commentsLoading() && !this.model.commentsLoaded()) {
+			if(this.discussableModel && !this.model.commentsLoading() /*&& !this.model.commentsLoaded()*/) {
 				this.model.commentsLoading(true);
 				this.communicator.queryCommentsOf(this.discussableModel.id());
 			}

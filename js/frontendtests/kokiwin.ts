@@ -215,7 +215,7 @@ export class Tests {
 				setTimeout(r, 100);
 			},
 			r => {
-				test.assert( () => this.webot.query('.cmt').child('*').text('Comment2').exists(false) );
+				test.assert( () => this.webot.query('.cmt').child('*').text('Comment2').exists() );
 				r();
 			}
 		], r);

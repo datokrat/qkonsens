@@ -66,6 +66,7 @@ export class Controller {
 		this.model.account.subscribe(account => {
 			this.updateAccountViewModel();
 			this.login();
+			this.reloadKk();
 		});
 		
 		this.viewModel.userName = ko.observable<string>();
@@ -76,6 +77,10 @@ export class Controller {
 		
 		this.updateAccountViewModel();
 		this.login();
+	}
+	
+	private reloadKk() {
+		this.model.konsenskiste(this.communicator.konsenskiste.query(this.model.konsenskiste().id()));
 	}
 	
 	private login() {
