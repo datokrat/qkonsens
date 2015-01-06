@@ -126,6 +126,7 @@ export class Main implements DiscussionCommunicator.Base {
 			var comment = this.parseComment(reference.Referrer);
 			comments.push(comment);
 		});
+		comments.sort((a,b) => a.id-b.id);
 		return comments;
 	}
 	

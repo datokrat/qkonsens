@@ -138,6 +138,9 @@ define(["require", "exports", 'event', 'common', 'comment', 'contentcommunicator
                 var comment = _this.parseComment(reference.Referrer);
                 comments.push(comment);
             });
+            comments.sort(function (a, b) {
+                return a.id - b.id;
+            });
             return comments;
         };
 
