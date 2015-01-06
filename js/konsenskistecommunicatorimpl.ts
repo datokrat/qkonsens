@@ -55,7 +55,7 @@ export class Main implements IKonsenskisteCommunicator.Main {
 				discoContext.saveChanges().then(() => r()).fail(error => onError(error));
 			},
 			r => {
-				post.PostTypeId = '2';
+				post.PostTypeId = '6'; /*Quintessence*/
 				post.ContentId = content.Id;
 				discoContext.Posts.add(post);
 				discoContext.saveChanges().then(() => r()).fail(error => onError(error));

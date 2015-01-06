@@ -37,7 +37,7 @@ define(["require", "exports", 'event', 'common', 'discocontext', 'contentcommuni
                     });
                 },
                 function (r) {
-                    post.PostTypeId = '2';
+                    post.PostTypeId = '6'; /*Quintessence*/
                     post.ContentId = content.Id;
                     discoContext.Posts.add(post);
                     discoContext.saveChanges().then(function () {
