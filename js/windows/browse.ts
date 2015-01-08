@@ -15,22 +15,19 @@ export class Win extends Frame.Win {
 }
 
 export class Controller {
-	constructor(model: TopicNavigationModel.Model, win: Win, communicator: Topic.Communicator, commandControl?: Commands.CommandControl) {
-		this.commandControl.commandProcessor.parent = commandControl.commandProcessor;
-		this.commandControl.commandProcessor.chain.append(cmd => {
-			return false;
-		});
+	constructor(model: TopicNavigationModel.Model, win: Win, communicator: Topic.Communicator, commandProcessor?: Commands.CommandProcessor) {
+		this.commandProcessor.parent = commandProcessor;
 		
 		win.navigation = ko.observable(new TopicNavigationViewModel.ViewModel);
 		this.navigationController = new TopicNavigationController.Controller(model, win.navigation(), 
-			{ communicator: communicator, commandProcessor: this.commandControl.commandProcessor });
+			{ communicator: communicator, commandProcessor: this.commandProcessor });
 	}
 	
 	public dispose() {
 		this.navigationController.dispose();
 	}
 	
-	public commandControl: Commands.CommandControl = { commandProcessor: new Commands.CommandProcessor() };
+	public commandProcessor = new Commands.CommandProcessor();
 	
 	private navigationController: TopicNavigationController.Controller;
 }

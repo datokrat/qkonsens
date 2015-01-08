@@ -14,6 +14,9 @@ define(["require", "exports", 'controller', 'topic', 'synchronizers/tsynchronize
 
     var ModelCommunicatorController = (function () {
         function ModelCommunicatorController(model, communicator) {
+            var _this = this;
+            this.model = model;
+            this.communicator = communicator;
             this.subscriptions = [];
             this.subscriptions = [
                 communicator.childrenReceived.subscribe(function (args) {
@@ -25,15 +28,22 @@ define(["require", "exports", 'controller', 'topic', 'synchronizers/tsynchronize
                         model.kokis.set(args.kokis);
                 }),
                 model.selectedTopic.subscribe(function (topic) {
-                    communicator.queryChildren(model.selectedTopic().id);
-                    communicator.queryContainedKokis(model.selectedTopic().id);
+                    return _this.onSelectedTopicChanged(topic);
                 })
             ];
+            this.onSelectedTopicChanged(model.selectedTopic());
         }
         ModelCommunicatorController.prototype.dispose = function () {
             this.subscriptions.forEach(function (s) {
                 return s.dispose();
             });
+        };
+
+        ModelCommunicatorController.prototype.onSelectedTopicChanged = function (topic) {
+            if (topic) {
+                this.communicator.queryChildren(this.model.selectedTopic().id);
+                this.communicator.queryContainedKokis(this.model.selectedTopic().id);
+            }
         };
         return ModelCommunicatorController;
     })();

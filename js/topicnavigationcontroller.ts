@@ -29,7 +29,7 @@ export interface ControllerArgs {
 }
 
 export class ModelCommunicatorController {
-	constructor(model: Model.Model, communicator: Topic.Communicator) {
+	constructor(private model: Model.Model, private communicator: Topic.Communicator) {
 		this.subscriptions = [
 			communicator.childrenReceived.subscribe(args => {
 				if(Topic.IdentifierHelper.equals(args.id, model.selectedTopic().id))
@@ -39,15 +39,20 @@ export class ModelCommunicatorController {
 				if(Topic.IdentifierHelper.equals(args.id, model.selectedTopic().id))
 					model.kokis.set(args.kokis);
 			}),
-			model.selectedTopic.subscribe(topic => {
-				communicator.queryChildren(model.selectedTopic().id);
-				communicator.queryContainedKokis(model.selectedTopic().id);
-			}),
+			model.selectedTopic.subscribe(topic => this.onSelectedTopicChanged(topic)),
 		];
+		this.onSelectedTopicChanged(model.selectedTopic());
 	}
 	
 	public dispose() {
 		this.subscriptions.forEach(s => s.dispose());
+	}
+	
+	private onSelectedTopicChanged(topic: Topic.Model) {
+		if(topic) {
+			this.communicator.queryChildren(this.model.selectedTopic().id);
+			this.communicator.queryContainedKokis(this.model.selectedTopic().id);
+		}
 	}
 	
 	private subscriptions: Evt.Subscription[] = [];

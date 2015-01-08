@@ -26,6 +26,8 @@ import ContentModelTests = require('tests/contentmodel')
 import CommandTests = require('tests/commands');
 import KElementTests = require('tests/kelement');
 
+import TopicLogic = require('tests/topiclogic');
+
 var test = new unit.Test()
 var asyncTest = new asyncunit.Test();
 
@@ -56,7 +58,9 @@ test.addTestClass(new CommandTests.Main(), 'Commands');
 test.addTestClass(new winKoki.Tests(), 'Window: Konsenskiste')
 test.addTestClass(new winBrowse.Tests(), 'Window: Browse');
 
-test.addTestClass(new controller.Tests(), 'Controller')
+test.addTestClass(new TopicLogic.Tests(), 'TopicLogic');
+
+test.addTestClass(new controller.Tests(), 'Controller');
 
 test.showResults(document.getElementById('tests'), test.run())
 asyncTest.run( result => asyncTest.showResults(document.getElementById('asynctests'), result) )

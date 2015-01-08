@@ -1,4 +1,4 @@
-define(["require", "exports", 'tests/tsunit', 'tests/asyncunit', 'tests/rating', 'tests/comment', 'tests/discussion', 'tests/discussionsynchronizer', 'tests/ratingcommunicator', 'tests/topicnavigationmodel', 'tests/topicnavigation', 'tests/topic', 'tests/winbrowse', 'tests/controller', 'tests/konsenskistemodel', 'tests/kernaussage', 'tests/konsenskistecontroller', 'tests/childarraysynchronizer', 'tests/commentsynchronizer', 'tests/observable', 'tests/content', 'tests/context', 'tests/winkonsenskiste', 'tests/contentcommunicator', 'tests/konsenskistecommunicator', 'tests/contentmodel', 'tests/commands', 'tests/kelement'], function(require, exports, unit, asyncunit, Rating, Comment, Discussion, DiscussionSynchronizer, TestRatingCommunicator, topicNavigationModel, topicNavigation, topic, winBrowse, controller, kokiModel, kaModel, kokiController, synchronizer, commentSynchronizer, observable, content, context, winKoki, ContentCommunicator, KokiCommunicator, ContentModelTests, CommandTests, KElementTests) {
+define(["require", "exports", 'tests/tsunit', 'tests/asyncunit', 'tests/rating', 'tests/comment', 'tests/discussion', 'tests/discussionsynchronizer', 'tests/ratingcommunicator', 'tests/topicnavigationmodel', 'tests/topicnavigation', 'tests/topic', 'tests/winbrowse', 'tests/controller', 'tests/konsenskistemodel', 'tests/kernaussage', 'tests/konsenskistecontroller', 'tests/childarraysynchronizer', 'tests/commentsynchronizer', 'tests/observable', 'tests/content', 'tests/context', 'tests/winkonsenskiste', 'tests/contentcommunicator', 'tests/konsenskistecommunicator', 'tests/contentmodel', 'tests/commands', 'tests/kelement', 'tests/topiclogic'], function(require, exports, unit, asyncunit, Rating, Comment, Discussion, DiscussionSynchronizer, TestRatingCommunicator, topicNavigationModel, topicNavigation, topic, winBrowse, controller, kokiModel, kaModel, kokiController, synchronizer, commentSynchronizer, observable, content, context, winKoki, ContentCommunicator, KokiCommunicator, ContentModelTests, CommandTests, KElementTests, TopicLogic) {
     var test = new unit.Test();
     var asyncTest = new asyncunit.Test();
 
@@ -28,6 +28,8 @@ define(["require", "exports", 'tests/tsunit', 'tests/asyncunit', 'tests/rating',
 
     test.addTestClass(new winKoki.Tests(), 'Window: Konsenskiste');
     test.addTestClass(new winBrowse.Tests(), 'Window: Browse');
+
+    test.addTestClass(new TopicLogic.Tests(), 'TopicLogic');
 
     test.addTestClass(new controller.Tests(), 'Controller');
 

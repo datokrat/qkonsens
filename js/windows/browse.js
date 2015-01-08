@@ -15,15 +15,12 @@ define(["require", "exports", '../frame', '../topicnavigationviewmodel', '../top
     exports.Win = Win;
 
     var Controller = (function () {
-        function Controller(model, win, communicator, commandControl) {
-            this.commandControl = { commandProcessor: new Commands.CommandProcessor() };
-            this.commandControl.commandProcessor.parent = commandControl.commandProcessor;
-            this.commandControl.commandProcessor.chain.append(function (cmd) {
-                return false;
-            });
+        function Controller(model, win, communicator, commandProcessor) {
+            this.commandProcessor = new Commands.CommandProcessor();
+            this.commandProcessor.parent = commandProcessor;
 
             win.navigation = ko.observable(new TopicNavigationViewModel.ViewModel);
-            this.navigationController = new TopicNavigationController.Controller(model, win.navigation(), { communicator: communicator, commandProcessor: this.commandControl.commandProcessor });
+            this.navigationController = new TopicNavigationController.Controller(model, win.navigation(), { communicator: communicator, commandProcessor: this.commandProcessor });
         }
         Controller.prototype.dispose = function () {
             this.navigationController.dispose();

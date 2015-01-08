@@ -11,7 +11,7 @@ export class ViewModel {
 	public right: frame.WinContainer;
 	public center: frame.WinContainer;
 	
-	public browseWin: BrowseWin.Win;
+	//public browseWin: BrowseWin.Win;
 	public kkWin: KonsenskisteWin.Win;
 	
 	public userName: Obs.Observable<string>;

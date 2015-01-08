@@ -4,49 +4,64 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'model', 'locationhash', 'frame', 'windows/none', 'windows/konsenskiste', 'windows/browse', 'windows/newkk', 'windows/discussion', 'windows/konsenskistecontroller', 'communicator', 'viewmodelcontext', 'topic', 'command'], function(require, exports, mdl, LocationHash, frame, noneWin, KokiWin, BrowseWin, NewKkWin, DiscussionWindow, kokiWinCtr, Communicator, ViewModelContext, Topic, Commands) {
+define(["require", "exports", 'model', 'locationhash', 'frame', 'windows/none', 'windows/konsenskiste', 'windows/newkk', 'topiclogic', 'windows/discussion', 'windows/konsenskistecontroller', 'communicator', 'viewmodelcontext', 'command', 'windowviewmodel'], function(require, exports, mdl, LocationHash, frame, noneWin, KokiWin, NewKkWin, TopicLogic, DiscussionWindow, kokiWinCtr, Communicator, ViewModelContext, Commands, WindowViewModel) {
     var Controller = (function () {
         function Controller(model, viewModel, communicator, commandControl) {
-            var _this = this;
             this.model = model;
             this.viewModel = viewModel;
             this.communicator = communicator;
             this.commandControl = { commandProcessor: new Commands.CommandProcessor() };
             this.subscriptions = [];
-            /*var topicNavigationController = new topicNavigationCtr.Controller(model.topicNavigation, viewModel.topicNavigation, { communicator: communicator.topic });*/
+            //var topicNavigationController = new topicNavigationCtr.Controller(model.topicNavigation, viewModel., { communicator: communicator.topic });
             this.initCommandControl(commandControl);
 
+            this.initWindows();
+
+            this.initTopicNavigation();
+            this.initAccount();
+            this.initState();
+        }
+        Controller.prototype.initWindows = function () {
+            var _this = this;
             this.kkWin = new KokiWin.Win();
-            this.browseWin = new BrowseWin.Win();
+
+            //this.browseWin = new BrowseWin.Win();
             this.newKkWin = new NewKkWin.Win();
 
-            viewModel.left = new frame.WinContainer(new noneWin.Win());
-            viewModel.right = new frame.WinContainer(this.browseWin);
-            viewModel.center = new frame.WinContainer(this.kkWin);
-            viewModel.browseWin = this.browseWin;
-            viewModel.kkWin = this.kkWin;
+            this.viewModel.left = new frame.WinContainer(new noneWin.Win());
+            this.viewModel.right = new frame.WinContainer(new noneWin.Win());
+            this.viewModel.center = new frame.WinContainer(this.kkWin);
 
-            var globalContext = new ViewModelContext(viewModel.left, viewModel.right, viewModel.center);
+            //this.viewModel.browseWin = this.browseWin;
+            this.viewModel.kkWin = this.kkWin;
+
+            var globalContext = new ViewModelContext(this.viewModel.left, this.viewModel.right, this.viewModel.center);
             globalContext.konsenskisteWindow = this.kkWin;
             globalContext.discussionWindow = new DiscussionWindow.Win();
-            globalContext.konsenskisteModel = model.konsenskiste;
+            globalContext.konsenskisteModel = this.model.konsenskiste;
 
-            this.kkWinController = new kokiWinCtr.Controller(model.konsenskiste(), this.kkWin, communicator.konsenskiste).setContext(globalContext);
+            this.kkWinController = new kokiWinCtr.Controller(this.model.konsenskiste(), this.kkWin, this.communicator.konsenskiste).setContext(globalContext);
 
-            this.browseWinController = new BrowseWin.Controller(model.topicNavigation, this.browseWin, communicator.topic, this.commandControl);
+            //this.browseWinController = new BrowseWin.Controller(this.model.topicNavigation, this.browseWin, this.communicator.topic, this.commandControl);
             this.newKkWinController = new NewKkWin.Controller(this.newKkWin, this.commandControl.commandProcessor);
 
-            model.konsenskiste.subscribe(function (newKoki) {
+            this.model.konsenskiste.subscribe(function (newKoki) {
                 return _this.kkWinController.setKonsenskisteModel(newKoki);
             });
+        };
 
-            var rootTopic = new Topic.Model();
-            rootTopic.id = { root: true, id: undefined };
-            rootTopic.text('[root]');
-            model.topicNavigation.history.push(rootTopic);
+        Controller.prototype.initTopicNavigation = function () {
+            var topicLogicResources = new TopicLogic.Resources();
+            topicLogicResources.topicNavigationModel = this.model.topicNavigation;
+            topicLogicResources.topicCommunicator = this.communicator.topic;
+            topicLogicResources.windowViewModel = new WindowViewModel.Main({ center: this.viewModel.center, left: this.viewModel.left, right: this.viewModel.right });
+            topicLogicResources.commandProcessor = this.commandControl.commandProcessor;
 
-            this.initAccount();
+            this.topicLogic = new TopicLogic.Controller(topicLogicResources);
+        };
 
+        Controller.prototype.initState = function () {
+            var _this = this;
             this.kkWin.state.subscribe(function (state) {
                 return LocationHash.set(JSON.stringify(state), false);
             });
@@ -54,11 +69,14 @@ define(["require", "exports", 'model', 'locationhash', 'frame', 'windows/none', 
                     return _this.onHashChanged();
                 })];
             this.onHashChanged();
-        }
+        };
+
         Controller.prototype.dispose = function () {
             this.kkWinController.dispose();
-            this.browseWinController.dispose();
+
+            //this.browseWinController.dispose();
             this.newKkWinController.dispose();
+            this.topicLogic.dispose();
             this.subscriptions.forEach(function (s) {
                 return s.dispose();
             });

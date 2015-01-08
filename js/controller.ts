@@ -10,6 +10,8 @@ import KokiWin = require('windows/konsenskiste');
 import BrowseWin = require('windows/browse');
 import NewKkWin = require('windows/newkk');
 
+import TopicLogic = require('topiclogic');
+
 import DiscussionWindow = require('windows/discussion')
 import kokiWinCtr = require('windows/konsenskistecontroller')
 import KokiControllerFactory = require('factories/konsenskistecontroller')
@@ -19,42 +21,56 @@ import KonsenskisteModel = require('konsenskistemodel');
 import ViewModelContext = require('viewmodelcontext')
 import Topic = require('topic');
 import Commands = require('command');
+import WindowViewModel = require('windowviewmodel');
 
 export class Controller {
 	constructor(private model: mdl.Model, private viewModel: vm.ViewModel, private communicator: Communicator.Main, commandControl?: Commands.CommandControl) {
-		/*var topicNavigationController = new topicNavigationCtr.Controller(model.topicNavigation, viewModel.topicNavigation, { communicator: communicator.topic });*/
+		//var topicNavigationController = new topicNavigationCtr.Controller(model.topicNavigation, viewModel., { communicator: communicator.topic });
 		this.initCommandControl(commandControl);
 		
+		this.initWindows();
+		
+		this.initTopicNavigation();
+		this.initAccount();
+		this.initState();
+	}
+	
+	private initWindows() {
 		this.kkWin = new KokiWin.Win();
-		this.browseWin = new BrowseWin.Win();
+		//this.browseWin = new BrowseWin.Win();
 		this.newKkWin = new NewKkWin.Win();
 		
-		viewModel.left = new frame.WinContainer( new noneWin.Win() );
-		viewModel.right = new frame.WinContainer( this.browseWin );
-		viewModel.center = new frame.WinContainer( this.kkWin );
-		viewModel.browseWin = this.browseWin;
-		viewModel.kkWin = this.kkWin;
+		this.viewModel.left = new frame.WinContainer( new noneWin.Win() );
+		this.viewModel.right = new frame.WinContainer( new noneWin.Win() );
+		this.viewModel.center = new frame.WinContainer( this.kkWin );
+		//this.viewModel.browseWin = this.browseWin;
+		this.viewModel.kkWin = this.kkWin;
 		
-		var globalContext = new ViewModelContext(viewModel.left, viewModel.right, viewModel.center);
+		var globalContext = new ViewModelContext(this.viewModel.left, this.viewModel.right, this.viewModel.center);
 		globalContext.konsenskisteWindow = this.kkWin;
 		globalContext.discussionWindow = new DiscussionWindow.Win();
-		globalContext.konsenskisteModel = model.konsenskiste;
+		globalContext.konsenskisteModel = this.model.konsenskiste;
 		
-		this.kkWinController = new kokiWinCtr.Controller(model.konsenskiste(), this.kkWin, communicator.konsenskiste)
+		this.kkWinController = new kokiWinCtr.Controller(this.model.konsenskiste(), this.kkWin, this.communicator.konsenskiste)
 			.setContext(globalContext);
 		
-		this.browseWinController = new BrowseWin.Controller(model.topicNavigation, this.browseWin, communicator.topic, this.commandControl);
+		//this.browseWinController = new BrowseWin.Controller(this.model.topicNavigation, this.browseWin, this.communicator.topic, this.commandControl);
 		this.newKkWinController = new NewKkWin.Controller(this.newKkWin, this.commandControl.commandProcessor);
 		
-		model.konsenskiste.subscribe( newKoki => this.kkWinController.setKonsenskisteModel(newKoki) );
+		this.model.konsenskiste.subscribe( newKoki => this.kkWinController.setKonsenskisteModel(newKoki) );
+	}
+	
+	private initTopicNavigation() {
+		var topicLogicResources = new TopicLogic.Resources();
+		topicLogicResources.topicNavigationModel = this.model.topicNavigation;
+		topicLogicResources.topicCommunicator = this.communicator.topic;
+		topicLogicResources.windowViewModel = new WindowViewModel.Main({ center: this.viewModel.center, left: this.viewModel.left, right: this.viewModel.right });
+		topicLogicResources.commandProcessor = this.commandControl.commandProcessor;
 		
-		var rootTopic = new Topic.Model();
-		rootTopic.id = { root: true, id: undefined };
-		rootTopic.text('[root]');
-		model.topicNavigation.history.push(rootTopic);
-		
-		this.initAccount();
-		
+		this.topicLogic = new TopicLogic.Controller(topicLogicResources);
+	}
+	
+	private initState() {
 		this.kkWin.state.subscribe(state => LocationHash.set(JSON.stringify(state), false));
 		this.subscriptions = [ LocationHash.changed.subscribe(() => this.onHashChanged()) ];
 		this.onHashChanged();
@@ -62,8 +78,9 @@ export class Controller {
 	
 	public dispose() {
 		this.kkWinController.dispose();
-		this.browseWinController.dispose();
+		//this.browseWinController.dispose();
 		this.newKkWinController.dispose();
+		this.topicLogic.dispose();
 		this.subscriptions.forEach(s => s.dispose());
 	}
 	
@@ -134,10 +151,12 @@ export class Controller {
 	
 	private kkWin: KokiWin.Win;
 	private kkWinController: kokiWinCtr.Controller;
-	private browseWin: BrowseWin.Win;
-	private browseWinController: BrowseWin.Controller;
+	//private browseWin: BrowseWin.Win;
+	//private browseWinController: BrowseWin.Controller;
 	private newKkWin: NewKkWin.Win;
 	private newKkWinController: NewKkWin.Controller;
+	
+	private topicLogic: TopicLogic.Controller;
 	
 	private subscriptions: Evt.Subscription[] = [];
 }
