@@ -9,6 +9,7 @@ define(["require", "exports", '../frame', '../controller', '../konsenskistemodel
         __extends(Win, _super);
         function Win() {
             _super.call(this, 'newkk-win-template', null);
+            this.state('ok');
         }
         return Win;
     })(frame.Win);

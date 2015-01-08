@@ -10,6 +10,7 @@ define(["require", "exports", '../frame'], function(require, exports, Frame) {
         function Win() {
             _super.call(this, 'discussion-win-template', null);
             this.discussable = ko.observable();
+            this.state('ok');
         }
         return Win;
     })(Frame.Win);

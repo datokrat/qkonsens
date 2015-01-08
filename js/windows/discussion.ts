@@ -22,6 +22,7 @@ export interface State {
 export class Win extends Frame.Win {
 	constructor() {
 		super('discussion-win-template', null);
+		this.state('ok');
 	}
 
 	public discussable: Obs.Observable<DiscussableViewModel> = ko.observable<DiscussableViewModel>();

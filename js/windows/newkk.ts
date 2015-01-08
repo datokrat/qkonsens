@@ -8,6 +8,7 @@ import KonsenskisteModel = require('../konsenskistemodel');
 export class Win extends frame.Win {
 	constructor() {
 		super('newkk-win-template', null);
+		this.state('ok');
 	}
 	
 	public parentName: Obs.Observable<string>;
