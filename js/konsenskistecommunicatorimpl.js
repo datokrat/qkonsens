@@ -87,53 +87,6 @@ define(["require", "exports", 'event', 'common', 'discocontext', 'contentcommuni
             });
         };
 
-        Main.prototype.createContent = function (content, then, fail) {
-            var discoContent = new Disco.Ontology.Content();
-            discoContent.Title = content.title();
-            discoContent.Text = content.text();
-            discoContent.CultureId = '2';
-
-            discoContext.Content.add(discoContent);
-            discoContext.saveChanges().then(function () {
-                return then(parseInt(discoContent.Id));
-            }).fail(function (error) {
-                return fail(error);
-            });
-
-            return discoContent;
-        };
-
-        Main.prototype.createPost = function (props, then, fail) {
-            var discoPost = new Disco.Ontology.Post();
-            discoPost.PostTypeId = props.typeId;
-            discoPost.ContentId = props.contentId;
-
-            discoContext.Posts.add(discoPost);
-            discoContext.saveChanges().then(function () {
-                return then();
-            }).fail(function (error) {
-                return fail(error);
-            });
-
-            return discoPost;
-        };
-
-        Main.prototype.createPostReference = function (props, then, fail) {
-            var discoReference = new Disco.Ontology.PostReference();
-            discoReference.ReferrerId = props.referrerId;
-            discoReference.ReferreeId = props.referreeId;
-            discoReference.ReferenceTypeId = props.typeId;
-
-            discoContext.PostReferences.add(discoReference);
-            discoContext.saveChanges().then(function () {
-                return then();
-            }).fail(function (error) {
-                return fail(error);
-            });
-
-            return discoReference;
-        };
-
         Main.prototype.query = function (id) {
             var _this = this;
             var onError = function (message) {
@@ -203,6 +156,53 @@ define(["require", "exports", 'event', 'common', 'discocontext', 'contentcommuni
             return discoContext.Posts.filter(function (it) {
                 return it.Id == this.Id;
             }, { Id: id }).include("ReferredFrom.Referrer.Content").include("ReferredFrom.Referrer.Ratings").include("ReferredFrom.Referrer.Ratings.ModifiedBy.Author").include("ReferredFrom.Referrer.ReferredFrom").include("ReferredFrom.Referrer.ReferredFrom.ReferenceType.Description").include("ReferredFrom.Referrer.RefersTo.Referree.Content").include("ReferredFrom.Referrer.RefersTo.ReferenceType.Description").include("ReferredFrom.ReferenceType.Description").include("RefersTo.Referree").include("RefersTo.Referree.Ratings").include("RefersTo.Referree.Ratings.ModifiedBy.Author").include("RefersTo.Referree.Content").include("RefersTo.ReferenceType").include("RefersTo.ReferenceType.Description").include("Content").include("Ratings").include("Ratings.ModifiedBy.Author").toArray();
+        };
+
+        Main.prototype.createContent = function (content, then, fail) {
+            var discoContent = new Disco.Ontology.Content();
+            discoContent.Title = content.title();
+            discoContent.Text = content.text();
+            discoContent.CultureId = '2';
+
+            discoContext.Content.add(discoContent);
+            discoContext.saveChanges().then(function () {
+                return then(parseInt(discoContent.Id));
+            }).fail(function (error) {
+                return fail(error);
+            });
+
+            return discoContent;
+        };
+
+        Main.prototype.createPost = function (props, then, fail) {
+            var discoPost = new Disco.Ontology.Post();
+            discoPost.PostTypeId = props.typeId;
+            discoPost.ContentId = props.contentId;
+
+            discoContext.Posts.add(discoPost);
+            discoContext.saveChanges().then(function () {
+                return then();
+            }).fail(function (error) {
+                return fail(error);
+            });
+
+            return discoPost;
+        };
+
+        Main.prototype.createPostReference = function (props, then, fail) {
+            var discoReference = new Disco.Ontology.PostReference();
+            discoReference.ReferrerId = props.referrerId;
+            discoReference.ReferreeId = props.referreeId;
+            discoReference.ReferenceTypeId = props.typeId;
+
+            discoContext.PostReferences.add(discoReference);
+            discoContext.saveChanges().then(function () {
+                return then();
+            }).fail(function (error) {
+                return fail(error);
+            });
+
+            return discoReference;
         };
         return Main;
     })();

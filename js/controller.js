@@ -45,15 +45,14 @@ define(["require", "exports", 'model', 'locationhash', 'frame', 'windows/none', 
             rootTopic.text('[root]');
             model.topicNavigation.history.push(rootTopic);
 
+            this.initAccount();
+
             this.kkWin.state.subscribe(function (state) {
                 return LocationHash.set(JSON.stringify(state), false);
             });
             this.subscriptions = [LocationHash.changed.subscribe(function () {
                     return _this.onHashChanged();
                 })];
-
-            this.initAccount();
-
             this.onHashChanged();
         }
         Controller.prototype.dispose = function () {

@@ -53,11 +53,10 @@ export class Controller {
 		rootTopic.text('[root]');
 		model.topicNavigation.history.push(rootTopic);
 		
-		this.kkWin.state.subscribe(state => LocationHash.set(JSON.stringify(state), false));
-		this.subscriptions = [ LocationHash.changed.subscribe(() => this.onHashChanged()) ];
-		
 		this.initAccount();
 		
+		this.kkWin.state.subscribe(state => LocationHash.set(JSON.stringify(state), false));
+		this.subscriptions = [ LocationHash.changed.subscribe(() => this.onHashChanged()) ];
 		this.onHashChanged();
 	}
 	
