@@ -87,41 +87,6 @@ export class Main implements IKonsenskisteCommunicator.Main {
 		});
 	}
 	
-	private createContent(content: ContentModel.General, then: (id: number) => void, fail: (err) => void): Disco.Ontology.Content {
-		var discoContent = new Disco.Ontology.Content();
-		discoContent.Title = content.title();
-		discoContent.Text = content.text();
-		discoContent.CultureId = '2';
-		
-		discoContext.Content.add(discoContent);
-		discoContext.saveChanges().then(() => then(parseInt(discoContent.Id))).fail(error => fail(error));
-		
-		return discoContent;
-	}
-	
-	private createPost(props: { typeId: string; contentId: string }, then: () => void, fail: (err) => void): Disco.Ontology.Post {
-		var discoPost = new Disco.Ontology.Post();
-		discoPost.PostTypeId = props.typeId;
-		discoPost.ContentId = props.contentId;
-		
-		discoContext.Posts.add(discoPost);
-		discoContext.saveChanges().then(() => then()).fail(error => fail(error));
-		
-		return discoPost;
-	}
-	
-	private createPostReference(props: { referrerId: string; referreeId: string; typeId: string }, then: () => void, fail: (err) => void): Disco.Ontology.PostReference {
-		var discoReference = new Disco.Ontology.PostReference();
-		discoReference.ReferrerId = props.referrerId;
-		discoReference.ReferreeId = props.referreeId;
-		discoReference.ReferenceTypeId = props.typeId;
-		
-		discoContext.PostReferences.add(discoReference);
-		discoContext.saveChanges().then(() => then()).fail(error => fail(error));
-		
-		return discoReference;
-	}
-	
 	public query(id: number): KonsenskisteModel.Model {
 		var onError = message => {
 			out.error(message);
@@ -190,6 +155,41 @@ export class Main implements IKonsenskisteCommunicator.Main {
 		.include("Ratings")
 		.include("Ratings.ModifiedBy.Author")
 		.toArray();
+	}
+	
+	private createContent(content: ContentModel.General, then: (id: number) => void, fail: (err) => void): Disco.Ontology.Content {
+		var discoContent = new Disco.Ontology.Content();
+		discoContent.Title = content.title();
+		discoContent.Text = content.text();
+		discoContent.CultureId = '2';
+		
+		discoContext.Content.add(discoContent);
+		discoContext.saveChanges().then(() => then(parseInt(discoContent.Id))).fail(error => fail(error));
+		
+		return discoContent;
+	}
+	
+	private createPost(props: { typeId: string; contentId: string }, then: () => void, fail: (err) => void): Disco.Ontology.Post {
+		var discoPost = new Disco.Ontology.Post();
+		discoPost.PostTypeId = props.typeId;
+		discoPost.ContentId = props.contentId;
+		
+		discoContext.Posts.add(discoPost);
+		discoContext.saveChanges().then(() => then()).fail(error => fail(error));
+		
+		return discoPost;
+	}
+	
+	private createPostReference(props: { referrerId: string; referreeId: string; typeId: string }, then: () => void, fail: (err) => void): Disco.Ontology.PostReference {
+		var discoReference = new Disco.Ontology.PostReference();
+		discoReference.ReferrerId = props.referrerId;
+		discoReference.ReferreeId = props.referreeId;
+		discoReference.ReferenceTypeId = props.typeId;
+		
+		discoContext.PostReferences.add(discoReference);
+		discoContext.saveChanges().then(() => then()).fail(error => fail(error));
+		
+		return discoReference;
 	}
 }
 
