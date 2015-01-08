@@ -70,6 +70,12 @@ export class Main implements KokiCommunicator.Main {
 		koki.childKas.push(ka);
 		this.kernaussageAppended.raise({ konsenskisteId: kokiId, kernaussage: ka });
 	}
+	
+	public create(koki: KonsenskisteModel.Model, parentTopicId: number, then: (id: number) => void) {
+		koki.id(newId());
+		this.testItems.set(koki.id(), koki);
+		then(koki.id());
+	}
 }
 
 export class Stub implements KokiCommunicator.Main {
@@ -85,4 +91,5 @@ export class Stub implements KokiCommunicator.Main {
 	
 	public query(id: number, out?: KonsenskisteModel.Model): KonsenskisteModel.Model { throw new Error('not implemented') }
 	public createAndAppendKa(kokiId: number, ka: KernaussageModel.Model) { throw new Error('not implemented') }
+	public create(koki: KonsenskisteModel.Model, parentTopicId: number, then: (id: number) => void) { throw new Error('not implemented') }
 }

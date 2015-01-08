@@ -1,13 +1,7 @@
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-define(["require", "exports", 'topic', 'synchronizers/tsynchronizers', 'command'], function(require, exports, Topic, TSync, Commands) {
+define(["require", "exports", 'controller', 'topic', 'synchronizers/tsynchronizers', 'command'], function(require, exports, MainController, Topic, TSync, Commands) {
     var Controller = (function () {
         function Controller(model, viewModel, args) {
-            this.modelViewModelController = new ModelViewModelController(model, viewModel, args.commandControl);
+            this.modelViewModelController = new ModelViewModelController(model, viewModel, args.commandProcessor);
             this.modelCommunicatorController = new ModelCommunicatorController(model, args.communicator);
         }
         Controller.prototype.dispose = function () {
@@ -46,7 +40,7 @@ define(["require", "exports", 'topic', 'synchronizers/tsynchronizers', 'command'
     exports.ModelCommunicatorController = ModelCommunicatorController;
 
     var ModelViewModelController = (function () {
-        function ModelViewModelController(model, viewModel, commandControl) {
+        function ModelViewModelController(model, viewModel, commandProcessor) {
             var _this = this;
             this.model = model;
             this.viewModel = viewModel;
@@ -62,7 +56,7 @@ define(["require", "exports", 'topic', 'synchronizers/tsynchronizers', 'command'
             this.kokiCommandControl.commandProcessor.chain.append(function (cmd) {
                 return _this.handleKokiCommand(cmd);
             });
-            this.kokiCommandControl.commandProcessor.parent = commandControl && commandControl.commandProcessor;
+            this.kokiCommandControl.commandProcessor.parent = commandProcessor;
 
             this.viewModelHistory = ko.observableArray();
             viewModel.breadcrumb = ko.computed(function () {
@@ -82,6 +76,10 @@ define(["require", "exports", 'topic', 'synchronizers/tsynchronizers', 'command'
             viewModel.kokis = ko.observableArray();
             this.kokiSync = new TSync.KokiItemViewModelSync({ commandControl: this.kokiCommandControl });
             this.kokiSync.setViewModelObservable(viewModel.kokis).setModelObservable(model.kokis);
+
+            viewModel.clickCreateNewKoki = function () {
+                commandProcessor.processCommand(new MainController.OpenNewKokiWindowCommand(_this.model.selectedTopic()));
+            };
         }
         ModelViewModelController.prototype.handleChildTopicCommand = function (cmd) {
             if (cmd instanceof Topic.TopicSelectedCommand) {
@@ -119,7 +117,7 @@ define(["require", "exports", 'topic', 'synchronizers/tsynchronizers', 'command'
                 return model.general().title() ? model.general().title() : model.general().text();
             });
             this.viewModel.click = function () {
-                commandControl && commandControl.commandProcessor.processCommand(new SelectKokiCommand(model));
+                commandControl && commandControl.commandProcessor.processCommand(new MainController.SelectKokiCommand(model));
             };
         }
         KokiItemViewModelController.prototype.dispose = function () {
@@ -128,14 +126,4 @@ define(["require", "exports", 'topic', 'synchronizers/tsynchronizers', 'command'
         return KokiItemViewModelController;
     })();
     exports.KokiItemViewModelController = KokiItemViewModelController;
-
-    var SelectKokiCommand = (function (_super) {
-        __extends(SelectKokiCommand, _super);
-        function SelectKokiCommand(model) {
-            _super.call(this);
-            this.model = model;
-        }
-        return SelectKokiCommand;
-    })(Commands.Command);
-    exports.SelectKokiCommand = SelectKokiCommand;
 });

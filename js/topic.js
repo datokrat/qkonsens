@@ -76,6 +76,7 @@ define(["require", "exports", 'command'], function(require, exports, Commands) {
 
     var Model = (function () {
         function Model() {
+            this.id = { root: false, id: null };
             this.title = ko.observable();
             this.text = ko.observable();
         }

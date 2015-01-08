@@ -19,9 +19,9 @@
 			<!-- ko foreach: kokis -->
 				<li class="clickable" data-bind="text: caption, click: click"></li>
 			<!-- /ko -->
-			<!--li data-bind="if: true || $root.isAdmin">
-				<a data-bind="click: click">Neu</a>
-			</li-->
+			<li data-bind="if: true || $root.isAdmin">
+				<a data-bind="click: clickCreateNewKoki">Neu</a>
+			</li>
 		</ul>
 	</div>
 </div>

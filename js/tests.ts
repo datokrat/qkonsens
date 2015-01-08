@@ -9,6 +9,7 @@ import TestRatingCommunicator = require('tests/ratingcommunicator');
 import topicNavigationModel = require('tests/topicnavigationmodel')
 import topicNavigation = require('tests/topicnavigation')
 import topic = require('tests/topic');
+import winBrowse = require('tests/winbrowse');
 import controller = require('tests/controller')
 import kokiModel = require('tests/konsenskistemodel')
 import kaModel = require('tests/kernaussage')
@@ -53,6 +54,7 @@ test.addTestClass(new topic.Tests(), 'Topic');
 test.addTestClass(new CommandTests.Main(), 'Commands');
 
 test.addTestClass(new winKoki.Tests(), 'Window: Konsenskiste')
+test.addTestClass(new winBrowse.Tests(), 'Window: Browse');
 
 test.addTestClass(new controller.Tests(), 'Controller')
 

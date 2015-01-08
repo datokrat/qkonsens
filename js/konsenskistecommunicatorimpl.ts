@@ -15,6 +15,7 @@ import IKernaussageCommunicator = require('kernaussagecommunicator')
 import KonsenskisteModel = require('konsenskistemodel')
 import KernaussageModel = require('kernaussagemodel')
 import ContentModel = require('contentmodel')
+import Topic = require('topic');
 
 export class Main implements IKonsenskisteCommunicator.Main {
 	public content: IContentCommunicator.Main;
@@ -40,32 +41,22 @@ export class Main implements IKonsenskisteCommunicator.Main {
 			this.kernaussageAppendingError.raise({ konsenskisteId: kokiId, message: message.toString() });
 		};
 		
-		var content = new Disco.Ontology.Content();
-		var post = new Disco.Ontology.Post();
+		var content: Disco.Ontology.Content;
+		var post: Disco.Ontology.Post;
 		var reference = new Disco.Ontology.PostReference();
 		var cxtContent = new Disco.Ontology.Content();
 		var cxtPost = new Disco.Ontology.Post();
 		var cxtReference = new Disco.Ontology.PostReference();
 		Common.Callbacks.batch([
 			r => {
-				content.Title = ka.general().title();
-				content.Text = ka.general().text();
-				content.CultureId = '2';
-				discoContext.Content.add(content);
-				discoContext.saveChanges().then(() => r()).fail(error => onError(error));
+				content = this.createContent(ka.general(), () => r(), err => onError(err));
 			},
 			r => {
-				post.PostTypeId = '6'; /*Quintessence*/
-				post.ContentId = content.Id;
-				discoContext.Posts.add(post);
-				discoContext.saveChanges().then(() => r()).fail(error => onError(error));
+				post = this.createPost({ typeId: '6', contentId: content.Id }, () => r(), err => onError(err));
 			},
 			r => {
-				reference.ReferrerId = post.Id;
-				reference.ReferreeId = kokiId.toString();
-				reference.ReferenceTypeId = '11';
-				discoContext.PostReferences.add(reference);
-				discoContext.saveChanges().then(() => r()).fail(error => onError(error));
+				reference = this.createPostReference({ typeId: '11', referrerId: post.Id, referreeId: kokiId.toString() }, 
+					() => r(), err => onError(err));
 			},
 			r => {
 				cxtContent.Text = ka.context().text();
@@ -96,6 +87,41 @@ export class Main implements IKonsenskisteCommunicator.Main {
 		});
 	}
 	
+	private createContent(content: ContentModel.General, then: (id: number) => void, fail: (err) => void): Disco.Ontology.Content {
+		var discoContent = new Disco.Ontology.Content();
+		discoContent.Title = content.title();
+		discoContent.Text = content.text();
+		discoContent.CultureId = '2';
+		
+		discoContext.Content.add(discoContent);
+		discoContext.saveChanges().then(() => then(parseInt(discoContent.Id))).fail(error => fail(error));
+		
+		return discoContent;
+	}
+	
+	private createPost(props: { typeId: string; contentId: string }, then: () => void, fail: (err) => void): Disco.Ontology.Post {
+		var discoPost = new Disco.Ontology.Post();
+		discoPost.PostTypeId = props.typeId;
+		discoPost.ContentId = props.contentId;
+		
+		discoContext.Posts.add(discoPost);
+		discoContext.saveChanges().then(() => then()).fail(error => fail(error));
+		
+		return discoPost;
+	}
+	
+	private createPostReference(props: { referrerId: string; referreeId: string; typeId: string }, then: () => void, fail: (err) => void): Disco.Ontology.PostReference {
+		var discoReference = new Disco.Ontology.PostReference();
+		discoReference.ReferrerId = props.referrerId;
+		discoReference.ReferreeId = props.referreeId;
+		discoReference.ReferenceTypeId = props.typeId;
+		
+		discoContext.PostReferences.add(discoReference);
+		discoContext.saveChanges().then(() => then()).fail(error => fail(error));
+		
+		return discoReference;
+	}
+	
 	public query(id: number): KonsenskisteModel.Model {
 		var onError = message => {
 			out.error(message);
@@ -118,6 +144,30 @@ export class Main implements IKonsenskisteCommunicator.Main {
 		}).fail(error => onError("JayData request failed"));
 		
 		return out;
+	}
+	
+	public create(koki: KonsenskisteModel.Model, parentTopicId: number,  then: (id: number) => void) {
+		var content: Disco.Ontology.Content;
+		var post: Disco.Ontology.Post;
+		var topicReference: Disco.Ontology.PostReference;
+		Common.Callbacks.batch([
+			r => {
+				content = this.createContent(koki.general(), () => r(), err => { throw err });
+			},
+			r => {
+				post = this.createPost({ typeId: '2', contentId: content.Id }, () => r(), err => { throw err });
+			},
+			r => {
+				if(parentTopicId) {
+					topicReference = this.createPostReference({ typeId: '2', referrerId: post.Id, referreeId: parentTopicId.toString() },
+						() => r(), err => { throw err });
+				}
+				else r();
+			}
+		], err => {
+			if(err) throw err;
+			else then(parseInt(post.Id));
+		});
 	}
 	
 	private queryRaw(id: number) {

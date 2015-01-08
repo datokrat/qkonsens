@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../topicnavigationcontroller', '../topicnavigationmodel', '../topicnavigationviewmodel', '../observable', '../topic', 'tests/testtopiccommunicator', '../contentmodel', '../konsenskistemodel', '../command'], function(require, exports, unit, test, common, ctr, mdl, vm, Obs, Topic, TopicCommunicator, ContentModel, KonsenskisteModel, Commands) {
+define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../controller', '../topicnavigationcontroller', '../topicnavigationmodel', '../topicnavigationviewmodel', '../observable', '../topic', 'tests/testtopiccommunicator', '../contentmodel', '../konsenskistemodel', '../command'], function(require, exports, unit, test, common, MainController, ctr, mdl, vm, Obs, Topic, TopicCommunicator, ContentModel, KonsenskisteModel, Commands) {
     var Tests = (function (_super) {
         __extends(Tests, _super);
         function Tests() {
@@ -150,7 +150,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../top
             commandControl.commandProcessor.chain.append(function (cmd) {
                 counter.inc('command');
                 test.assert(function () {
-                    return cmd instanceof ctr.SelectKokiCommand;
+                    return cmd instanceof MainController.SelectKokiCommand;
                 });
                 var castCmd = cmd;
                 test.assert(function () {
@@ -173,11 +173,11 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../top
 
         Tests.prototype.receiveCommandToSelectKoki = function () {
             var counter = new common.Counter();
-            var commandControl = { commandProcessor: new Commands.CommandProcessor };
-            commandControl.commandProcessor.chain.append(function (cmd) {
+            var commandProcessor = new Commands.CommandProcessor;
+            commandProcessor.chain.append(function (cmd) {
                 counter.inc('command');
                 test.assert(function () {
-                    return cmd instanceof ctr.SelectKokiCommand;
+                    return cmd instanceof MainController.SelectKokiCommand;
                 });
                 var castCmd = cmd;
                 test.assert(function () {
@@ -188,12 +188,12 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../top
 
             var model = new mdl.ModelImpl();
             var viewModel = new vm.ViewModel();
-            var controller = new ctr.ModelViewModelController(model, viewModel, commandControl);
+            var controller = new ctr.ModelViewModelController(model, viewModel, commandProcessor);
             var kokiModel = new KonsenskisteModel.Model();
             kokiModel.id(3);
             var kokiViewModel = new vm.KokiItem();
 
-            var cmd = new ctr.SelectKokiCommand(kokiModel);
+            var cmd = new MainController.SelectKokiCommand(kokiModel);
             controller.kokiCommandControl.commandProcessor.processCommand(cmd);
 
             test.assert(function () {
@@ -289,6 +289,36 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../top
 
             test.assert(function () {
                 return queryCtr == 1;
+            });
+        };
+
+        Tests.prototype.newKoki = function () {
+            var counter = new common.Counter();
+            var commandProcessor = new Commands.CommandProcessor();
+            var model = new mdl.ModelImpl();
+            var viewModel = new vm.ViewModel();
+            var controller = new ctr.ModelViewModelController(model, viewModel, commandProcessor);
+
+            var topic = new Topic.Model();
+            topic.title('Parent Topic wr,s');
+            model.history.push(topic);
+
+            commandProcessor.chain.append(function (cmd) {
+                if (cmd instanceof MainController.OpenNewKokiWindowCommand) {
+                    counter.inc('openNewKokiWindow command');
+                    var openNewKokiWindow = cmd;
+                    test.assert(function (v) {
+                        return v.val(openNewKokiWindow.topic.title()) == 'Parent Topic wr,s';
+                    });
+                    return true;
+                }
+                return false;
+            });
+
+            viewModel.clickCreateNewKoki();
+
+            test.assert(function (v) {
+                return v.val(counter.get('openNewKokiWindow command')) == 1;
             });
         };
         return Tests;

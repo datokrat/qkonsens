@@ -5,6 +5,7 @@ import webot = require('frontendtests/webot');
 import common = require('../common');
 import Evt = require('../event');
 import Obs = require('../observable');
+import Commands = require('../command');
 
 import Win = require('windows/browse');
 import Topic = require('../topic');
@@ -80,7 +81,7 @@ export class Tests extends unit.TestClass {
 		var topicCommunicator = new TopicCommunicator.Main();
 		var topicNavigationModel = new TopicNavigationModel.ModelImpl();
 		var topicNavigationViewModel = new TopicNavigationViewModel.ViewModel();
-		var topicNavigationController = new TopicNavigationController.Controller(topicNavigationModel, topicNavigationViewModel, { communicator: topicCommunicator });
+		var topicNavigationController = new TopicNavigationController.Controller(topicNavigationModel, topicNavigationViewModel, { communicator: topicCommunicator, commandProcessor: null });
 		
 		topicCommunicator.setTestChildren({ id: 3 }, [TopicFactory.Main.create({ id: 5, text: 'Topic 5' })]);
 		
@@ -125,6 +126,7 @@ export class Tests extends unit.TestClass {
 				win.navigation().kokis = ko.observableArray([new TopicNavigationViewModel.KokiItem]);
 				win.navigation().kokis()[0].caption = ko.observable<string>('KoKi im Thema');
 				win.navigation().kokis()[0].click = () => {};
+				win.navigation().clickCreateNewKoki = () => {};
 				reloader.viewModel().right.win(win);
 				setTimeout(r);
 			},
@@ -142,7 +144,7 @@ export class Tests extends unit.TestClass {
 		var topicCommunicator = new TopicCommunicator.Main();
 		var topicNavigationModel = new TopicNavigationModel.ModelImpl();
 		var topicNavigationViewModel = new TopicNavigationViewModel.ViewModel();
-		var topicNavigationController = new TopicNavigationController.Controller(topicNavigationModel, topicNavigationViewModel, { communicator: topicCommunicator, commandControl: reloader.controller().commandControl });
+		var topicNavigationController = new TopicNavigationController.Controller(topicNavigationModel, topicNavigationViewModel, { communicator: topicCommunicator, commandProcessor: reloader.controller().commandControl.commandProcessor });
 		
 		common.Callbacks.batch([
 			r => {

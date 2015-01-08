@@ -18,43 +18,32 @@ define(["require", "exports", 'event', 'common', 'discocontext', 'contentcommuni
                 _this.kernaussageAppendingError.raise({ konsenskisteId: kokiId, message: message.toString() });
             };
 
-            var content = new Disco.Ontology.Content();
-            var post = new Disco.Ontology.Post();
+            var content;
+            var post;
             var reference = new Disco.Ontology.PostReference();
             var cxtContent = new Disco.Ontology.Content();
             var cxtPost = new Disco.Ontology.Post();
             var cxtReference = new Disco.Ontology.PostReference();
             Common.Callbacks.batch([
                 function (r) {
-                    content.Title = ka.general().title();
-                    content.Text = ka.general().text();
-                    content.CultureId = '2';
-                    discoContext.Content.add(content);
-                    discoContext.saveChanges().then(function () {
+                    content = _this.createContent(ka.general(), function () {
                         return r();
-                    }).fail(function (error) {
-                        return onError(error);
+                    }, function (err) {
+                        return onError(err);
                     });
                 },
                 function (r) {
-                    post.PostTypeId = '6'; /*Quintessence*/
-                    post.ContentId = content.Id;
-                    discoContext.Posts.add(post);
-                    discoContext.saveChanges().then(function () {
+                    post = _this.createPost({ typeId: '6', contentId: content.Id }, function () {
                         return r();
-                    }).fail(function (error) {
-                        return onError(error);
+                    }, function (err) {
+                        return onError(err);
                     });
                 },
                 function (r) {
-                    reference.ReferrerId = post.Id;
-                    reference.ReferreeId = kokiId.toString();
-                    reference.ReferenceTypeId = '11';
-                    discoContext.PostReferences.add(reference);
-                    discoContext.saveChanges().then(function () {
+                    reference = _this.createPostReference({ typeId: '11', referrerId: post.Id, referreeId: kokiId.toString() }, function () {
                         return r();
-                    }).fail(function (error) {
-                        return onError(error);
+                    }, function (err) {
+                        return onError(err);
                     });
                 },
                 function (r) {
@@ -98,6 +87,53 @@ define(["require", "exports", 'event', 'common', 'discocontext', 'contentcommuni
             });
         };
 
+        Main.prototype.createContent = function (content, then, fail) {
+            var discoContent = new Disco.Ontology.Content();
+            discoContent.Title = content.title();
+            discoContent.Text = content.text();
+            discoContent.CultureId = '2';
+
+            discoContext.Content.add(discoContent);
+            discoContext.saveChanges().then(function () {
+                return then(parseInt(discoContent.Id));
+            }).fail(function (error) {
+                return fail(error);
+            });
+
+            return discoContent;
+        };
+
+        Main.prototype.createPost = function (props, then, fail) {
+            var discoPost = new Disco.Ontology.Post();
+            discoPost.PostTypeId = props.typeId;
+            discoPost.ContentId = props.contentId;
+
+            discoContext.Posts.add(discoPost);
+            discoContext.saveChanges().then(function () {
+                return then();
+            }).fail(function (error) {
+                return fail(error);
+            });
+
+            return discoPost;
+        };
+
+        Main.prototype.createPostReference = function (props, then, fail) {
+            var discoReference = new Disco.Ontology.PostReference();
+            discoReference.ReferrerId = props.referrerId;
+            discoReference.ReferreeId = props.referreeId;
+            discoReference.ReferenceTypeId = props.typeId;
+
+            discoContext.PostReferences.add(discoReference);
+            discoContext.saveChanges().then(function () {
+                return then();
+            }).fail(function (error) {
+                return fail(error);
+            });
+
+            return discoReference;
+        };
+
         Main.prototype.query = function (id) {
             var _this = this;
             var onError = function (message) {
@@ -123,6 +159,44 @@ define(["require", "exports", 'event', 'common', 'discocontext', 'contentcommuni
             });
 
             return out;
+        };
+
+        Main.prototype.create = function (koki, parentTopicId, then) {
+            var _this = this;
+            var content;
+            var post;
+            var topicReference;
+            Common.Callbacks.batch([
+                function (r) {
+                    content = _this.createContent(koki.general(), function () {
+                        return r();
+                    }, function (err) {
+                        throw err;
+                    });
+                },
+                function (r) {
+                    post = _this.createPost({ typeId: '2', contentId: content.Id }, function () {
+                        return r();
+                    }, function (err) {
+                        throw err;
+                    });
+                },
+                function (r) {
+                    if (parentTopicId) {
+                        topicReference = _this.createPostReference({ typeId: '2', referrerId: post.Id, referreeId: parentTopicId.toString() }, function () {
+                            return r();
+                        }, function (err) {
+                            throw err;
+                        });
+                    } else
+                        r();
+                }
+            ], function (err) {
+                if (err)
+                    throw err;
+                else
+                    then(parseInt(post.Id));
+            });
         };
 
         Main.prototype.queryRaw = function (id) {

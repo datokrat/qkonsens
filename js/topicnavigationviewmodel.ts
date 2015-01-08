@@ -6,6 +6,8 @@ export class ViewModel {
 	public selected: Obs.Observable<Topic.ViewModel>;
 	public children: Obs.ObservableArray<Topic.ViewModel>;
 	public kokis: Obs.ObservableArray<KokiItem>;
+	
+	public clickCreateNewKoki: () => void;
 }
 
 export class KokiItem {

@@ -23,7 +23,7 @@ export class Controller {
 		
 		win.navigation = ko.observable(new TopicNavigationViewModel.ViewModel);
 		this.navigationController = new TopicNavigationController.Controller(model, win.navigation(), 
-			{ communicator: communicator, commandControl: this.commandControl });
+			{ communicator: communicator, commandProcessor: this.commandControl.commandProcessor });
 	}
 	
 	public dispose() {

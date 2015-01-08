@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../model', '../viewmodel', '../controller', '../konsenskistemodel', '../topic', '../windows/konsenskiste', '../communicator', 'tests/testcommunicator'], function(require, exports, unit, test, common, mdl, vm, ctr, koki, tpc, kokiWin, Communicator, TestCommunicator) {
+define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../model', '../viewmodel', '../controller', '../konsenskistemodel', '../topic', 'windows/konsenskiste', 'windows/newkk', '../konsenskistemodel', '../communicator', 'tests/testcommunicator', '../topic'], function(require, exports, unit, test, common, mdl, vm, ctr, koki, tpc, kokiWin, NewKkWin, KonsenskisteModel, Communicator, TestCommunicator, Topic) {
     var Tests = (function (_super) {
         __extends(Tests, _super);
         function Tests() {
@@ -139,6 +139,39 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../mod
             });
             test.assert(function (v) {
                 return v.val(counter.get('account changed')) == 1;
+            });
+        };
+
+        Tests.prototype.processCreateNewKokiCommand = function () {
+            var counter = new common.Counter();
+            this.cxt.communicator.konsenskiste.create = function (koki, parentTopicId, then) {
+                counter.inc('communicator.create');
+                then(2);
+            };
+            this.cxt.controller.commandControl.commandProcessor.processCommand(new ctr.CreateNewKokiCommand(new KonsenskisteModel.Model(), new Topic.Model, function (id) {
+                test.assert(function (v) {
+                    return v.val(id) == 2;
+                });
+                counter.inc('then');
+            }));
+            test.assert(function (v) {
+                return v.val(counter.get('then')) == 1;
+            });
+            test.assert(function (v) {
+                return v.val(counter.get('communicator.create')) == 1;
+            });
+        };
+
+        Tests.prototype.processOpenNewKkWindowCommand = function () {
+            var _this = this;
+            var topic = new tpc.Model();
+            topic.title('Parent Topic apgr');
+            this.cxt.controller.commandControl.commandProcessor.processCommand(new ctr.OpenNewKokiWindowCommand(topic));
+            test.assert(function (v) {
+                return _this.cxt.viewModel.left.win() instanceof NewKkWin.Win;
+            });
+            test.assert(function (v) {
+                return _this.cxt.viewModel.left.win().parentName() == 'Parent Topic apgr';
             });
         };
         return Tests;

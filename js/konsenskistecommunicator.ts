@@ -18,6 +18,7 @@ export interface Main {
 	kernaussageAppendingError: Events.Event<KaAppendingErrorArgs>;
 	query(id: number, out?: KonsenskisteModel.Model): KonsenskisteModel.Model;
 	createAndAppendKa(kokiId: number, ka: KernaussageModel.Model);
+	create(koki: KonsenskisteModel.Model, parentTopicId: number, then: (id: number) => void);
 }
 
 export interface ReceivedArgs {

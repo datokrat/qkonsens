@@ -49,6 +49,12 @@ define(["require", "exports", '../id', 'event', 'itemcontainer', 'tests/testcont
             koki.childKas.push(ka);
             this.kernaussageAppended.raise({ konsenskisteId: kokiId, kernaussage: ka });
         };
+
+        Main.prototype.create = function (koki, parentTopicId, then) {
+            koki.id(newId());
+            this.testItems.set(koki.id(), koki);
+            then(koki.id());
+        };
         return Main;
     })();
     exports.Main = Main;
@@ -68,6 +74,9 @@ define(["require", "exports", '../id', 'event', 'itemcontainer', 'tests/testcont
             throw new Error('not implemented');
         };
         Stub.prototype.createAndAppendKa = function (kokiId, ka) {
+            throw new Error('not implemented');
+        };
+        Stub.prototype.create = function (koki, parentTopicId, then) {
             throw new Error('not implemented');
         };
         return Stub;

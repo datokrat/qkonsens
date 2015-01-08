@@ -70,7 +70,7 @@ export class ModelCommunicatorController {
 }
 
 export class Model {
-	public id: TopicIdentifier;
+	public id: TopicIdentifier = { root: false, id: null };
 	
 	public title = ko.observable<string>();
 	public text = ko.observable<string>();

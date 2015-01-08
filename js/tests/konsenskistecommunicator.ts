@@ -123,6 +123,17 @@ class TestClass extends unit.TestClass {
 		
 		r();
 	}
+	
+	createKoki(async, r) {
+		async();
+		var koki = new KonsenskisteModel.Model;
+		koki.general().text('Text');
+		koki.general().title('Title');
+		koki.context().text('Klärtext');
+		this.com.create(koki, null, id => {
+			r();
+		});
+	}
 }
 
 export = TestClass;

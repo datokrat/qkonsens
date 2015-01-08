@@ -1,6 +1,7 @@
 import unit = require('tests/tsunit');
 import test = require('tests/test');
 import common = require('../common');
+import MainController = require('../controller');
 import ctr = require('../topicnavigationcontroller')
 import mdl = require('../topicnavigationmodel')
 import vm = require('../topicnavigationviewmodel')
@@ -115,8 +116,8 @@ export class Tests extends unit.TestClass {
 		var commandControl: Commands.CommandControl = { commandProcessor: new Commands.CommandProcessor };
 		commandControl.commandProcessor.chain.append(cmd => {
 			counter.inc('command');
-			test.assert(() => cmd instanceof ctr.SelectKokiCommand);
-			var castCmd = <ctr.SelectKokiCommand>cmd;
+			test.assert(() => cmd instanceof MainController.SelectKokiCommand);
+			var castCmd = <MainController.SelectKokiCommand>cmd;
 			test.assert(() => castCmd.model.id() == 3);
 			return true;
 		});
@@ -132,22 +133,22 @@ export class Tests extends unit.TestClass {
 	
 	receiveCommandToSelectKoki() {
 		var counter = new common.Counter();
-		var commandControl: Commands.CommandControl = { commandProcessor: new Commands.CommandProcessor };
-		commandControl.commandProcessor.chain.append(cmd => {
+		var commandProcessor: Commands.CommandProcessor = new Commands.CommandProcessor;
+		commandProcessor.chain.append(cmd => {
 			counter.inc('command');
-			test.assert(() => cmd instanceof ctr.SelectKokiCommand);
-			var castCmd = <ctr.SelectKokiCommand>cmd;
+			test.assert(() => cmd instanceof MainController.SelectKokiCommand);
+			var castCmd = <MainController.SelectKokiCommand>cmd;
 			test.assert(() => castCmd.model.id() == 3);
 			return true;
 		});
 		
 		var model = new mdl.ModelImpl();
 		var viewModel = new vm.ViewModel();
-		var controller = new ctr.ModelViewModelController(model, viewModel, commandControl);
+		var controller = new ctr.ModelViewModelController(model, viewModel, commandProcessor);
 		var kokiModel = new KonsenskisteModel.Model(); kokiModel.id(3);
 		var kokiViewModel = new vm.KokiItem();
 		
-		var cmd = new ctr.SelectKokiCommand(kokiModel);
+		var cmd = new MainController.SelectKokiCommand(kokiModel);
 		controller.kokiCommandControl.commandProcessor.processCommand(cmd);
 		
 		test.assert(() => counter.get('command') == 1);
@@ -211,6 +212,32 @@ export class Tests extends unit.TestClass {
 		model.history.push(topic);
 		
 		test.assert(() => queryCtr == 1);
+	}
+	
+	newKoki() {
+		var counter = new common.Counter();
+		var commandProcessor = new Commands.CommandProcessor();
+		var model = new mdl.ModelImpl();
+		var viewModel = new vm.ViewModel();
+		var controller = new ctr.ModelViewModelController(model, viewModel, commandProcessor);
+		
+		var topic = new Topic.Model();
+		topic.title('Parent Topic wr,s');
+		model.history.push(topic);
+		
+		commandProcessor.chain.append(cmd => {
+			if(cmd instanceof MainController.OpenNewKokiWindowCommand) {
+				counter.inc('openNewKokiWindow command');
+				var openNewKokiWindow = <MainController.OpenNewKokiWindowCommand>cmd;
+				test.assert(v => v.val(openNewKokiWindow.topic.title()) == 'Parent Topic wr,s');
+				return true;
+			}
+			return false;
+		});
+		
+		viewModel.clickCreateNewKoki();
+		
+		test.assert(v => v.val(counter.get('openNewKokiWindow command')) == 1);
 	}
 }
 

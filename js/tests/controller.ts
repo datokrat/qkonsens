@@ -9,10 +9,13 @@ import ctr = require('../controller')
 import koki = require('../konsenskistemodel')
 import tpc = require('../topic')
 
-import kokiWin = require('../windows/konsenskiste')
+import kokiWin = require('windows/konsenskiste')
+import NewKkWin = require('windows/newkk')
+import KonsenskisteModel = require('../konsenskistemodel');
 
 import Communicator = require('../communicator')
 import TestCommunicator = require('tests/testcommunicator')
+import Topic = require('../topic');
 
 export class Tests extends unit.TestClass {
 	private factory = new Factory();
@@ -112,6 +115,28 @@ export class Tests extends unit.TestClass {
 		
 		test.assert(v => v.val(this.cxt.model.account().userName) == 'TheUnnamed');
 		test.assert(v => v.val(counter.get('account changed')) == 1);
+	}
+	
+	processCreateNewKokiCommand() {
+		var counter = new common.Counter();
+		this.cxt.communicator.konsenskiste.create = (koki: KonsenskisteModel.Model, parentTopicId: number, then: (id: number) => void) => {
+			counter.inc('communicator.create');
+			then(2);
+		};
+		this.cxt.controller.commandControl.commandProcessor.processCommand(new ctr.CreateNewKokiCommand(new KonsenskisteModel.Model(), new Topic.Model, (id: number) => {
+			test.assert(v => v.val(id) == 2);
+			counter.inc('then');
+		}));
+		test.assert(v => v.val(counter.get('then')) == 1);
+		test.assert(v => v.val(counter.get('communicator.create')) == 1);
+	}
+	
+	processOpenNewKkWindowCommand() {
+		var topic = new tpc.Model();
+		topic.title('Parent Topic apgr');
+		this.cxt.controller.commandControl.commandProcessor.processCommand(new ctr.OpenNewKokiWindowCommand(topic));
+		test.assert(v => this.cxt.viewModel.left.win() instanceof NewKkWin.Win);
+		test.assert(v => (<NewKkWin.Win>this.cxt.viewModel.left.win()).parentName() == 'Parent Topic apgr');
 	}
 }
 

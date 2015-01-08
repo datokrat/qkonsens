@@ -1,5 +1,6 @@
 import Evt = require('event');
 import Obs = require('observable');
+import MainController = require('controller');
 import Model = require('topicnavigationmodel');
 import ViewModel = require('topicnavigationviewmodel');
 import Topic = require('topic');
@@ -9,7 +10,7 @@ import Commands = require('command');
 
 export class Controller {
 	constructor(model: Model.Model, viewModel: ViewModel.ViewModel, args: ControllerArgs) {
-		this.modelViewModelController = new ModelViewModelController(model, viewModel, args.commandControl);
+		this.modelViewModelController = new ModelViewModelController(model, viewModel, args.commandProcessor);
 		this.modelCommunicatorController = new ModelCommunicatorController(model, args.communicator);
 	}
 	
@@ -24,7 +25,7 @@ export class Controller {
 
 export interface ControllerArgs {
 	communicator: Topic.Communicator;
-	commandControl?: Commands.CommandControl;
+	commandProcessor: Commands.CommandProcessor;
 }
 
 export class ModelCommunicatorController {
@@ -53,11 +54,11 @@ export class ModelCommunicatorController {
 }
 
 export class ModelViewModelController {
-	constructor(private model: Model.Model, private viewModel: ViewModel.ViewModel, commandControl?: Commands.CommandControl) {
+	constructor(private model: Model.Model, private viewModel: ViewModel.ViewModel, commandProcessor?: Commands.CommandProcessor) {
 		this.childTopicCommandControl.commandProcessor.chain.append(cmd => this.handleChildTopicCommand(cmd));
 		this.breadcrumbTopicCommandControl.commandProcessor.chain.append(cmd => this.handleBreadcrumbTopicCommand(cmd));
 		this.kokiCommandControl.commandProcessor.chain.append(cmd => this.handleKokiCommand(cmd));
-		this.kokiCommandControl.commandProcessor.parent = commandControl && commandControl.commandProcessor;
+		this.kokiCommandControl.commandProcessor.parent = commandProcessor;
 		
 		this.viewModelHistory = ko.observableArray<Topic.ViewModel>();
 		viewModel.breadcrumb = ko.computed<Topic.ViewModel[]>(() => this.viewModelHistory().slice(0,-1));
@@ -79,6 +80,10 @@ export class ModelViewModelController {
 		this.kokiSync
 			.setViewModelObservable(viewModel.kokis)
 			.setModelObservable(model.kokis);
+		
+		viewModel.clickCreateNewKoki = () => {
+			commandProcessor.processCommand(new MainController.OpenNewKokiWindowCommand(this.model.selectedTopic()));
+		};
 	}
 	
 	private handleChildTopicCommand(cmd: Commands.Command) {
@@ -121,15 +126,11 @@ export class KokiItemViewModelController {
 	constructor(model: KonsenskisteModel.Model, private viewModel: ViewModel.KokiItem, commandControl?: Commands.CommandControl) {
 		this.viewModel.caption = ko.computed(() => model.general().title() ? model.general().title() : model.general().text());
 		this.viewModel.click = () => {
-			commandControl && commandControl.commandProcessor.processCommand(new SelectKokiCommand(model));
+			commandControl && commandControl.commandProcessor.processCommand(new MainController.SelectKokiCommand(model));
 		};
 	}
 	
 	public dispose() {
 		this.viewModel.caption.dispose();
 	}
-}
-
-export class SelectKokiCommand extends Commands.Command {
-	constructor(public model: KonsenskisteModel.Model) { super() }
 }

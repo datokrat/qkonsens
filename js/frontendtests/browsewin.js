@@ -82,7 +82,7 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', 'frontendtests/re
             var topicCommunicator = new TopicCommunicator.Main();
             var topicNavigationModel = new TopicNavigationModel.ModelImpl();
             var topicNavigationViewModel = new TopicNavigationViewModel.ViewModel();
-            var topicNavigationController = new TopicNavigationController.Controller(topicNavigationModel, topicNavigationViewModel, { communicator: topicCommunicator });
+            var topicNavigationController = new TopicNavigationController.Controller(topicNavigationModel, topicNavigationViewModel, { communicator: topicCommunicator, commandProcessor: null });
 
             topicCommunicator.setTestChildren({ id: 3 }, [TopicFactory.Main.create({ id: 5, text: 'Topic 5' })]);
 
@@ -136,6 +136,8 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', 'frontendtests/re
                     win.navigation().kokis()[0].caption = ko.observable('KoKi im Thema');
                     win.navigation().kokis()[0].click = function () {
                     };
+                    win.navigation().clickCreateNewKoki = function () {
+                    };
                     reloader.viewModel().right.win(win);
                     setTimeout(r);
                 },
@@ -158,7 +160,7 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', 'frontendtests/re
             var topicCommunicator = new TopicCommunicator.Main();
             var topicNavigationModel = new TopicNavigationModel.ModelImpl();
             var topicNavigationViewModel = new TopicNavigationViewModel.ViewModel();
-            var topicNavigationController = new TopicNavigationController.Controller(topicNavigationModel, topicNavigationViewModel, { communicator: topicCommunicator, commandControl: reloader.controller().commandControl });
+            var topicNavigationController = new TopicNavigationController.Controller(topicNavigationModel, topicNavigationViewModel, { communicator: topicCommunicator, commandProcessor: reloader.controller().commandControl.commandProcessor });
 
             common.Callbacks.batch([
                 function (r) {
