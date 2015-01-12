@@ -6,6 +6,7 @@ import common = require('../common');
 import Evt = require('../event');
 import Obs = require('../observable');
 import Commands = require('../command');
+import KokiLogic = require('../kokilogic');
 
 import Win = require('windows/browse');
 import Topic = require('../topic');
@@ -141,10 +142,10 @@ export class Tests extends unit.TestClass {
 	clickKokiInTopic(async, r) {
 		async();
 		var win = new Win.Win();
-		var topicCommunicator = new TopicCommunicator.Main();
+		var topicCommunicator = new TopicCommunicator.Stub();
 		var topicNavigationModel = new TopicNavigationModel.ModelImpl();
 		var topicNavigationViewModel = new TopicNavigationViewModel.ViewModel();
-		var topicNavigationController = new TopicNavigationController.Controller(topicNavigationModel, topicNavigationViewModel, { communicator: topicCommunicator, commandProcessor: reloader.controller().commandControl.commandProcessor });
+		var topicNavigationController = new TopicNavigationController.Controller(topicNavigationModel, topicNavigationViewModel, { communicator: topicCommunicator, commandProcessor: reloader.controller().commandProcessor });
 		
 		common.Callbacks.batch([
 			r => {
@@ -161,7 +162,8 @@ export class Tests extends unit.TestClass {
 				setTimeout(r);
 			},
 			r => {
-				test.assert(() => reloader.model().konsenskiste().id() == 19);
+				var koki = new KonsenskisteModel.Model(); koki.id(19);
+				this.webot.query('.win:contains("Detailansicht")').child('*').text('Fehler').exists();
 				r();
 			}
 		], r);

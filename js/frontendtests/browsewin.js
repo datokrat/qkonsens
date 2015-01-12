@@ -157,10 +157,10 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', 'frontendtests/re
             var _this = this;
             async();
             var win = new Win.Win();
-            var topicCommunicator = new TopicCommunicator.Main();
+            var topicCommunicator = new TopicCommunicator.Stub();
             var topicNavigationModel = new TopicNavigationModel.ModelImpl();
             var topicNavigationViewModel = new TopicNavigationViewModel.ViewModel();
-            var topicNavigationController = new TopicNavigationController.Controller(topicNavigationModel, topicNavigationViewModel, { communicator: topicCommunicator, commandProcessor: reloader.controller().commandControl.commandProcessor });
+            var topicNavigationController = new TopicNavigationController.Controller(topicNavigationModel, topicNavigationViewModel, { communicator: topicCommunicator, commandProcessor: reloader.controller().commandProcessor });
 
             common.Callbacks.batch([
                 function (r) {
@@ -181,9 +181,9 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', 'frontendtests/re
                     setTimeout(r);
                 },
                 function (r) {
-                    test.assert(function () {
-                        return reloader.model().konsenskiste().id() == 19;
-                    });
+                    var koki = new KonsenskisteModel.Model();
+                    koki.id(19);
+                    _this.webot.query('.win:contains("Detailansicht")').child('*').text('Fehler').exists();
                     r();
                 }
             ], r);

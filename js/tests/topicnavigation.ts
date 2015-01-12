@@ -2,6 +2,7 @@ import unit = require('tests/tsunit');
 import test = require('tests/test');
 import common = require('../common');
 import MainController = require('../controller');
+import KokiLogic = require('../kokilogic');
 import ctr = require('../topicnavigationcontroller')
 import mdl = require('../topicnavigationmodel')
 import vm = require('../topicnavigationviewmodel')
@@ -116,8 +117,8 @@ export class Tests extends unit.TestClass {
 		var commandControl: Commands.CommandControl = { commandProcessor: new Commands.CommandProcessor };
 		commandControl.commandProcessor.chain.append(cmd => {
 			counter.inc('command');
-			test.assert(() => cmd instanceof MainController.SelectKokiCommand);
-			var castCmd = <MainController.SelectKokiCommand>cmd;
+			test.assert(() => cmd instanceof KokiLogic.SelectAndLoadKokiCommand);
+			var castCmd = <KokiLogic.SelectAndLoadKokiCommand>cmd;
 			test.assert(() => castCmd.model.id() == 3);
 			return true;
 		});
@@ -136,8 +137,8 @@ export class Tests extends unit.TestClass {
 		var commandProcessor: Commands.CommandProcessor = new Commands.CommandProcessor;
 		commandProcessor.chain.append(cmd => {
 			counter.inc('command');
-			test.assert(() => cmd instanceof MainController.SelectKokiCommand);
-			var castCmd = <MainController.SelectKokiCommand>cmd;
+			test.assert(() => cmd instanceof KokiLogic.SelectAndLoadKokiCommand);
+			var castCmd = <KokiLogic.SelectAndLoadKokiCommand>cmd;
 			test.assert(() => castCmd.model.id() == 3);
 			return true;
 		});
@@ -148,7 +149,7 @@ export class Tests extends unit.TestClass {
 		var kokiModel = new KonsenskisteModel.Model(); kokiModel.id(3);
 		var kokiViewModel = new vm.KokiItem();
 		
-		var cmd = new MainController.SelectKokiCommand(kokiModel);
+		var cmd = new KokiLogic.SelectAndLoadKokiCommand(kokiModel);
 		controller.kokiCommandControl.commandProcessor.processCommand(cmd);
 		
 		test.assert(() => counter.get('command') == 1);

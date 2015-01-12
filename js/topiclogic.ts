@@ -9,7 +9,6 @@ import BrowseWin = require('windows/browse');
 export class Controller {
 	constructor(resources: Resources) {
 		this.resources = resources;
-		this.commandProcessor = new Commands.CommandProcessor();
 		
 		this.initTopicNavigation();
 		this.initBrowseWin();
@@ -33,8 +32,6 @@ export class Controller {
 		
 		this.resources.windowViewModel.fillFrameWithWindow(WindowViewModel.Frame.Right, this.browseWin);
 	}
-	
-	public commandProcessor: Commands.CommandProcessor;
 	
 	private resources: Resources;
 	private browseWin: BrowseWin.Win;

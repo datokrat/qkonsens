@@ -13,7 +13,7 @@ export class Tests extends unit.TestClass {
 		var model = this.modelFactory.create( 'Begriff Basisdemokratie', 'Basisdemokratie ist Demokratie, die aus der Basis kommt', 'Baduum-Disch!' );
 		var viewModel = new ViewModel.ViewModel();
 		var communicator = new KernaussageCommunicator();
-		var controller = new Controller.Controller(model, viewModel, communicator);
+		var controller = new Controller.Controller(model, viewModel, { communicator: communicator, commandProcessor: null });
 		
 		test.assert( () => viewModel.general().title() == 'Begriff Basisdemokratie' );
 	}

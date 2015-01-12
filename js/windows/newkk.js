@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", '../frame', '../controller', '../konsenskistemodel'], function(require, exports, frame, MainController, KonsenskisteModel) {
+define(["require", "exports", '../frame', '../controller', '../kokilogic', '../konsenskistemodel'], function(require, exports, frame, MainController, KokiLogic, KonsenskisteModel) {
     var Win = (function (_super) {
         __extends(Win, _super);
         function Win() {
@@ -32,7 +32,7 @@ define(["require", "exports", '../frame', '../controller', '../konsenskistemodel
                 koki.general().text(window.text());
                 commandProcessor.processCommand(new MainController.CreateNewKokiCommand(koki, _this.parentTopic(), function (id) {
                     koki.id(id);
-                    commandProcessor.processCommand(new MainController.SelectKokiCommand(koki));
+                    commandProcessor.processCommand(new KokiLogic.SelectAndLoadKokiCommand(koki));
                 }));
             };
         }

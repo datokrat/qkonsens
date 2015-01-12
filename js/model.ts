@@ -2,8 +2,8 @@ import topicNavigation = require('topicnavigationmodel')
 import konsenskiste = require('konsenskistemodel')
 
 export interface Model {
-	topicNavigation: topicNavigation.Model;
-	konsenskiste: KnockoutObservable<konsenskiste.Model>;
+	//topicNavigation: topicNavigation.Model;
+	//konsenskiste: KnockoutObservable<konsenskiste.Model>;
 	account: KnockoutObservable<Account>;
 }
 

@@ -59,7 +59,7 @@ export interface ReceiptErrorArgs {
 }
 
 export class Controller<Mdl extends Model, Vm extends ViewModel, Com extends Communicator> {
-	constructor(model: Mdl, viewModel: Vm, communicator: Com) {
+	constructor(model: Mdl, viewModel: Vm, communicator: Com, private parentCommandProcessor: Commands.CommandProcessor) {
 		this.initCommandProcessor();
 		
 		this.model = model;
@@ -92,7 +92,7 @@ export class Controller<Mdl extends Model, Vm extends ViewModel, Com extends Com
 	
 	private initDiscussion() {
 		this.viewModel.discussion = ko.observable<Discussion.ViewModel>();
-		this.discussionSynchronizer = new KSync.DiscussionSynchronizer(this.communicator.discussion);
+		this.discussionSynchronizer = new KSync.DiscussionSynchronizer({ communicator: this.communicator.discussion, commandProcessor: this.parentCommandProcessor });
 		this.discussionSynchronizer
 			.setDiscussableModel(this.model)
 			.setDiscussableViewModel(this.viewModel)

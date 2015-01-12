@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../model', '../viewmodel', '../controller', '../konsenskistemodel', '../topic', 'windows/konsenskiste', 'windows/newkk', '../konsenskistemodel', '../communicator', 'tests/testcommunicator', '../topic'], function(require, exports, unit, test, common, mdl, vm, ctr, koki, tpc, kokiWin, NewKkWin, KonsenskisteModel, Communicator, TestCommunicator, Topic) {
+define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../model', '../viewmodel', '../controller', '../konsenskistemodel', '../topic', 'windows/konsenskiste', 'windows/newkk', 'windows/discussion', '../konsenskistemodel', '../discussion', '../communicator', 'tests/testcommunicator', '../topic', '../kokilogic'], function(require, exports, unit, test, common, mdl, vm, ctr, koki, tpc, kokiWin, NewKkWin, DiscussionWin, KonsenskisteModel, Discussion, Communicator, TestCommunicator, Topic, KokiLogic) {
     var Tests = (function (_super) {
         __extends(Tests, _super);
         function Tests() {
@@ -34,8 +34,9 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../mod
         };
 
         Tests.prototype.testKonsenskiste = function () {
-            this.cxt.model.konsenskiste(new koki.Model());
-            this.cxt.model.konsenskiste().general().title('Hi!');
+            var konsenskiste = new koki.Model();
+            konsenskiste.general().title('Hi!');
+            this.cxt.controller.commandProcessor.processCommand(new KokiLogic.SetKokiCommand(konsenskiste));
 
             var konsenskisteWindow = this.cxt.viewModel.center.win();
             test.assert(function () {
@@ -47,7 +48,8 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../mod
             var oldKoki = new koki.Model;
             oldKoki.id(1);
 
-            this.cxt.model.konsenskiste(oldKoki);
+            //this.cxt.model.konsenskiste(oldKoki);
+            this.cxt.controller.commandProcessor.processCommand(new KokiLogic.SetKokiCommand(oldKoki));
 
             var newKoki = new koki.Model;
             newKoki.general().title('hi');
@@ -69,7 +71,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../mod
             var newKoki = new koki.Model;
             newKoki.id(1);
             newKoki.general().title('hi');
-            this.cxt.model.konsenskiste(oldKoki);
+            this.cxt.controller.commandProcessor.processCommand(new KokiLogic.SetKokiCommand(oldKoki));
 
             this.cxt.communicator.konsenskiste.received.raise({ id: 1, konsenskiste: newKoki });
 
@@ -148,7 +150,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../mod
                 counter.inc('communicator.create');
                 then(2);
             };
-            this.cxt.controller.commandControl.commandProcessor.processCommand(new ctr.CreateNewKokiCommand(new KonsenskisteModel.Model(), new Topic.Model, function (id) {
+            this.cxt.controller.commandProcessor.processCommand(new ctr.CreateNewKokiCommand(new KonsenskisteModel.Model(), new Topic.Model, function (id) {
                 test.assert(function (v) {
                     return v.val(id) == 2;
                 });
@@ -166,12 +168,23 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../mod
             var _this = this;
             var topic = new tpc.Model();
             topic.title('Parent Topic apgr');
-            this.cxt.controller.commandControl.commandProcessor.processCommand(new ctr.OpenNewKokiWindowCommand(topic));
+            this.cxt.controller.commandProcessor.processCommand(new ctr.OpenNewKokiWindowCommand(topic));
             test.assert(function (v) {
                 return _this.cxt.viewModel.left.win() instanceof NewKkWin.Win;
             });
             test.assert(function (v) {
                 return _this.cxt.viewModel.left.win().parentName() == 'Parent Topic apgr';
+            });
+        };
+
+        Tests.prototype.processOpenDiscussionWindowCommand = function () {
+            var _this = this;
+            var discussableViewModel = {
+                discussion: ko.observable(new Discussion.ViewModel)
+            };
+            this.cxt.controller.commandProcessor.processCommand(new ctr.OpenDiscussionWindowCommand(discussableViewModel));
+            test.assert(function (v) {
+                return _this.cxt.viewModel.left.win() instanceof DiscussionWin.Win;
             });
         };
         return Tests;

@@ -10,8 +10,9 @@ import vm = require('viewmodel')
 import ctr = require('controller')
 
 import Comment = require('comment')
-import KonsenskisteModel = require('konsenskistemodel')
-import KernaussageModel = require('kernaussagemodel')
+import KonsenskisteModel = require('../konsenskistemodel')
+import KernaussageModel = require('../kernaussagemodel')
+import KokiLogic = require('../kokilogic');
 
 import TestCommunicator = require('tests/testcommunicator')
 
@@ -40,7 +41,7 @@ export class Tests {
 		var kernaussage = new KernaussageModel.Model();
 		konsenskiste.childKas.push(kernaussage);
 		
-		model.konsenskiste(konsenskiste);
+		controller.commandProcessor.processCommand(new KokiLogic.SetKokiCommand(konsenskiste));
 		
 		kernaussage.id(2);
 		kernaussage.general().title('Kernaussagen-Titel');
@@ -138,10 +139,10 @@ export class Tests {
 		async();
 		common.Callbacks.batch([
 			r => {
-				var model = reloader.model();
+				var controller = reloader.controller();
 				var oldKoki = new KonsenskisteModel.Model;
 				oldKoki.id(15);
-				model.konsenskiste(oldKoki);
+				controller.commandProcessor.processCommand(new KokiLogic.SetKokiCommand(oldKoki));
 				
 				var newKoki = new KonsenskisteModel.Model;
 				newKoki.id(15);
@@ -192,7 +193,6 @@ export class Tests {
 		var serverKa = new KernaussageModel.Model();
 		common.Callbacks.batch([
 			r => {
-				var model = reloader.model();
 				var communicator = reloader.communicator();
 				serverKa.id(2);
 				var comment = new Comment.Model();
@@ -223,14 +223,16 @@ export class Tests {
 	
 	commentsLoading(async, r) {
 		async();
-		var model = reloader.model();
+		var controller = reloader.controller();
+		var koki = new KonsenskisteModel.Model(); koki.id(1);
 		common.Callbacks.batch([
 			r => {
+				controller.commandProcessor.processCommand(new KokiLogic.SetKokiCommand(koki));
 				this.webot.query('.kk>.controls').child('*').contains('Diskussion').click();
 				setTimeout(r);
 			},
 			r => {
-				model.konsenskiste().discussion().commentsLoading(true);
+				koki.discussion().commentsLoading(true);
 				setTimeout(r);
 			},
 			r => {
@@ -367,6 +369,7 @@ export class Tests {
 	}
 	
 	changePermaLink(async, r) {
+		throw new Error('deactivated');
 		async();
 		var com = reloader.communicator();
 		var testKoki = new KonsenskisteModel.Model();
@@ -402,7 +405,7 @@ export class Tests {
 				
 				var koki = new KonsenskisteModel.Model();
 				koki.id(592);
-				reloader.model().konsenskiste(koki);
+				reloader.controller().commandProcessor.processCommand(new KokiLogic.SetKokiCommand(koki));
 				
 				com.konsenskiste.query(592);
 				setTimeout(r);

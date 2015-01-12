@@ -1,4 +1,4 @@
-define(["require", "exports", 'controller', 'topic', 'synchronizers/tsynchronizers', 'command'], function(require, exports, MainController, Topic, TSync, Commands) {
+define(["require", "exports", 'controller', 'kokilogic', 'topic', 'synchronizers/tsynchronizers', 'command'], function(require, exports, MainController, KokiLogic, Topic, TSync, Commands) {
     var Controller = (function () {
         function Controller(model, viewModel, args) {
             this.modelViewModelController = new ModelViewModelController(model, viewModel, args.commandProcessor);
@@ -127,7 +127,7 @@ define(["require", "exports", 'controller', 'topic', 'synchronizers/tsynchronize
                 return model.general().title() ? model.general().title() : model.general().text();
             });
             this.viewModel.click = function () {
-                commandControl && commandControl.commandProcessor.processCommand(new MainController.SelectKokiCommand(model));
+                commandControl && commandControl.commandProcessor.processCommand(new KokiLogic.SelectAndLoadKokiCommand(model));
             };
         }
         KokiItemViewModelController.prototype.dispose = function () {

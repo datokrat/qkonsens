@@ -26,7 +26,8 @@ define(["require", "exports", 'contentmodel', 'rating', 'discussion', 'command',
     exports.ViewModel = ViewModel;
 
     var Controller = (function () {
-        function Controller(model, viewModel, communicator) {
+        function Controller(model, viewModel, communicator, parentCommandProcessor) {
+            this.parentCommandProcessor = parentCommandProcessor;
             this.commandProcessor = new Commands.CommandProcessor();
             this.initCommandProcessor();
 
@@ -60,7 +61,7 @@ define(["require", "exports", 'contentmodel', 'rating', 'discussion', 'command',
 
         Controller.prototype.initDiscussion = function () {
             this.viewModel.discussion = ko.observable();
-            this.discussionSynchronizer = new KSync.DiscussionSynchronizer(this.communicator.discussion);
+            this.discussionSynchronizer = new KSync.DiscussionSynchronizer({ communicator: this.communicator.discussion, commandProcessor: this.parentCommandProcessor });
             this.discussionSynchronizer.setDiscussableModel(this.model).setDiscussableViewModel(this.viewModel).setViewModelObservable(this.viewModel.discussion).setModelObservable(this.model.discussion);
         };
 

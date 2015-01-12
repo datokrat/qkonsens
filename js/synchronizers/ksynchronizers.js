@@ -81,11 +81,11 @@ define(["require", "exports", 'synchronizers/childsynchronizer', 'factories/cons
 
     var DiscussionSynchronizer = (function (_super) {
         __extends(DiscussionSynchronizer, _super);
-        function DiscussionSynchronizer(communicator) {
+        function DiscussionSynchronizer(args) {
             _super.call(this);
             this.setViewModelFactory(new Factories.Factory(Discussion.ViewModel));
 
-            this.controllerFty = new DiscussionControllerFactory(communicator);
+            this.controllerFty = new DiscussionControllerFactory(args);
             this.setControllerFactory(this.controllerFty);
         }
         DiscussionSynchronizer.prototype.setViewModelContext = function (cxt) {
@@ -110,11 +110,11 @@ define(["require", "exports", 'synchronizers/childsynchronizer', 'factories/cons
     exports.DiscussionSynchronizer = DiscussionSynchronizer;
 
     var DiscussionControllerFactory = (function () {
-        function DiscussionControllerFactory(communicator) {
-            this.communicator = communicator;
+        function DiscussionControllerFactory(args) {
+            this.args = args;
         }
         DiscussionControllerFactory.prototype.create = function (model, viewModel) {
-            var ret = new Discussion.Controller(model, viewModel, this.communicator);
+            var ret = new Discussion.Controller(model, viewModel, this.args);
             ret.setDiscussableModel(this.discussableModel);
             ret.setDiscussableViewModel(this.discussableViewModel);
             ret.setViewModelContext(this.viewModelContext);

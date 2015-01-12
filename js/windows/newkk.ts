@@ -3,6 +3,7 @@ import Obs = require('../observable');
 import Commands = require('../command');
 import Topic = require('../topic');
 import MainController = require('../controller');
+import KokiLogic = require('../kokilogic');
 import KonsenskisteModel = require('../konsenskistemodel');
 
 export class Win extends frame.Win {
@@ -29,7 +30,7 @@ export class Controller {
 			koki.general().text(window.text());
 			commandProcessor.processCommand(new MainController.CreateNewKokiCommand(koki, this.parentTopic(), id => {
 				koki.id(id);
-				commandProcessor.processCommand(new MainController.SelectKokiCommand(koki));
+				commandProcessor.processCommand(new KokiLogic.SelectAndLoadKokiCommand(koki));
 			}));
 		};
 	}

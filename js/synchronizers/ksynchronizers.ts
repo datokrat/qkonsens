@@ -90,11 +90,11 @@ export class RatingControllerFactory {
 export class DiscussionSynchronizer
 	extends Base.ChildSynchronizer<Discussion.Model, Discussion.ViewModel, Discussion.Controller>
 {
-	constructor(communicator: DiscussionCommunicator.Base) {
+	constructor(args: Discussion.ControllerArgs) {
 		super();
 		this.setViewModelFactory( new Factories.Factory(Discussion.ViewModel) );
 		
-		this.controllerFty = new DiscussionControllerFactory(communicator);
+		this.controllerFty = new DiscussionControllerFactory(args);
 		this.setControllerFactory( this.controllerFty );
 	}
     
@@ -120,12 +120,11 @@ export class DiscussionSynchronizer
 }
 
 class DiscussionControllerFactory {
-	constructor(communicator: DiscussionCommunicator.Base) {
-		this.communicator = communicator;
+	constructor(private args: Discussion.ControllerArgs) {
 	}
 	
 	public create(model: Discussion.Model, viewModel: Discussion.ViewModel) {
-		var ret = new Discussion.Controller(model, viewModel, this.communicator);
+		var ret = new Discussion.Controller(model, viewModel, this.args);
 		ret.setDiscussableModel(this.discussableModel);
 		ret.setDiscussableViewModel(this.discussableViewModel);
         ret.setViewModelContext(this.viewModelContext);
@@ -144,7 +143,6 @@ class DiscussionControllerFactory {
 		this.discussableViewModel = v;
 	}
 
-	private communicator: DiscussionCommunicator.Base;
     private viewModelContext: ViewModelContext;
 	
 	private discussableModel: Discussion.DiscussableModel;

@@ -2,9 +2,9 @@ define(["require", "exports", '../konsenskistecontroller'], function(require, ex
     var Factory = (function () {
         function Factory() {
         }
-        Factory.prototype.create = function (model, viewModel, communicator) {
+        Factory.prototype.create = function (model, viewModel, args) {
             if (model)
-                return new ctr.ControllerImpl(model, viewModel, communicator);
+                return new ctr.ControllerImpl(model, viewModel, args);
             else
                 return new NullController();
         };

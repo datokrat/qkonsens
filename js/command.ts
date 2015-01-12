@@ -6,21 +6,30 @@ export interface ChainMiddleware<Args> {
 
 export class Chain<Args> {
     public run(args: Args): boolean {
-        for(var i=0; i < this.middleware.length; ++i) {
+        for(var i=0; i < this.middleware.length; ++i)
             if(this.middleware[i](args)) return true;
-        }
         return false;
     }
+	
+	public flood(args: Args): void {
+		for(var i=0; i < this.middleware.length; ++i)
+			this.middleware[i](args);
+	}
     
     public insertAtBeginning(mw: ChainMiddleware<Args>) {
         this.middleware = [mw].concat(this.middleware);
     }
     
-    public append(mw: ChainMiddleware<Args>) {
+    public append(mw: ChainMiddleware<Args>): DisposableOperation {
         this.middleware.push(mw);
+		return { dispose: () => this.middleware.removeOne(mw) };
     }
     
     private middleware: ChainMiddleware<Args>[] = [];
+}
+
+export interface DisposableOperation {
+	dispose(): void;
 }
 
 export interface CommandControl {
@@ -37,4 +46,8 @@ export class CommandProcessor {
             else throw new Error('command not processable: ' + cmd);
         }
     }
+	
+	public floodCommand(cmd: Command) {
+		this.chain.flood(cmd);
+	}
 }

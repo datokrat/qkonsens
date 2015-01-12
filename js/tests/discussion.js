@@ -14,7 +14,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../discussion', 'te
             this.model = new Discussion.Model();
             this.viewModel = new Discussion.ViewModel();
             this.communicator = new DiscussionCommunicator();
-            this.controller = new Discussion.Controller(this.model, this.viewModel, this.communicator);
+            this.controller = new Discussion.Controller(this.model, this.viewModel, { communicator: this.communicator, commandProcessor: null });
 
             this.discussable = { id: ko.observable(2), discussion: ko.observable() };
             this.discussable.discussion(new Discussion.Model);
@@ -195,7 +195,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../discussion', 'te
             var model = new Discussion.Model();
             var viewModel = new Discussion.ViewModel();
             var communicator = new DiscussionCommunicator();
-            var controller = new Discussion.Controller(model, viewModel, communicator);
+            var controller = new Discussion.Controller(model, viewModel, { communicator: communicator, commandProcessor: null });
             controller.setDiscussableModel({ id: ko.observable(2), discussion: ko.observable(model) });
 
             var serverDiscussable = { id: ko.observable(2), discussion: ko.observable(new Discussion.Model) };

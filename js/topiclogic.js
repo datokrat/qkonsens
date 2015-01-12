@@ -1,8 +1,7 @@
-define(["require", "exports", 'command', 'topic', 'windowviewmodel', 'windows/browse'], function(require, exports, Commands, Topic, WindowViewModel, BrowseWin) {
+define(["require", "exports", 'topic', 'windowviewmodel', 'windows/browse'], function(require, exports, Topic, WindowViewModel, BrowseWin) {
     var Controller = (function () {
         function Controller(resources) {
             this.resources = resources;
-            this.commandProcessor = new Commands.CommandProcessor();
 
             this.initTopicNavigation();
             this.initBrowseWin();

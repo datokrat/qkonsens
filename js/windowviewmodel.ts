@@ -7,6 +7,10 @@ export class Main {
 		this.getWinContainerOfFrame(frame).win(window);
 	}
 	
+	public getWindowOfFrame(frame: Frame): frame.Win {
+		return this.getWinContainerOfFrame(frame).win();
+	}
+	
 	private getWinContainerOfFrame(frame: Frame) {
 		switch(frame) {
 			case Frame.Center: return this.winContainers.center;

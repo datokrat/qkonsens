@@ -1,7 +1,10 @@
 import unit = require('tests/tsunit')
 import test = require('tests/test')
+import Common = require('../common');
+import Commands = require('../command');
+import KokiLogic = require('../kokilogic');
 
-import kokiMdl = require('../konsenskistemodel')
+import KonsenskisteModel = require('../konsenskistemodel')
 import win = require('windows/konsenskiste')
 import ctr = require('windows/konsenskistecontroller')
 import KokiCommunicator = require('tests/testkonsenskistecommunicator')
@@ -10,14 +13,16 @@ import ViewModelContext = require('../viewmodelcontext');
 import kaMdl = require('../kernaussagemodel')
 
 export class Tests extends unit.TestClass {
-	private konsenskisteModel: kokiMdl.Model;
+	private konsenskisteModel: KonsenskisteModel.Model;
 	private window: win.Win;
-	private controller: ctr.Controller;
+	private controller: ctr.ControllerImpl;
+	private commandProcessor: Commands.CommandProcessor;
 	
 	setUp() {
-		this.konsenskisteModel = new kokiMdl.Model();
+		this.konsenskisteModel = new KonsenskisteModel.Model();
 		this.window = new win.Win();
-		this.controller = new ctr.Controller(this.konsenskisteModel, this.window, new KokiCommunicator.Main);
+		this.commandProcessor = new Commands.CommandProcessor();
+		this.controller = new ctr.ControllerImpl(this.konsenskisteModel, this.window, {communicator: new KokiCommunicator.Main, commandProcessor: this.commandProcessor});
 	}
 	
 	tearDown() {
@@ -32,7 +37,7 @@ export class Tests extends unit.TestClass {
 	}
 	
 	testSetKonsenskisteModel() {
-		var newModel = new kokiMdl.Model;
+		var newModel = new KonsenskisteModel.Model;
 		
 		var currentTitle = ko.computed<string>( () => this.window.kkView().general().title() );
 		
@@ -47,7 +52,7 @@ export class Tests extends unit.TestClass {
 	testNullModel() {
 		try {
 			var window = new win.Win;
-			var controller = new ctr.Controller(null, window, new KokiCommunicator.Main);
+			var controller = new ctr.ControllerImpl(null, window, {communicator: new KokiCommunicator.Main, commandProcessor: this.commandProcessor});
 		}
 		finally {
 			controller && controller.dispose();
@@ -67,10 +72,25 @@ export class Tests extends unit.TestClass {
 		test.assert( () => this.window.kkView().childKas()[0].general().title() == 'Begriff Basisdemokratie' );
 		test.assert( () => this.window.kkView().childKas()[0].general().text() == 'Blablablablub' );
 	}
+	
+	emitHandleChangedKokiStateCommand() {
+		var counter = new Common.Counter();
+		this.commandProcessor.chain.append(cmd => {
+			counter.inc('cmd');
+			test.assert(v => cmd instanceof KokiLogic.HandleChangedKokiWinStateCommand);
+			return true;
+		});
+		
+		var kokiModel = new KonsenskisteModel.Model();
+		kokiModel.id(3);
+		this.controller.setKonsenskisteModel(kokiModel);
+		
+		test.assert(v => v.val(counter.get('cmd')) == 1);
+	}
     
-    contextImplementation() {
+    /*contextImplementation() {
 		this.controller.setContext(new ViewModelContext(null, null, null));
 		
 		test.assert( () => this.controller['konsenskisteController']['cxt'] );
-    }
+    }*/
 }

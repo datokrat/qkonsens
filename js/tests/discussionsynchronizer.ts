@@ -1,6 +1,7 @@
 import unit = require('tests/tsunit');
 import test = require('tests/test');
 
+import Commands = require('../command');
 import Discussion = require('../discussion');
 import DiscussionCommunicator = require('tests/testdiscussioncommunicator');
 import KSync = require('synchronizers/ksynchronizers');
@@ -24,7 +25,7 @@ class TestClass extends unit.TestClass {
 	private sync: KSync.DiscussionSynchronizer;
 	
 	setUp() {
-		this.sync = new KSync.DiscussionSynchronizer(new DiscussionCommunicator);
+		this.sync = new KSync.DiscussionSynchronizer({ communicator: new DiscussionCommunicator, commandProcessor: null });
 	}
 	
 	setViewModelContext() {
@@ -36,7 +37,7 @@ class TestClass extends unit.TestClass {
 		
 		var model = new Discussion.Model();
 		this.sync.setViewModelFactory(new Factories.Factory(Discussion.ViewModel));
-		this.sync.setControllerFactory(new Factories.ControllerFactoryEx<Discussion.Model, Discussion.ViewModel, DiscussionCommunicator, Discussion.Controller>(Discussion.Controller, new DiscussionCommunicator));
+		this.sync.setControllerFactory(new Factories.ControllerFactoryEx<Discussion.Model, Discussion.ViewModel, {communicator: DiscussionCommunicator; commandProcessor: Commands.CommandProcessor}, Discussion.Controller>(Discussion.Controller, {communicator: new DiscussionCommunicator, commandProcessor: null}));
 		this.sync.setModelObservable(ko.observable<Discussion.Model>(model));
 		this.sync.setViewModelObservable(ko.observable<Discussion.ViewModel>());
 		this.sync.setViewModelContext(new ViewModelContext(null, null, null));

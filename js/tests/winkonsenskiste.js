@@ -4,16 +4,17 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/tsunit', 'tests/test', '../konsenskistemodel', 'windows/konsenskiste', 'windows/konsenskistecontroller', 'tests/testkonsenskistecommunicator', '../viewmodelcontext', '../kernaussagemodel'], function(require, exports, unit, test, kokiMdl, win, ctr, KokiCommunicator, ViewModelContext, kaMdl) {
+define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../command', '../kokilogic', '../konsenskistemodel', 'windows/konsenskiste', 'windows/konsenskistecontroller', 'tests/testkonsenskistecommunicator', '../kernaussagemodel'], function(require, exports, unit, test, Common, Commands, KokiLogic, KonsenskisteModel, win, ctr, KokiCommunicator, kaMdl) {
     var Tests = (function (_super) {
         __extends(Tests, _super);
         function Tests() {
             _super.apply(this, arguments);
         }
         Tests.prototype.setUp = function () {
-            this.konsenskisteModel = new kokiMdl.Model();
+            this.konsenskisteModel = new KonsenskisteModel.Model();
             this.window = new win.Win();
-            this.controller = new ctr.Controller(this.konsenskisteModel, this.window, new KokiCommunicator.Main);
+            this.commandProcessor = new Commands.CommandProcessor();
+            this.controller = new ctr.ControllerImpl(this.konsenskisteModel, this.window, { communicator: new KokiCommunicator.Main, commandProcessor: this.commandProcessor });
         };
 
         Tests.prototype.tearDown = function () {
@@ -34,7 +35,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../konsenskistemode
 
         Tests.prototype.testSetKonsenskisteModel = function () {
             var _this = this;
-            var newModel = new kokiMdl.Model;
+            var newModel = new KonsenskisteModel.Model;
 
             var currentTitle = ko.computed(function () {
                 return _this.window.kkView().general().title();
@@ -55,7 +56,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../konsenskistemode
         Tests.prototype.testNullModel = function () {
             try  {
                 var window = new win.Win;
-                var controller = new ctr.Controller(null, window, new KokiCommunicator.Main);
+                var controller = new ctr.ControllerImpl(null, window, { communicator: new KokiCommunicator.Main, commandProcessor: this.commandProcessor });
             } finally {
                 controller && controller.dispose();
             }
@@ -84,12 +85,22 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../konsenskistemode
             });
         };
 
-        Tests.prototype.contextImplementation = function () {
-            var _this = this;
-            this.controller.setContext(new ViewModelContext(null, null, null));
+        Tests.prototype.emitHandleChangedKokiStateCommand = function () {
+            var counter = new Common.Counter();
+            this.commandProcessor.chain.append(function (cmd) {
+                counter.inc('cmd');
+                test.assert(function (v) {
+                    return cmd instanceof KokiLogic.HandleChangedKokiWinStateCommand;
+                });
+                return true;
+            });
 
-            test.assert(function () {
-                return _this.controller['konsenskisteController']['cxt'];
+            var kokiModel = new KonsenskisteModel.Model();
+            kokiModel.id(3);
+            this.controller.setKonsenskisteModel(kokiModel);
+
+            test.assert(function (v) {
+                return v.val(counter.get('cmd')) == 1;
             });
         };
         return Tests;

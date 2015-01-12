@@ -29,7 +29,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../discussion', 'te
             _super.apply(this, arguments);
         }
         TestClass.prototype.setUp = function () {
-            this.sync = new KSync.DiscussionSynchronizer(new DiscussionCommunicator);
+            this.sync = new KSync.DiscussionSynchronizer({ communicator: new DiscussionCommunicator, commandProcessor: null });
         };
 
         TestClass.prototype.setViewModelContext = function () {
@@ -41,7 +41,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../discussion', 'te
 
             var model = new Discussion.Model();
             this.sync.setViewModelFactory(new Factories.Factory(Discussion.ViewModel));
-            this.sync.setControllerFactory(new Factories.ControllerFactoryEx(Discussion.Controller, new DiscussionCommunicator));
+            this.sync.setControllerFactory(new Factories.ControllerFactoryEx(Discussion.Controller, { communicator: new DiscussionCommunicator, commandProcessor: null }));
             this.sync.setModelObservable(ko.observable(model));
             this.sync.setViewModelObservable(ko.observable());
             this.sync.setViewModelContext(new ViewModelContext(null, null, null));

@@ -19,7 +19,7 @@ class TestClass extends unit.TestClass {
 		this.com = new TestKokiCommunicator.Main();
 		this.mdl = new KonsenskisteModel.Model;
 		this.vm = new KokiViewModel.ViewModel;
-		this.ctr = new KokiController.ControllerImpl( this.mdl, this.vm, this.com );
+		this.ctr = new KokiController.ControllerImpl( this.mdl, this.vm, {communicator: this.com, commandProcessor: null} );
 		r();
 	}
 	

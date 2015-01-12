@@ -7,9 +7,10 @@ var __extends = this.__extends || function (d, b) {
 define(["require", "exports", 'factories/kernaussagemodel', 'synchronizers/kokisynchronizers', 'kelement'], function(require, exports, KernaussageFactory, KokiSync, KElement) {
     var ControllerImpl = (function (_super) {
         __extends(ControllerImpl, _super);
-        function ControllerImpl(model, viewModel, communicator) {
+        function ControllerImpl(model, viewModel, args) {
             var _this = this;
-            _super.call(this, model, viewModel, communicator);
+            _super.call(this, model, viewModel, args.communicator, args.commandProcessor);
+            this.args = args;
             this.onKokiReceived = function (args) {
                 if (_this.model.id() == args.konsenskiste.id())
                     _this.model.set(args.konsenskiste);
@@ -20,7 +21,7 @@ define(["require", "exports", 'factories/kernaussagemodel', 'synchronizers/kokis
             };
             this.modelSubscriptions = [];
             this.communicatorSubscriptions = [];
-            this.init(model, viewModel, communicator);
+            this.init(model, viewModel, args.communicator);
         }
         ControllerImpl.prototype.init = function (model, viewModel, communicator) {
             this.initCommunicator();
@@ -65,7 +66,7 @@ define(["require", "exports", 'factories/kernaussagemodel', 'synchronizers/kokis
                 _this.communicator.createAndAppendKa(_this.model.id(), ka);
             };
 
-            this.kaSynchronizer = new KokiSync.KaSynchronizer(this.communicator.kernaussage);
+            this.kaSynchronizer = new KokiSync.KaSynchronizer({ communicator: this.communicator.kernaussage, commandProcessor: this.args.commandProcessor });
             this.kaSynchronizer.setViewModelObservable(this.viewModel.childKas).setModelObservable(this.model.childKas);
         };
 

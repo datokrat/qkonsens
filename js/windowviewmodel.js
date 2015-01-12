@@ -7,6 +7,10 @@ define(["require", "exports"], function(require, exports) {
             this.getWinContainerOfFrame(frame).win(window);
         };
 
+        Main.prototype.getWindowOfFrame = function (frame) {
+            return this.getWinContainerOfFrame(frame).win();
+        };
+
         Main.prototype.getWinContainerOfFrame = function (frame) {
             switch (frame) {
                 case 0 /* Center */:

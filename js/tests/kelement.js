@@ -8,7 +8,7 @@ define(["require", "exports", 'tests/test', '../common', '../kelement', '../rati
             kModel.id(6);
             var kViewModel = new KElement.ViewModel();
             var kCommunicator = new KokiCommunicator.Stub();
-            var kController = new KElement.Controller(kModel, kViewModel, kCommunicator);
+            var kController = new KElement.Controller(kModel, kViewModel, kCommunicator, null);
 
             kCommunicator.rating.submitRating = function (ratableId, rating, then) {
                 counter.inc('submitRating');

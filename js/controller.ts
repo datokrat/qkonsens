@@ -1,6 +1,7 @@
 import mdl = require('model')
 import vm = require('viewmodel')
 import topicNavigationCtr = require('topicnavigationcontroller')
+import TopicNavigationModel = require('topicnavigationmodel');
 import LocationHash = require('locationhash');
 import Evt = require('event');
 
@@ -11,8 +12,10 @@ import BrowseWin = require('windows/browse');
 import NewKkWin = require('windows/newkk');
 
 import TopicLogic = require('topiclogic');
+import KokiLogic = require('kokilogic');
 
 import DiscussionWindow = require('windows/discussion')
+import Discussion = require('discussion');
 import kokiWinCtr = require('windows/konsenskistecontroller')
 import KokiControllerFactory = require('factories/konsenskistecontroller')
 import Communicator = require('communicator')
@@ -29,43 +32,55 @@ export class Controller {
 		this.initCommandControl(commandControl);
 		
 		this.initWindows();
+		this.initWindowViewModel();
 		
-		this.initTopicNavigation();
+		this.initKokiLogic();
+		this.initTopicLogic();
 		this.initAccount();
 		this.initState();
 	}
 	
 	private initWindows() {
 		this.kkWin = new KokiWin.Win();
-		//this.browseWin = new BrowseWin.Win();
 		this.newKkWin = new NewKkWin.Win();
 		
 		this.viewModel.left = new frame.WinContainer( new noneWin.Win() );
 		this.viewModel.right = new frame.WinContainer( new noneWin.Win() );
-		this.viewModel.center = new frame.WinContainer( this.kkWin );
-		//this.viewModel.browseWin = this.browseWin;
-		this.viewModel.kkWin = this.kkWin;
+		this.viewModel.center = new frame.WinContainer( new noneWin.Win() );
+		//this.viewModel.kkWin = this.kkWin;
 		
-		var globalContext = new ViewModelContext(this.viewModel.left, this.viewModel.right, this.viewModel.center);
+		/*var globalContext = new ViewModelContext(this.viewModel.left, this.viewModel.right, this.viewModel.center);
 		globalContext.konsenskisteWindow = this.kkWin;
 		globalContext.discussionWindow = new DiscussionWindow.Win();
-		globalContext.konsenskisteModel = this.model.konsenskiste;
+		globalContext.konsenskisteModel = this.model.konsenskiste;*/
 		
-		this.kkWinController = new kokiWinCtr.Controller(this.model.konsenskiste(), this.kkWin, this.communicator.konsenskiste)
-			.setContext(globalContext);
+		//this.kkWinController = new kokiWinCtr.ControllerImpl(this.model.konsenskiste(), this.kkWin, this.communicator.konsenskiste)
+		//	.setContext(globalContext);
 		
-		//this.browseWinController = new BrowseWin.Controller(this.model.topicNavigation, this.browseWin, this.communicator.topic, this.commandControl);
-		this.newKkWinController = new NewKkWin.Controller(this.newKkWin, this.commandControl.commandProcessor);
+		this.newKkWinController = new NewKkWin.Controller(this.newKkWin, this.commandProcessor);
 		
-		this.model.konsenskiste.subscribe( newKoki => this.kkWinController.setKonsenskisteModel(newKoki) );
+		//this.model.konsenskiste.subscribe( newKoki => this.kkWinController.setKonsenskisteModel(newKoki) );
 	}
 	
-	private initTopicNavigation() {
+	private initWindowViewModel() {
+		this.windowViewModel = new WindowViewModel.Main({ center: this.viewModel.center, left: this.viewModel.left, right: this.viewModel.right });
+	}
+	
+	private initKokiLogic() {
+		var kokiLogicResources = new KokiLogic.Resources();
+		kokiLogicResources.windowViewModel = this.windowViewModel;
+		kokiLogicResources.konsenskisteCommunicator = this.communicator.konsenskiste;
+		kokiLogicResources.commandProcessor = this.commandProcessor;
+		
+		this.kokiLogic = new KokiLogic.Controller(kokiLogicResources);
+	}
+	
+	private initTopicLogic() {
 		var topicLogicResources = new TopicLogic.Resources();
-		topicLogicResources.topicNavigationModel = this.model.topicNavigation;
+		topicLogicResources.topicNavigationModel = new TopicNavigationModel.ModelImpl(); //this.model.topicNavigation;
 		topicLogicResources.topicCommunicator = this.communicator.topic;
-		topicLogicResources.windowViewModel = new WindowViewModel.Main({ center: this.viewModel.center, left: this.viewModel.left, right: this.viewModel.right });
-		topicLogicResources.commandProcessor = this.commandControl.commandProcessor;
+		topicLogicResources.windowViewModel = this.windowViewModel;
+		topicLogicResources.commandProcessor = this.commandProcessor;
 		
 		this.topicLogic = new TopicLogic.Controller(topicLogicResources);
 	}
@@ -77,9 +92,9 @@ export class Controller {
 	}
 	
 	public dispose() {
-		this.kkWinController.dispose();
-		//this.browseWinController.dispose();
+		//this.kkWinController.dispose();
 		this.newKkWinController.dispose();
+		this.kokiLogic.dispose();
 		this.topicLogic.dispose();
 		this.subscriptions.forEach(s => s.dispose());
 	}
@@ -88,7 +103,8 @@ export class Controller {
 		this.model.account.subscribe(account => {
 			this.updateAccountViewModel();
 			this.login();
-			this.reloadKk();
+			//this.reloadKk();
+			this.commandProcessor.floodCommand(new HandleChangedAccountCommand());
 		});
 		
 		this.viewModel.userName = ko.observable<string>();
@@ -101,9 +117,9 @@ export class Controller {
 		this.login();
 	}
 	
-	private reloadKk() {
+	/*private reloadKk() {
 		this.model.konsenskiste(this.communicator.konsenskiste.query(this.model.konsenskiste().id()));
-	}
+	}*/
 	
 	private login() {
 		this.communicator.commandProcessor.processCommand(new Communicator.LoginCommand(this.model.account().userName));
@@ -114,22 +130,28 @@ export class Controller {
 	}
 	
 	private initCommandControl(parent: Commands.CommandControl) {
-		this.commandControl.commandProcessor.parent = parent && parent.commandProcessor;
-		this.commandControl.commandProcessor.chain.append(cmd => {
-			if(cmd instanceof SelectKokiCommand) {
+		this.commandProcessor.parent = parent && parent.commandProcessor;
+		this.commandProcessor.chain.append(cmd => {
+			/*if(cmd instanceof SelectKokiCommand) {
 				this.kkWinController.setKonsenskisteModelById((<SelectKokiCommand>cmd).model.id());
 				return true;
-			}
-			else if(cmd instanceof CreateNewKokiCommand) {
+			}*/
+			if(cmd instanceof CreateNewKokiCommand) {
 				var createKokiCommand = <CreateNewKokiCommand>cmd;
 				var topicId: number = !createKokiCommand.parentTopic.id.root && createKokiCommand.parentTopic.id.id;
 				this.communicator.konsenskiste.create(createKokiCommand.model, topicId, id => createKokiCommand.then(id));
 				return true;
 			}
-			else if(cmd instanceof OpenNewKokiWindowCommand) {
+			if(cmd instanceof OpenNewKokiWindowCommand) {
 				var openNewKokiWindowCommand = <OpenNewKokiWindowCommand>cmd;
 				this.newKkWinController.setParentTopic(openNewKokiWindowCommand.topic);
 				this.viewModel.left.win(this.newKkWin);
+				return true;
+			}
+			if(cmd instanceof OpenDiscussionWindowCommand) {
+				var openDiscussionWindowCommand = <OpenDiscussionWindowCommand>cmd;
+				this.discussionWin.discussable((<OpenDiscussionWindowCommand>cmd).discussableViewModel);
+				this.viewModel.left.win(this.discussionWin);
 				return true;
 			}
 			return false;
@@ -147,23 +169,24 @@ export class Controller {
 		}
 	}
 	
-	public commandControl: Commands.CommandControl = { commandProcessor: new Commands.CommandProcessor() };
+	public commandProcessor = new Commands.CommandProcessor();
 	
+	private windowViewModel: WindowViewModel.Main;
+	private discussionWin = new DiscussionWindow.Win();
 	private kkWin: KokiWin.Win;
-	private kkWinController: kokiWinCtr.Controller;
-	//private browseWin: BrowseWin.Win;
-	//private browseWinController: BrowseWin.Controller;
+	//private kkWinController: kokiWinCtr.ControllerImpl;
 	private newKkWin: NewKkWin.Win;
 	private newKkWinController: NewKkWin.Controller;
 	
+	private kokiLogic: KokiLogic.Controller
 	private topicLogic: TopicLogic.Controller;
 	
 	private subscriptions: Evt.Subscription[] = [];
 }
 
-export class SelectKokiCommand extends Commands.Command {
+/*export class SelectKokiCommand extends Commands.Command {
 	constructor(public model: KonsenskisteModel.Model) { super() }
-}
+}*/
 
 export class CreateNewKokiCommand extends Commands.Command {
 	constructor(public model: KonsenskisteModel.Model, public parentTopic: Topic.Model, public then: (id: number) => void) { super() }
@@ -171,4 +194,12 @@ export class CreateNewKokiCommand extends Commands.Command {
 
 export class OpenNewKokiWindowCommand extends Commands.Command {
 	constructor(public topic: Topic.Model) { super() }
+}
+
+export class HandleChangedAccountCommand extends Commands.Command {
+	public toString = () => 'HandleChangedAccountCommand';
+}
+
+export class OpenDiscussionWindowCommand extends Commands.Command {
+	constructor(public discussableViewModel: Discussion.DiscussableViewModel) { super() }
 }

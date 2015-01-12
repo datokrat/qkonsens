@@ -1,4 +1,4 @@
-define(["require", "exports", 'observable', 'comment', 'synchronizers/comment'], function(require, exports, Obs, Comment, CommentSynchronizer) {
+define(["require", "exports", 'observable', 'controller', 'comment', 'synchronizers/comment'], function(require, exports, Obs, MainController, Comment, CommentSynchronizer) {
     var Model = (function () {
         function Model() {
             this.comments = new Obs.ObservableArrayExtender(ko.observableArray());
@@ -18,11 +18,11 @@ define(["require", "exports", 'observable', 'comment', 'synchronizers/comment'],
     exports.ViewModel = ViewModel;
 
     var Controller = (function () {
-        function Controller(model, viewModel, communicator) {
+        function Controller(model, viewModel, args) {
             var _this = this;
             this.model = model;
             this.viewModel = viewModel;
-            this.communicator = communicator;
+            this.args = args;
             this.onCommentsReceived = function (args) {
                 if (_this.discussableModel && _this.discussableModel.id() == args.id) {
                     _this.model.comments.set(args.comments);
@@ -39,19 +39,15 @@ define(["require", "exports", 'observable', 'comment', 'synchronizers/comment'],
                 }
             };
             this.discussionClick = function () {
-                if (_this.viewModelContext) {
-                    if (_this.discussableModel && !_this.model.commentsLoading()) {
-                        _this.model.commentsLoading(true);
-                        _this.communicator.queryCommentsOf(_this.discussableModel.id());
-                    }
+                if (_this.discussableModel && !_this.model.commentsLoading()) {
+                    _this.model.commentsLoading(true);
+                    _this.args.communicator.queryCommentsOf(_this.discussableModel.id());
+                }
 
-                    if (!_this.discussableModel)
-                        _this.model.error('DiscussionController.discussableModel is not defined');
+                if (!_this.discussableModel)
+                    _this.model.error('DiscussionController.discussableModel is not defined');
 
-                    _this.viewModelContext.discussionWindow.discussable(_this.discussableViewModel);
-                    _this.viewModelContext.setLeftWindow(_this.viewModelContext.discussionWindow);
-                } else
-                    console.warn('viewModelContext is null');
+                _this.args.commandProcessor.processCommand(new MainController.OpenDiscussionWindowCommand(_this.discussableViewModel));
             };
             this.communicatorSubscriptions = [];
             this.viewModel.comments = ko.observableArray();
@@ -67,25 +63,25 @@ define(["require", "exports", 'observable', 'comment', 'synchronizers/comment'],
                 comment.content().text(_this.viewModel.newCommentText());
                 _this.viewModel.newCommentText('');
                 _this.viewModel.newCommentDisabled(true);
-                communicator.appendComment(_this.discussableModel.id(), comment);
+                args.communicator.appendComment(_this.discussableModel.id(), comment);
             };
 
             this.model.removeComment = function (comment) {
-                _this.communicator.removeComment({ discussableId: _this.discussableModel.id(), commentId: comment.id });
+                _this.args.communicator.removeComment({ discussableId: _this.discussableModel.id(), commentId: comment.id });
             };
 
-            this.commentSynchronizer = new CommentSynchronizer(this.communicator).setViewModelObservable(this.viewModel.comments).setModelObservable(this.model.comments);
+            this.commentSynchronizer = new CommentSynchronizer(this.args.communicator).setViewModelObservable(this.viewModel.comments).setModelObservable(this.model.comments);
             this.commentSynchronizer.itemCreated.subscribe(function (args) {
                 args.controller.setCommentableModel(_this.model);
             });
 
             this.communicatorSubscriptions = [
-                this.communicator.commentsReceived.subscribe(this.onCommentsReceived),
-                this.communicator.commentsReceiptError.subscribe(this.onCommentsReceiptError),
-                this.communicator.commentAppended.subscribe(this.onCommentAppended.bind(this)),
-                this.communicator.commentAppendingError.subscribe(this.onCommentAppendingError.bind(this)),
-                this.communicator.commentRemoved.subscribe(this.onCommentRemoved.bind(this)),
-                this.communicator.commentRemovalError.subscribe(this.onCommentRemovalError.bind(this))
+                this.args.communicator.commentsReceived.subscribe(this.onCommentsReceived),
+                this.args.communicator.commentsReceiptError.subscribe(this.onCommentsReceiptError),
+                this.args.communicator.commentAppended.subscribe(this.onCommentAppended.bind(this)),
+                this.args.communicator.commentAppendingError.subscribe(this.onCommentAppendingError.bind(this)),
+                this.args.communicator.commentRemoved.subscribe(this.onCommentRemoved.bind(this)),
+                this.args.communicator.commentRemovalError.subscribe(this.onCommentRemovalError.bind(this))
             ];
         }
         Controller.prototype.onCommentRemoved = function (args) {
@@ -104,7 +100,7 @@ define(["require", "exports", 'observable', 'comment', 'synchronizers/comment'],
 
         Controller.prototype.onCommentAppended = function (args) {
             if (args.discussableId == this.discussableModel.id()) {
-                this.communicator.queryCommentsOf(this.discussableModel.id());
+                this.args.communicator.queryCommentsOf(this.discussableModel.id());
                 this.viewModel.newCommentDisabled(false);
             }
         };

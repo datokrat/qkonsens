@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../controller', '../topicnavigationcontroller', '../topicnavigationmodel', '../topicnavigationviewmodel', '../observable', '../topic', 'tests/testtopiccommunicator', '../contentmodel', '../konsenskistemodel', '../command'], function(require, exports, unit, test, common, MainController, ctr, mdl, vm, Obs, Topic, TopicCommunicator, ContentModel, KonsenskisteModel, Commands) {
+define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../controller', '../kokilogic', '../topicnavigationcontroller', '../topicnavigationmodel', '../topicnavigationviewmodel', '../observable', '../topic', 'tests/testtopiccommunicator', '../contentmodel', '../konsenskistemodel', '../command'], function(require, exports, unit, test, common, MainController, KokiLogic, ctr, mdl, vm, Obs, Topic, TopicCommunicator, ContentModel, KonsenskisteModel, Commands) {
     var Tests = (function (_super) {
         __extends(Tests, _super);
         function Tests() {
@@ -150,7 +150,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../con
             commandControl.commandProcessor.chain.append(function (cmd) {
                 counter.inc('command');
                 test.assert(function () {
-                    return cmd instanceof MainController.SelectKokiCommand;
+                    return cmd instanceof KokiLogic.SelectAndLoadKokiCommand;
                 });
                 var castCmd = cmd;
                 test.assert(function () {
@@ -177,7 +177,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../con
             commandProcessor.chain.append(function (cmd) {
                 counter.inc('command');
                 test.assert(function () {
-                    return cmd instanceof MainController.SelectKokiCommand;
+                    return cmd instanceof KokiLogic.SelectAndLoadKokiCommand;
                 });
                 var castCmd = cmd;
                 test.assert(function () {
@@ -193,7 +193,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../con
             kokiModel.id(3);
             var kokiViewModel = new vm.KokiItem();
 
-            var cmd = new MainController.SelectKokiCommand(kokiModel);
+            var cmd = new KokiLogic.SelectAndLoadKokiCommand(kokiModel);
             controller.kokiCommandControl.commandProcessor.processCommand(cmd);
 
             test.assert(function () {

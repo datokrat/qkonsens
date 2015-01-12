@@ -7,9 +7,9 @@ var __extends = this.__extends || function (d, b) {
 define(["require", "exports", 'synchronizers/childarraysynchronizer', 'factories/constructorbased', '../kernaussageviewmodel', '../kernaussagecontroller'], function(require, exports, Base, Factories, KaViewModel, KaController) {
     var KaSynchronizer = (function (_super) {
         __extends(KaSynchronizer, _super);
-        function KaSynchronizer(communicator) {
+        function KaSynchronizer(args) {
             _super.call(this);
-            this.controllerFactory2 = new ControllerFactory().setCommunicator(communicator);
+            this.controllerFactory2 = new ControllerFactory().setArgs(args);
             this.setViewModelFactory(new Factories.Factory(KaViewModel.ViewModel));
             this.setControllerFactory(this.controllerFactory2);
         }
@@ -27,7 +27,7 @@ define(["require", "exports", 'synchronizers/childarraysynchronizer', 'factories
         function ControllerFactory() {
         }
         ControllerFactory.prototype.create = function (model, viewModel) {
-            var controller = new KaController.Controller(model, viewModel, this.communicator);
+            var controller = new KaController.Controller(model, viewModel, this.args);
             if (this.viewModelContext)
                 controller.setViewModelContext(this.viewModelContext);
             return controller;
@@ -38,8 +38,8 @@ define(["require", "exports", 'synchronizers/childarraysynchronizer', 'factories
             return this;
         };
 
-        ControllerFactory.prototype.setCommunicator = function (com) {
-            this.communicator = com;
+        ControllerFactory.prototype.setArgs = function (args) {
+            this.args = args;
             return this;
         };
         return ControllerFactory;

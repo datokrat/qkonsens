@@ -12,7 +12,7 @@ export class Main {
 		var kModel = new KElement.Model(); kModel.id(6);
 		var kViewModel = new KElement.ViewModel();
 		var kCommunicator = new KokiCommunicator.Stub();
-		var kController = new KElement.Controller(kModel, kViewModel, kCommunicator);
+		var kController = new KElement.Controller(kModel, kViewModel, kCommunicator, null);
 		
 		kCommunicator.rating.submitRating = (ratableId: number, rating: string, then?: () => void) => {
 			counter.inc('submitRating');

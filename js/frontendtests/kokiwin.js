@@ -1,4 +1,4 @@
-define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendtests/webot', '../common', 'comment', 'konsenskistemodel', 'kernaussagemodel'], function(require, exports, test, reloader, webot, common, Comment, KonsenskisteModel, KernaussageModel) {
+define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendtests/webot', '../common', 'comment', '../konsenskistemodel', '../kernaussagemodel', '../kokilogic'], function(require, exports, test, reloader, webot, common, Comment, KonsenskisteModel, KernaussageModel, KokiLogic) {
     ko = top.frames[2].ko;
 
     var Tests = (function () {
@@ -22,7 +22,7 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
             var kernaussage = new KernaussageModel.Model();
             konsenskiste.childKas.push(kernaussage);
 
-            model.konsenskiste(konsenskiste);
+            controller.commandProcessor.processCommand(new KokiLogic.SetKokiCommand(konsenskiste));
 
             kernaussage.id(2);
             kernaussage.general().title('Kernaussagen-Titel');
@@ -159,10 +159,10 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
             async();
             common.Callbacks.batch([
                 function (r) {
-                    var model = reloader.model();
+                    var controller = reloader.controller();
                     var oldKoki = new KonsenskisteModel.Model;
                     oldKoki.id(15);
-                    model.konsenskiste(oldKoki);
+                    controller.commandProcessor.processCommand(new KokiLogic.SetKokiCommand(oldKoki));
 
                     var newKoki = new KonsenskisteModel.Model;
                     newKoki.id(15);
@@ -223,7 +223,6 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
             var serverKa = new KernaussageModel.Model();
             common.Callbacks.batch([
                 function (r) {
-                    var model = reloader.model();
                     var communicator = reloader.communicator();
                     serverKa.id(2);
                     var comment = new Comment.Model();
@@ -259,14 +258,17 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
         Tests.prototype.commentsLoading = function (async, r) {
             var _this = this;
             async();
-            var model = reloader.model();
+            var controller = reloader.controller();
+            var koki = new KonsenskisteModel.Model();
+            koki.id(1);
             common.Callbacks.batch([
                 function (r) {
+                    controller.commandProcessor.processCommand(new KokiLogic.SetKokiCommand(koki));
                     _this.webot.query('.kk>.controls').child('*').contains('Diskussion').click();
                     setTimeout(r);
                 },
                 function (r) {
-                    model.konsenskiste().discussion().commentsLoading(true);
+                    koki.discussion().commentsLoading(true);
                     setTimeout(r);
                 },
                 function (r) {
@@ -435,6 +437,7 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
 
         Tests.prototype.changePermaLink = function (async, r) {
             var _this = this;
+            throw new Error('deactivated');
             async();
             var com = reloader.communicator();
             var testKoki = new KonsenskisteModel.Model();
@@ -473,7 +476,7 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
 
                     var koki = new KonsenskisteModel.Model();
                     koki.id(592);
-                    reloader.model().konsenskiste(koki);
+                    reloader.controller().commandProcessor.processCommand(new KokiLogic.SetKokiCommand(koki));
 
                     com.konsenskiste.query(592);
                     setTimeout(r);

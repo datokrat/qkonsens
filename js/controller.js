@@ -4,58 +4,64 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'model', 'locationhash', 'frame', 'windows/none', 'windows/konsenskiste', 'windows/newkk', 'topiclogic', 'windows/discussion', 'windows/konsenskistecontroller', 'communicator', 'viewmodelcontext', 'command', 'windowviewmodel'], function(require, exports, mdl, LocationHash, frame, noneWin, KokiWin, NewKkWin, TopicLogic, DiscussionWindow, kokiWinCtr, Communicator, ViewModelContext, Commands, WindowViewModel) {
+define(["require", "exports", 'model', 'topicnavigationmodel', 'locationhash', 'frame', 'windows/none', 'windows/konsenskiste', 'windows/newkk', 'topiclogic', 'kokilogic', 'windows/discussion', 'communicator', 'command', 'windowviewmodel'], function(require, exports, mdl, TopicNavigationModel, LocationHash, frame, noneWin, KokiWin, NewKkWin, TopicLogic, KokiLogic, DiscussionWindow, Communicator, Commands, WindowViewModel) {
     var Controller = (function () {
         function Controller(model, viewModel, communicator, commandControl) {
             this.model = model;
             this.viewModel = viewModel;
             this.communicator = communicator;
-            this.commandControl = { commandProcessor: new Commands.CommandProcessor() };
+            this.commandProcessor = new Commands.CommandProcessor();
+            this.discussionWin = new DiscussionWindow.Win();
             this.subscriptions = [];
             //var topicNavigationController = new topicNavigationCtr.Controller(model.topicNavigation, viewModel., { communicator: communicator.topic });
             this.initCommandControl(commandControl);
 
             this.initWindows();
+            this.initWindowViewModel();
 
-            this.initTopicNavigation();
+            this.initKokiLogic();
+            this.initTopicLogic();
             this.initAccount();
             this.initState();
         }
         Controller.prototype.initWindows = function () {
-            var _this = this;
             this.kkWin = new KokiWin.Win();
-
-            //this.browseWin = new BrowseWin.Win();
             this.newKkWin = new NewKkWin.Win();
 
             this.viewModel.left = new frame.WinContainer(new noneWin.Win());
             this.viewModel.right = new frame.WinContainer(new noneWin.Win());
-            this.viewModel.center = new frame.WinContainer(this.kkWin);
+            this.viewModel.center = new frame.WinContainer(new noneWin.Win());
 
-            //this.viewModel.browseWin = this.browseWin;
-            this.viewModel.kkWin = this.kkWin;
-
-            var globalContext = new ViewModelContext(this.viewModel.left, this.viewModel.right, this.viewModel.center);
+            //this.viewModel.kkWin = this.kkWin;
+            /*var globalContext = new ViewModelContext(this.viewModel.left, this.viewModel.right, this.viewModel.center);
             globalContext.konsenskisteWindow = this.kkWin;
             globalContext.discussionWindow = new DiscussionWindow.Win();
-            globalContext.konsenskisteModel = this.model.konsenskiste;
-
-            this.kkWinController = new kokiWinCtr.Controller(this.model.konsenskiste(), this.kkWin, this.communicator.konsenskiste).setContext(globalContext);
-
-            //this.browseWinController = new BrowseWin.Controller(this.model.topicNavigation, this.browseWin, this.communicator.topic, this.commandControl);
-            this.newKkWinController = new NewKkWin.Controller(this.newKkWin, this.commandControl.commandProcessor);
-
-            this.model.konsenskiste.subscribe(function (newKoki) {
-                return _this.kkWinController.setKonsenskisteModel(newKoki);
-            });
+            globalContext.konsenskisteModel = this.model.konsenskiste;*/
+            //this.kkWinController = new kokiWinCtr.ControllerImpl(this.model.konsenskiste(), this.kkWin, this.communicator.konsenskiste)
+            //	.setContext(globalContext);
+            this.newKkWinController = new NewKkWin.Controller(this.newKkWin, this.commandProcessor);
+            //this.model.konsenskiste.subscribe( newKoki => this.kkWinController.setKonsenskisteModel(newKoki) );
         };
 
-        Controller.prototype.initTopicNavigation = function () {
+        Controller.prototype.initWindowViewModel = function () {
+            this.windowViewModel = new WindowViewModel.Main({ center: this.viewModel.center, left: this.viewModel.left, right: this.viewModel.right });
+        };
+
+        Controller.prototype.initKokiLogic = function () {
+            var kokiLogicResources = new KokiLogic.Resources();
+            kokiLogicResources.windowViewModel = this.windowViewModel;
+            kokiLogicResources.konsenskisteCommunicator = this.communicator.konsenskiste;
+            kokiLogicResources.commandProcessor = this.commandProcessor;
+
+            this.kokiLogic = new KokiLogic.Controller(kokiLogicResources);
+        };
+
+        Controller.prototype.initTopicLogic = function () {
             var topicLogicResources = new TopicLogic.Resources();
-            topicLogicResources.topicNavigationModel = this.model.topicNavigation;
+            topicLogicResources.topicNavigationModel = new TopicNavigationModel.ModelImpl(); //this.model.topicNavigation;
             topicLogicResources.topicCommunicator = this.communicator.topic;
-            topicLogicResources.windowViewModel = new WindowViewModel.Main({ center: this.viewModel.center, left: this.viewModel.left, right: this.viewModel.right });
-            topicLogicResources.commandProcessor = this.commandControl.commandProcessor;
+            topicLogicResources.windowViewModel = this.windowViewModel;
+            topicLogicResources.commandProcessor = this.commandProcessor;
 
             this.topicLogic = new TopicLogic.Controller(topicLogicResources);
         };
@@ -72,10 +78,9 @@ define(["require", "exports", 'model', 'locationhash', 'frame', 'windows/none', 
         };
 
         Controller.prototype.dispose = function () {
-            this.kkWinController.dispose();
-
-            //this.browseWinController.dispose();
+            //this.kkWinController.dispose();
             this.newKkWinController.dispose();
+            this.kokiLogic.dispose();
             this.topicLogic.dispose();
             this.subscriptions.forEach(function (s) {
                 return s.dispose();
@@ -87,7 +92,9 @@ define(["require", "exports", 'model', 'locationhash', 'frame', 'windows/none', 
             this.model.account.subscribe(function (account) {
                 _this.updateAccountViewModel();
                 _this.login();
-                _this.reloadKk();
+
+                //this.reloadKk();
+                _this.commandProcessor.floodCommand(new HandleChangedAccountCommand());
             });
 
             this.viewModel.userName = ko.observable();
@@ -100,10 +107,9 @@ define(["require", "exports", 'model', 'locationhash', 'frame', 'windows/none', 
             this.login();
         };
 
-        Controller.prototype.reloadKk = function () {
-            this.model.konsenskiste(this.communicator.konsenskiste.query(this.model.konsenskiste().id()));
-        };
-
+        /*private reloadKk() {
+        this.model.konsenskiste(this.communicator.konsenskiste.query(this.model.konsenskiste().id()));
+        }*/
         Controller.prototype.login = function () {
             this.communicator.commandProcessor.processCommand(new Communicator.LoginCommand(this.model.account().userName));
         };
@@ -115,22 +121,30 @@ define(["require", "exports", 'model', 'locationhash', 'frame', 'windows/none', 
 
         Controller.prototype.initCommandControl = function (parent) {
             var _this = this;
-            this.commandControl.commandProcessor.parent = parent && parent.commandProcessor;
-            this.commandControl.commandProcessor.chain.append(function (cmd) {
-                if (cmd instanceof SelectKokiCommand) {
-                    _this.kkWinController.setKonsenskisteModelById(cmd.model.id());
-                    return true;
-                } else if (cmd instanceof CreateNewKokiCommand) {
+            this.commandProcessor.parent = parent && parent.commandProcessor;
+            this.commandProcessor.chain.append(function (cmd) {
+                /*if(cmd instanceof SelectKokiCommand) {
+                this.kkWinController.setKonsenskisteModelById((<SelectKokiCommand>cmd).model.id());
+                return true;
+                }*/
+                if (cmd instanceof CreateNewKokiCommand) {
                     var createKokiCommand = cmd;
                     var topicId = !createKokiCommand.parentTopic.id.root && createKokiCommand.parentTopic.id.id;
                     _this.communicator.konsenskiste.create(createKokiCommand.model, topicId, function (id) {
                         return createKokiCommand.then(id);
                     });
                     return true;
-                } else if (cmd instanceof OpenNewKokiWindowCommand) {
+                }
+                if (cmd instanceof OpenNewKokiWindowCommand) {
                     var openNewKokiWindowCommand = cmd;
                     _this.newKkWinController.setParentTopic(openNewKokiWindowCommand.topic);
                     _this.viewModel.left.win(_this.newKkWin);
+                    return true;
+                }
+                if (cmd instanceof OpenDiscussionWindowCommand) {
+                    var openDiscussionWindowCommand = cmd;
+                    _this.discussionWin.discussable(cmd.discussableViewModel);
+                    _this.viewModel.left.win(_this.discussionWin);
                     return true;
                 }
                 return false;
@@ -150,16 +164,9 @@ define(["require", "exports", 'model', 'locationhash', 'frame', 'windows/none', 
     })();
     exports.Controller = Controller;
 
-    var SelectKokiCommand = (function (_super) {
-        __extends(SelectKokiCommand, _super);
-        function SelectKokiCommand(model) {
-            _super.call(this);
-            this.model = model;
-        }
-        return SelectKokiCommand;
-    })(Commands.Command);
-    exports.SelectKokiCommand = SelectKokiCommand;
-
+    /*export class SelectKokiCommand extends Commands.Command {
+    constructor(public model: KonsenskisteModel.Model) { super() }
+    }*/
     var CreateNewKokiCommand = (function (_super) {
         __extends(CreateNewKokiCommand, _super);
         function CreateNewKokiCommand(model, parentTopic, then) {
@@ -181,4 +188,26 @@ define(["require", "exports", 'model', 'locationhash', 'frame', 'windows/none', 
         return OpenNewKokiWindowCommand;
     })(Commands.Command);
     exports.OpenNewKokiWindowCommand = OpenNewKokiWindowCommand;
+
+    var HandleChangedAccountCommand = (function (_super) {
+        __extends(HandleChangedAccountCommand, _super);
+        function HandleChangedAccountCommand() {
+            _super.apply(this, arguments);
+            this.toString = function () {
+                return 'HandleChangedAccountCommand';
+            };
+        }
+        return HandleChangedAccountCommand;
+    })(Commands.Command);
+    exports.HandleChangedAccountCommand = HandleChangedAccountCommand;
+
+    var OpenDiscussionWindowCommand = (function (_super) {
+        __extends(OpenDiscussionWindowCommand, _super);
+        function OpenDiscussionWindowCommand(discussableViewModel) {
+            _super.call(this);
+            this.discussableViewModel = discussableViewModel;
+        }
+        return OpenDiscussionWindowCommand;
+    })(Commands.Command);
+    exports.OpenDiscussionWindowCommand = OpenDiscussionWindowCommand;
 });

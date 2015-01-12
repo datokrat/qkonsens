@@ -1,6 +1,7 @@
 import evt = require('event')
 import ConstructorBasedFactory = require('factories/constructorbased')
 import Obs = require('observable')
+import Commands = require('command');
 
 import mdl = require('konsenskistemodel')
 import vm = require('konsenskisteviewmodel')
@@ -28,9 +29,9 @@ export interface Controller {
 }
 
 export class ControllerImpl extends KElement.Controller<mdl.Model, vm.ViewModel, KokiCommunicator.Main> implements Controller {
-	constructor(model: mdl.Model, viewModel: vm.ViewModel, communicator: KokiCommunicator.Main) {
-		super(model, viewModel, communicator);
-		this.init(model, viewModel, communicator);
+	constructor(model: mdl.Model, viewModel: vm.ViewModel, private args: ControllerArgs) {
+		super(model, viewModel, args.communicator, args.commandProcessor);
+		this.init(model, viewModel, args.communicator);
 	}
 	
 	private init(model: mdl.Model, viewModel: vm.ViewModel, communicator: KokiCommunicator.Main) {
@@ -74,7 +75,7 @@ export class ControllerImpl extends KElement.Controller<mdl.Model, vm.ViewModel,
 			this.communicator.createAndAppendKa(this.model.id(), ka);
 		}
 		
-		this.kaSynchronizer = new KokiSync.KaSynchronizer(this.communicator.kernaussage);
+		this.kaSynchronizer = new KokiSync.KaSynchronizer({ communicator: this.communicator.kernaussage, commandProcessor: this.args.commandProcessor });
 		this.kaSynchronizer
 			.setViewModelObservable(this.viewModel.childKas)
 			.setModelObservable(this.model.childKas);
@@ -108,4 +109,9 @@ export class ControllerImpl extends KElement.Controller<mdl.Model, vm.ViewModel,
 	
 	private modelSubscriptions: evt.Subscription[] = [];
 	private communicatorSubscriptions: evt.Subscription[] = [];
+}
+
+export interface ControllerArgs {
+	communicator: KokiCommunicator.Main;
+	commandProcessor: Commands.CommandProcessor;
 }

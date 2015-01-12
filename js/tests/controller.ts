@@ -11,11 +11,15 @@ import tpc = require('../topic')
 
 import kokiWin = require('windows/konsenskiste')
 import NewKkWin = require('windows/newkk')
+import DiscussionWin = require('windows/discussion');
 import KonsenskisteModel = require('../konsenskistemodel');
+import Discussion = require('../discussion');
 
 import Communicator = require('../communicator')
 import TestCommunicator = require('tests/testcommunicator')
 import Topic = require('../topic');
+
+import KokiLogic = require('../kokilogic');
 
 export class Tests extends unit.TestClass {
 	private factory = new Factory();
@@ -37,8 +41,9 @@ export class Tests extends unit.TestClass {
 	}
 	
 	testKonsenskiste() {
-		this.cxt.model.konsenskiste(new koki.Model());
-		this.cxt.model.konsenskiste().general().title('Hi!');
+		var konsenskiste = new koki.Model();
+		konsenskiste.general().title('Hi!');
+		this.cxt.controller.commandProcessor.processCommand(new KokiLogic.SetKokiCommand(konsenskiste));
 		
 		var konsenskisteWindow = <kokiWin.Win>this.cxt.viewModel.center.win();
 		test.assert( () => konsenskisteWindow.kkView().general().title() == 'Hi!' )
@@ -48,7 +53,8 @@ export class Tests extends unit.TestClass {
 		var oldKoki = new koki.Model;
 		oldKoki.id(1);
 		
-		this.cxt.model.konsenskiste(oldKoki);
+		//this.cxt.model.konsenskiste(oldKoki);
+		this.cxt.controller.commandProcessor.processCommand(new KokiLogic.SetKokiCommand(oldKoki));
 		
 		var newKoki = new koki.Model;
 		newKoki.general().title('hi');
@@ -66,7 +72,7 @@ export class Tests extends unit.TestClass {
 		var newKoki = new koki.Model;
 		newKoki.id(1);
 		newKoki.general().title('hi');
-		this.cxt.model.konsenskiste(oldKoki);
+		this.cxt.controller.commandProcessor.processCommand(new KokiLogic.SetKokiCommand(oldKoki));
 		
 		this.cxt.communicator.konsenskiste.received.raise({ id: 1, konsenskiste: newKoki });
 		
@@ -123,7 +129,7 @@ export class Tests extends unit.TestClass {
 			counter.inc('communicator.create');
 			then(2);
 		};
-		this.cxt.controller.commandControl.commandProcessor.processCommand(new ctr.CreateNewKokiCommand(new KonsenskisteModel.Model(), new Topic.Model, (id: number) => {
+		this.cxt.controller.commandProcessor.processCommand(new ctr.CreateNewKokiCommand(new KonsenskisteModel.Model(), new Topic.Model, (id: number) => {
 			test.assert(v => v.val(id) == 2);
 			counter.inc('then');
 		}));
@@ -134,9 +140,17 @@ export class Tests extends unit.TestClass {
 	processOpenNewKkWindowCommand() {
 		var topic = new tpc.Model();
 		topic.title('Parent Topic apgr');
-		this.cxt.controller.commandControl.commandProcessor.processCommand(new ctr.OpenNewKokiWindowCommand(topic));
+		this.cxt.controller.commandProcessor.processCommand(new ctr.OpenNewKokiWindowCommand(topic));
 		test.assert(v => this.cxt.viewModel.left.win() instanceof NewKkWin.Win);
 		test.assert(v => (<NewKkWin.Win>this.cxt.viewModel.left.win()).parentName() == 'Parent Topic apgr');
+	}
+	
+	processOpenDiscussionWindowCommand() {
+		var discussableViewModel: Discussion.DiscussableViewModel = {
+			discussion: ko.observable(new Discussion.ViewModel)
+		};
+		this.cxt.controller.commandProcessor.processCommand(new ctr.OpenDiscussionWindowCommand(discussableViewModel));
+		test.assert(v => this.cxt.viewModel.left.win() instanceof DiscussionWin.Win);
 	}
 }
 

@@ -1,6 +1,7 @@
 import Evt = require('event');
 import Obs = require('observable');
 import MainController = require('controller');
+import KokiLogic = require('kokilogic');
 import Model = require('topicnavigationmodel');
 import ViewModel = require('topicnavigationviewmodel');
 import Topic = require('topic');
@@ -131,7 +132,7 @@ export class KokiItemViewModelController {
 	constructor(model: KonsenskisteModel.Model, private viewModel: ViewModel.KokiItem, commandControl?: Commands.CommandControl) {
 		this.viewModel.caption = ko.computed(() => model.general().title() ? model.general().title() : model.general().text());
 		this.viewModel.click = () => {
-			commandControl && commandControl.commandProcessor.processCommand(new MainController.SelectKokiCommand(model));
+			commandControl && commandControl.commandProcessor.processCommand(new KokiLogic.SelectAndLoadKokiCommand(model));
 		};
 	}
 	
