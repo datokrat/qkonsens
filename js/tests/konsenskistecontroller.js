@@ -255,6 +255,10 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenski
             this.event.raise(args);
         };
 
+        TestEvent.prototype.clear = function () {
+            this.event.clear();
+        };
+
         TestEvent.prototype.countListeners = function () {
             return this.listenerCtr;
         };

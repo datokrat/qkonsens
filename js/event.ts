@@ -7,6 +7,7 @@ export interface Event<Args> {
 	unsubscribe(cb: (Args) => void);
 	raise(args?: Args);
 	raiseThis(args?: Args);
+	clear();
 }
 
 export interface Listener<Args> {
@@ -52,6 +53,10 @@ export class EventImpl<Args> implements Event<Args> {
 		this.listeners.forEach(function(l: (Args) => void) {
 			l(args);
 		});
+	}
+	
+	public clear() {
+		this.listeners = [];
 	}
 	
 	public raiseThis: (args?: Args) => void;

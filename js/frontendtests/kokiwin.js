@@ -437,7 +437,6 @@ define(["require", "exports", 'tests/test', 'frontendtests/reloader', 'frontendt
 
         Tests.prototype.changePermaLink = function (async, r) {
             var _this = this;
-            throw new Error('deactivated');
             async();
             var com = reloader.communicator();
             var testKoki = new KonsenskisteModel.Model();

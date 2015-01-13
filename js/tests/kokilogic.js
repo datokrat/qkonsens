@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../frame', '../command', '../controller', '../konsenskistemodel', 'tests/testkonsenskistecommunicator', 'windows/konsenskiste', '../windowviewmodel', '../kokilogic'], function(require, exports, unit, test, common, frame, Commands, Controller, KonsenskisteModel, KonsenskisteCommunicator, KonsenskisteWin, WindowViewModel, KokiLogic) {
+define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../frame', '../command', '../controller', '../konsenskistemodel', 'tests/testkonsenskistecommunicator', 'windows/konsenskiste', '../windowviewmodel', '../kokilogic', '../statelogic'], function(require, exports, unit, test, common, frame, Commands, Controller, KonsenskisteModel, KonsenskisteCommunicator, KonsenskisteWin, WindowViewModel, KokiLogic, StateLogic) {
     var Tests = (function (_super) {
         __extends(Tests, _super);
         function Tests() {
@@ -116,6 +116,23 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../fra
 
             test.assert(function (v) {
                 return v.val(_this.counter.get('cmd')) == 1;
+            });
+        };
+
+        Tests.prototype.processChangeKokiStateCommand = function () {
+            var _this = this;
+            var resources = ResourceInitializer.createResources();
+            var kokiLogic = new KokiLogic.Controller(resources);
+
+            var state = { kokiId: 19 };
+            resources.konsenskisteCommunicator.query = function (id) {
+                _this.counter.inc('query');
+                return new KonsenskisteModel.Model();
+            };
+            kokiLogic.commandProcessor.processCommand(new StateLogic.ChangeKokiStateCommand(state));
+
+            test.assert(function (v) {
+                return v.val(_this.counter.get('query')) == 1;
             });
         };
 

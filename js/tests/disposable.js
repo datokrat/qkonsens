@@ -59,6 +59,10 @@ define(["require", "exports", 'tests/tsunit', '../event'], function(require, exp
             this.event.raise(args);
         };
 
+        TestEvent.prototype.clear = function () {
+            this.event.clear();
+        };
+
         TestEvent.prototype.countListeners = function () {
             return this.listenerCtr;
         };

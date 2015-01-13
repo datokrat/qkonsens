@@ -67,6 +67,10 @@ class TestEvent<Args> implements Event.Event<Args>, GenericTestEvent {
 		this.event.raise(args);
 	}
 	
+	public clear() {
+		this.event.clear();
+	}
+	
 	public raiseThis: (args?: Args) => void;
 	
 	public countListeners(): number {

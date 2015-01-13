@@ -11,6 +11,7 @@ import KokiWin = require('windows/konsenskiste');
 import BrowseWin = require('windows/browse');
 import NewKkWin = require('windows/newkk');
 
+import StateLogic = require('statelogic');
 import TopicLogic = require('topiclogic');
 import KokiLogic = require('kokilogic');
 
@@ -37,7 +38,7 @@ export class Controller {
 		this.initKokiLogic();
 		this.initTopicLogic();
 		this.initAccount();
-		this.initState();
+		this.initStateLogic();
 	}
 	
 	private initWindows() {
@@ -85,15 +86,21 @@ export class Controller {
 		this.topicLogic = new TopicLogic.Controller(topicLogicResources);
 	}
 	
-	private initState() {
-		this.kkWin.state.subscribe(state => LocationHash.set(JSON.stringify(state), false));
+	private initStateLogic() {
+		/*this.kkWin.state.subscribe(state => LocationHash.set(JSON.stringify(state), false));
 		this.subscriptions = [ LocationHash.changed.subscribe(() => this.onHashChanged()) ];
-		this.onHashChanged();
+		this.onHashChanged();*/
+		
+		var resources = new StateLogic.Resources();
+		resources.commandProcessor = this.commandProcessor;
+		this.stateLogic = new StateLogic.Controller(resources);
+		
+		this.stateLogic.initialize();
 	}
 	
 	public dispose() {
-		//this.kkWinController.dispose();
 		this.newKkWinController.dispose();
+		this.stateLogic.dispose();
 		this.kokiLogic.dispose();
 		this.topicLogic.dispose();
 		this.subscriptions.forEach(s => s.dispose());
@@ -158,7 +165,7 @@ export class Controller {
 		});
 	}
 	
-	private onHashChanged() {
+	/*private onHashChanged() {
 		var hash = LocationHash.get().slice(1);
 		try {
 			var hashObj = JSON.parse(hash);
@@ -167,7 +174,7 @@ export class Controller {
 		catch(e) {
 			this.kkWin.setState({ kokiId: 12 });
 		}
-	}
+	}*/
 	
 	public commandProcessor = new Commands.CommandProcessor();
 	
@@ -178,7 +185,8 @@ export class Controller {
 	private newKkWin: NewKkWin.Win;
 	private newKkWinController: NewKkWin.Controller;
 	
-	private kokiLogic: KokiLogic.Controller
+	private stateLogic: StateLogic.Controller;
+	private kokiLogic: KokiLogic.Controller;
 	private topicLogic: TopicLogic.Controller;
 	
 	private subscriptions: Evt.Subscription[] = [];

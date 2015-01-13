@@ -14,6 +14,7 @@ import KonsenskisteWinController = require('windows/konsenskistecontroller');
 import WindowViewModel = require('../windowviewmodel');
 
 import KokiLogic = require('../kokilogic');
+import StateLogic = require('../statelogic');
 
 export class Tests extends unit.TestClass {
 	setUp() {
@@ -100,6 +101,20 @@ export class Tests extends unit.TestClass {
 		kokiLogic.commandProcessor.processCommand(new KokiLogic.SetKokiCommand(koki));
 		
 		test.assert(v => v.val(this.counter.get('cmd')) == 1);
+	}
+	
+	processChangeKokiStateCommand() {
+		var resources = ResourceInitializer.createResources();
+		var kokiLogic = new KokiLogic.Controller(resources);
+		
+		var state = { kokiId: 19 };
+		resources.konsenskisteCommunicator.query = id => {
+			this.counter.inc('query');
+			return new KonsenskisteModel.Model();
+		};
+		kokiLogic.commandProcessor.processCommand(new StateLogic.ChangeKokiStateCommand(state));
+		
+		test.assert(v => v.val(this.counter.get('query')) == 1);
 	}
 	
 	passUnknownCommandFromChildToParent() {

@@ -369,7 +369,6 @@ export class Tests {
 	}
 	
 	changePermaLink(async, r) {
-		throw new Error('deactivated');
 		async();
 		var com = reloader.communicator();
 		var testKoki = new KonsenskisteModel.Model();

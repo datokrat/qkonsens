@@ -10,6 +10,8 @@ import KonsenskisteWinController = require('windows/konsenskistecontroller');
 import NewKkWin = require('windows/newkk');
 import WindowViewModel = require('windowviewmodel');
 
+import StateLogic = require('statelogic');
+
 export class Controller {
 	constructor(private resources: Resources) {
 		this.initCommandProcessors();
@@ -29,6 +31,7 @@ export class Controller {
 			if(cmd instanceof SetKokiCommand) return this.onSetKokiCommandReceived(<SelectAndLoadKokiCommand>cmd);
 			if(cmd instanceof CreateNewKokiCommand) return this.onCreateNewKokiCommandReceived(<CreateNewKokiCommand>cmd);
 			if(cmd instanceof MainController.HandleChangedAccountCommand) return this.onHandleChangedAccountCommandReceived(<MainController.HandleChangedAccountCommand>cmd);
+			if(cmd instanceof StateLogic.ChangeKokiStateCommand) return this.onChangeKokiStateCommandReceived(<StateLogic.ChangeKokiStateCommand>cmd);
 		});
 		
 		this.internalCommandProcessor = new Commands.CommandProcessor();
@@ -78,6 +81,11 @@ export class Controller {
 	
 	private onHandleChangedKokiWinStateCommandReceived(cmd: HandleChangedKokiWinStateCommand): boolean {
 		this.resources.commandProcessor.floodCommand(cmd);
+		return true;
+	}
+	
+	private onChangeKokiStateCommandReceived(cmd: StateLogic.ChangeKokiStateCommand): boolean {
+		this.selectAndLoadKoki(cmd.state.kokiId);
 		return true;
 	}
 	

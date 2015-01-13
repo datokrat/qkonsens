@@ -20,6 +20,7 @@ import TestCommunicator = require('tests/testcommunicator')
 import Topic = require('../topic');
 
 import KokiLogic = require('../kokilogic');
+import StateLogic = require('../statelogic');
 
 export class Tests extends unit.TestClass {
 	private factory = new Factory();

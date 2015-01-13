@@ -1,6 +1,7 @@
 import unit = require('tests/tsunit')
 import asyncunit = require('tests/asyncunit')
 
+import LocationHash = require('tests/locationhash');
 import Rating = require('tests/rating');
 import Comment = require('tests/comment');
 import Discussion = require('tests/discussion');
@@ -26,6 +27,7 @@ import ContentModelTests = require('tests/contentmodel')
 import CommandTests = require('tests/commands');
 import KElementTests = require('tests/kelement');
 
+import StateLogic = require('tests/statelogic');
 import TopicLogic = require('tests/topiclogic');
 import KokiLogic = require('tests/kokilogic');
 
@@ -35,6 +37,7 @@ var asyncTest = new asyncunit.Test();
 asyncTest.addTestClass(new ContentCommunicator(), 'ContentCommunicator');
 asyncTest.addTestClass(new KokiCommunicator(), 'KonsenskisteCommunicator');
 asyncTest.addTestClass(new Rating.TestClass(), 'Rating');
+asyncTest.addTestClass(new LocationHash.Tests, 'LocationHash');
 
 test.addTestClass(new observable.Tests, 'Observable');
 test.addTestClass(new ContentModelTests(), 'ContentModel');
@@ -59,6 +62,7 @@ test.addTestClass(new CommandTests.Main(), 'Commands');
 test.addTestClass(new winKoki.Tests(), 'Window: Konsenskiste')
 test.addTestClass(new winBrowse.Tests(), 'Window: Browse');
 
+test.addTestClass(new StateLogic.Tests(), 'StateLogic');
 test.addTestClass(new KokiLogic.Tests(), 'KokiLogic');
 test.addTestClass(new TopicLogic.Tests(), 'TopicLogic');
 

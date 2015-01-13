@@ -56,6 +56,10 @@ define(["require", "exports"], function(require, exports) {
             });
         };
 
+        EventImpl.prototype.clear = function () {
+            this.listeners = [];
+        };
+
         EventImpl.prototype.isListener = function (cb) {
             return this.listeners.indexOf(cb) != -1;
         };

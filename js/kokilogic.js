@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'command', 'memory', 'controller', 'windows/konsenskiste', 'windows/konsenskistecontroller', 'windowviewmodel'], function(require, exports, Commands, Memory, MainController, KonsenskisteWin, KonsenskisteWinController, WindowViewModel) {
+define(["require", "exports", 'command', 'memory', 'controller', 'windows/konsenskiste', 'windows/konsenskistecontroller', 'windowviewmodel', 'statelogic'], function(require, exports, Commands, Memory, MainController, KonsenskisteWin, KonsenskisteWinController, WindowViewModel, StateLogic) {
     var Controller = (function () {
         function Controller(resources) {
             this.resources = resources;
@@ -31,6 +31,8 @@ define(["require", "exports", 'command', 'memory', 'controller', 'windows/konsen
                     return _this.onCreateNewKokiCommandReceived(cmd);
                 if (cmd instanceof MainController.HandleChangedAccountCommand)
                     return _this.onHandleChangedAccountCommandReceived(cmd);
+                if (cmd instanceof StateLogic.ChangeKokiStateCommand)
+                    return _this.onChangeKokiStateCommandReceived(cmd);
             });
 
             this.internalCommandProcessor = new Commands.CommandProcessor();
@@ -83,6 +85,11 @@ define(["require", "exports", 'command', 'memory', 'controller', 'windows/konsen
 
         Controller.prototype.onHandleChangedKokiWinStateCommandReceived = function (cmd) {
             this.resources.commandProcessor.floodCommand(cmd);
+            return true;
+        };
+
+        Controller.prototype.onChangeKokiStateCommandReceived = function (cmd) {
+            this.selectAndLoadKoki(cmd.state.kokiId);
             return true;
         };
 

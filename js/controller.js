@@ -4,12 +4,22 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'model', 'topicnavigationmodel', 'locationhash', 'frame', 'windows/none', 'windows/konsenskiste', 'windows/newkk', 'topiclogic', 'kokilogic', 'windows/discussion', 'communicator', 'command', 'windowviewmodel'], function(require, exports, mdl, TopicNavigationModel, LocationHash, frame, noneWin, KokiWin, NewKkWin, TopicLogic, KokiLogic, DiscussionWindow, Communicator, Commands, WindowViewModel) {
+define(["require", "exports", 'model', 'topicnavigationmodel', 'frame', 'windows/none', 'windows/konsenskiste', 'windows/newkk', 'statelogic', 'topiclogic', 'kokilogic', 'windows/discussion', 'communicator', 'command', 'windowviewmodel'], function(require, exports, mdl, TopicNavigationModel, frame, noneWin, KokiWin, NewKkWin, StateLogic, TopicLogic, KokiLogic, DiscussionWindow, Communicator, Commands, WindowViewModel) {
     var Controller = (function () {
         function Controller(model, viewModel, communicator, commandControl) {
             this.model = model;
             this.viewModel = viewModel;
             this.communicator = communicator;
+            /*private onHashChanged() {
+            var hash = LocationHash.get().slice(1);
+            try {
+            var hashObj = JSON.parse(hash);
+            this.kkWin.setState(hashObj || { kokiId: 12 });
+            }
+            catch(e) {
+            this.kkWin.setState({ kokiId: 12 });
+            }
+            }*/
             this.commandProcessor = new Commands.CommandProcessor();
             this.discussionWin = new DiscussionWindow.Win();
             this.subscriptions = [];
@@ -22,7 +32,7 @@ define(["require", "exports", 'model', 'topicnavigationmodel', 'locationhash', '
             this.initKokiLogic();
             this.initTopicLogic();
             this.initAccount();
-            this.initState();
+            this.initStateLogic();
         }
         Controller.prototype.initWindows = function () {
             this.kkWin = new KokiWin.Win();
@@ -66,20 +76,20 @@ define(["require", "exports", 'model', 'topicnavigationmodel', 'locationhash', '
             this.topicLogic = new TopicLogic.Controller(topicLogicResources);
         };
 
-        Controller.prototype.initState = function () {
-            var _this = this;
-            this.kkWin.state.subscribe(function (state) {
-                return LocationHash.set(JSON.stringify(state), false);
-            });
-            this.subscriptions = [LocationHash.changed.subscribe(function () {
-                    return _this.onHashChanged();
-                })];
-            this.onHashChanged();
+        Controller.prototype.initStateLogic = function () {
+            /*this.kkWin.state.subscribe(state => LocationHash.set(JSON.stringify(state), false));
+            this.subscriptions = [ LocationHash.changed.subscribe(() => this.onHashChanged()) ];
+            this.onHashChanged();*/
+            var resources = new StateLogic.Resources();
+            resources.commandProcessor = this.commandProcessor;
+            this.stateLogic = new StateLogic.Controller(resources);
+
+            this.stateLogic.initialize();
         };
 
         Controller.prototype.dispose = function () {
-            //this.kkWinController.dispose();
             this.newKkWinController.dispose();
+            this.stateLogic.dispose();
             this.kokiLogic.dispose();
             this.topicLogic.dispose();
             this.subscriptions.forEach(function (s) {
@@ -149,16 +159,6 @@ define(["require", "exports", 'model', 'topicnavigationmodel', 'locationhash', '
                 }
                 return false;
             });
-        };
-
-        Controller.prototype.onHashChanged = function () {
-            var hash = LocationHash.get().slice(1);
-            try  {
-                var hashObj = JSON.parse(hash);
-                this.kkWin.setState(hashObj || { kokiId: 12 });
-            } catch (e) {
-                this.kkWin.setState({ kokiId: 12 });
-            }
         };
         return Controller;
     })();
