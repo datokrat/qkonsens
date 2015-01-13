@@ -153,6 +153,10 @@ export class Tests extends unit.TestClass {
 		this.cxt.controller.commandProcessor.processCommand(new ctr.OpenDiscussionWindowCommand(discussableViewModel));
 		test.assert(v => this.cxt.viewModel.left.win() instanceof DiscussionWin.Win);
 	}
+	
+	isNotAdminPerDefault() {
+		test.assert(v => this.cxt.viewModel.isAdmin() == false);
+	}
 }
 
 class Factory {

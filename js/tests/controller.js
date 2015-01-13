@@ -187,6 +187,13 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../mod
                 return _this.cxt.viewModel.left.win() instanceof DiscussionWin.Win;
             });
         };
+
+        Tests.prototype.isNotAdminPerDefault = function () {
+            var _this = this;
+            test.assert(function (v) {
+                return _this.cxt.viewModel.isAdmin() == false;
+            });
+        };
         return Tests;
     })(unit.TestClass);
     exports.Tests = Tests;

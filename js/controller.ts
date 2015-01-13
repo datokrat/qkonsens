@@ -85,6 +85,7 @@ export class Controller {
 	}
 	
 	private initAccount() {
+		this.viewModel.isAdmin = ko.observable<boolean>(false);
 		this.model.account.subscribe(account => {
 			this.updateAccountViewModel();
 			this.login();

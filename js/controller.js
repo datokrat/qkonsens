@@ -78,6 +78,7 @@ define(["require", "exports", 'model', 'topicnavigationmodel', 'frame', 'windows
 
         Controller.prototype.initAccount = function () {
             var _this = this;
+            this.viewModel.isAdmin = ko.observable(false);
             this.model.account.subscribe(function (account) {
                 _this.updateAccountViewModel();
                 _this.login();

@@ -18,7 +18,9 @@
 		<!-- ko foreach: childKas -->
 			<!-- ko template: { name: 'ka-template' } --><!-- /ko -->
 		<!-- /ko -->
-		<a class="clickable control" data-bind="click: newKaClick">+Kernaussage</a>
+		<!-- ko if: $root.isAdmin -->
+			<a class="clickable control" data-bind="click: newKaClick">+Kernaussage</a>
+		<!-- /ko -->
 		<!-- ko if: newKaFormVisible -->
 		<div class="ka">
 			<p class="title"><input placeholder="Titel" type="text" class="block titleInput" data-bind="value: newKaTitle" /></p>
