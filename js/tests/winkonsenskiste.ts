@@ -88,9 +88,12 @@ export class Tests extends unit.TestClass {
 		test.assert(v => v.val(counter.get('cmd')) == 1);
 	}
     
-    /*contextImplementation() {
-		this.controller.setContext(new ViewModelContext(null, null, null));
+    noKokiModelMeansNullState() {
+		this.konsenskisteModel = null;
+		this.window = new win.Win();
+		this.commandProcessor = new Commands.CommandProcessor();
+		this.controller = new ctr.ControllerImpl(this.konsenskisteModel, this.window, {communicator: new KokiCommunicator.Main, commandProcessor: this.commandProcessor});
 		
-		test.assert( () => this.controller['konsenskisteController']['cxt'] );
-    }*/
+		test.assert(v => v.val(this.window.state()) == null);
+	}
 }

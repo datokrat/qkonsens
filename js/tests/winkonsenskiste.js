@@ -103,6 +103,18 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../com
                 return v.val(counter.get('cmd')) == 1;
             });
         };
+
+        Tests.prototype.noKokiModelMeansNullState = function () {
+            var _this = this;
+            this.konsenskisteModel = null;
+            this.window = new win.Win();
+            this.commandProcessor = new Commands.CommandProcessor();
+            this.controller = new ctr.ControllerImpl(this.konsenskisteModel, this.window, { communicator: new KokiCommunicator.Main, commandProcessor: this.commandProcessor });
+
+            test.assert(function (v) {
+                return v.val(_this.window.state()) == null;
+            });
+        };
         return Tests;
     })(unit.TestClass);
     exports.Tests = Tests;

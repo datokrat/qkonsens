@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'model', 'topicnavigationmodel', 'frame', 'windows/none', 'windows/konsenskiste', 'windows/newkk', 'statelogic', 'topiclogic', 'kokilogic', 'windows/discussion', 'communicator', 'command', 'windowviewmodel'], function(require, exports, mdl, TopicNavigationModel, frame, noneWin, KokiWin, NewKkWin, StateLogic, TopicLogic, KokiLogic, DiscussionWindow, Communicator, Commands, WindowViewModel) {
+define(["require", "exports", 'model', 'topicnavigationmodel', 'frame', 'windows/none', 'windows/newkk', 'windows/intro', 'statelogic', 'topiclogic', 'kokilogic', 'windows/discussion', 'communicator', 'command', 'windowviewmodel'], function(require, exports, mdl, TopicNavigationModel, frame, noneWin, NewKkWin, IntroWin, StateLogic, TopicLogic, KokiLogic, DiscussionWindow, Communicator, Commands, WindowViewModel) {
     var Controller = (function () {
         function Controller(model, viewModel, communicator, commandControl) {
             this.model = model;
@@ -35,10 +35,11 @@ define(["require", "exports", 'model', 'topicnavigationmodel', 'frame', 'windows
             this.initStateLogic();
         }
         Controller.prototype.initWindows = function () {
-            this.kkWin = new KokiWin.Win();
+            //this.kkWin = new KokiWin.Win();
             this.newKkWin = new NewKkWin.Win();
+            this.introWin = new IntroWin.Win();
 
-            this.viewModel.left = new frame.WinContainer(new noneWin.Win());
+            this.viewModel.left = new frame.WinContainer(this.introWin);
             this.viewModel.right = new frame.WinContainer(new noneWin.Win());
             this.viewModel.center = new frame.WinContainer(new noneWin.Win());
 

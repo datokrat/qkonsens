@@ -7,9 +7,10 @@ import Evt = require('event');
 
 import frame = require('frame')
 import noneWin = require('windows/none')
-import KokiWin = require('windows/konsenskiste');
+//import KokiWin = require('windows/konsenskiste');
 import BrowseWin = require('windows/browse');
 import NewKkWin = require('windows/newkk');
+import IntroWin = require('windows/intro');
 
 import StateLogic = require('statelogic');
 import TopicLogic = require('topiclogic');
@@ -42,10 +43,11 @@ export class Controller {
 	}
 	
 	private initWindows() {
-		this.kkWin = new KokiWin.Win();
+		//this.kkWin = new KokiWin.Win();
 		this.newKkWin = new NewKkWin.Win();
+		this.introWin = new IntroWin.Win();
 		
-		this.viewModel.left = new frame.WinContainer( new noneWin.Win() );
+		this.viewModel.left = new frame.WinContainer( this.introWin );
 		this.viewModel.right = new frame.WinContainer( new noneWin.Win() );
 		this.viewModel.center = new frame.WinContainer( new noneWin.Win() );
 		//this.viewModel.kkWin = this.kkWin;
@@ -180,10 +182,11 @@ export class Controller {
 	
 	private windowViewModel: WindowViewModel.Main;
 	private discussionWin = new DiscussionWindow.Win();
-	private kkWin: KokiWin.Win;
+	//private kkWin: KokiWin.Win;
 	//private kkWinController: kokiWinCtr.ControllerImpl;
 	private newKkWin: NewKkWin.Win;
 	private newKkWinController: NewKkWin.Controller;
+	private introWin: IntroWin.Win;
 	
 	private stateLogic: StateLogic.Controller;
 	private kokiLogic: KokiLogic.Controller;

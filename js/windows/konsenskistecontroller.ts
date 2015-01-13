@@ -36,18 +36,11 @@ export class ControllerImpl implements Controller {
 				var typedState = <State>state;
 				var koki = new kokiMdl.Model(); koki.id(typedState.kokiId);
 				this.args.commandProcessor.processCommand(new KokiLogic.SelectAndLoadKokiCommand(koki));
-				//this.setKonsenskisteModelById(typedState.kokiId);
 			}
 		}
 		this.window.state.subscribe(state => this.args.commandProcessor.floodCommand
 			(new KokiLogic.HandleChangedKokiWinStateCommand(state)));
 	}
-	
-	/*public setKonsenskisteModelById(id: number) {
-		throw new Error('cxt is an old field - shouldn\'t be used');
-		if(!this.cxt.konsenskisteModel() || this.cxt.konsenskisteModel().id() != id)
-			this.cxt.konsenskisteModel(this.communicator.query(id));
-	}*/
 	
 	private initKonsenskiste(konsenskisteModel: kokiMdl.Model) {
 		this.disposeKonsenskiste();
@@ -56,10 +49,12 @@ export class ControllerImpl implements Controller {
 		this.konsenskisteModel = konsenskisteModel;
 		this.konsenskisteController = this.konsenskisteControllerFactory.create
 			(konsenskisteModel, konsenskisteViewModel, this.args);
-		//if(this.cxt) this.konsenskisteController.setViewModelContext(this.cxt);
         
 		this.window.kkView(konsenskisteViewModel);
-		this.window.state(<State>{ kokiId: konsenskisteModel && konsenskisteModel.id() });
+		if(konsenskisteModel)
+			this.window.state(<State>{ kokiId: konsenskisteModel && konsenskisteModel.id() });
+		else
+			this.window.state(null);
 	}
 	
 	private disposeKonsenskiste() {

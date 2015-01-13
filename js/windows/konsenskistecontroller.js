@@ -18,7 +18,6 @@ define(["require", "exports", 'factories/konsenskistecontroller', '../konsenskis
                     var koki = new kokiMdl.Model();
                     koki.id(typedState.kokiId);
                     _this.args.commandProcessor.processCommand(new KokiLogic.SelectAndLoadKokiCommand(koki));
-                    //this.setKonsenskisteModelById(typedState.kokiId);
                 }
             };
             this.window.state.subscribe(function (state) {
@@ -26,11 +25,6 @@ define(["require", "exports", 'factories/konsenskistecontroller', '../konsenskis
             });
         };
 
-        /*public setKonsenskisteModelById(id: number) {
-        throw new Error('cxt is an old field - shouldn\'t be used');
-        if(!this.cxt.konsenskisteModel() || this.cxt.konsenskisteModel().id() != id)
-        this.cxt.konsenskisteModel(this.communicator.query(id));
-        }*/
         ControllerImpl.prototype.initKonsenskiste = function (konsenskisteModel) {
             this.disposeKonsenskiste();
 
@@ -38,9 +32,11 @@ define(["require", "exports", 'factories/konsenskistecontroller', '../konsenskis
             this.konsenskisteModel = konsenskisteModel;
             this.konsenskisteController = this.konsenskisteControllerFactory.create(konsenskisteModel, konsenskisteViewModel, this.args);
 
-            //if(this.cxt) this.konsenskisteController.setViewModelContext(this.cxt);
             this.window.kkView(konsenskisteViewModel);
-            this.window.state({ kokiId: konsenskisteModel && konsenskisteModel.id() });
+            if (konsenskisteModel)
+                this.window.state({ kokiId: konsenskisteModel && konsenskisteModel.id() });
+            else
+                this.window.state(null);
         };
 
         ControllerImpl.prototype.disposeKonsenskiste = function () {
