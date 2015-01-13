@@ -12,19 +12,22 @@
 	<ul data-bind="foreach: children">
 		<li class="clickable" data-bind="text: caption, click: click"></li>
 	</ul>
-<!-- ko if: kokis().length -->
 <h1>Konsenskisten zum Thema:</h1>
 <div>
 		<ul data-bind="">
+			<!-- ko if: kokis().length -->
 			<!-- ko foreach: kokis -->
 				<li class="clickable" data-bind="text: caption, click: click"></li>
 			<!-- /ko -->
-			<li data-bind="if: $root.isAdmin">
+			<!-- /ko -->
+			
+			<!-- ko if: $root.isAdmin -->
+			<li>
 				<a data-bind="click: clickCreateNewKoki">Neu</a>
 			</li>
+			<!-- /ko -->
 		</ul>
 	</div>
 </div>
-<!-- /ko -->
 </section>
 <!-- /ko -->
