@@ -10,16 +10,6 @@ define(["require", "exports", 'model', 'topicnavigationmodel', 'frame', 'windows
             this.model = model;
             this.viewModel = viewModel;
             this.communicator = communicator;
-            /*private onHashChanged() {
-            var hash = LocationHash.get().slice(1);
-            try {
-            var hashObj = JSON.parse(hash);
-            this.kkWin.setState(hashObj || { kokiId: 12 });
-            }
-            catch(e) {
-            this.kkWin.setState({ kokiId: 12 });
-            }
-            }*/
             this.commandProcessor = new Commands.CommandProcessor();
             this.discussionWin = new DiscussionWindow.Win();
             this.subscriptions = [];
@@ -35,7 +25,6 @@ define(["require", "exports", 'model', 'topicnavigationmodel', 'frame', 'windows
             this.initStateLogic();
         }
         Controller.prototype.initWindows = function () {
-            //this.kkWin = new KokiWin.Win();
             this.newKkWin = new NewKkWin.Win();
             this.introWin = new IntroWin.Win();
 
@@ -43,15 +32,7 @@ define(["require", "exports", 'model', 'topicnavigationmodel', 'frame', 'windows
             this.viewModel.right = new frame.WinContainer(new noneWin.Win());
             this.viewModel.center = new frame.WinContainer(new noneWin.Win());
 
-            //this.viewModel.kkWin = this.kkWin;
-            /*var globalContext = new ViewModelContext(this.viewModel.left, this.viewModel.right, this.viewModel.center);
-            globalContext.konsenskisteWindow = this.kkWin;
-            globalContext.discussionWindow = new DiscussionWindow.Win();
-            globalContext.konsenskisteModel = this.model.konsenskiste;*/
-            //this.kkWinController = new kokiWinCtr.ControllerImpl(this.model.konsenskiste(), this.kkWin, this.communicator.konsenskiste)
-            //	.setContext(globalContext);
             this.newKkWinController = new NewKkWin.Controller(this.newKkWin, this.commandProcessor);
-            //this.model.konsenskiste.subscribe( newKoki => this.kkWinController.setKonsenskisteModel(newKoki) );
         };
 
         Controller.prototype.initWindowViewModel = function () {
@@ -78,9 +59,6 @@ define(["require", "exports", 'model', 'topicnavigationmodel', 'frame', 'windows
         };
 
         Controller.prototype.initStateLogic = function () {
-            /*this.kkWin.state.subscribe(state => LocationHash.set(JSON.stringify(state), false));
-            this.subscriptions = [ LocationHash.changed.subscribe(() => this.onHashChanged()) ];
-            this.onHashChanged();*/
             var resources = new StateLogic.Resources();
             resources.commandProcessor = this.commandProcessor;
             this.stateLogic = new StateLogic.Controller(resources);
@@ -103,8 +81,6 @@ define(["require", "exports", 'model', 'topicnavigationmodel', 'frame', 'windows
             this.model.account.subscribe(function (account) {
                 _this.updateAccountViewModel();
                 _this.login();
-
-                //this.reloadKk();
                 _this.commandProcessor.floodCommand(new HandleChangedAccountCommand());
             });
 
@@ -118,9 +94,6 @@ define(["require", "exports", 'model', 'topicnavigationmodel', 'frame', 'windows
             this.login();
         };
 
-        /*private reloadKk() {
-        this.model.konsenskiste(this.communicator.konsenskiste.query(this.model.konsenskiste().id()));
-        }*/
         Controller.prototype.login = function () {
             this.communicator.commandProcessor.processCommand(new Communicator.LoginCommand(this.model.account().userName));
         };
@@ -134,10 +107,6 @@ define(["require", "exports", 'model', 'topicnavigationmodel', 'frame', 'windows
             var _this = this;
             this.commandProcessor.parent = parent && parent.commandProcessor;
             this.commandProcessor.chain.append(function (cmd) {
-                /*if(cmd instanceof SelectKokiCommand) {
-                this.kkWinController.setKonsenskisteModelById((<SelectKokiCommand>cmd).model.id());
-                return true;
-                }*/
                 if (cmd instanceof CreateNewKokiCommand) {
                     var createKokiCommand = cmd;
                     var topicId = !createKokiCommand.parentTopic.id.root && createKokiCommand.parentTopic.id.id;
@@ -165,9 +134,6 @@ define(["require", "exports", 'model', 'topicnavigationmodel', 'frame', 'windows
     })();
     exports.Controller = Controller;
 
-    /*export class SelectKokiCommand extends Commands.Command {
-    constructor(public model: KonsenskisteModel.Model) { super() }
-    }*/
     var CreateNewKokiCommand = (function (_super) {
         __extends(CreateNewKokiCommand, _super);
         function CreateNewKokiCommand(model, parentTopic, then) {
