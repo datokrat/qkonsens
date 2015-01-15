@@ -103,6 +103,7 @@ define(["require", "exports", 'event', 'rating', 'discocontext', 'disco', 'commo
             var rating = this.parse(rawRatings);
             out = out || new Rating.LikeRatingModel();
             out.personalRating(ScoreParser.fromRatingToLikeRating(rating.personalRating()));
+            out.summarizedRatings(rating.summarizedRatings());
             return out;
         };
         return Parser;

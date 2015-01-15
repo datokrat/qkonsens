@@ -1,8 +1,8 @@
 <div class="select rating control">
 	<input type="radio" name="rating" value="like" data-bind="checked: personalRating(), click: select('like'), attr: { name: id + '-likerating', id: 'likerating-' + id + '-like' }" /><label
-	data-bind="attr: { for: 'likerating-' + id + '-like' }">+<span class="count" data-bind="text: 0"></span></label><input
+	data-bind="attr: { for: 'likerating-' + id + '-like' }">+<span class="count" data-bind="text: summarizedRatings().like()"></span></label><input
 	type="radio" name="rating" value="dislike" data-bind="checked: personalRating(), click: select('dislike'), attr: { name: id + '-likerating', id: 'likerating-' + id + '-dislike' }" /><label
-	data-bind="attr: { for: 'likerating-' + id + '-dislike' }">-<span class="count" data-bind="text: 0"></span></label><input
+	data-bind="attr: { for: 'likerating-' + id + '-dislike' }">-<span class="count" data-bind="text: summarizedRatings().dislike()"></span></label><input
 	type="radio" name="rating" value="none" data-bind="checked: personalRating(), click: select('none'), attr: { name: id + '-likerating', id: 'likerating-' + id + '-none' }" /><label
-	data-bind="attr: { for: 'likerating-' + id + '-none' }">?<span class="count" data-bind="text: 0"></span></label>
+	data-bind="attr: { for: 'likerating-' + id + '-none' }">?<span class="count"></span></label>
 </div>

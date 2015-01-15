@@ -103,6 +103,7 @@ export class Parser {
 		var rating = this.parse(rawRatings);
 		out = out || new Rating.LikeRatingModel();
 		out.personalRating(ScoreParser.fromRatingToLikeRating(rating.personalRating()));
+		out.summarizedRatings(rating.summarizedRatings());
 		return out;
 	}
 }
