@@ -21,6 +21,7 @@ define(["require", "exports", 'command'], function(require, exports, Commands) {
     var LikeRatingModel = (function () {
         function LikeRatingModel() {
             this.personalRating = ko.observable('none');
+            this.summarizedRatings = ko.observable(new SummarizedLikeRatingCollectionModel);
         }
         LikeRatingModel.prototype.set = function (other) {
             this.personalRating(other.personalRating());
@@ -87,6 +88,7 @@ define(["require", "exports", 'command'], function(require, exports, Commands) {
             this.model = model;
             viewModel.id = LikeRatingController.idCtr++;
             viewModel.personalRating = model.personalRating;
+            viewModel.summarizedRatings = model.summarizedRatings;
 
             viewModel.select = function (ratingValue) {
                 return function () {
@@ -154,4 +156,24 @@ define(["require", "exports", 'command'], function(require, exports, Commands) {
         return SummarizedRatingCollectionModel;
     })();
     exports.SummarizedRatingCollectionModel = SummarizedRatingCollectionModel;
+
+    var SummarizedLikeRatingCollectionViewModel = (function () {
+        function SummarizedLikeRatingCollectionViewModel() {
+        }
+        return SummarizedLikeRatingCollectionViewModel;
+    })();
+    exports.SummarizedLikeRatingCollectionViewModel = SummarizedLikeRatingCollectionViewModel;
+
+    var SummarizedLikeRatingCollectionModel = (function () {
+        function SummarizedLikeRatingCollectionModel() {
+            this.like = ko.observable(0);
+            this.dislike = ko.observable(0);
+        }
+        SummarizedLikeRatingCollectionModel.prototype.set = function (rhs) {
+            this.like(rhs.like());
+            this.dislike(rhs.dislike());
+        };
+        return SummarizedLikeRatingCollectionModel;
+    })();
+    exports.SummarizedLikeRatingCollectionModel = SummarizedLikeRatingCollectionModel;
 });

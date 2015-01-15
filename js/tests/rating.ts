@@ -71,4 +71,15 @@ export class TestClass extends unit.TestClass {
 		
 		test.assert(() => vm.summarizedRatings().like() == 3);
 	}
+	
+	summarizedLikeRatingsMVSync() {
+		var mdl = new Rating.LikeRatingModel();
+		var vm = new Rating.LikeRatingViewModel();
+		var com = new RatingCommunicator.Stub();
+		var ctr = new Rating.LikeRatingController(mdl, vm, null);
+		
+		mdl.summarizedRatings().like(6);
+		
+		test.assert(v => vm.summarizedRatings().like() == 6);
+	}
 }

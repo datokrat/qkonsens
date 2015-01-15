@@ -91,6 +91,19 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', '../common', '../
                 return vm.summarizedRatings().like() == 3;
             });
         };
+
+        TestClass.prototype.summarizedLikeRatingsMVSync = function () {
+            var mdl = new Rating.LikeRatingModel();
+            var vm = new Rating.LikeRatingViewModel();
+            var com = new RatingCommunicator.Stub();
+            var ctr = new Rating.LikeRatingController(mdl, vm, null);
+
+            mdl.summarizedRatings().like(6);
+
+            test.assert(function (v) {
+                return vm.summarizedRatings().like() == 6;
+            });
+        };
         return TestClass;
     })(unit.TestClass);
     exports.TestClass = TestClass;

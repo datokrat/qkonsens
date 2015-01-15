@@ -25,6 +25,8 @@ export class Model {
 
 export class LikeRatingModel {
 	public personalRating: Obs.Observable<string> = ko.observable<string>('none');
+	public summarizedRatings: Obs.Observable<SummarizedLikeRatingCollectionModel>
+		= ko.observable<SummarizedLikeRatingCollectionModel>(new SummarizedLikeRatingCollectionModel);
 	
 	public set(other: LikeRatingModel) {
 		this.personalRating(other.personalRating());
@@ -42,6 +44,7 @@ export class ViewModel {
 export class LikeRatingViewModel {
 	public id: number;
 	public personalRating: Obs.Observable<string>;
+	public summarizedRatings: Obs.Observable<SummarizedLikeRatingCollectionViewModel>;
 	public select: (rating: string) => () => void;
 }
 
@@ -83,6 +86,7 @@ export class LikeRatingController {
 	constructor(private model: LikeRatingModel, viewModel: LikeRatingViewModel, commandProcessor: Commands.CommandProcessor) {
 		viewModel.id = LikeRatingController.idCtr++;
 		viewModel.personalRating = model.personalRating;
+		viewModel.summarizedRatings = model.summarizedRatings;
 		
 		viewModel.select = (ratingValue: string) => () => setTimeout(() => {
 			commandProcessor.processCommand(new SelectLikeRatingCommand(ratingValue, () => this.onRatingSubmitted(ratingValue)));
@@ -129,5 +133,19 @@ export class SummarizedRatingCollectionModel {
 		this.neutral(rhs.neutral());
 		this.dislike(rhs.dislike());
 		this.strongdislike(rhs.strongdislike());
+	}
+}
+
+export class SummarizedLikeRatingCollectionViewModel {
+	public like: Obs.Observable<number>;
+	public dislike: Obs.Observable<number>;
+}
+
+export class SummarizedLikeRatingCollectionModel {
+	public like = ko.observable<number>(0);
+	public dislike = ko.observable<number>(0);
+	public set(rhs: SummarizedRatingCollectionViewModel) {
+		this.like(rhs.like());
+		this.dislike(rhs.dislike());
 	}
 }
