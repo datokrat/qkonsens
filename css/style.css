@@ -263,7 +263,7 @@ input[type=submit], button {
 }
 
 .win#left ul, .win#right ul {
-	list-style-type: none;
+	/*list-style-type: none;*/
 	padding-left: 1em;
 }
 
