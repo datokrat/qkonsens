@@ -7,6 +7,7 @@ import ContentViewModel = require('contentviewmodel');
 import Rating = require('rating');
 import Discussion = require('discussion');
 import Commands = require('command');
+import KElementCommands = require('kelementcommands');
 
 import ContentCommunicator = require('contentcommunicator');
 import DiscussionCommunicator = require('discussioncommunicator');
@@ -35,6 +36,8 @@ export class ViewModel {
 	public context: Obs.Observable<ContentViewModel.Context>;
 	public rating: Obs.Observable<Rating.ViewModel>;
 	public discussion: Obs.Observable<Discussion.ViewModel>;
+	
+	public editClick: () => void;
 }
 
 export interface Communicator {
@@ -70,6 +73,10 @@ export class Controller<Mdl extends Model, Vm extends ViewModel, Com extends Com
 		this.initGeneralContent();
 		this.initContext();
 		this.initRating();
+		
+		viewModel.editClick = () => {
+			parentCommandProcessor.processCommand(new KElementCommands.OpenEditKElementWindowCommand(this.model));
+		};
 	}
 	
 	private initCommandProcessor() {

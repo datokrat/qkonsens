@@ -7,8 +7,8 @@ define(["require", "exports", '../event'], function(require, exports, Events) {
             this.testContext = {};
         }
         TestCommunicator.prototype.setGeneralTestContent = function (generalContent) {
-            if (typeof generalContent.id === 'number')
-                this.generalTestContent[generalContent.id] = generalContent;
+            if (typeof generalContent.postId === 'number')
+                this.generalTestContent[generalContent.postId] = generalContent;
             else
                 throw new Error('TestContentCommunicator.setGeneralTestContent: generalContent.id is not a number');
         };
@@ -34,6 +34,14 @@ define(["require", "exports", '../event'], function(require, exports, Events) {
                 this.contextRetrieved.raise({ context: context });
             else
                 throw new Error('TestContentCommunicator.queryContext: id not found');
+        };
+
+        TestCommunicator.prototype.updateGeneral = function (model, callbacks) {
+            var generalContent = this.generalTestContent[model.postId];
+            if (typeof generalContent !== 'undefined')
+                callbacks.then();
+            else
+                throw new Error('updateGeneral: id not found');
         };
 
         TestCommunicator.prototype.query = function (id) {

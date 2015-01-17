@@ -11,7 +11,7 @@ export class Context {
 }
 
 export class General {
-	public id: number;
+	public postId: number;
 	public title: Observable.Observable<string> = ko.observable<string>();
 	public text: Observable.Observable<string> = ko.observable<string>();
 	

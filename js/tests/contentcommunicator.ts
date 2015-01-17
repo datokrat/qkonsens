@@ -37,9 +37,9 @@ class TestClass extends unit.TestClass {
 		this.contextController = new ContentController.Context( this.contextModel, this.contextViewModel, this.com );
 		
 		this.content1 = this.contentModelFactory.createGeneralContent('Text #1', 'Title #1');
-		this.content1.id = 1;
+		this.content1.postId = 1;
 		this.content2 = this.contentModelFactory.createGeneralContent('Text #2', 'Title #2');
-		this.content2.id = 2;
+		this.content2.postId = 2;
 		
 		this.context1 = this.contentModelFactory.createContext('Context #1');
 		this.context1.id = 10;
@@ -54,7 +54,7 @@ class TestClass extends unit.TestClass {
 		async();
 		common.Callbacks.batch([
 			r => {
-				this.generalModel.id = 1;
+				this.generalModel.postId = 1;
 				this.contextModel.id = 10;
 				this.com.queryGeneral(1);
 				this.com.queryContext(10);

@@ -9,8 +9,8 @@ class TestCommunicator implements Interface.Main {
 	private testContext: any = {};
 	
 	public setGeneralTestContent(generalContent: ContentModel.General) {
-		if(typeof generalContent.id === 'number')
-			this.generalTestContent[generalContent.id] = generalContent;
+		if(typeof generalContent.postId === 'number')
+			this.generalTestContent[generalContent.postId] = generalContent;
 		else throw new Error('TestContentCommunicator.setGeneralTestContent: generalContent.id is not a number');
 	}
 	
@@ -33,6 +33,13 @@ class TestCommunicator implements Interface.Main {
 		if(typeof context !== 'undefined')
 			this.contextRetrieved.raise({ context: context });
 		else throw new Error('TestContentCommunicator.queryContext: id not found');
+	}
+	
+	public updateGeneral(model: ContentModel.General, callbacks: { then: () => void; error?: (error) => void }) {
+		var generalContent = this.generalTestContent[model.postId];
+		if(typeof generalContent !== 'undefined')
+			callbacks.then();
+		else throw new Error('updateGeneral: id not found');
 	}
 	
 	public query(id: number) {

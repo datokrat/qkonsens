@@ -225,6 +225,7 @@ export class Parser {
 	
 	public parseGeneralContent(rawPost: Disco.Ontology.Post, out?: ContentModel.General): ContentModel.General {
 		out = out || new ContentModel.General;
+		out.postId = parseInt(rawPost.Id);
 		out.title(rawPost.Content.Title);
 		out.text(rawPost.Content.Text);
 		return out;

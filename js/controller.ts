@@ -7,6 +7,7 @@ import frame = require('frame')
 import noneWin = require('windows/none')
 import NewKkWin = require('windows/newkk');
 import IntroWin = require('windows/intro');
+import EditKElementWin = require('windows/editkelement');
 
 import StateLogic = require('statelogic');
 import TopicLogic = require('topiclogic');
@@ -18,6 +19,7 @@ import Communicator = require('communicator')
 import KonsenskisteModel = require('konsenskistemodel');
 import Topic = require('topic');
 import Commands = require('command');
+import KElementCommands = require('kelementcommands');
 import WindowViewModel = require('windowviewmodel');
 
 export class Controller {
@@ -36,6 +38,7 @@ export class Controller {
 	
 	private initWindows() {
 		this.newKkWin = new NewKkWin.Win();
+		this.editKElementWin = new EditKElementWin.Win();
 		this.introWin = new IntroWin.Win();
 		
 		this.viewModel.left = new frame.WinContainer( this.introWin );
@@ -43,6 +46,7 @@ export class Controller {
 		this.viewModel.center = new frame.WinContainer( new noneWin.Win() );
 		
 		this.newKkWinController = new NewKkWin.Controller(this.newKkWin, this.commandProcessor);
+		this.editKElementWinController = new EditKElementWin.Controller(this.editKElementWin, this.commandProcessor);
 	}
 	
 	private initWindowViewModel() {
@@ -131,6 +135,19 @@ export class Controller {
 				this.viewModel.left.win(this.discussionWin);
 				return true;
 			}
+			if(cmd instanceof KElementCommands.OpenEditKElementWindowCommand) {
+				var editKElementWindowCommand = <KElementCommands.OpenEditKElementWindowCommand>cmd;
+				this.editKElementWinController.setModel(editKElementWindowCommand.model);
+				this.viewModel.left.win(this.editKElementWin);
+				return true;
+			}
+			if(cmd instanceof KElementCommands.UpdateGeneralContentCommand) {
+				var updateGeneralContentCommand = <KElementCommands.UpdateGeneralContentCommand>cmd;
+				this.communicator.konsenskiste.content.updateGeneral(updateGeneralContentCommand.content, { then: () => {
+					updateGeneralContentCommand.callbacks.then();
+				}});
+				return true;
+			}
 			return false;
 		});
 	}
@@ -142,6 +159,8 @@ export class Controller {
 	private newKkWin: NewKkWin.Win;
 	private newKkWinController: NewKkWin.Controller;
 	private introWin: IntroWin.Win;
+	private editKElementWin: EditKElementWin.Win;
+	private editKElementWinController: EditKElementWin.Controller;
 	
 	private stateLogic: StateLogic.Controller;
 	private kokiLogic: KokiLogic.Controller;

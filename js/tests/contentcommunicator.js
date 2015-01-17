@@ -21,9 +21,9 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', '../common', 'tes
             this.contextController = new ContentController.Context(this.contextModel, this.contextViewModel, this.com);
 
             this.content1 = this.contentModelFactory.createGeneralContent('Text #1', 'Title #1');
-            this.content1.id = 1;
+            this.content1.postId = 1;
             this.content2 = this.contentModelFactory.createGeneralContent('Text #2', 'Title #2');
-            this.content2.id = 2;
+            this.content2.postId = 2;
 
             this.context1 = this.contentModelFactory.createContext('Context #1');
             this.context1.id = 10;
@@ -39,7 +39,7 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', '../common', 'tes
             async();
             common.Callbacks.batch([
                 function (r) {
-                    _this.generalModel.id = 1;
+                    _this.generalModel.postId = 1;
                     _this.contextModel.id = 10;
                     _this.com.queryGeneral(1);
                     _this.com.queryContext(10);

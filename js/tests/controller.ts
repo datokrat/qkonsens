@@ -11,9 +11,12 @@ import tpc = require('../topic')
 
 import kokiWin = require('windows/konsenskiste')
 import NewKkWin = require('windows/newkk')
+import EditKElementWin = require('windows/editkelement');
 import DiscussionWin = require('windows/discussion');
 import KonsenskisteModel = require('../konsenskistemodel');
+import ContentModel = require('../contentmodel');
 import Discussion = require('../discussion');
+import KElementCommands = require('../kelementcommands');
 
 import Communicator = require('../communicator')
 import TestCommunicator = require('tests/testcommunicator')
@@ -154,8 +157,32 @@ export class Tests extends unit.TestClass {
 		test.assert(v => this.cxt.viewModel.left.win() instanceof DiscussionWin.Win);
 	}
 	
+	processOpenEditKElementWindowCommand() {
+		var kElement = new KonsenskisteModel.Model(); kElement.id(5);
+		this.cxt.controller.commandProcessor.processCommand(new KElementCommands.OpenEditKElementWindowCommand(kElement));
+		test.assert(v => this.cxt.viewModel.left.win() instanceof EditKElementWin.Win);
+	}
+	
 	isNotAdminPerDefault() {
 		test.assert(v => this.cxt.viewModel.isAdmin() == false);
+	}
+	
+	handleUpdateGeneralContentCommand() {
+		var counter = new common.Counter();
+		var content = new ContentModel.General();
+		content.postId = 5;
+		
+		this.cxt.communicator.konsenskiste.content.updateGeneral = (model, callbacks) => {
+			counter.inc('updateGeneral');
+			test.assert(v => v.val(model.postId) == content.postId);
+			callbacks.then();
+		};
+		
+		this.cxt.controller.commandProcessor.processCommand(
+			new KElementCommands.UpdateGeneralContentCommand(content, { then: () => counter.inc('then') }));
+		
+		test.assert(v => v.val(counter.get('updateGeneral')) == 1);
+		test.assert(v => v.val(counter.get('then')) == 1);
 	}
 }
 

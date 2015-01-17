@@ -1,0 +1,15 @@
+<h1>
+	<span data-bind="template: { name: 'historybar-template' }"></span>
+	Bearbeiten
+</h1>
+<div>
+	<p>
+		<input class="block" type="text" placeholder="Titel" data-bind="value: title" />
+		<textarea class="block" placeholder="Text" data-bind="value: text"></textarea>
+		<button data-bind="click: submitGeneralContent">Titel und Text speichern</button>
+	</p>
+	<p>
+		<textarea class="block" placeholder="Klärtext" data-bind="value: context"></textarea>
+		<button data-bind="">Klärtext speichern</button>
+	</p>
+</div>

@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'model', 'topicnavigationmodel', 'frame', 'windows/none', 'windows/newkk', 'windows/intro', 'statelogic', 'topiclogic', 'kokilogic', 'windows/discussion', 'communicator', 'command', 'windowviewmodel'], function(require, exports, mdl, TopicNavigationModel, frame, noneWin, NewKkWin, IntroWin, StateLogic, TopicLogic, KokiLogic, DiscussionWindow, Communicator, Commands, WindowViewModel) {
+define(["require", "exports", 'model', 'topicnavigationmodel', 'frame', 'windows/none', 'windows/newkk', 'windows/intro', 'windows/editkelement', 'statelogic', 'topiclogic', 'kokilogic', 'windows/discussion', 'communicator', 'command', 'kelementcommands', 'windowviewmodel'], function(require, exports, mdl, TopicNavigationModel, frame, noneWin, NewKkWin, IntroWin, EditKElementWin, StateLogic, TopicLogic, KokiLogic, DiscussionWindow, Communicator, Commands, KElementCommands, WindowViewModel) {
     var Controller = (function () {
         function Controller(model, viewModel, communicator, commandControl) {
             this.model = model;
@@ -26,6 +26,7 @@ define(["require", "exports", 'model', 'topicnavigationmodel', 'frame', 'windows
         }
         Controller.prototype.initWindows = function () {
             this.newKkWin = new NewKkWin.Win();
+            this.editKElementWin = new EditKElementWin.Win();
             this.introWin = new IntroWin.Win();
 
             this.viewModel.left = new frame.WinContainer(this.introWin);
@@ -33,6 +34,7 @@ define(["require", "exports", 'model', 'topicnavigationmodel', 'frame', 'windows
             this.viewModel.center = new frame.WinContainer(new noneWin.Win());
 
             this.newKkWinController = new NewKkWin.Controller(this.newKkWin, this.commandProcessor);
+            this.editKElementWinController = new EditKElementWin.Controller(this.editKElementWin, this.commandProcessor);
         };
 
         Controller.prototype.initWindowViewModel = function () {
@@ -126,6 +128,19 @@ define(["require", "exports", 'model', 'topicnavigationmodel', 'frame', 'windows
                     var openDiscussionWindowCommand = cmd;
                     _this.discussionWin.discussable(cmd.discussableViewModel);
                     _this.viewModel.left.win(_this.discussionWin);
+                    return true;
+                }
+                if (cmd instanceof KElementCommands.OpenEditKElementWindowCommand) {
+                    var editKElementWindowCommand = cmd;
+                    _this.editKElementWinController.setModel(editKElementWindowCommand.model);
+                    _this.viewModel.left.win(_this.editKElementWin);
+                    return true;
+                }
+                if (cmd instanceof KElementCommands.UpdateGeneralContentCommand) {
+                    var updateGeneralContentCommand = cmd;
+                    _this.communicator.konsenskiste.content.updateGeneral(updateGeneralContentCommand.content, { then: function () {
+                            updateGeneralContentCommand.callbacks.then();
+                        } });
                     return true;
                 }
                 return false;

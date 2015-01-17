@@ -11,7 +11,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../kernaussagemodel
             _super.apply(this, arguments);
             this.modelFactory = new ModelFactory();
         }
-        Tests.prototype.test = function () {
+        Tests.prototype.contentSync = function () {
             var model = this.modelFactory.create('Begriff Basisdemokratie', 'Basisdemokratie ist Demokratie, die aus der Basis kommt', 'Baduum-Disch!');
             var viewModel = new ViewModel.ViewModel();
             var communicator = new KernaussageCommunicator();

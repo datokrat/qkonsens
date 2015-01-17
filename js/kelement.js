@@ -1,4 +1,4 @@
-define(["require", "exports", 'contentmodel', 'rating', 'discussion', 'command', 'synchronizers/ksynchronizers'], function(require, exports, ContentModel, Rating, Discussion, Commands, KSync) {
+define(["require", "exports", 'contentmodel', 'rating', 'discussion', 'command', 'kelementcommands', 'synchronizers/ksynchronizers'], function(require, exports, ContentModel, Rating, Discussion, Commands, KElementCommands, KSync) {
     var Model = (function () {
         function Model() {
             this.id = ko.observable();
@@ -27,6 +27,7 @@ define(["require", "exports", 'contentmodel', 'rating', 'discussion', 'command',
 
     var Controller = (function () {
         function Controller(model, viewModel, communicator, parentCommandProcessor) {
+            var _this = this;
             this.parentCommandProcessor = parentCommandProcessor;
             this.commandProcessor = new Commands.CommandProcessor();
             this.initCommandProcessor();
@@ -39,6 +40,10 @@ define(["require", "exports", 'contentmodel', 'rating', 'discussion', 'command',
             this.initGeneralContent();
             this.initContext();
             this.initRating();
+
+            viewModel.editClick = function () {
+                parentCommandProcessor.processCommand(new KElementCommands.OpenEditKElementWindowCommand(_this.model));
+            };
         }
         Controller.prototype.initCommandProcessor = function () {
             var _this = this;

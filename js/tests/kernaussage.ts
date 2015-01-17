@@ -5,11 +5,12 @@ import Model = require('../kernaussagemodel')
 import ViewModel = require('../kernaussageviewmodel')
 import Controller = require('../kernaussagecontroller')
 import KernaussageCommunicator = require('tests/testkernaussagecommunicator')
+import Commands = require('../command');
 
 export class Tests extends unit.TestClass {
 	private modelFactory = new ModelFactory();
 
-	test() {
+	contentSync() {
 		var model = this.modelFactory.create( 'Begriff Basisdemokratie', 'Basisdemokratie ist Demokratie, die aus der Basis kommt', 'Baduum-Disch!' );
 		var viewModel = new ViewModel.ViewModel();
 		var communicator = new KernaussageCommunicator();

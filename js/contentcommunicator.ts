@@ -8,6 +8,8 @@ export interface Main {
 	queryGeneral(id: number);
 	queryContext(id: number);
 	query(id: number);
+	
+	updateGeneral(model: ContentModel.General, callbacks: { then: () => void; error?: (error) => void });
 }
 
 export interface GeneralContentRetrievedArgs {

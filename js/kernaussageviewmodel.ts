@@ -7,5 +7,4 @@ import Obs = require('observable');
 import KElement = require('kelement');
 
 export class ViewModel extends KElement.ViewModel {
-	//public isActive: () => boolean;
 }

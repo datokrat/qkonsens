@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../model', '../viewmodel', '../controller', '../konsenskistemodel', '../topic', 'windows/konsenskiste', 'windows/newkk', 'windows/discussion', '../konsenskistemodel', '../discussion', '../communicator', 'tests/testcommunicator', '../topic', '../kokilogic'], function(require, exports, unit, test, common, mdl, vm, ctr, koki, tpc, kokiWin, NewKkWin, DiscussionWin, KonsenskisteModel, Discussion, Communicator, TestCommunicator, Topic, KokiLogic) {
+define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../model', '../viewmodel', '../controller', '../konsenskistemodel', '../topic', 'windows/konsenskiste', 'windows/newkk', 'windows/editkelement', 'windows/discussion', '../konsenskistemodel', '../contentmodel', '../discussion', '../kelementcommands', '../communicator', 'tests/testcommunicator', '../topic', '../kokilogic'], function(require, exports, unit, test, common, mdl, vm, ctr, koki, tpc, kokiWin, NewKkWin, EditKElementWin, DiscussionWin, KonsenskisteModel, ContentModel, Discussion, KElementCommands, Communicator, TestCommunicator, Topic, KokiLogic) {
     var Tests = (function (_super) {
         __extends(Tests, _super);
         function Tests() {
@@ -188,10 +188,45 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../mod
             });
         };
 
+        Tests.prototype.processOpenEditKElementWindowCommand = function () {
+            var _this = this;
+            var kElement = new KonsenskisteModel.Model();
+            kElement.id(5);
+            this.cxt.controller.commandProcessor.processCommand(new KElementCommands.OpenEditKElementWindowCommand(kElement));
+            test.assert(function (v) {
+                return _this.cxt.viewModel.left.win() instanceof EditKElementWin.Win;
+            });
+        };
+
         Tests.prototype.isNotAdminPerDefault = function () {
             var _this = this;
             test.assert(function (v) {
                 return _this.cxt.viewModel.isAdmin() == false;
+            });
+        };
+
+        Tests.prototype.handleUpdateGeneralContentCommand = function () {
+            var counter = new common.Counter();
+            var content = new ContentModel.General();
+            content.postId = 5;
+
+            this.cxt.communicator.konsenskiste.content.updateGeneral = function (model, callbacks) {
+                counter.inc('updateGeneral');
+                test.assert(function (v) {
+                    return v.val(model.postId) == content.postId;
+                });
+                callbacks.then();
+            };
+
+            this.cxt.controller.commandProcessor.processCommand(new KElementCommands.UpdateGeneralContentCommand(content, { then: function () {
+                    return counter.inc('then');
+                } }));
+
+            test.assert(function (v) {
+                return v.val(counter.get('updateGeneral')) == 1;
+            });
+            test.assert(function (v) {
+                return v.val(counter.get('then')) == 1;
             });
         };
         return Tests;

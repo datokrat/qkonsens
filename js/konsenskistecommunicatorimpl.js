@@ -245,6 +245,7 @@ define(["require", "exports", 'event', 'common', 'discocontext', 'contentcommuni
 
         Parser.prototype.parseGeneralContent = function (rawPost, out) {
             out = out || new ContentModel.General;
+            out.postId = parseInt(rawPost.Id);
             out.title(rawPost.Content.Title);
             out.text(rawPost.Content.Text);
             return out;

@@ -21,6 +21,7 @@ import observable = require('tests/observable')
 import content = require('tests/content')
 import context = require('tests/context')
 import winKoki = require('tests/winkonsenskiste')
+import WinEditKElement = require('tests/wineditkelement');
 import ContentCommunicator = require('tests/contentcommunicator')
 import KokiCommunicator = require('tests/konsenskistecommunicator')
 import ContentModelTests = require('tests/contentmodel')
@@ -61,6 +62,7 @@ test.addTestClass(new CommandTests.Main(), 'Commands');
 
 test.addTestClass(new winKoki.Tests(), 'Window: Konsenskiste')
 test.addTestClass(new winBrowse.Tests(), 'Window: Browse');
+test.addTestClass(new WinEditKElement.Tests(), 'Window: EditKElement');
 
 test.addTestClass(new StateLogic.Tests(), 'StateLogic');
 test.addTestClass(new KokiLogic.Tests(), 'KokiLogic');

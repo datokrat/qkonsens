@@ -26,7 +26,7 @@ export class General {
 	}
 	
 	private onContentRetrieved = (args: Communicator.GeneralContentRetrievedArgs) => {
-		if(this.model.id == args.general.id)
+		if(this.model.postId == args.general.postId)
 			this.model.set(args.general);
 	}
 	

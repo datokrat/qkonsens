@@ -3,7 +3,7 @@ define(["require", "exports", 'event'], function(require, exports, Events) {
         function General(model, viewModel, communicator) {
             var _this = this;
             this.onContentRetrieved = function (args) {
-                if (_this.model.id == args.general.id)
+                if (_this.model.postId == args.general.postId)
                     _this.model.set(args.general);
             };
             this.init(model, viewModel, communicator);
