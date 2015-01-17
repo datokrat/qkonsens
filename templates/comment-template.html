@@ -5,6 +5,9 @@
 	<!-- ko if: content().title() && content().title().length -->
 		<h1 class="title" data-bind="text: content().title"></h1>
 	<!-- /ko -->
-	<p><span class="text" data-bind="text: content().text"></span></p>
+	<p>
+		<span class="text" data-bind="text: content().text"></span>
+		<span class="author" data-bind="text: author"></span>
+	</p>
 	<!-- ko template: { name: 'likerating-template', data: rating } --><!-- /ko -->
 </div>

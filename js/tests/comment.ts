@@ -8,7 +8,7 @@ import RatingCommunicator = require('tests/testratingcommunicator');
 import DiscussionCommunicator = require('tests/testdiscussioncommunicator');
 
 export class Main extends unit.TestClass {
-	test() {
+	handleSelectLikeRatingCommand() {
 		var counter = new common.Counter();
 		var model = new Comment.Model();
 		var viewModel = new Comment.ViewModel();

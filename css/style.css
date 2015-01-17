@@ -66,6 +66,17 @@ div.cmt {
 	background-color: rgba(200,200,200,0.2);
 }
 
+div.cmt .author {
+	font-style: italic;
+	font-size: 0.7em;
+}
+
+div.cmt .author:before {
+	font-style: italic;
+	font-size: 0.7em;
+	content: "--"
+}
+
 div.cxt {
 	padding: 0.2em 0.5em;
 	margin: 0.2em 0;

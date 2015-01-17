@@ -17,6 +17,7 @@ export class Model {
 	public id: number;
 	public content: Obs.Observable<ContentModel.General> = ko.observable( new ContentModel.General );
 	public rating: Obs.Observable<Rating.LikeRatingModel> = ko.observable(new Rating.LikeRatingModel);
+	public author: Obs.Observable<string> = ko.observable<string>();
 }
 
 var idCtr = 0;
@@ -24,6 +25,7 @@ export class ViewModel {
 	public id = idCtr++;
 	public content: Obs.Observable<ContentViewModel.General>;
 	public rating: Obs.Observable<Rating.LikeRatingViewModel>;
+	public author: Obs.Observable<string>;
 	
 	public removeClick: () => void;
 }
@@ -32,6 +34,7 @@ export class Controller {
 	constructor(private model: Model, viewModel: ViewModel, private communicator: DiscussionCommunicator.Base) {
 		this.initCommandProcessor();
 		
+		viewModel.author = model.author;
 		viewModel.content = ko.observable<ContentViewModel.General>();
 		viewModel.removeClick = () => {
 			this.commentableModel && this.commentableModel.removeComment(model);

@@ -3,6 +3,7 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'contentmodel', 'r
         function Model() {
             this.content = ko.observable(new ContentModel.General);
             this.rating = ko.observable(new Rating.LikeRatingModel);
+            this.author = ko.observable();
         }
         return Model;
     })();
@@ -25,6 +26,7 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'contentmodel', 'r
             this.commandProcessor = new Commands.CommandProcessor();
             this.initCommandProcessor();
 
+            viewModel.author = model.author;
             viewModel.content = ko.observable();
             viewModel.removeClick = function () {
                 _this.commentableModel && _this.commentableModel.removeComment(model);

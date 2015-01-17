@@ -86,7 +86,8 @@
      'Tags': { 'type':'Array','elementType':'Disco.Ontology.Tag','inverseProperty':'$$unbound' },
      'Ratings': { 'type':'Array','elementType':'Disco.Ontology.Rating','inverseProperty':'$$unbound' },
      'RefersTo': { 'type':'Array','elementType':'Disco.Ontology.PostReference','inverseProperty':'$$unbound' },
-     'ReferredFrom': { 'type':'Array','elementType':'Disco.Ontology.PostReference','inverseProperty':'$$unbound' }
+     'ReferredFrom': { 'type':'Array','elementType':'Disco.Ontology.PostReference','inverseProperty':'$$unbound' },
+     'ModifiedBy': { 'type':'Disco.Ontology.Originator','inverseProperty':'$$unbound' },
   });
 
   Disco.Ontology.EntityBase.extend('Disco.Ontology.PostReference', {

@@ -10,7 +10,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../com
         function Main() {
             _super.apply(this, arguments);
         }
-        Main.prototype.test = function () {
+        Main.prototype.handleSelectLikeRatingCommand = function () {
             var counter = new common.Counter();
             var model = new Comment.Model();
             var viewModel = new Comment.ViewModel();

@@ -116,6 +116,7 @@ export class Main implements DiscussionCommunicator.Base {
 			&& it.ReferenceType.Description.Name != "Context" \
 			&& it.Referree.Id == this.Id', { Id: discussableId })
 		.include('Referrer.Content')
+		.include('Referrer.ModifiedBy.Author')
 		.include('Referrer.Ratings.ModifiedBy.Author')
 		.toArray();
 	}
@@ -135,6 +136,7 @@ export class Main implements DiscussionCommunicator.Base {
 		ret.id = parseInt(comment.Id);
 		ret.content().title(comment.Content.Title);
 		ret.content().text(comment.Content.Text);
+		ret.author(comment.ModifiedBy.Author.Alias);
 		this.ratingParser.parseLikeRating(comment.Ratings, ret.rating());
 		return ret;
 	}
