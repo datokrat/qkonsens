@@ -29,6 +29,8 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', 'frontendtests/re
                     win.navigation().children()[0].click = function () {
                     };
                     win.navigation().kokis = ko.observableArray([]);
+                    win.navigation().clickCreateNewKoki = function () {
+                    };
 
                     reloader.viewModel().right.win(win);
                     setTimeout(r);
@@ -62,6 +64,8 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', 'frontendtests/re
                     win.navigation().selected = ko.observable(topicViewModel);
                     win.navigation().children = ko.observableArray([]);
                     win.navigation().kokis = ko.observableArray([]);
+                    win.navigation().clickCreateNewKoki = function () {
+                    };
 
                     reloader.viewModel().right.win(win);
                     setTimeout(r);

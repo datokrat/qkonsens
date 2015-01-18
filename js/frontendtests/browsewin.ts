@@ -37,6 +37,7 @@ export class Tests extends unit.TestClass {
 				win.navigation().children()[0].caption = ko.observable('Child 1');
 				win.navigation().children()[0].click = () => {};
 				win.navigation().kokis = ko.observableArray([]);
+				win.navigation().clickCreateNewKoki = () => {};
 					
 				reloader.viewModel().right.win(win);
 				setTimeout(r);
@@ -65,6 +66,7 @@ export class Tests extends unit.TestClass {
 				win.navigation().selected = ko.observable(topicViewModel);
 				win.navigation().children = ko.observableArray([]);
 				win.navigation().kokis = ko.observableArray([]);
+				win.navigation().clickCreateNewKoki = () => {};
 				
 				reloader.viewModel().right.win(win);
 				setTimeout(r);

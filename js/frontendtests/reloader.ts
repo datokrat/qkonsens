@@ -16,7 +16,8 @@ var controller: KnockoutObservable<ctr.Controller> = ko.observable();
 var communicator: KnockoutObservable<TestCommunicator> = ko.observable();
 
 try {
-	ko.applyBindings({ page: page });
+	//TODO: find less dirty solution to reference "$root.isAdmin" and make it more testable
+	ko.applyBindings({ page: page, isAdmin: ko.observable(true) });
 }
 catch(e) {}
 
