@@ -4,3 +4,4 @@
 * more error handling!
 * find possibility to flush JayData buffer
 * Content.Context editing: create it when it doesn't exist!
+* Make history of left frame work

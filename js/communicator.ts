@@ -9,8 +9,8 @@ export interface Main {
 	commandProcessor: Commands.CommandProcessor;
 }
 
-export class LoginCommand extends Commands.Command {
-	constructor(public userName: string) { super() }
+export class LoginCommand {
+	constructor(public userName: string) { }
 	
 	public toString() { return 'LoginCommand ' + JSON.stringify(this) }
 }
