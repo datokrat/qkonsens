@@ -148,6 +148,13 @@ export class Controller {
 				}});
 				return true;
 			}
+			if(cmd instanceof KElementCommands.UpdateContextCommand) {
+				var updateContextCommand = <KElementCommands.UpdateContextCommand>cmd;
+				this.communicator.konsenskiste.content.updateContext(updateContextCommand.content, { then: () => {
+					updateContextCommand.callbacks.then();
+				}, error: () => {}});
+				return true;
+			}
 			return false;
 		});
 	}

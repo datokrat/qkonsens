@@ -10,7 +10,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../com
         function Tests() {
             _super.apply(this, arguments);
         }
-        Tests.prototype.emitUpdateKElementCommand = function () {
+        Tests.prototype.emitUpdateGeneralContentCommand = function () {
             var counter = new Common.Counter();
             var win = new EditKElementWin.Win();
             var commandProcessor = new Commands.CommandProcessor();
@@ -26,6 +26,28 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../com
             });
 
             win.submitGeneralContent();
+
+            test.assert(function (v) {
+                return v.val(counter.get('cmd')) == 1;
+            });
+        };
+
+        Tests.prototype.emitUpdateContextCommand = function () {
+            var counter = new Common.Counter();
+            var win = new EditKElementWin.Win();
+            var commandProcessor = new Commands.CommandProcessor();
+            var controller = new EditKElementWin.Controller(win, commandProcessor);
+            controller.setModel(new KonsenskisteModel.Model);
+
+            commandProcessor.chain.insertAtBeginning(function (cmd) {
+                if (cmd instanceof KElementCommands.UpdateContextCommand) {
+                    counter.inc('cmd');
+                    return true;
+                }
+                return false;
+            });
+
+            win.submitContext();
 
             test.assert(function (v) {
                 return v.val(counter.get('cmd')) == 1;

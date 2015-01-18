@@ -57,7 +57,7 @@ export class Context {
 	}
 	
 	private onUpdateRetrieved = (args: Communicator.ContextRetrievedArgs) => {
-		if(this.model.id == args.context.id)
+		if(this.model.postId == args.context.postId)
 			this.model.set(args.context);
 	}
 	

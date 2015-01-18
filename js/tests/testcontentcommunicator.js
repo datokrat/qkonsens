@@ -14,8 +14,8 @@ define(["require", "exports", '../event'], function(require, exports, Events) {
         };
 
         TestCommunicator.prototype.setTestContext = function (context) {
-            if (typeof context.id === 'number')
-                this.testContext[context.id] = context;
+            if (typeof context.postId === 'number')
+                this.testContext[context.postId] = context;
             else
                 throw new Error('TestContentCommunicator.setTestContext: context.id is not a number');
         };
@@ -42,6 +42,10 @@ define(["require", "exports", '../event'], function(require, exports, Events) {
                 callbacks.then();
             else
                 throw new Error('updateGeneral: id not found');
+        };
+
+        TestCommunicator.prototype.updateContext = function (model, callbacks) {
+            throw new Error('not implemented');
         };
 
         TestCommunicator.prototype.query = function (id) {

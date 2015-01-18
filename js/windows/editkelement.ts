@@ -3,6 +3,7 @@ import Obs = require('../observable');
 import Commands = require('../command');
 import KElement = require('../kelement');
 import KElementCommands = require('../kelementcommands');
+import ContentModel = require('../contentmodel');
 
 export class Win extends frame.Win {
 	constructor() {
@@ -14,6 +15,7 @@ export class Win extends frame.Win {
 	public context: Obs.Observable<string>;
 	
 	public submitGeneralContent: () => void;
+	public submitContext: () => void;
 }
 
 export class Controller {
@@ -23,9 +25,25 @@ export class Controller {
 		this.win.context = ko.observable<string>();
 		
 		this.win.submitGeneralContent = () => {
-			var cmd = new KElementCommands.UpdateGeneralContentCommand(this.kElement.general(), { then: () => {
+			var newContent = new ContentModel.General();
+			newContent.set(this.kElement.general());
+			newContent.title(this.win.title());
+			newContent.text(this.win.text());
+			
+			var cmd = new KElementCommands.UpdateGeneralContentCommand(newContent, { then: () => {
 				this.kElement.general().title(this.win.title());
 				this.kElement.general().text(this.win.text());
+			} });
+			this.parentCommandProcessor.processCommand(cmd);
+		};
+		
+		this.win.submitContext = () => {
+			var newContext = new ContentModel.Context();
+			newContext.set(this.kElement.context());
+			newContext.text(this.win.context());
+			
+			var cmd = new KElementCommands.UpdateContextCommand(newContext, { then: () => {
+				this.kElement.context().text(this.win.context());
 			} });
 			this.parentCommandProcessor.processCommand(cmd);
 		};
@@ -35,6 +53,7 @@ export class Controller {
 		this.kElement = kElement;
 		this.win.title(kElement.general().title());
 		this.win.text(kElement.general().text());
+		this.win.context(kElement.context().text());
 	}
 	
 	private kElement: KElement.Model;

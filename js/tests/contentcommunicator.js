@@ -26,7 +26,7 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', '../common', 'tes
             this.content2.postId = 2;
 
             this.context1 = this.contentModelFactory.createContext('Context #1');
-            this.context1.id = 10;
+            this.context1.postId = 10;
 
             this.com.setGeneralTestContent(this.content1);
             this.com.setGeneralTestContent(this.content2);
@@ -40,7 +40,7 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', '../common', 'tes
             common.Callbacks.batch([
                 function (r) {
                     _this.generalModel.postId = 1;
-                    _this.contextModel.id = 10;
+                    _this.contextModel.postId = 10;
                     _this.com.queryGeneral(1);
                     _this.com.queryContext(10);
                     setTimeout(r);

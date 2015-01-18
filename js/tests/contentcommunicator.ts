@@ -42,7 +42,7 @@ class TestClass extends unit.TestClass {
 		this.content2.postId = 2;
 		
 		this.context1 = this.contentModelFactory.createContext('Context #1');
-		this.context1.id = 10;
+		this.context1.postId = 10;
 		
 		this.com.setGeneralTestContent(this.content1);
 		this.com.setGeneralTestContent(this.content2);
@@ -55,7 +55,7 @@ class TestClass extends unit.TestClass {
 		common.Callbacks.batch([
 			r => {
 				this.generalModel.postId = 1;
-				this.contextModel.id = 10;
+				this.contextModel.postId = 10;
 				this.com.queryGeneral(1);
 				this.com.queryContext(10);
 				setTimeout(r);

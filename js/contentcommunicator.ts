@@ -10,6 +10,7 @@ export interface Main {
 	query(id: number);
 	
 	updateGeneral(model: ContentModel.General, callbacks: { then: () => void; error?: (error) => void });
+	updateContext(model: ContentModel.Context, callbacks: { then: () => void; error?: (error) => void });
 }
 
 export interface GeneralContentRetrievedArgs {

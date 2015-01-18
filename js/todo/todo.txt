@@ -1,3 +1,6 @@
 * teils ko.computed durch ko.function ersetzen
 * synchronizer disposable machen
-* Neue KAs als Quintessence erstellen
+* encapsulate commands etc. to (discussion / kelement / ?) logic
+* more error handling!
+* find possibility to flush JayData buffer
+* Content.Context editing: create it when it doesn't exist!

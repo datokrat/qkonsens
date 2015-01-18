@@ -4,7 +4,7 @@ define(["require", "exports"], function(require, exports) {
             this.text = ko.observable();
         }
         Context.prototype.set = function (context) {
-            this.id = context.id;
+            this.postId = context.postId;
             this.text(context.text());
         };
         return Context;
@@ -17,6 +17,7 @@ define(["require", "exports"], function(require, exports) {
             this.text = ko.observable();
         }
         General.prototype.set = function (content) {
+            this.postId = content.postId;
             this.title(content.title());
             this.text(content.text());
         };

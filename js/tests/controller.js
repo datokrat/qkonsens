@@ -229,6 +229,30 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../mod
                 return v.val(counter.get('then')) == 1;
             });
         };
+
+        Tests.prototype.handleUpdateContextCommand = function () {
+            var counter = new common.Counter();
+            var content = new ContentModel.Context();
+
+            this.cxt.communicator.konsenskiste.content.updateContext = function (model, callbacks) {
+                counter.inc('updateContext');
+                test.assert(function (v) {
+                    return v.val(model.postId) == content.postId;
+                });
+                callbacks.then();
+            };
+
+            this.cxt.controller.commandProcessor.processCommand(new KElementCommands.UpdateContextCommand(content, { then: function () {
+                    return counter.inc('then');
+                } }));
+
+            test.assert(function (v) {
+                return v.val(counter.get('updateContext')) == 1;
+            });
+            test.assert(function (v) {
+                return v.val(counter.get('then')) == 1;
+            });
+        };
         return Tests;
     })(unit.TestClass);
     exports.Tests = Tests;

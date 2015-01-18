@@ -235,6 +235,7 @@ export class Parser {
 		var rawContext = this.extractRawContext(rawPost);
 		if(rawContext) {
 			out = out || new ContentModel.Context;
+			out.postId = parseInt(rawPost.Id);
 			out.text(rawContext.Content.Text);
 			return out;
 		}

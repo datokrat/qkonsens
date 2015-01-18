@@ -42,7 +42,7 @@ export class Coll {
 		return Coll.single(collection, predicate);
 	}
 	
-	public static where(collection: any[], predicate: (item: any, index: number) => boolean ): any[]  {
+	public static where<T>(collection: T[], predicate: (item: T, index: number) => boolean ): T[]  {
 		var ret = [];
 		for(var i = 0; i < collection.length; ++i) {
 			if(predicate(collection[i], i))

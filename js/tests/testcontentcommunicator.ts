@@ -15,8 +15,8 @@ class TestCommunicator implements Interface.Main {
 	}
 	
 	public setTestContext(context: ContentModel.Context) {
-		if(typeof context.id === 'number')
-			this.testContext[context.id] = context;
+		if(typeof context.postId === 'number')
+			this.testContext[context.postId] = context;
 		else throw new Error('TestContentCommunicator.setTestContext: context.id is not a number');
 	}
 	
@@ -40,6 +40,10 @@ class TestCommunicator implements Interface.Main {
 		if(typeof generalContent !== 'undefined')
 			callbacks.then();
 		else throw new Error('updateGeneral: id not found');
+	}
+	
+	public updateContext(model: ContentModel.Context, callbacks: { then: () => void; error?: (error) => void }) {
+		throw new Error('not implemented');
 	}
 	
 	public query(id: number) {

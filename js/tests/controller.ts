@@ -184,6 +184,23 @@ export class Tests extends unit.TestClass {
 		test.assert(v => v.val(counter.get('updateGeneral')) == 1);
 		test.assert(v => v.val(counter.get('then')) == 1);
 	}
+	
+	handleUpdateContextCommand() {
+		var counter = new common.Counter();
+		var content = new ContentModel.Context();
+		
+		this.cxt.communicator.konsenskiste.content.updateContext = (model, callbacks) => {
+			counter.inc('updateContext');
+			test.assert(v => v.val(model.postId) == content.postId);
+			callbacks.then();
+		};
+		
+		this.cxt.controller.commandProcessor.processCommand(
+			new KElementCommands.UpdateContextCommand(content, { then: () => counter.inc('then') }));
+		
+		test.assert(v => v.val(counter.get('updateContext')) == 1);
+		test.assert(v => v.val(counter.get('then')) == 1);
+	}
 }
 
 class Factory {

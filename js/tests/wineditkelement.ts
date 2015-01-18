@@ -8,7 +8,7 @@ import KElementCommands = require('../kelementcommands');
 import KonsenskisteModel = require('../konsenskistemodel');
 
 export class Tests extends unit.TestClass {
-	emitUpdateKElementCommand() {
+	emitUpdateGeneralContentCommand() {
 		var counter = new Common.Counter();
 		var win = new EditKElementWin.Win();
 		var commandProcessor = new Commands.CommandProcessor();
@@ -24,6 +24,26 @@ export class Tests extends unit.TestClass {
 		});
 		
 		win.submitGeneralContent();
+		
+		test.assert(v => v.val(counter.get('cmd')) == 1);
+	}
+	
+	emitUpdateContextCommand() {
+		var counter = new Common.Counter();
+		var win = new EditKElementWin.Win();
+		var commandProcessor = new Commands.CommandProcessor();
+		var controller = new EditKElementWin.Controller(win, commandProcessor);
+		controller.setModel(new KonsenskisteModel.Model);
+		
+		commandProcessor.chain.insertAtBeginning(cmd => {
+			if(cmd instanceof KElementCommands.UpdateContextCommand) {
+				counter.inc('cmd');
+				return true;
+			}
+			return false;
+		});
+		
+		win.submitContext();
 		
 		test.assert(v => v.val(counter.get('cmd')) == 1);
 	}

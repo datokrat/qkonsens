@@ -143,6 +143,14 @@ define(["require", "exports", 'model', 'topicnavigationmodel', 'frame', 'windows
                         } });
                     return true;
                 }
+                if (cmd instanceof KElementCommands.UpdateContextCommand) {
+                    var updateContextCommand = cmd;
+                    _this.communicator.konsenskiste.content.updateContext(updateContextCommand.content, { then: function () {
+                            updateContextCommand.callbacks.then();
+                        }, error: function () {
+                        } });
+                    return true;
+                }
                 return false;
             });
         };

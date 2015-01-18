@@ -36,7 +36,7 @@ define(["require", "exports", 'event'], function(require, exports, Events) {
         function Context(model, viewModel, communicator) {
             var _this = this;
             this.onUpdateRetrieved = function (args) {
-                if (_this.model.id == args.context.id)
+                if (_this.model.postId == args.context.postId)
                     _this.model.set(args.context);
             };
             this.model = model;

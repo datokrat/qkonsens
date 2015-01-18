@@ -8,3 +8,7 @@ export class OpenEditKElementWindowCommand {
 export class UpdateGeneralContentCommand {
 	constructor(public content: Content.General, public callbacks: { then: () => void }) {}
 }
+
+export class UpdateContextCommand {
+	constructor(public content: Content.Context, public callbacks: { then: () => void }) {}
+}

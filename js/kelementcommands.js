@@ -15,4 +15,13 @@ define(["require", "exports"], function(require, exports) {
         return UpdateGeneralContentCommand;
     })();
     exports.UpdateGeneralContentCommand = UpdateGeneralContentCommand;
+
+    var UpdateContextCommand = (function () {
+        function UpdateContextCommand(content, callbacks) {
+            this.content = content;
+            this.callbacks = callbacks;
+        }
+        return UpdateContextCommand;
+    })();
+    exports.UpdateContextCommand = UpdateContextCommand;
 });
