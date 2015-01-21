@@ -6,6 +6,7 @@ import Model = require('topicnavigationmodel');
 import ViewModel = require('topicnavigationviewmodel');
 import Topic = require('topic');
 import TSync = require('synchronizers/tsynchronizers');
+import ArraySync = require('synchronizers/childarraysynchronizer');
 import KonsenskisteModel = require('konsenskistemodel');
 import Commands = require('command');
 
@@ -32,10 +33,10 @@ export interface ControllerArgs {
 export class ModelCommunicatorController {
 	constructor(private model: Model.Model, private communicator: Topic.Communicator) {
 		this.subscriptions = [
-			communicator.childrenReceived.subscribe(args => {
+			/*communicator.childrenReceived.subscribe(args => {
 				if(Topic.IdentifierHelper.equals(args.id, model.selectedTopic().id))
 					model.children.items.set(args.children);
-			}),
+			}),*/
 			communicator.containedKokisReceived.subscribe(args => {
 				if(Topic.IdentifierHelper.equals(args.id, model.selectedTopic().id))
 					model.kokis.items.set(args.kokis);
@@ -51,8 +52,8 @@ export class ModelCommunicatorController {
 	
 	private onSelectedTopicChanged(topic: Topic.Model) {
 		if(topic) {
-			this.communicator.queryChildren(this.model.selectedTopic().id);
-			this.communicator.queryContainedKokis(this.model.selectedTopic().id);
+			this.communicator.queryChildren(this.model.selectedTopic().id, this.model.children);
+			this.communicator.queryContainedKokis(this.model.selectedTopic().id, this.model.kokis);
 		}
 	}
 	
@@ -79,11 +80,7 @@ export class ModelViewModelController {
 		this.childrenController = new ChildrenViewModelController(model.children, viewModel.children, this.childTopicCommandControl);
 		
 		viewModel.kokis = new ViewModel.Kokis();
-		viewModel.kokis.items = ko.observableArray<Topic.ViewModel>();
-		this.kokiSync = new TSync.KokiItemViewModelSync({ commandControl: this.kokiCommandControl });
-		this.kokiSync
-			.setViewModelObservable(viewModel.kokis.items)
-			.setModelObservable(model.kokis.items);
+		this.kokisController = new KokisViewModelController(model.kokis, viewModel.kokis, this.kokiCommandControl);
 		
 		viewModel.clickCreateNewKoki = () => {
 			commandProcessor.processCommand(new MainController.OpenNewKokiWindowCommand(this.model.selectedTopic()));
@@ -112,7 +109,7 @@ export class ModelViewModelController {
 	
 	public dispose() {
 		this.breadcrumbSync.dispose();
-		this.kokiSync.dispose();
+		this.kokisController.dispose();
 		this.childrenController.dispose();
 	}
 	
@@ -121,14 +118,16 @@ export class ModelViewModelController {
 	public kokiCommandControl: Commands.CommandControl = { commandProcessor: new Commands.CommandProcessor() };
 	
 	private breadcrumbSync: TSync.TopicViewModelSync;
-	private kokiSync: TSync.KokiItemViewModelSync;
 	private viewModelHistory: Obs.ObservableArray<Topic.ViewModel>;
 	
 	private childrenController: ChildrenViewModelController;
+	private kokisController: KokisViewModelController;
 }
 
 export class ChildrenViewModelController {
 	public constructor(model: Model.Children, viewModel: ViewModel.Children, commandControl: Commands.CommandControl) {
+		viewModel.queryState = model.queryState;
+		
 		viewModel.items = ko.observableArray<Topic.ViewModel>();
 		this.childrenSync = new TSync.TopicViewModelSync({ commandControl: commandControl });
 		this.childrenSync
@@ -141,6 +140,24 @@ export class ChildrenViewModelController {
 	}
 	
 	private childrenSync: TSync.TopicViewModelSync;
+}
+
+export class KokisViewModelController {
+	public constructor(model: Model.Kokis, viewModel: ViewModel.Kokis, commandControl: Commands.CommandControl) {
+		viewModel.queryState = model.queryState;
+		
+		viewModel.items = ko.observableArray<Topic.ViewModel>();
+		this.kokisSync = new TSync.KokiItemViewModelSync({ commandControl: commandControl });
+		this.kokisSync
+			.setModelObservable(model.items)
+			.setViewModelObservable(viewModel.items);
+	}
+	
+	public dispose() {
+		this.kokisSync.dispose();
+	}
+	
+	private kokisSync: TSync.KokiItemViewModelSync;
 }
 
 export class KokiItemViewModelController {

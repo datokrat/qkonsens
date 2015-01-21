@@ -17,6 +17,7 @@ import TopicNavigationViewModel = require('../topicnavigationviewmodel');
 import TopicNavigationController = require('../topicnavigationcontroller');
 import KonsenskisteViewModel = require('../konsenskisteviewmodel');
 import KonsenskisteModel = require('../konsenskistemodel');
+import QueryState = require('../querystate');
 
 export class Tests extends unit.TestClass {
 	private webot = new webot.Webot();
@@ -37,6 +38,7 @@ export class Tests extends unit.TestClass {
 				win.navigation().children.items = ko.observableArray([new Topic.ViewModel]);
 				win.navigation().children.items()[0].caption = ko.observable('Child 1');
 				win.navigation().children.items()[0].click = () => {};
+				win.navigation().children.queryState = ko.observable(new QueryState.QueryState());
 				win.navigation().kokis = new TopicNavigationViewModel.Kokis();
 				win.navigation().kokis.items = ko.observableArray([]);
 				win.navigation().clickCreateNewKoki = () => {};
@@ -68,6 +70,7 @@ export class Tests extends unit.TestClass {
 				win.navigation().selected = ko.observable(topicViewModel);
 				win.navigation().children = new TopicNavigationViewModel.Children();
 				win.navigation().children.items = ko.observableArray([]);
+				win.navigation().children.queryState = ko.observable(new QueryState.QueryState());
 				win.navigation().kokis = new TopicNavigationViewModel.Kokis();
 				win.navigation().kokis.items = ko.observableArray([]);
 				win.navigation().clickCreateNewKoki = () => {};
@@ -90,7 +93,9 @@ export class Tests extends unit.TestClass {
 		var topicNavigationViewModel = new TopicNavigationViewModel.ViewModel();
 		var topicNavigationController = new TopicNavigationController.Controller(topicNavigationModel, topicNavigationViewModel, { communicator: topicCommunicator, commandProcessor: null });
 		
-		topicCommunicator.setTestChildren({ id: 3 }, [TopicFactory.Main.create({ id: 5, text: 'Topic 5' })]);
+		topicCommunicator.queryChildren = (id, out) => {
+			if(id.id == 3) out.items.set([TopicFactory.Main.create({ id: 5, text: 'Topic 5' })]);
+		};
 		
 		var topic0 = TopicFactory.Main.create({ id: 0, text: 'Topic 0' });
 		var topic3 = TopicFactory.Main.create({ id: 3, text: 'Topic 3' });
@@ -132,6 +137,7 @@ export class Tests extends unit.TestClass {
 				
 				win.navigation().children = new TopicNavigationViewModel.Children();
 				win.navigation().children.items = ko.observableArray([]);
+				win.navigation().children.queryState = ko.observable(new QueryState.QueryState());
 				win.navigation().kokis = new TopicNavigationViewModel.Kokis();
 				win.navigation().kokis.items = ko.observableArray([new TopicNavigationViewModel.KokiItem]);
 				win.navigation().kokis.items()[0].caption = ko.observable<string>('KoKi im Thema');

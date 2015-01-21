@@ -39,9 +39,14 @@ export class ModelImpl implements Model {
 	public kokis = new Kokis();
 }
 
-export class QueryableItemCollection<T> {
+export class QueryableItemCollectionBase {
+	public items: Obs.ObservableArrayEx<any>;
+	public queryState: Obs.Observable<QueryState.QueryState>;
+}
+
+export class QueryableItemCollection<T> implements QueryableItemCollectionBase {
 	public items: Obs.ObservableArrayEx<T> = new Obs.ObservableArrayExtender(ko.observableArray<T>());
-	public queryState: Obs.Observable<QueryState.QueryState> = ko.observable<QueryState.QueryState>();
+	public queryState: Obs.Observable<QueryState.QueryState> = ko.observable<QueryState.QueryState>(new QueryState.QueryState);
 }
 
 export class Kokis extends QueryableItemCollection<Konsenskiste.Model> {}

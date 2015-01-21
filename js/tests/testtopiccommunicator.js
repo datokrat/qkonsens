@@ -13,7 +13,7 @@ define(["require", "exports", '../event', '../itemcontainer'], function(require,
                 this.testTopics.set(id.id, children);
         };
 
-        Main.prototype.queryChildren = function (id) {
+        Main.prototype.queryChildren = function (id, out) {
             try  {
                 if (id.root)
                     this.childrenReceived.raise({ id: id, children: this.testRootTopic });
@@ -24,7 +24,7 @@ define(["require", "exports", '../event', '../itemcontainer'], function(require,
             }
         };
 
-        Main.prototype.queryContainedKokis = function (id) {
+        Main.prototype.queryContainedKokis = function (id, out) {
         };
         return Main;
     })();

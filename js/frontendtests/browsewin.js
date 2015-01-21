@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/asyncunit', 'tests/test', 'frontendtests/reloader', 'frontendtests/webot', '../common', 'windows/browse', '../topic', 'factories/topic', 'tests/testtopiccommunicator', '../topicnavigationmodel', '../topicnavigationviewmodel', '../topicnavigationcontroller', '../konsenskistemodel'], function(require, exports, unit, test, reloader, webot, common, Win, Topic, TopicFactory, TopicCommunicator, TopicNavigationModel, TopicNavigationViewModel, TopicNavigationController, KonsenskisteModel) {
+define(["require", "exports", 'tests/asyncunit', 'tests/test', 'frontendtests/reloader', 'frontendtests/webot', '../common', 'windows/browse', '../topic', 'factories/topic', 'tests/testtopiccommunicator', '../topicnavigationmodel', '../topicnavigationviewmodel', '../topicnavigationcontroller', '../konsenskistemodel', '../querystate'], function(require, exports, unit, test, reloader, webot, common, Win, Topic, TopicFactory, TopicCommunicator, TopicNavigationModel, TopicNavigationViewModel, TopicNavigationController, KonsenskisteModel, QueryState) {
     var Tests = (function (_super) {
         __extends(Tests, _super);
         function Tests() {
@@ -29,6 +29,7 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', 'frontendtests/re
                     win.navigation().children.items()[0].caption = ko.observable('Child 1');
                     win.navigation().children.items()[0].click = function () {
                     };
+                    win.navigation().children.queryState = ko.observable(new QueryState.QueryState());
                     win.navigation().kokis = new TopicNavigationViewModel.Kokis();
                     win.navigation().kokis.items = ko.observableArray([]);
                     win.navigation().clickCreateNewKoki = function () {
@@ -66,6 +67,7 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', 'frontendtests/re
                     win.navigation().selected = ko.observable(topicViewModel);
                     win.navigation().children = new TopicNavigationViewModel.Children();
                     win.navigation().children.items = ko.observableArray([]);
+                    win.navigation().children.queryState = ko.observable(new QueryState.QueryState());
                     win.navigation().kokis = new TopicNavigationViewModel.Kokis();
                     win.navigation().kokis.items = ko.observableArray([]);
                     win.navigation().clickCreateNewKoki = function () {
@@ -92,7 +94,10 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', 'frontendtests/re
             var topicNavigationViewModel = new TopicNavigationViewModel.ViewModel();
             var topicNavigationController = new TopicNavigationController.Controller(topicNavigationModel, topicNavigationViewModel, { communicator: topicCommunicator, commandProcessor: null });
 
-            topicCommunicator.setTestChildren({ id: 3 }, [TopicFactory.Main.create({ id: 5, text: 'Topic 5' })]);
+            topicCommunicator.queryChildren = function (id, out) {
+                if (id.id == 3)
+                    out.items.set([TopicFactory.Main.create({ id: 5, text: 'Topic 5' })]);
+            };
 
             var topic0 = TopicFactory.Main.create({ id: 0, text: 'Topic 0' });
             var topic3 = TopicFactory.Main.create({ id: 3, text: 'Topic 3' });
@@ -142,6 +147,7 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', 'frontendtests/re
 
                     win.navigation().children = new TopicNavigationViewModel.Children();
                     win.navigation().children.items = ko.observableArray([]);
+                    win.navigation().children.queryState = ko.observable(new QueryState.QueryState());
                     win.navigation().kokis = new TopicNavigationViewModel.Kokis();
                     win.navigation().kokis.items = ko.observableArray([new TopicNavigationViewModel.KokiItem]);
                     win.navigation().kokis.items()[0].caption = ko.observable('KoKi im Thema');

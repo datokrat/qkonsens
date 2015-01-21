@@ -59,24 +59,26 @@ export class Tests extends unit.TestClass {
 	}
 	
 	getFromCommunicator() {
+		var counter = new common.Counter();
 		var model = new mdl.ModelImpl();
 		model.history.push(new Topic.Model);
 		model.selectedTopic().id = { id: 3 };
 		var communicator = new TopicCommunicator.Main();
 		var controller = new ctr.ModelCommunicatorController(model, communicator);
 		
-		communicator.childrenReceived.raise({ id: { id: 3 }, children: [new Topic.Model] });
-		communicator.containedKokisReceived.raise({ id: { id: 3 }, kokis: [new KonsenskisteModel.Model] });
+		communicator.queryChildren = (id, out) => {
+			counter.inc('queryChildren');
+			test.assert(v => out == model.children);
+		};
+		communicator.queryContainedKokis = (id, out) => {
+			counter.inc('queryContainedKokis');
+			test.assert(v => out == model.kokis);
+		};
 		
-		test.assert(() => model.children.items.get().length == 1);
-		test.assert(v => v.val(model.kokis.items.get().length) == 1);
+		model.selectChild(new Topic.Model);
 		
-		//Wrong id - should be ignored
-		communicator.containedKokisReceived.raise({ id: { id: 2 }, kokis: [] });
-		communicator.childrenReceived.raise({ id: { id: 2 }, children: [] });
-		
-		test.assert(v => v.val(model.children.items.get().length) == 1);
-		test.assert(v => v.val(model.kokis.items.get().length) == 1);
+		test.assert(v => v.val(counter.get('queryChildren')) == 1);
+		test.assert(v => v.val(counter.get('queryContainedKokis')) == 1);
 	}
 	
 	queriesWhenSelectedTopicChanged() {

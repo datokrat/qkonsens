@@ -1,5 +1,6 @@
 import Evt = require('event');
 import Topic = require('topic');
+import TopicNavigation = require('topicnavigationmodel');
 import KokiCommunicator = require('konsenskistecommunicatorimpl');
 import discoContext = require('discocontext');
 
@@ -7,10 +8,16 @@ export class Main implements Topic.Communicator {
 	public childrenReceived: Evt.Event<Topic.ChildrenReceivedArgs> = new Evt.EventImpl<Topic.ChildrenReceivedArgs>();
 	public containedKokisReceived = new Evt.EventImpl<Topic.ContainedKokisReceivedArgs>();
 	
-	public queryChildren(id: Topic.TopicIdentifier): void {
+	public queryChildren(id: Topic.TopicIdentifier, out?: TopicNavigation.Children): void {
+		var out = out || new TopicNavigation.Children();
+		out.queryState().loading(true);
+		
 		var then = (rawChildren: Disco.Ontology.Post[]) => {
 			var children = rawChildren.map(raw => this.topicParser.parseTopic(raw));
 			this.childrenReceived.raise({ id: id, children: children });
+			
+			out.items.set(children);
+			out.queryState().loading(false);
 		};
 		
 		if(id.root) this.queryRootChildren(then);
@@ -40,12 +47,23 @@ export class Main implements Topic.Communicator {
 			.toArray().then(then);
 	}
 	
-	public queryContainedKokis(id: Topic.TopicIdentifier) {
-		if(!id.root) this.queryContainedKokisOfNonRoot(id.id);
-		else this.containedKokisReceived.raise({ id: id, kokis: [] });
+	public queryContainedKokis(id: Topic.TopicIdentifier, out?: TopicNavigation.Kokis) {
+		var out = out || new TopicNavigation.Kokis();
+		out.queryState().loading(true);
+		
+		var then = (rawKokis: Disco.Ontology.Post[]) => {
+			var kokis = rawKokis.map(raw => this.kokiParser.parse(raw));
+			this.containedKokisReceived.raise({ id: id, kokis: kokis });
+			
+			out.items.set(kokis);
+			out.queryState().loading(false);
+		};
+		
+		if(!id.root) this.queryContainedKokisOfNonRoot(id.id, then);
+		else then([]);
 	}
 	
-	private queryContainedKokisOfNonRoot(id: number) {
+	private queryContainedKokisOfNonRoot(id: number, then: (rawKokis: Disco.Ontology.Post[]) => void) {
 		var dependenceFilter = discoContext.PostReferences.filter(function(it) {
 			return it.ReferreeId == this.Id;
 		}, { Id: id });
@@ -57,10 +75,7 @@ export class Main implements Topic.Communicator {
 			return it.RefersTo.some(this.dependenceFilter) && it.ReferredFrom.some(this.kaRefFilter)
 		}, { dependenceFilter: dependenceFilter, kaRefFilter: kaRefFilter })
 		.include('Content')
-		.toArray().then(rawKokis => {
-			var kokis = rawKokis.map(raw => this.kokiParser.parse(raw));
-			this.containedKokisReceived.raise({ id: { root: false, id: id }, kokis: kokis });
-		});
+		.toArray().then(then);
 	}
 	
 	private topicParser = new Parser();

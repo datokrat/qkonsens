@@ -19,10 +19,6 @@ define(["require", "exports", 'controller', 'kokilogic', 'topicnavigationviewmod
             this.communicator = communicator;
             this.subscriptions = [];
             this.subscriptions = [
-                communicator.childrenReceived.subscribe(function (args) {
-                    if (Topic.IdentifierHelper.equals(args.id, model.selectedTopic().id))
-                        model.children.items.set(args.children);
-                }),
                 communicator.containedKokisReceived.subscribe(function (args) {
                     if (Topic.IdentifierHelper.equals(args.id, model.selectedTopic().id))
                         model.kokis.items.set(args.kokis);
@@ -41,8 +37,8 @@ define(["require", "exports", 'controller', 'kokilogic', 'topicnavigationviewmod
 
         ModelCommunicatorController.prototype.onSelectedTopicChanged = function (topic) {
             if (topic) {
-                this.communicator.queryChildren(this.model.selectedTopic().id);
-                this.communicator.queryContainedKokis(this.model.selectedTopic().id);
+                this.communicator.queryChildren(this.model.selectedTopic().id, this.model.children);
+                this.communicator.queryContainedKokis(this.model.selectedTopic().id, this.model.kokis);
             }
         };
         return ModelCommunicatorController;
@@ -83,9 +79,7 @@ define(["require", "exports", 'controller', 'kokilogic', 'topicnavigationviewmod
             this.childrenController = new ChildrenViewModelController(model.children, viewModel.children, this.childTopicCommandControl);
 
             viewModel.kokis = new ViewModel.Kokis();
-            viewModel.kokis.items = ko.observableArray();
-            this.kokiSync = new TSync.KokiItemViewModelSync({ commandControl: this.kokiCommandControl });
-            this.kokiSync.setViewModelObservable(viewModel.kokis.items).setModelObservable(model.kokis.items);
+            this.kokisController = new KokisViewModelController(model.kokis, viewModel.kokis, this.kokiCommandControl);
 
             viewModel.clickCreateNewKoki = function () {
                 commandProcessor.processCommand(new MainController.OpenNewKokiWindowCommand(_this.model.selectedTopic()));
@@ -113,7 +107,7 @@ define(["require", "exports", 'controller', 'kokilogic', 'topicnavigationviewmod
 
         ModelViewModelController.prototype.dispose = function () {
             this.breadcrumbSync.dispose();
-            this.kokiSync.dispose();
+            this.kokisController.dispose();
             this.childrenController.dispose();
         };
         return ModelViewModelController;
@@ -122,6 +116,8 @@ define(["require", "exports", 'controller', 'kokilogic', 'topicnavigationviewmod
 
     var ChildrenViewModelController = (function () {
         function ChildrenViewModelController(model, viewModel, commandControl) {
+            viewModel.queryState = model.queryState;
+
             viewModel.items = ko.observableArray();
             this.childrenSync = new TSync.TopicViewModelSync({ commandControl: commandControl });
             this.childrenSync.setModelObservable(model.items).setViewModelObservable(viewModel.items);
@@ -132,6 +128,21 @@ define(["require", "exports", 'controller', 'kokilogic', 'topicnavigationviewmod
         return ChildrenViewModelController;
     })();
     exports.ChildrenViewModelController = ChildrenViewModelController;
+
+    var KokisViewModelController = (function () {
+        function KokisViewModelController(model, viewModel, commandControl) {
+            viewModel.queryState = model.queryState;
+
+            viewModel.items = ko.observableArray();
+            this.kokisSync = new TSync.KokiItemViewModelSync({ commandControl: commandControl });
+            this.kokisSync.setModelObservable(model.items).setViewModelObservable(viewModel.items);
+        }
+        KokisViewModelController.prototype.dispose = function () {
+            this.kokisSync.dispose();
+        };
+        return KokisViewModelController;
+    })();
+    exports.KokisViewModelController = KokisViewModelController;
 
     var KokiItemViewModelController = (function () {
         function KokiItemViewModelController(model, viewModel, commandControl) {

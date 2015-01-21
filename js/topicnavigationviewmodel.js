@@ -19,6 +19,13 @@ define(["require", "exports"], function(require, exports) {
     })();
     exports.KokiItem = KokiItem;
 
+    var QueryableItemCollectionBase = (function () {
+        function QueryableItemCollectionBase() {
+        }
+        return QueryableItemCollectionBase;
+    })();
+    exports.QueryableItemCollectionBase = QueryableItemCollectionBase;
+
     var QueryableItemCollection = (function () {
         function QueryableItemCollection() {
         }

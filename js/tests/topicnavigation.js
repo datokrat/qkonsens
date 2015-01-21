@@ -69,31 +69,33 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../con
         };
 
         Tests.prototype.getFromCommunicator = function () {
+            var counter = new common.Counter();
             var model = new mdl.ModelImpl();
             model.history.push(new Topic.Model);
             model.selectedTopic().id = { id: 3 };
             var communicator = new TopicCommunicator.Main();
             var controller = new ctr.ModelCommunicatorController(model, communicator);
 
-            communicator.childrenReceived.raise({ id: { id: 3 }, children: [new Topic.Model] });
-            communicator.containedKokisReceived.raise({ id: { id: 3 }, kokis: [new KonsenskisteModel.Model] });
+            communicator.queryChildren = function (id, out) {
+                counter.inc('queryChildren');
+                test.assert(function (v) {
+                    return out == model.children;
+                });
+            };
+            communicator.queryContainedKokis = function (id, out) {
+                counter.inc('queryContainedKokis');
+                test.assert(function (v) {
+                    return out == model.kokis;
+                });
+            };
 
-            test.assert(function () {
-                return model.children.items.get().length == 1;
+            model.selectChild(new Topic.Model);
+
+            test.assert(function (v) {
+                return v.val(counter.get('queryChildren')) == 1;
             });
             test.assert(function (v) {
-                return v.val(model.kokis.items.get().length) == 1;
-            });
-
-            //Wrong id - should be ignored
-            communicator.containedKokisReceived.raise({ id: { id: 2 }, kokis: [] });
-            communicator.childrenReceived.raise({ id: { id: 2 }, children: [] });
-
-            test.assert(function (v) {
-                return v.val(model.children.items.get().length) == 1;
-            });
-            test.assert(function (v) {
-                return v.val(model.kokis.items.get().length) == 1;
+                return v.val(counter.get('queryContainedKokis')) == 1;
             });
         };
 

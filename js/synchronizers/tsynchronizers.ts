@@ -10,13 +10,17 @@ import Commands = require('../command');
 export class TopicViewModelSync extends ArraySync.ObservingChildArraySynchronizer<Topic.Model, Topic.ViewModel, Topic.ModelViewModelController> {
 	constructor(args: { commandControl: Commands.CommandControl }) {
 		super();
-		this.fty = new ModelViewModelControllerFactory();
-		
 		this.setViewModelFactory(new Factory.Factory(Topic.ViewModel));
 		this.setControllerFactory(new Factory.ControllerFactoryEx(Topic.ModelViewModelController, args.commandControl));
 	}
-	
-	private fty: ModelViewModelControllerFactory;
+}
+
+export class KokiItemViewModelSync extends ArraySync.ObservingChildArraySynchronizer<KonsenskisteModel.Model, TopicNavigationViewModel.KokiItem, TopicNavigationController.KokiItemViewModelController> {
+	constructor(args: { commandControl: Commands.CommandControl }) {
+		super();
+		this.setViewModelFactory(new Factory.Factory(TopicNavigationViewModel.KokiItem));
+		this.setControllerFactory(new Factory.ControllerFactoryEx(TopicNavigationController.KokiItemViewModelController, args.commandControl));
+	}
 }
 
 export class TopicCommunicatorSync extends ArraySync.PureModelArraySynchronizer<Topic.Model, Topic.ModelCommunicatorController> {
@@ -26,14 +30,6 @@ export class TopicCommunicatorSync extends ArraySync.PureModelArraySynchronizer<
 	
 	public setCommunicator(communicator: Topic.Communicator) {
 		this.setControllerFactory(new ModelCommunicatorControllerFactory(communicator));
-	}
-}
-
-export class KokiItemViewModelSync extends ArraySync.ObservingChildArraySynchronizer<KonsenskisteModel.Model, TopicNavigationViewModel.KokiItem, TopicNavigationController.KokiItemViewModelController> {
-	constructor(args: { commandControl: Commands.CommandControl }) {
-		super();
-		this.setViewModelFactory(new Factory.Factory(TopicNavigationViewModel.KokiItem));
-		this.setControllerFactory(new Factory.ControllerFactoryEx(TopicNavigationController.KokiItemViewModelController, args.commandControl));
 	}
 }
 

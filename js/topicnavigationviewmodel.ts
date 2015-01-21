@@ -16,9 +16,14 @@ export class KokiItem {
 	public click: () => void;
 }
 
-export class QueryableItemCollection<T> {
+export class QueryableItemCollectionBase {
+	items: Obs.ObservableArray<any>;
+	queryState: Obs.Observable<QueryState.QueryState>;
+}
+
+export class QueryableItemCollection<T> implements QueryableItemCollectionBase {
 	items: Obs.ObservableArray<T>;
-	queryState: Obs.ObservableArray<QueryState.QueryState>;
+	queryState: Obs.Observable<QueryState.QueryState>;
 }
 
 export class Kokis extends QueryableItemCollection<KokiItem> {}

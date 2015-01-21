@@ -4,30 +4,32 @@
 	<ul data-bind="foreach: breadcrumb">
 		<li class="clickable" data-bind="text: caption, click: click"></li>
 	</ul>
-<!-- ko with: selected -->
-	<b data-bind="text: caption"></b>
-	<p data-bind="text: description"></p>
-<!-- /ko -->
 	
+	<!-- ko with: selected -->
+		<b data-bind="text: caption"></b>
+		<p data-bind="text: description"></p>
+	<!-- /ko -->
+	
+	<!-- ko template: { name: 'querystate-template', data: children.queryState } --><!-- /ko -->
 	<ul data-bind="foreach: children.items">
 		<li class="clickable" data-bind="text: caption, click: click"></li>
 	</ul>
 <h1>Konsenskisten zum Thema:</h1>
 <div>
-		<ul data-bind="">
-			<!-- ko if: kokis.items().length -->
-			<!-- ko foreach: kokis.items -->
-				<li class="clickable" data-bind="text: caption, click: click"></li>
-			<!-- /ko -->
-			<!-- /ko -->
-			
-			<!-- ko if: $root.isAdmin -->
-			<li>
-				<a data-bind="click: clickCreateNewKoki">Neu</a>
-			</li>
-			<!-- /ko -->
-		</ul>
-	</div>
+	<!-- ko template: { name: 'querystate-template', data: children.queryState } --><!-- /ko -->
+	<ul data-bind="">
+		<!-- ko if: kokis.items().length -->
+		<!-- ko foreach: kokis.items -->
+			<li class="clickable" data-bind="text: caption, click: click"></li>
+		<!-- /ko -->
+		<!-- /ko -->
+		
+		<!-- ko if: $root.isAdmin -->
+		<li>
+			<a data-bind="click: clickCreateNewKoki">Neu</a>
+		</li>
+		<!-- /ko -->
+	</ul>
 </div>
 </section>
 <!-- /ko -->

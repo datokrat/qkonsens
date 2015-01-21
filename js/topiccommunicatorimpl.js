@@ -1,4 +1,4 @@
-define(["require", "exports", 'event', 'topic', 'konsenskistecommunicatorimpl', 'discocontext'], function(require, exports, Evt, Topic, KokiCommunicator, discoContext) {
+define(["require", "exports", 'event', 'topic', 'topicnavigationmodel', 'konsenskistecommunicatorimpl', 'discocontext'], function(require, exports, Evt, Topic, TopicNavigation, KokiCommunicator, discoContext) {
     var Main = (function () {
         function Main() {
             this.childrenReceived = new Evt.EventImpl();
@@ -6,13 +6,19 @@ define(["require", "exports", 'event', 'topic', 'konsenskistecommunicatorimpl', 
             this.topicParser = new Parser();
             this.kokiParser = new KokiCommunicator.Parser();
         }
-        Main.prototype.queryChildren = function (id) {
+        Main.prototype.queryChildren = function (id, out) {
             var _this = this;
+            var out = out || new TopicNavigation.Children();
+            out.queryState().loading(true);
+
             var then = function (rawChildren) {
                 var children = rawChildren.map(function (raw) {
                     return _this.topicParser.parseTopic(raw);
                 });
                 _this.childrenReceived.raise({ id: id, children: children });
+
+                out.items.set(children);
+                out.queryState().loading(false);
             };
 
             if (id.root)
@@ -41,15 +47,28 @@ define(["require", "exports", 'event', 'topic', 'konsenskistecommunicatorimpl', 
             }, { childFilter: childFilter }).include('Content').toArray().then(then);
         };
 
-        Main.prototype.queryContainedKokis = function (id) {
+        Main.prototype.queryContainedKokis = function (id, out) {
+            var _this = this;
+            var out = out || new TopicNavigation.Kokis();
+            out.queryState().loading(true);
+
+            var then = function (rawKokis) {
+                var kokis = rawKokis.map(function (raw) {
+                    return _this.kokiParser.parse(raw);
+                });
+                _this.containedKokisReceived.raise({ id: id, kokis: kokis });
+
+                out.items.set(kokis);
+                out.queryState().loading(false);
+            };
+
             if (!id.root)
-                this.queryContainedKokisOfNonRoot(id.id);
+                this.queryContainedKokisOfNonRoot(id.id, then);
             else
-                this.containedKokisReceived.raise({ id: id, kokis: [] });
+                then([]);
         };
 
-        Main.prototype.queryContainedKokisOfNonRoot = function (id) {
-            var _this = this;
+        Main.prototype.queryContainedKokisOfNonRoot = function (id, then) {
             var dependenceFilter = discoContext.PostReferences.filter(function (it) {
                 return it.ReferreeId == this.Id;
             }, { Id: id });
@@ -59,12 +78,7 @@ define(["require", "exports", 'event', 'topic', 'konsenskistecommunicatorimpl', 
 
             discoContext.Posts.filter(function (it) {
                 return it.RefersTo.some(this.dependenceFilter) && it.ReferredFrom.some(this.kaRefFilter);
-            }, { dependenceFilter: dependenceFilter, kaRefFilter: kaRefFilter }).include('Content').toArray().then(function (rawKokis) {
-                var kokis = rawKokis.map(function (raw) {
-                    return _this.kokiParser.parse(raw);
-                });
-                _this.containedKokisReceived.raise({ id: { root: false, id: id }, kokis: kokis });
-            });
+            }, { dependenceFilter: dependenceFilter, kaRefFilter: kaRefFilter }).include('Content').toArray().then(then);
         };
         return Main;
     })();

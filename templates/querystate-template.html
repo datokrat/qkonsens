@@ -1,0 +1,6 @@
+<!-- ko if: error -->
+	<span style="color: red">Fehler: <span data-bind="text: error"></span></span>
+<!-- /ko -->
+<!-- ko if: !error() && loading() -->
+	Laden...
+<!-- /ko -->

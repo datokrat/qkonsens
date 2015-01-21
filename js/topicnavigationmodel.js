@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'observable'], function(require, exports, Obs) {
+define(["require", "exports", 'observable', 'querystate'], function(require, exports, Obs, QueryState) {
     var ModelImpl = (function () {
         function ModelImpl() {
             var _this = this;
@@ -32,10 +32,17 @@ define(["require", "exports", 'observable'], function(require, exports, Obs) {
     })();
     exports.ModelImpl = ModelImpl;
 
+    var QueryableItemCollectionBase = (function () {
+        function QueryableItemCollectionBase() {
+        }
+        return QueryableItemCollectionBase;
+    })();
+    exports.QueryableItemCollectionBase = QueryableItemCollectionBase;
+
     var QueryableItemCollection = (function () {
         function QueryableItemCollection() {
             this.items = new Obs.ObservableArrayExtender(ko.observableArray());
-            this.queryState = ko.observable();
+            this.queryState = ko.observable(new QueryState.QueryState);
         }
         return QueryableItemCollection;
     })();

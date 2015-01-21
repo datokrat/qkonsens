@@ -90,8 +90,8 @@ export class ViewModel {
 }
 
 export interface Communicator {
-	queryChildren(id: TopicIdentifier): void;
-	queryContainedKokis(id: TopicIdentifier): void;
+	queryChildren(id: TopicIdentifier, out?: TopicNavigationModel.Children): void;
+	queryContainedKokis(id: TopicIdentifier, out?: TopicNavigationModel.Kokis): void;
 	childrenReceived: Evt.Event<ChildrenReceivedArgs>;
 	containedKokisReceived: Evt.Event<ContainedKokisReceivedArgs>;
 }
