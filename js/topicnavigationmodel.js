@@ -12,8 +12,8 @@ define(["require", "exports", 'observable'], function(require, exports, Obs) {
             this.selectedTopic = ko.computed(function () {
                 return _this.history && _this.history.get(-1);
             });
-            this.children = new ChildrenModel();
-            this.kokis = new KokisModel();
+            this.children = new Children();
+            this.kokis = new Kokis();
         }
         ModelImpl.prototype.goBackToBreadcrumbTopic = function (index) {
             this.history.removeMany(index + 1);
@@ -35,26 +35,27 @@ define(["require", "exports", 'observable'], function(require, exports, Obs) {
     var QueryableItemCollection = (function () {
         function QueryableItemCollection() {
             this.items = new Obs.ObservableArrayExtender(ko.observableArray());
+            this.queryState = ko.observable();
         }
         return QueryableItemCollection;
     })();
     exports.QueryableItemCollection = QueryableItemCollection;
 
-    var KokisModel = (function (_super) {
-        __extends(KokisModel, _super);
-        function KokisModel() {
+    var Kokis = (function (_super) {
+        __extends(Kokis, _super);
+        function Kokis() {
             _super.apply(this, arguments);
         }
-        return KokisModel;
+        return Kokis;
     })(QueryableItemCollection);
-    exports.KokisModel = KokisModel;
-    var ChildrenModel = (function (_super) {
-        __extends(ChildrenModel, _super);
-        function ChildrenModel() {
+    exports.Kokis = Kokis;
+    var Children = (function (_super) {
+        __extends(Children, _super);
+        function Children() {
             _super.apply(this, arguments);
         }
-        return ChildrenModel;
+        return Children;
     })(QueryableItemCollection);
-    exports.ChildrenModel = ChildrenModel;
+    exports.Children = Children;
     ;
 });

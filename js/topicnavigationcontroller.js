@@ -80,9 +80,7 @@ define(["require", "exports", 'controller', 'kokilogic', 'topicnavigationviewmod
             this.breadcrumbSync.setModelObservable(model.history).setViewModelObservable(this.viewModelHistory);
 
             viewModel.children = new ViewModel.Children();
-            viewModel.children.items = ko.observableArray();
-            this.childrenSync = new TSync.TopicViewModelSync({ commandControl: this.childTopicCommandControl });
-            this.childrenSync.setModelObservable(model.children.items).setViewModelObservable(viewModel.children.items);
+            this.childrenController = new ChildrenViewModelController(model.children, viewModel.children, this.childTopicCommandControl);
 
             viewModel.kokis = new ViewModel.Kokis();
             viewModel.kokis.items = ko.observableArray();
@@ -115,12 +113,25 @@ define(["require", "exports", 'controller', 'kokilogic', 'topicnavigationviewmod
 
         ModelViewModelController.prototype.dispose = function () {
             this.breadcrumbSync.dispose();
-            this.childrenSync.dispose();
             this.kokiSync.dispose();
+            this.childrenController.dispose();
         };
         return ModelViewModelController;
     })();
     exports.ModelViewModelController = ModelViewModelController;
+
+    var ChildrenViewModelController = (function () {
+        function ChildrenViewModelController(model, viewModel, commandControl) {
+            viewModel.items = ko.observableArray();
+            this.childrenSync = new TSync.TopicViewModelSync({ commandControl: commandControl });
+            this.childrenSync.setModelObservable(model.items).setViewModelObservable(viewModel.items);
+        }
+        ChildrenViewModelController.prototype.dispose = function () {
+            this.childrenSync.dispose();
+        };
+        return ChildrenViewModelController;
+    })();
+    exports.ChildrenViewModelController = ChildrenViewModelController;
 
     var KokiItemViewModelController = (function () {
         function KokiItemViewModelController(model, viewModel, commandControl) {

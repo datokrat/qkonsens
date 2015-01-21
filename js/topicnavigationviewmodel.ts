@@ -1,5 +1,6 @@
 import Obs = require('observable');
 import Topic = require('topic');
+import QueryState = require('querystate');
 
 export class ViewModel {
 	public breadcrumb: Obs.Observable<Topic.ViewModel[]>;
@@ -17,6 +18,7 @@ export class KokiItem {
 
 export class QueryableItemCollection<T> {
 	items: Obs.ObservableArray<T>;
+	queryState: Obs.ObservableArray<QueryState.QueryState>;
 }
 
 export class Kokis extends QueryableItemCollection<KokiItem> {}

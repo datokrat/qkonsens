@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'factories/constructorbased', 'synchronizers/childarraysynchronizer', '../topic', '../topicnavigationviewmodel', '../topicnavigationcontroller'], function(require, exports, Factory, Sync, Topic, TopicNavigationViewModel, TopicNavigationController) {
+define(["require", "exports", 'factories/constructorbased', 'synchronizers/childarraysynchronizer', '../topic', '../topicnavigationviewmodel', '../topicnavigationcontroller'], function(require, exports, Factory, ArraySync, Topic, TopicNavigationViewModel, TopicNavigationController) {
     var TopicViewModelSync = (function (_super) {
         __extends(TopicViewModelSync, _super);
         function TopicViewModelSync(args) {
@@ -15,7 +15,7 @@ define(["require", "exports", 'factories/constructorbased', 'synchronizers/child
             this.setControllerFactory(new Factory.ControllerFactoryEx(Topic.ModelViewModelController, args.commandControl));
         }
         return TopicViewModelSync;
-    })(Sync.ObservingChildArraySynchronizer);
+    })(ArraySync.ObservingChildArraySynchronizer);
     exports.TopicViewModelSync = TopicViewModelSync;
 
     var TopicCommunicatorSync = (function (_super) {
@@ -27,7 +27,7 @@ define(["require", "exports", 'factories/constructorbased', 'synchronizers/child
             this.setControllerFactory(new ModelCommunicatorControllerFactory(communicator));
         };
         return TopicCommunicatorSync;
-    })(Sync.PureModelArraySynchronizer);
+    })(ArraySync.PureModelArraySynchronizer);
     exports.TopicCommunicatorSync = TopicCommunicatorSync;
 
     var KokiItemViewModelSync = (function (_super) {
@@ -38,7 +38,7 @@ define(["require", "exports", 'factories/constructorbased', 'synchronizers/child
             this.setControllerFactory(new Factory.ControllerFactoryEx(TopicNavigationController.KokiItemViewModelController, args.commandControl));
         }
         return KokiItemViewModelSync;
-    })(Sync.ObservingChildArraySynchronizer);
+    })(ArraySync.ObservingChildArraySynchronizer);
     exports.KokiItemViewModelSync = KokiItemViewModelSync;
 
     var ModelCommunicatorControllerFactory = (function () {

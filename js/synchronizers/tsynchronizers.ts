@@ -1,12 +1,13 @@
 import Factory = require('factories/constructorbased');
-import Sync = require('synchronizers/childarraysynchronizer');
+import ArraySync = require('synchronizers/childarraysynchronizer');
+import Sync = require('synchronizers/childsynchronizer');
 import Topic = require('../topic');
 import KonsenskisteModel = require('../konsenskistemodel');
 import TopicNavigationViewModel = require('../topicnavigationviewmodel');
 import TopicNavigationController = require('../topicnavigationcontroller');
 import Commands = require('../command');
 
-export class TopicViewModelSync extends Sync.ObservingChildArraySynchronizer<Topic.Model, Topic.ViewModel, Topic.ModelViewModelController> {
+export class TopicViewModelSync extends ArraySync.ObservingChildArraySynchronizer<Topic.Model, Topic.ViewModel, Topic.ModelViewModelController> {
 	constructor(args: { commandControl: Commands.CommandControl }) {
 		super();
 		this.fty = new ModelViewModelControllerFactory();
@@ -18,7 +19,7 @@ export class TopicViewModelSync extends Sync.ObservingChildArraySynchronizer<Top
 	private fty: ModelViewModelControllerFactory;
 }
 
-export class TopicCommunicatorSync extends Sync.PureModelArraySynchronizer<Topic.Model, Topic.ModelCommunicatorController> {
+export class TopicCommunicatorSync extends ArraySync.PureModelArraySynchronizer<Topic.Model, Topic.ModelCommunicatorController> {
 	constructor() {
 		super();
 	}
@@ -28,7 +29,7 @@ export class TopicCommunicatorSync extends Sync.PureModelArraySynchronizer<Topic
 	}
 }
 
-export class KokiItemViewModelSync extends Sync.ObservingChildArraySynchronizer<KonsenskisteModel.Model, TopicNavigationViewModel.KokiItem, TopicNavigationController.KokiItemViewModelController> {
+export class KokiItemViewModelSync extends ArraySync.ObservingChildArraySynchronizer<KonsenskisteModel.Model, TopicNavigationViewModel.KokiItem, TopicNavigationController.KokiItemViewModelController> {
 	constructor(args: { commandControl: Commands.CommandControl }) {
 		super();
 		this.setViewModelFactory(new Factory.Factory(TopicNavigationViewModel.KokiItem));

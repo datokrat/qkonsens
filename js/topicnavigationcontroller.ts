@@ -76,11 +76,7 @@ export class ModelViewModelController {
 			.setViewModelObservable(this.viewModelHistory);
 		
 		viewModel.children = new ViewModel.Children();
-		viewModel.children.items = ko.observableArray<Topic.ViewModel>();
-		this.childrenSync = new TSync.TopicViewModelSync({ commandControl: this.childTopicCommandControl });
-		this.childrenSync
-			.setModelObservable(model.children.items)
-			.setViewModelObservable(viewModel.children.items);
+		this.childrenController = new ChildrenViewModelController(model.children, viewModel.children, this.childTopicCommandControl);
 		
 		viewModel.kokis = new ViewModel.Kokis();
 		viewModel.kokis.items = ko.observableArray<Topic.ViewModel>();
@@ -116,8 +112,8 @@ export class ModelViewModelController {
 	
 	public dispose() {
 		this.breadcrumbSync.dispose();
-		this.childrenSync.dispose();
 		this.kokiSync.dispose();
+		this.childrenController.dispose();
 	}
 	
 	public childTopicCommandControl: Commands.CommandControl = { commandProcessor: new Commands.CommandProcessor() };
@@ -125,9 +121,26 @@ export class ModelViewModelController {
 	public kokiCommandControl: Commands.CommandControl = { commandProcessor: new Commands.CommandProcessor() };
 	
 	private breadcrumbSync: TSync.TopicViewModelSync;
-	private childrenSync: TSync.TopicViewModelSync;
 	private kokiSync: TSync.KokiItemViewModelSync;
 	private viewModelHistory: Obs.ObservableArray<Topic.ViewModel>;
+	
+	private childrenController: ChildrenViewModelController;
+}
+
+export class ChildrenViewModelController {
+	public constructor(model: Model.Children, viewModel: ViewModel.Children, commandControl: Commands.CommandControl) {
+		viewModel.items = ko.observableArray<Topic.ViewModel>();
+		this.childrenSync = new TSync.TopicViewModelSync({ commandControl: commandControl });
+		this.childrenSync
+			.setModelObservable(model.items)
+			.setViewModelObservable(viewModel.items);
+	}
+	
+	public dispose() {
+		this.childrenSync.dispose();
+	}
+	
+	private childrenSync: TSync.TopicViewModelSync;
 }
 
 export class KokiItemViewModelController {
