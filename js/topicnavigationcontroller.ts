@@ -34,11 +34,11 @@ export class ModelCommunicatorController {
 		this.subscriptions = [
 			communicator.childrenReceived.subscribe(args => {
 				if(Topic.IdentifierHelper.equals(args.id, model.selectedTopic().id))
-					model.children.set(args.children);
+					model.children.items.set(args.children);
 			}),
 			communicator.containedKokisReceived.subscribe(args => {
 				if(Topic.IdentifierHelper.equals(args.id, model.selectedTopic().id))
-					model.kokis.set(args.kokis);
+					model.kokis.items.set(args.kokis);
 			}),
 			model.selectedTopic.subscribe(topic => this.onSelectedTopicChanged(topic)),
 		];
@@ -75,17 +75,19 @@ export class ModelViewModelController {
 			.setModelObservable(model.history)
 			.setViewModelObservable(this.viewModelHistory);
 		
-		viewModel.children = ko.observableArray<Topic.ViewModel>();
+		viewModel.children = new ViewModel.Children();
+		viewModel.children.items = ko.observableArray<Topic.ViewModel>();
 		this.childrenSync = new TSync.TopicViewModelSync({ commandControl: this.childTopicCommandControl });
 		this.childrenSync
-			.setModelObservable(model.children)
-			.setViewModelObservable(viewModel.children);
+			.setModelObservable(model.children.items)
+			.setViewModelObservable(viewModel.children.items);
 		
-		viewModel.kokis = ko.observableArray<Topic.ViewModel>();
+		viewModel.kokis = new ViewModel.Kokis();
+		viewModel.kokis.items = ko.observableArray<Topic.ViewModel>();
 		this.kokiSync = new TSync.KokiItemViewModelSync({ commandControl: this.kokiCommandControl });
 		this.kokiSync
-			.setViewModelObservable(viewModel.kokis)
-			.setModelObservable(model.kokis);
+			.setViewModelObservable(viewModel.kokis.items)
+			.setModelObservable(model.kokis.items);
 		
 		viewModel.clickCreateNewKoki = () => {
 			commandProcessor.processCommand(new MainController.OpenNewKokiWindowCommand(this.model.selectedTopic()));

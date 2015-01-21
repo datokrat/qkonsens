@@ -1,4 +1,4 @@
-define(["require", "exports", 'controller', 'kokilogic', 'topic', 'synchronizers/tsynchronizers', 'command'], function(require, exports, MainController, KokiLogic, Topic, TSync, Commands) {
+define(["require", "exports", 'controller', 'kokilogic', 'topicnavigationviewmodel', 'topic', 'synchronizers/tsynchronizers', 'command'], function(require, exports, MainController, KokiLogic, ViewModel, Topic, TSync, Commands) {
     var Controller = (function () {
         function Controller(model, viewModel, args) {
             this.modelViewModelController = new ModelViewModelController(model, viewModel, args.commandProcessor);
@@ -21,11 +21,11 @@ define(["require", "exports", 'controller', 'kokilogic', 'topic', 'synchronizers
             this.subscriptions = [
                 communicator.childrenReceived.subscribe(function (args) {
                     if (Topic.IdentifierHelper.equals(args.id, model.selectedTopic().id))
-                        model.children.set(args.children);
+                        model.children.items.set(args.children);
                 }),
                 communicator.containedKokisReceived.subscribe(function (args) {
                     if (Topic.IdentifierHelper.equals(args.id, model.selectedTopic().id))
-                        model.kokis.set(args.kokis);
+                        model.kokis.items.set(args.kokis);
                 }),
                 model.selectedTopic.subscribe(function (topic) {
                     return _this.onSelectedTopicChanged(topic);
@@ -79,13 +79,15 @@ define(["require", "exports", 'controller', 'kokilogic', 'topic', 'synchronizers
             this.breadcrumbSync = new TSync.TopicViewModelSync({ commandControl: this.breadcrumbTopicCommandControl });
             this.breadcrumbSync.setModelObservable(model.history).setViewModelObservable(this.viewModelHistory);
 
-            viewModel.children = ko.observableArray();
+            viewModel.children = new ViewModel.Children();
+            viewModel.children.items = ko.observableArray();
             this.childrenSync = new TSync.TopicViewModelSync({ commandControl: this.childTopicCommandControl });
-            this.childrenSync.setModelObservable(model.children).setViewModelObservable(viewModel.children);
+            this.childrenSync.setModelObservable(model.children.items).setViewModelObservable(viewModel.children.items);
 
-            viewModel.kokis = ko.observableArray();
+            viewModel.kokis = new ViewModel.Kokis();
+            viewModel.kokis.items = ko.observableArray();
             this.kokiSync = new TSync.KokiItemViewModelSync({ commandControl: this.kokiCommandControl });
-            this.kokiSync.setViewModelObservable(viewModel.kokis).setModelObservable(model.kokis);
+            this.kokiSync.setViewModelObservable(viewModel.kokis.items).setModelObservable(model.kokis.items);
 
             viewModel.clickCreateNewKoki = function () {
                 commandProcessor.processCommand(new MainController.OpenNewKokiWindowCommand(_this.model.selectedTopic()));

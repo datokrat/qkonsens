@@ -24,11 +24,13 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', 'frontendtests/re
                     win.navigation().selected().caption = ko.observable('Topic 1');
                     win.navigation().selected().description = ko.observable('Description');
 
-                    win.navigation().children = ko.observableArray([new Topic.ViewModel]);
-                    win.navigation().children()[0].caption = ko.observable('Child 1');
-                    win.navigation().children()[0].click = function () {
+                    win.navigation().children = new TopicNavigationViewModel.Children();
+                    win.navigation().children.items = ko.observableArray([new Topic.ViewModel]);
+                    win.navigation().children.items()[0].caption = ko.observable('Child 1');
+                    win.navigation().children.items()[0].click = function () {
                     };
-                    win.navigation().kokis = ko.observableArray([]);
+                    win.navigation().kokis = new TopicNavigationViewModel.Kokis();
+                    win.navigation().kokis.items = ko.observableArray([]);
                     win.navigation().clickCreateNewKoki = function () {
                     };
 
@@ -62,8 +64,10 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', 'frontendtests/re
                     win.navigation = ko.observable(new TopicNavigationViewModel.ViewModel);
                     win.navigation().breadcrumb = ko.observableArray([]);
                     win.navigation().selected = ko.observable(topicViewModel);
-                    win.navigation().children = ko.observableArray([]);
-                    win.navigation().kokis = ko.observableArray([]);
+                    win.navigation().children = new TopicNavigationViewModel.Children();
+                    win.navigation().children.items = ko.observableArray([]);
+                    win.navigation().kokis = new TopicNavigationViewModel.Kokis();
+                    win.navigation().kokis.items = ko.observableArray([]);
                     win.navigation().clickCreateNewKoki = function () {
                     };
 
@@ -135,10 +139,13 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', 'frontendtests/re
                     win.navigation().breadcrumb()[0].click = function () {
                     };
                     win.navigation().selected = ko.observable(topicViewModel);
-                    win.navigation().children = ko.observableArray([]);
-                    win.navigation().kokis = ko.observableArray([new TopicNavigationViewModel.KokiItem]);
-                    win.navigation().kokis()[0].caption = ko.observable('KoKi im Thema');
-                    win.navigation().kokis()[0].click = function () {
+
+                    win.navigation().children = new TopicNavigationViewModel.Children();
+                    win.navigation().children.items = ko.observableArray([]);
+                    win.navigation().kokis = new TopicNavigationViewModel.Kokis();
+                    win.navigation().kokis.items = ko.observableArray([new TopicNavigationViewModel.KokiItem]);
+                    win.navigation().kokis.items()[0].caption = ko.observable('KoKi im Thema');
+                    win.navigation().kokis.items()[0].click = function () {
                     };
                     win.navigation().clickCreateNewKoki = function () {
                     };
@@ -171,7 +178,7 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', 'frontendtests/re
                     var koki = new KonsenskisteModel.Model();
                     koki.id(19);
                     koki.general().title('Bitte hier klicken!');
-                    topicNavigationModel.kokis.push(koki);
+                    topicNavigationModel.kokis.items.push(koki);
                     win.navigation = ko.observable(topicNavigationViewModel);
                     reloader.viewModel().right.win(win);
                     setTimeout(r);

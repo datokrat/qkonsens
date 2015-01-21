@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../controller', '../kokilogic', '../topicnavigationcontroller', '../topicnavigationmodel', '../topicnavigationviewmodel', '../observable', '../topic', 'tests/testtopiccommunicator', '../contentmodel', '../konsenskistemodel', '../command'], function(require, exports, unit, test, common, MainController, KokiLogic, ctr, mdl, vm, Obs, Topic, TopicCommunicator, ContentModel, KonsenskisteModel, Commands) {
+define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../controller', '../kokilogic', '../topicnavigationcontroller', '../topicnavigationmodel', '../topicnavigationviewmodel', '../topic', 'tests/testtopiccommunicator', '../contentmodel', '../konsenskistemodel', '../command'], function(require, exports, unit, test, common, MainController, KokiLogic, ctr, mdl, vm, Topic, TopicCommunicator, ContentModel, KonsenskisteModel, Commands) {
     var Tests = (function (_super) {
         __extends(Tests, _super);
         function Tests() {
@@ -36,14 +36,14 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../con
             var controller = new ctr.ModelViewModelController(model, viewModel);
 
             test.assert(function () {
-                return model.children.get() != null;
+                return model.children.items.get() != null;
             });
 
-            model.children.push(new Topic.Model);
-            model.children.get()[0].title('Child Title');
+            model.children.items.push(new Topic.Model);
+            model.children.items.get()[0].title('Child Title');
 
             test.assert(function () {
-                return viewModel.children().length == 1;
+                return viewModel.children.items().length == 1;
             });
         };
 
@@ -53,18 +53,18 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../con
             var controller = new ctr.ModelViewModelController(model, viewModel);
 
             test.assert(function () {
-                return model.kokis.get() != null;
+                return model.kokis.items.get() != null;
             });
 
-            model.kokis.push(new KonsenskisteModel.Model);
-            model.kokis.get(0).general(new ContentModel.General);
-            model.kokis.get(0).general().title('KoKi Title');
+            model.kokis.items.push(new KonsenskisteModel.Model);
+            model.kokis.items.get(0).general(new ContentModel.General);
+            model.kokis.items.get(0).general().title('KoKi Title');
 
             test.assert(function () {
-                return viewModel.kokis().length == 1;
+                return viewModel.kokis.items().length == 1;
             });
             test.assert(function () {
-                return viewModel.kokis()[0].caption() == 'KoKi Title';
+                return viewModel.kokis.items()[0].caption() == 'KoKi Title';
             });
         };
 
@@ -79,10 +79,10 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../con
             communicator.containedKokisReceived.raise({ id: { id: 3 }, kokis: [new KonsenskisteModel.Model] });
 
             test.assert(function () {
-                return model.children.get().length == 1;
+                return model.children.items.get().length == 1;
             });
             test.assert(function (v) {
-                return v.val(model.kokis.get().length) == 1;
+                return v.val(model.kokis.items.get().length) == 1;
             });
 
             //Wrong id - should be ignored
@@ -90,10 +90,10 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../con
             communicator.childrenReceived.raise({ id: { id: 2 }, children: [] });
 
             test.assert(function (v) {
-                return v.val(model.children.get().length) == 1;
+                return v.val(model.children.items.get().length) == 1;
             });
             test.assert(function (v) {
-                return v.val(model.kokis.get().length) == 1;
+                return v.val(model.kokis.items.get().length) == 1;
             });
         };
 
@@ -128,16 +128,16 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../con
             var controller = new ctr.ModelViewModelController(model, viewModel);
 
             model.history.push(new Topic.Model);
-            model.children.set([new Topic.Model]);
-            model.children.get(0).title('Child');
+            model.children.items.set([new Topic.Model]);
+            model.children.items.get(0).title('Child');
 
-            viewModel.children()[0].click();
+            viewModel.children.items()[0].click();
 
             test.assert(function () {
                 return model.history.get().length == 2;
             });
             test.assert(function () {
-                return model.children.get().length == 0;
+                return model.children.items.get().length == 0;
             });
             test.assert(function () {
                 return model.selectedTopic().title() == 'Child';
@@ -217,59 +217,6 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../con
             });
             test.assert(function () {
                 return model.selectedTopic().title() == 'Parent';
-            });
-        };
-
-        Tests.prototype.parentTopicArray = function () {
-            var pushCtr = 0, removeCtr = 0, changeCtr = 0;
-            var arr = new mdl.ParentTopicArray();
-            arr.pushed.subscribe(function () {
-                return ++pushCtr;
-            });
-            arr.removed.subscribe(function () {
-                return ++removeCtr;
-            });
-            arr.changed.subscribe(function () {
-                return ++changeCtr;
-            });
-
-            var hst = new Obs.ObservableArrayExtender(ko.observableArray([]));
-            arr.setHistory(hst);
-
-            test.assert(function () {
-                return changeCtr == 1;
-            });
-            test.assert(function () {
-                return pushCtr == 0;
-            });
-            test.assert(function () {
-                return removeCtr == 0;
-            });
-
-            pushCtr = 0, removeCtr = 0, changeCtr = 0;
-            hst.push(new Topic.Model);
-
-            test.assert(function () {
-                return changeCtr == 0;
-            });
-            test.assert(function () {
-                return pushCtr == 0;
-            });
-            test.assert(function () {
-                return removeCtr == 0;
-            });
-
-            pushCtr = 0, removeCtr = 0, changeCtr = 0;
-            hst.push(new Topic.Model);
-
-            test.assert(function () {
-                return changeCtr == 0;
-            });
-            test.assert(function () {
-                return pushCtr == 1;
-            });
-            test.assert(function () {
-                return removeCtr == 0;
             });
         };
 

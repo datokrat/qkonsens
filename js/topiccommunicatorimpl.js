@@ -7,42 +7,38 @@ define(["require", "exports", 'event', 'topic', 'konsenskistecommunicatorimpl', 
             this.kokiParser = new KokiCommunicator.Parser();
         }
         Main.prototype.queryChildren = function (id) {
+            var _this = this;
+            var then = function (rawChildren) {
+                var children = rawChildren.map(function (raw) {
+                    return _this.topicParser.parseTopic(raw);
+                });
+                _this.childrenReceived.raise({ id: id, children: children });
+            };
+
             if (id.root)
-                this.queryRootChildren();
+                this.queryRootChildren(then);
             else
-                this.queryNonRootChildren(id.id);
+                this.queryNonRootChildren(id.id, then);
         };
 
-        Main.prototype.queryRootChildren = function () {
-            var _this = this;
+        Main.prototype.queryRootChildren = function (then) {
             var parentlessFilter = discoContext.PostReferences.filter(function (it) {
                 return it.ReferenceType.Description.Name != 'Child';
             });
 
             discoContext.Posts.filter(function (it) {
                 return it.PostType.Description.Name == 'Topic' && it.RefersTo.every(this.parentlessFilter);
-            }, { parentlessFilter: parentlessFilter }).include('Content').toArray().then(function (topics) {
-                var rootChildren = topics.map(function (raw) {
-                    return _this.topicParser.parseTopic(raw);
-                });
-                _this.childrenReceived.raise({ id: { root: true, id: undefined }, children: rootChildren });
-            });
+            }, { parentlessFilter: parentlessFilter }).include('Content').toArray().then(then);
         };
 
-        Main.prototype.queryNonRootChildren = function (id) {
-            var _this = this;
+        Main.prototype.queryNonRootChildren = function (id, then) {
             var childFilter = discoContext.PostReferences.filter(function (it) {
                 return it.ReferenceType.Description.Name == 'Child' && it.ReferreeId == this.Id;
             }, { Id: id });
 
             discoContext.Posts.filter(function (it) {
                 return it.PostType.Description.Name == 'Topic' && it.RefersTo.some(this.childFilter);
-            }, { childFilter: childFilter }).include('Content').toArray().then(function (topics) {
-                var children = topics.map(function (raw) {
-                    return _this.topicParser.parseTopic(raw);
-                });
-                _this.childrenReceived.raise({ id: { id: id }, children: children });
-            });
+            }, { childFilter: childFilter }).include('Content').toArray().then(then);
         };
 
         Main.prototype.queryContainedKokis = function (id) {

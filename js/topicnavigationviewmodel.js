@@ -1,3 +1,9 @@
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
 define(["require", "exports"], function(require, exports) {
     var ViewModel = (function () {
         function ViewModel() {
@@ -12,4 +18,28 @@ define(["require", "exports"], function(require, exports) {
         return KokiItem;
     })();
     exports.KokiItem = KokiItem;
+
+    var QueryableItemCollection = (function () {
+        function QueryableItemCollection() {
+        }
+        return QueryableItemCollection;
+    })();
+    exports.QueryableItemCollection = QueryableItemCollection;
+
+    var Kokis = (function (_super) {
+        __extends(Kokis, _super);
+        function Kokis() {
+            _super.apply(this, arguments);
+        }
+        return Kokis;
+    })(QueryableItemCollection);
+    exports.Kokis = Kokis;
+    var Children = (function (_super) {
+        __extends(Children, _super);
+        function Children() {
+            _super.apply(this, arguments);
+        }
+        return Children;
+    })(QueryableItemCollection);
+    exports.Children = Children;
 });

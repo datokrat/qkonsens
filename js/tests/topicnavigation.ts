@@ -35,12 +35,12 @@ export class Tests extends unit.TestClass {
 		var viewModel = new vm.ViewModel();
 		var controller = new ctr.ModelViewModelController(model, viewModel);
 		
-		test.assert(() => model.children.get() != null);
+		test.assert(() => model.children.items.get() != null);
 		
-		model.children.push(new Topic.Model);
-		model.children.get()[0].title('Child Title');
+		model.children.items.push(new Topic.Model);
+		model.children.items.get()[0].title('Child Title');
 		
-		test.assert(() => viewModel.children().length == 1);
+		test.assert(() => viewModel.children.items().length == 1);
 	}
 	
 	kokis() {
@@ -48,14 +48,14 @@ export class Tests extends unit.TestClass {
 		var viewModel = new vm.ViewModel();
 		var controller = new ctr.ModelViewModelController(model, viewModel);
 		
-		test.assert(() => model.kokis.get() != null);
+		test.assert(() => model.kokis.items.get() != null);
 		
-		model.kokis.push(new KonsenskisteModel.Model);
-		model.kokis.get(0).general(new ContentModel.General);
-		model.kokis.get(0).general().title('KoKi Title');
+		model.kokis.items.push(new KonsenskisteModel.Model);
+		model.kokis.items.get(0).general(new ContentModel.General);
+		model.kokis.items.get(0).general().title('KoKi Title');
 		
-		test.assert(() => viewModel.kokis().length == 1);
-		test.assert(() => viewModel.kokis()[0].caption() == 'KoKi Title');
+		test.assert(() => viewModel.kokis.items().length == 1);
+		test.assert(() => viewModel.kokis.items()[0].caption() == 'KoKi Title');
 	}
 	
 	getFromCommunicator() {
@@ -68,15 +68,15 @@ export class Tests extends unit.TestClass {
 		communicator.childrenReceived.raise({ id: { id: 3 }, children: [new Topic.Model] });
 		communicator.containedKokisReceived.raise({ id: { id: 3 }, kokis: [new KonsenskisteModel.Model] });
 		
-		test.assert(() => model.children.get().length == 1);
-		test.assert(v => v.val(model.kokis.get().length) == 1);
+		test.assert(() => model.children.items.get().length == 1);
+		test.assert(v => v.val(model.kokis.items.get().length) == 1);
 		
 		//Wrong id - should be ignored
 		communicator.containedKokisReceived.raise({ id: { id: 2 }, kokis: [] });
 		communicator.childrenReceived.raise({ id: { id: 2 }, children: [] });
 		
-		test.assert(v => v.val(model.children.get().length) == 1);
-		test.assert(v => v.val(model.kokis.get().length) == 1);
+		test.assert(v => v.val(model.children.items.get().length) == 1);
+		test.assert(v => v.val(model.kokis.items.get().length) == 1);
 	}
 	
 	queriesWhenSelectedTopicChanged() {
@@ -102,13 +102,13 @@ export class Tests extends unit.TestClass {
 		var controller = new ctr.ModelViewModelController(model, viewModel);
 		
 		model.history.push(new Topic.Model);
-		model.children.set([new Topic.Model]);
-		model.children.get(0).title('Child');
+		model.children.items.set([new Topic.Model]);
+		model.children.items.get(0).title('Child');
 		
-		viewModel.children()[0].click();
+		viewModel.children.items()[0].click();
 		
 		test.assert(() => model.history.get().length == 2);
-		test.assert(() => model.children.get().length == 0);
+		test.assert(() => model.children.items.get().length == 0);
 		test.assert(() => model.selectedTopic().title() == 'Child');
 	}
 	
@@ -167,35 +167,6 @@ export class Tests extends unit.TestClass {
 		
 		test.assert(() => model.history.get().length == 1);
 		test.assert(() => model.selectedTopic().title() == 'Parent');
-	}
-	
-	parentTopicArray() {
-		var pushCtr = 0, removeCtr = 0, changeCtr = 0;
-		var arr = new mdl.ParentTopicArray();
-		arr.pushed.subscribe(() => ++pushCtr);
-		arr.removed.subscribe(() => ++removeCtr);
-		arr.changed.subscribe(() => ++changeCtr);
-		
-		var hst = new Obs.ObservableArrayExtender(ko.observableArray([]));
-		arr.setHistory(hst);
-		
-		test.assert(() => changeCtr == 1);
-		test.assert(() => pushCtr == 0);
-		test.assert(() => removeCtr == 0);
-		
-		pushCtr = 0, removeCtr = 0, changeCtr = 0;
-		hst.push(new Topic.Model);
-		
-		test.assert(() => changeCtr == 0);
-		test.assert(() => pushCtr == 0);
-		test.assert(() => removeCtr == 0);
-		
-		pushCtr = 0, removeCtr = 0, changeCtr = 0;
-		hst.push(new Topic.Model);
-		
-		test.assert(() => changeCtr == 0);
-		test.assert(() => pushCtr == 1);
-		test.assert(() => removeCtr == 0);
 	}
 	
 	root() {

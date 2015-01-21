@@ -8,11 +8,16 @@ export class Main implements Topic.Communicator {
 	public containedKokisReceived = new Evt.EventImpl<Topic.ContainedKokisReceivedArgs>();
 	
 	public queryChildren(id: Topic.TopicIdentifier): void {
-		if(id.root) this.queryRootChildren();
-		else this.queryNonRootChildren(id.id);
+		var then = (rawChildren: Disco.Ontology.Post[]) => {
+			var children = rawChildren.map(raw => this.topicParser.parseTopic(raw));
+			this.childrenReceived.raise({ id: id, children: children });
+		};
+		
+		if(id.root) this.queryRootChildren(then);
+		else this.queryNonRootChildren(id.id, then);
 	}
 	
-	private queryRootChildren(): void {
+	private queryRootChildren(then: (rawChildren: Disco.Ontology.Post[]) => void): void {
 		var parentlessFilter = discoContext.PostReferences.filter(function(it) { return it.ReferenceType.Description.Name != 'Child'});
 		
 		discoContext.Posts.filter(
@@ -20,13 +25,10 @@ export class Main implements Topic.Communicator {
 			{ parentlessFilter: parentlessFilter })
 			.include('Content')
 			.toArray()
-			.then(topics => {
-				var rootChildren = topics.map(raw => this.topicParser.parseTopic(raw));
-				this.childrenReceived.raise({ id: { root: true, id: undefined }, children: rootChildren });
-			});
+			.then(then);
 	}
 	
-	private queryNonRootChildren(id: number): void {
+	private queryNonRootChildren(id: number, then: (rawChildren: Disco.Ontology.Post[]) => void): void {
 		var childFilter = discoContext.PostReferences.filter(
 			function(it) { return it.ReferenceType.Description.Name == 'Child' && it.ReferreeId == this.Id },
 			{ Id: id });
@@ -35,10 +37,7 @@ export class Main implements Topic.Communicator {
 			function(it) { return it.PostType.Description.Name == 'Topic' && it.RefersTo.some(this.childFilter) },
 			{ childFilter: childFilter })
 			.include('Content')
-			.toArray().then(topics => {
-				var children = topics.map(raw => this.topicParser.parseTopic(raw));
-				this.childrenReceived.raise({ id: { id: id }, children: children });
-			});
+			.toArray().then(then);
 	}
 	
 	public queryContainedKokis(id: Topic.TopicIdentifier) {
