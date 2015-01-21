@@ -93,10 +93,8 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../mod
             var viewModel = new vm.ViewModel();
             var communicator = new TestCommunicator();
             communicator.commandProcessor.chain.insertAtBeginning(function (cmd) {
-                test.assert(function (v) {
-                    return cmd instanceof Communicator.LoginCommand;
-                });
-                counter.inc('login command');
+                if (cmd instanceof Communicator.LoginCommand)
+                    counter.inc('login command');
                 return true;
             });
             var controller = new ctr.Controller(model, viewModel, communicator);

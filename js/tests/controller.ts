@@ -94,8 +94,8 @@ export class Tests extends unit.TestClass {
 		var viewModel = new vm.ViewModel();
 		var communicator = new TestCommunicator();
 		communicator.commandProcessor.chain.insertAtBeginning(cmd => {
-			test.assert(v => cmd instanceof Communicator.LoginCommand);
-			counter.inc('login command');
+			if(cmd instanceof Communicator.LoginCommand)
+				counter.inc('login command');
 			return true;
 		});
 		var controller = new ctr.Controller(model, viewModel, communicator);

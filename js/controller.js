@@ -80,6 +80,8 @@ define(["require", "exports", 'model', 'topicnavigationmodel', 'frame', 'windows
 
         Controller.prototype.initAccount = function () {
             var _this = this;
+            this.initializeListOfAvailableAccounts();
+
             this.viewModel.isAdmin = ko.observable(false);
             this.model.account.subscribe(function (account) {
                 _this.updateAccountViewModel();
@@ -95,6 +97,14 @@ define(["require", "exports", 'model', 'topicnavigationmodel', 'frame', 'windows
 
             this.updateAccountViewModel();
             this.login();
+        };
+
+        Controller.prototype.initializeListOfAvailableAccounts = function () {
+            var _this = this;
+            this.viewModel.availableAccounts = ko.observableArray(['anonymous']);
+            this.communicator.commandProcessor.processCommand(new Communicator.GetAllUsersCommand(function (users) {
+                _this.viewModel.availableAccounts(users);
+            }));
         };
 
         Controller.prototype.login = function () {

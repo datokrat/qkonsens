@@ -2,5 +2,5 @@
 <span id="usermgt">
 	<input type="checkbox" id="modmode" data-bind="checked: isAdmin" /><label for="modmode">Moderationsmodus</label> |
 	<!--label for="username">Username: </label><input id="username" type="text" data-bind="value: userName" /-->
-	<select data-bind="options: ['anonymous', 'WS'], value: userName"></select>
+	<select data-bind="options: availableAccounts, value: userName"></select>
 </span>

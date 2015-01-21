@@ -9,8 +9,14 @@ export interface Main {
 	commandProcessor: Commands.CommandProcessor;
 }
 
+//TODO: add callback
 export class LoginCommand {
 	constructor(public userName: string) { }
 	
 	public toString() { return 'LoginCommand ' + JSON.stringify(this) }
+}
+
+export class GetAllUsersCommand {
+	constructor(public then: (users: string[]) => void) { }
+	public toString() { return 'GetAllUsersCommand' }
 }

@@ -11,4 +11,5 @@ export class ViewModel {
 	
 	public userName: Obs.Observable<string>;
 	public isAdmin: Obs.Observable<boolean>;
+	public availableAccounts: Obs.ObservableArray<string>;
 }

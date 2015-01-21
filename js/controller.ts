@@ -89,6 +89,8 @@ export class Controller {
 	}
 	
 	private initAccount() {
+		this.initializeListOfAvailableAccounts();
+		
 		this.viewModel.isAdmin = ko.observable<boolean>(false);
 		this.model.account.subscribe(account => {
 			this.updateAccountViewModel();
@@ -104,6 +106,13 @@ export class Controller {
 		
 		this.updateAccountViewModel();
 		this.login();
+	}
+	
+	private initializeListOfAvailableAccounts() {
+		this.viewModel.availableAccounts = ko.observableArray<string>(['anonymous']);
+		this.communicator.commandProcessor.processCommand(new Communicator.GetAllUsersCommand(users => {
+			this.viewModel.availableAccounts(users);
+		}));
 	}
 	
 	private login() {
