@@ -6,19 +6,18 @@ import KElement = require('kelement');
 
 import EventFactory = require('factories/event')
 import Obs = require('observable')
+import QueryState = require('querystate');
 
 export class Model extends KElement.Model {
 	public childKas: Obs.ObservableArrayEx<KernaussageModel.Model> 
 		= new Obs.ObservableArrayExtender<KernaussageModel.Model>(ko.observableArray<KernaussageModel.Model>());
 	
-	public error: Obs.Observable<string> = ko.observable<string>();
-	public loading: Obs.Observable<boolean> = ko.observable<boolean>();
+	public queryState = ko.observable<QueryState.QueryState>(new QueryState.QueryState());
 	
-	public set(model: Model) {
+	public set(rhs: Model) {
 		KElement.Model.prototype.set.apply(this, arguments);
-		this.setChildKas(model.childKas.get())
-		this.loading(model.loading());
-		this.error(model.error());
+		this.setChildKas(rhs.childKas.get())
+		this.queryState().set(rhs.queryState());
 	}
 	
 	private setChildKas(other: KernaussageModel.Model[]) {

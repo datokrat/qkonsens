@@ -90,12 +90,12 @@ define(["require", "exports", 'event', 'common', 'discocontext', 'contentcommuni
         Main.prototype.query = function (id) {
             var _this = this;
             var onError = function (message) {
-                out.error(message);
-                out.loading(false);
+                out.queryState().error(message);
+                out.queryState().loading(false);
                 _this.receiptError.raise({ id: id, message: message, konsenskiste: out });
             };
             var out = new KonsenskisteModel.Model();
-            out.loading(true);
+            out.queryState().loading(true);
             out.id(id);
 
             this.queryRaw(id).then(function (rawKokis) {
@@ -103,8 +103,8 @@ define(["require", "exports", 'event', 'common', 'discocontext', 'contentcommuni
                     onError('koki id[' + id + '] could not be found');
                     return;
                 }
-                out.error(null);
-                out.loading(false);
+                out.queryState().error(null);
+                out.queryState().loading(false);
                 var parsedKoki = _this.parser.parse(rawKokis[0], out);
                 _this.received.raise({ id: id, konsenskiste: parsedKoki });
             }).fail(function (error) {

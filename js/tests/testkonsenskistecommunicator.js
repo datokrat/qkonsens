@@ -23,16 +23,16 @@ define(["require", "exports", '../id', 'event', 'itemcontainer', 'tests/testcont
             try  {
                 out = out || new KonsenskisteModel.Model();
                 out.id(id);
-                out.loading(true);
+                out.queryState().loading(true);
                 out.set(this.testItems.get(id));
             } catch (e) {
-                out.error('id[' + id + '] not found');
-                out.loading(false);
+                out.queryState().error('id[' + id + '] not found');
+                out.queryState().loading(false);
                 this.receiptError.raise({ id: id, message: 'id[' + id + '] not found', konsenskiste: out });
                 return out;
             }
-            out.error(null);
-            out.loading(false);
+            out.queryState().error(null);
+            out.queryState().loading(false);
             this.received.raise({ id: id, konsenskiste: out });
             return out;
         };

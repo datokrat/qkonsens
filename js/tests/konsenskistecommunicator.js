@@ -44,10 +44,10 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', '../common', 'tes
                 },
                 function (r) {
                     test.assert(function () {
-                        return _this.mdl.loading() == false;
+                        return _this.mdl.queryState().loading() == false;
                     });
                     test.assert(function () {
-                        return !_this.mdl.error();
+                        return !_this.mdl.queryState().error();
                     });
                     test.assert(function () {
                         return _this.mdl.general().title() == 'Title #1';
@@ -128,7 +128,7 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', '../common', 'tes
             var koki;
             this.com.receiptError.subscribe(function (args) {
                 test.assert(function () {
-                    return args.konsenskiste.error() && true;
+                    return args.konsenskiste.queryState().error() && true;
                 });
                 ++errorCtr;
             });

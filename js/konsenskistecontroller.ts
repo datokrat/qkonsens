@@ -48,8 +48,7 @@ export class ControllerImpl extends KElement.Controller<mdl.Model, vm.ViewModel,
 	}
 	
 	private initProperties() {
-		this.viewModel.loading = this.model.loading;
-		this.viewModel.error = this.model.error;
+		this.viewModel.queryState = this.model.queryState;
 	}
 	
 	private initKas() {

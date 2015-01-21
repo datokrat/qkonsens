@@ -5,12 +5,12 @@ import Kernaussage = require('kernaussageviewmodel')
 import Rating = require('rating')
 import Comment = require('comment')
 import Discussion = require('discussion')
+import QueryState = require('querystate');
 
 import KElement = require('kelement');
 
 export class ViewModel extends KElement.ViewModel {
-	public error: Obs.Observable<string>;
-	public loading: Obs.Observable<boolean>;
+	public queryState: Obs.Observable<QueryState.QueryState>;
 	
 	public childKas: Obs.ObservableArray<Kernaussage.ViewModel>;
 	public newKaFormVisible: Obs.Observable<boolean>;

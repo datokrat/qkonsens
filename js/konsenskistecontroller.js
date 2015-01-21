@@ -37,8 +37,7 @@ define(["require", "exports", 'factories/kernaussagemodel', 'synchronizers/kokis
         };
 
         ControllerImpl.prototype.initProperties = function () {
-            this.viewModel.loading = this.model.loading;
-            this.viewModel.error = this.model.error;
+            this.viewModel.queryState = this.model.queryState;
         };
 
         ControllerImpl.prototype.initKas = function () {

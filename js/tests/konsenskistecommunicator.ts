@@ -47,8 +47,8 @@ class TestClass extends unit.TestClass {
 				setTimeout(r, 0);
 			},
 			r => {
-				test.assert( () => this.mdl.loading() == false );
-				test.assert( () => !this.mdl.error() );
+				test.assert( () => this.mdl.queryState().loading() == false );
+				test.assert( () => !this.mdl.queryState().error() );
 				test.assert( () => this.mdl.general().title() == 'Title #1' );
 				test.assert( () => this.mdl.general().text() == 'Text #1' );
 				r();
@@ -111,7 +111,7 @@ class TestClass extends unit.TestClass {
 		var successCtr = 0;
 		var koki: KonsenskisteModel.Model;
 		this.com.receiptError.subscribe(args => {
-			test.assert(() => args.konsenskiste.error() && true);
+			test.assert(() => args.konsenskiste.queryState().error() && true);
 			++errorCtr;
 		});
 		this.com.received.subscribe(args => ++successCtr);

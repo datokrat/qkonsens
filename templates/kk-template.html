@@ -1,11 +1,11 @@
 <div class="kk">
-	<!-- ko if: error() -->
-		<span style="color: red">Fehler: <span data-bind="text: error"></span></span>
+	<!-- ko if: queryState().error -->
+		<span style="color: red">Fehler: <span data-bind="text: queryState().error"></span></span>
 	<!-- /ko -->
-	<!-- ko if: !error() && loading() -->
+	<!-- ko if: !queryState().error() && queryState().loading() -->
 		Laden...
 	<!-- /ko -->
-	<!-- ko if: !error() && !loading() -->
+	<!-- ko if: !queryState().error() && !queryState().loading() -->
 		<a class="clickable symbol" data-bind="click: editClick" style="float: right">bearbeiten</a>
 		<!-- ko template: { name: 'content-template', data: general } --><!-- /ko -->
 		

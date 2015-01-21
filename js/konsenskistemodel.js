@@ -4,22 +4,20 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'kernaussagemodel', 'kelement', 'factories/event', 'observable'], function(require, exports, KernaussageModel, KElement, EventFactory, Obs) {
+define(["require", "exports", 'kernaussagemodel', 'kelement', 'factories/event', 'observable', 'querystate'], function(require, exports, KernaussageModel, KElement, EventFactory, Obs, QueryState) {
     var Model = (function (_super) {
         __extends(Model, _super);
         function Model(context) {
             if (typeof context === "undefined") { context = new ModelContext; }
             _super.call(this);
             this.childKas = new Obs.ObservableArrayExtender(ko.observableArray());
-            this.error = ko.observable();
-            this.loading = ko.observable();
+            this.queryState = ko.observable(new QueryState.QueryState());
             this.factoryContext = context;
         }
-        Model.prototype.set = function (model) {
+        Model.prototype.set = function (rhs) {
             KElement.Model.prototype.set.apply(this, arguments);
-            this.setChildKas(model.childKas.get());
-            this.loading(model.loading());
-            this.error(model.error());
+            this.setChildKas(rhs.childKas.get());
+            this.queryState().set(rhs.queryState());
         };
 
         Model.prototype.setChildKas = function (other) {
