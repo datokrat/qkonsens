@@ -21,30 +21,34 @@ define(["require", "exports", 'event', 'topic', 'topicnavigationmodel', 'konsens
                 out.queryState().loading(false);
             };
 
+            var fail = function (err) {
+                out.queryState().error(err);
+            };
+
             if (id.root)
-                this.queryRootChildren(then);
+                this.queryRootChildren(then, fail);
             else
-                this.queryNonRootChildren(id.id, then);
+                this.queryNonRootChildren(id.id, then, fail);
         };
 
-        Main.prototype.queryRootChildren = function (then) {
+        Main.prototype.queryRootChildren = function (then, fail) {
             var parentlessFilter = discoContext.PostReferences.filter(function (it) {
                 return it.ReferenceType.Description.Name != 'Child';
             });
 
             discoContext.Posts.filter(function (it) {
                 return it.PostType.Description.Name == 'Topic' && it.RefersTo.every(this.parentlessFilter);
-            }, { parentlessFilter: parentlessFilter }).include('Content').toArray().then(then);
+            }, { parentlessFilter: parentlessFilter }).include('Content').toArray().then(then).fail(fail);
         };
 
-        Main.prototype.queryNonRootChildren = function (id, then) {
+        Main.prototype.queryNonRootChildren = function (id, then, fail) {
             var childFilter = discoContext.PostReferences.filter(function (it) {
                 return it.ReferenceType.Description.Name == 'Child' && it.ReferreeId == this.Id;
             }, { Id: id });
 
             discoContext.Posts.filter(function (it) {
                 return it.PostType.Description.Name == 'Topic' && it.RefersTo.some(this.childFilter);
-            }, { childFilter: childFilter }).include('Content').toArray().then(then);
+            }, { childFilter: childFilter }).include('Content').toArray().then(then).fail(fail);
         };
 
         Main.prototype.queryContainedKokis = function (id, out) {
@@ -62,13 +66,17 @@ define(["require", "exports", 'event', 'topic', 'topicnavigationmodel', 'konsens
                 out.queryState().loading(false);
             };
 
+            var fail = function (err) {
+                return out.queryState().error(err);
+            };
+
             if (!id.root)
-                this.queryContainedKokisOfNonRoot(id.id, then);
+                this.queryContainedKokisOfNonRoot(id.id, then, fail);
             else
                 then([]);
         };
 
-        Main.prototype.queryContainedKokisOfNonRoot = function (id, then) {
+        Main.prototype.queryContainedKokisOfNonRoot = function (id, then, fail) {
             var dependenceFilter = discoContext.PostReferences.filter(function (it) {
                 return it.ReferreeId == this.Id;
             }, { Id: id });

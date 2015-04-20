@@ -58,25 +58,28 @@ export class Main implements IKonsenskisteCommunicator.Main {
 				reference = this.createPostReference({ typeId: '11', referrerId: post.Id, referreeId: kokiId.toString() }, 
 					() => r(), err => onError(err));
 			},
-			r => {
-				cxtContent.Text = ka.context().text();
-				cxtContent.CultureId = '2';
-				discoContext.Content.add(cxtContent);
-				discoContext.saveChanges().then(() => r()).fail(error => onError(error));
-			},
-			r => {
-				cxtPost.PostTypeId = '2';
-				cxtPost.ContentId = cxtContent.Id;
-				discoContext.Posts.add(cxtPost);
-				discoContext.saveChanges().then(() => r()).fail(error => onError(error));
-			},
-			r => {
-				cxtReference.ReferrerId = post.Id;
-				cxtReference.ReferreeId = cxtPost.Id;
-				cxtReference.ReferenceTypeId = '10';
-				discoContext.PostReferences.add(cxtReference);
-				discoContext.saveChanges().then(() => r()).fail(error => onError(error));
-			}
+			ka.context() && ka.context().text() ?
+			(r => Common.Callbacks.batch([
+				r => {
+					cxtContent.Text = ka.context().text();
+					cxtContent.CultureId = '2';
+					discoContext.Content.add(cxtContent);
+					discoContext.saveChanges().then(() => r()).fail(error => onError(error));
+				},
+				r => {
+					cxtPost.PostTypeId = '2';
+					cxtPost.ContentId = cxtContent.Id;
+					discoContext.Posts.add(cxtPost);
+					discoContext.saveChanges().then(() => r()).fail(error => onError(error));
+				},
+				r => {
+					cxtReference.ReferrerId = post.Id;
+					cxtReference.ReferreeId = cxtPost.Id;
+					cxtReference.ReferenceTypeId = '10';
+					discoContext.PostReferences.add(cxtReference);
+					discoContext.saveChanges().then(() => r()).fail(error => onError(error));
+				}
+			], r)) : r => r()
 		], (err) => {
 			if(err)
 				onError(err);

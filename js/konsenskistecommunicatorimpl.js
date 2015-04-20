@@ -46,36 +46,42 @@ define(["require", "exports", 'event', 'common', 'discocontext', 'contentcommuni
                         return onError(err);
                     });
                 },
-                function (r) {
-                    cxtContent.Text = ka.context().text();
-                    cxtContent.CultureId = '2';
-                    discoContext.Content.add(cxtContent);
-                    discoContext.saveChanges().then(function () {
-                        return r();
-                    }).fail(function (error) {
-                        return onError(error);
-                    });
-                },
-                function (r) {
-                    cxtPost.PostTypeId = '2';
-                    cxtPost.ContentId = cxtContent.Id;
-                    discoContext.Posts.add(cxtPost);
-                    discoContext.saveChanges().then(function () {
-                        return r();
-                    }).fail(function (error) {
-                        return onError(error);
-                    });
-                },
-                function (r) {
-                    cxtReference.ReferrerId = post.Id;
-                    cxtReference.ReferreeId = cxtPost.Id;
-                    cxtReference.ReferenceTypeId = '10';
-                    discoContext.PostReferences.add(cxtReference);
-                    discoContext.saveChanges().then(function () {
-                        return r();
-                    }).fail(function (error) {
-                        return onError(error);
-                    });
+                ka.context() && ka.context().text() ? (function (r) {
+                    return Common.Callbacks.batch([
+                        function (r) {
+                            cxtContent.Text = ka.context().text();
+                            cxtContent.CultureId = '2';
+                            discoContext.Content.add(cxtContent);
+                            discoContext.saveChanges().then(function () {
+                                return r();
+                            }).fail(function (error) {
+                                return onError(error);
+                            });
+                        },
+                        function (r) {
+                            cxtPost.PostTypeId = '2';
+                            cxtPost.ContentId = cxtContent.Id;
+                            discoContext.Posts.add(cxtPost);
+                            discoContext.saveChanges().then(function () {
+                                return r();
+                            }).fail(function (error) {
+                                return onError(error);
+                            });
+                        },
+                        function (r) {
+                            cxtReference.ReferrerId = post.Id;
+                            cxtReference.ReferreeId = cxtPost.Id;
+                            cxtReference.ReferenceTypeId = '10';
+                            discoContext.PostReferences.add(cxtReference);
+                            discoContext.saveChanges().then(function () {
+                                return r();
+                            }).fail(function (error) {
+                                return onError(error);
+                            });
+                        }
+                    ], r);
+                }) : function (r) {
+                    return r();
                 }
             ], function (err) {
                 if (err)

@@ -20,11 +20,15 @@ export class Main implements Topic.Communicator {
 			out.queryState().loading(false);
 		};
 		
-		if(id.root) this.queryRootChildren(then);
-		else this.queryNonRootChildren(id.id, then);
+		var fail = (err) => {
+			out.queryState().error(err);
+		};
+		
+		if(id.root) this.queryRootChildren(then, fail);
+		else this.queryNonRootChildren(id.id, then, fail);
 	}
 	
-	private queryRootChildren(then: (rawChildren: Disco.Ontology.Post[]) => void): void {
+	private queryRootChildren(then: (rawChildren: Disco.Ontology.Post[]) => void, fail: (err) => void): void {
 		var parentlessFilter = discoContext.PostReferences.filter(function(it) { return it.ReferenceType.Description.Name != 'Child'});
 		
 		discoContext.Posts.filter(
@@ -32,10 +36,11 @@ export class Main implements Topic.Communicator {
 			{ parentlessFilter: parentlessFilter })
 			.include('Content')
 			.toArray()
-			.then(then);
+			.then(then)
+			.fail(fail);
 	}
 	
-	private queryNonRootChildren(id: number, then: (rawChildren: Disco.Ontology.Post[]) => void): void {
+	private queryNonRootChildren(id: number, then: (rawChildren: Disco.Ontology.Post[]) => void, fail: (err) => void): void {
 		var childFilter = discoContext.PostReferences.filter(
 			function(it) { return it.ReferenceType.Description.Name == 'Child' && it.ReferreeId == this.Id },
 			{ Id: id });
@@ -44,7 +49,7 @@ export class Main implements Topic.Communicator {
 			function(it) { return it.PostType.Description.Name == 'Topic' && it.RefersTo.some(this.childFilter) },
 			{ childFilter: childFilter })
 			.include('Content')
-			.toArray().then(then);
+			.toArray().then(then).fail(fail);
 	}
 	
 	public queryContainedKokis(id: Topic.TopicIdentifier, out?: TopicNavigation.Kokis) {
@@ -59,11 +64,13 @@ export class Main implements Topic.Communicator {
 			out.queryState().loading(false);
 		};
 		
-		if(!id.root) this.queryContainedKokisOfNonRoot(id.id, then);
+		var fail = (err) => out.queryState().error(err);
+		
+		if(!id.root) this.queryContainedKokisOfNonRoot(id.id, then, fail);
 		else then([]);
 	}
 	
-	private queryContainedKokisOfNonRoot(id: number, then: (rawKokis: Disco.Ontology.Post[]) => void) {
+	private queryContainedKokisOfNonRoot(id: number, then: (rawKokis: Disco.Ontology.Post[]) => void, fail: (err) => void) {
 		var dependenceFilter = discoContext.PostReferences.filter(function(it) {
 			return it.ReferreeId == this.Id;
 		}, { Id: id });
