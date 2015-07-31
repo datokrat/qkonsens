@@ -16,7 +16,6 @@ export interface State {
 }
 
 export interface Controller {
-	//setKonsenskisteModelById(id: number): void;
 	setKonsenskisteModel(model: kokiMdl.Model): void;
 	dispose(): void;
 }
@@ -62,23 +61,14 @@ export class ControllerImpl implements Controller {
 			this.konsenskisteController.dispose();
 	}
 	
-	/*public setContext(cxt: ViewModelContext) {
-		this.cxt = cxt;
-		this.konsenskisteController.setViewModelContext(cxt);
-		return this;
-	}*/
-	
 	public setKonsenskisteModel(konsenskisteModel: kokiMdl.Model) {
 		this.initKonsenskiste(konsenskisteModel);
-		//this.setContext(this.cxt);
 	}
 	
 	public dispose() {
 		this.konsenskisteController.dispose();
 		this.subscriptions.forEach(s => s.dispose());
 	}
-	
-	//private cxt: ViewModelContext;
 	
 	private window: winVm.Win;
 	private konsenskisteModel: kokiMdl.Model;
