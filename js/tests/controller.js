@@ -148,7 +148,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../mod
                 counter.inc('communicator.create');
                 then(2);
             };
-            this.cxt.controller.commandProcessor.processCommand(new ctr.CreateNewKokiCommand(new KonsenskisteModel.Model(), new Topic.Model, function (id) {
+            this.cxt.controller.commandProcessor.processCommand(new ctr.CreateNewKokiCommand({ text: "", title: "" }, new Topic.Model, function (id) {
                 test.assert(function (v) {
                     return v.val(id) == 2;
                 });

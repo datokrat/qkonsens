@@ -150,11 +150,7 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', '../common', 'tes
 
         TestClass.prototype.createKoki = function (async, r) {
             async();
-            var koki = new KonsenskisteModel.Model;
-            koki.general().text('Text');
-            koki.general().title('Title');
-            koki.context().text('Klärtext');
-            this.com.create(koki, null, function (id) {
+            this.com.create({ text: 'Text', title: 'Title' }, null, function (id) {
                 r();
             });
         };

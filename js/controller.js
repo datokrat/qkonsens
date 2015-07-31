@@ -24,6 +24,55 @@ define(["require", "exports", 'model', 'topicnavigationmodel', 'frame', 'windows
             this.initAccount();
             this.initStateLogic();
         }
+        Controller.prototype.initCommandControl = function (parent) {
+            var _this = this;
+            this.commandProcessor.parent = parent && parent.commandProcessor;
+            this.commandProcessor.chain.append(function (cmd) {
+                if (cmd instanceof CreateNewKokiCommand) {
+                    var createKokiCommand = cmd;
+                    var topicId = !createKokiCommand.parentTopic.id.root && createKokiCommand.parentTopic.id.id;
+                    _this.communicator.konsenskiste.create(createKokiCommand.data, topicId, function (id) {
+                        return createKokiCommand.then(id);
+                    });
+                    return true;
+                }
+                if (cmd instanceof OpenNewKokiWindowCommand) {
+                    var openNewKokiWindowCommand = cmd;
+                    _this.newKkWinController.setParentTopic(openNewKokiWindowCommand.topic);
+                    _this.viewModel.left.win(_this.newKkWin);
+                    return true;
+                }
+                if (cmd instanceof OpenDiscussionWindowCommand) {
+                    var openDiscussionWindowCommand = cmd;
+                    _this.discussionWin.discussable(cmd.discussableViewModel);
+                    _this.viewModel.left.win(_this.discussionWin);
+                    return true;
+                }
+                if (cmd instanceof KElementCommands.OpenEditKElementWindowCommand) {
+                    var editKElementWindowCommand = cmd;
+                    _this.editKElementWinController.setModel(editKElementWindowCommand.model);
+                    _this.viewModel.left.win(_this.editKElementWin);
+                    return true;
+                }
+                if (cmd instanceof KElementCommands.UpdateGeneralContentCommand) {
+                    var updateGeneralContentCommand = cmd;
+                    _this.communicator.konsenskiste.content.updateGeneral(updateGeneralContentCommand.content, { then: function () {
+                            updateGeneralContentCommand.callbacks.then();
+                        } });
+                    return true;
+                }
+                if (cmd instanceof KElementCommands.UpdateContextCommand) {
+                    var updateContextCommand = cmd;
+                    _this.communicator.konsenskiste.content.updateContext(updateContextCommand.content, { then: function () {
+                            updateContextCommand.callbacks.then();
+                        }, error: function () {
+                        } });
+                    return true;
+                }
+                return false;
+            });
+        };
+
         Controller.prototype.initWindows = function () {
             this.newKkWin = new NewKkWin.Win();
             this.editKElementWin = new EditKElementWin.Win();
@@ -68,16 +117,6 @@ define(["require", "exports", 'model', 'topicnavigationmodel', 'frame', 'windows
             this.stateLogic.initialize();
         };
 
-        Controller.prototype.dispose = function () {
-            this.newKkWinController.dispose();
-            this.stateLogic.dispose();
-            this.kokiLogic.dispose();
-            this.topicLogic.dispose();
-            this.subscriptions.forEach(function (s) {
-                return s.dispose();
-            });
-        };
-
         Controller.prototype.initAccount = function () {
             var _this = this;
             this.initializeListOfAvailableAccounts();
@@ -116,52 +155,13 @@ define(["require", "exports", 'model', 'topicnavigationmodel', 'frame', 'windows
                 this.viewModel.userName(this.model.account().userName);
         };
 
-        Controller.prototype.initCommandControl = function (parent) {
-            var _this = this;
-            this.commandProcessor.parent = parent && parent.commandProcessor;
-            this.commandProcessor.chain.append(function (cmd) {
-                if (cmd instanceof CreateNewKokiCommand) {
-                    var createKokiCommand = cmd;
-                    var topicId = !createKokiCommand.parentTopic.id.root && createKokiCommand.parentTopic.id.id;
-                    _this.communicator.konsenskiste.create(createKokiCommand.model, topicId, function (id) {
-                        return createKokiCommand.then(id);
-                    });
-                    return true;
-                }
-                if (cmd instanceof OpenNewKokiWindowCommand) {
-                    var openNewKokiWindowCommand = cmd;
-                    _this.newKkWinController.setParentTopic(openNewKokiWindowCommand.topic);
-                    _this.viewModel.left.win(_this.newKkWin);
-                    return true;
-                }
-                if (cmd instanceof OpenDiscussionWindowCommand) {
-                    var openDiscussionWindowCommand = cmd;
-                    _this.discussionWin.discussable(cmd.discussableViewModel);
-                    _this.viewModel.left.win(_this.discussionWin);
-                    return true;
-                }
-                if (cmd instanceof KElementCommands.OpenEditKElementWindowCommand) {
-                    var editKElementWindowCommand = cmd;
-                    _this.editKElementWinController.setModel(editKElementWindowCommand.model);
-                    _this.viewModel.left.win(_this.editKElementWin);
-                    return true;
-                }
-                if (cmd instanceof KElementCommands.UpdateGeneralContentCommand) {
-                    var updateGeneralContentCommand = cmd;
-                    _this.communicator.konsenskiste.content.updateGeneral(updateGeneralContentCommand.content, { then: function () {
-                            updateGeneralContentCommand.callbacks.then();
-                        } });
-                    return true;
-                }
-                if (cmd instanceof KElementCommands.UpdateContextCommand) {
-                    var updateContextCommand = cmd;
-                    _this.communicator.konsenskiste.content.updateContext(updateContextCommand.content, { then: function () {
-                            updateContextCommand.callbacks.then();
-                        }, error: function () {
-                        } });
-                    return true;
-                }
-                return false;
+        Controller.prototype.dispose = function () {
+            this.newKkWinController.dispose();
+            this.stateLogic.dispose();
+            this.kokiLogic.dispose();
+            this.topicLogic.dispose();
+            this.subscriptions.forEach(function (s) {
+                return s.dispose();
             });
         };
         return Controller;
@@ -170,9 +170,9 @@ define(["require", "exports", 'model', 'topicnavigationmodel', 'frame', 'windows
 
     var CreateNewKokiCommand = (function (_super) {
         __extends(CreateNewKokiCommand, _super);
-        function CreateNewKokiCommand(model, parentTopic, then) {
+        function CreateNewKokiCommand(data, parentTopic, then) {
             _super.call(this);
-            this.model = model;
+            this.data = data;
             this.parentTopic = parentTopic;
             this.then = then;
         }

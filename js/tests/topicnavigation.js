@@ -156,7 +156,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../con
                 });
                 var castCmd = cmd;
                 test.assert(function () {
-                    return castCmd.model.id() == 3;
+                    return castCmd.id == 3;
                 });
                 return true;
             });
@@ -183,7 +183,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../con
                 });
                 var castCmd = cmd;
                 test.assert(function () {
-                    return castCmd.model.id() == 3;
+                    return castCmd.id == 3;
                 });
                 return true;
             });
@@ -191,11 +191,8 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../con
             var model = new mdl.ModelImpl();
             var viewModel = new vm.ViewModel();
             var controller = new ctr.ModelViewModelController(model, viewModel, commandProcessor);
-            var kokiModel = new KonsenskisteModel.Model();
-            kokiModel.id(3);
-            var kokiViewModel = new vm.KokiItem();
 
-            var cmd = new KokiLogic.SelectAndLoadKokiCommand(kokiModel);
+            var cmd = new KokiLogic.SelectAndLoadKokiCommand(3);
             controller.kokiCommandControl.commandProcessor.processCommand(cmd);
 
             test.assert(function () {

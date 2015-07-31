@@ -1,4 +1,4 @@
-define(["require", "exports", '../id', 'event', 'itemcontainer', 'tests/testcontentcommunicator', 'tests/testkernaussagecommunicator', 'tests/testdiscussioncommunicator', 'tests/testratingcommunicator', '../konsenskistemodel'], function(require, exports, newId, Events, ItemContainer, TestContentCommunicator, TestKaCommunicator, TestDiscussionCommunicator, TestRatingCommunicator, KonsenskisteModel) {
+define(["require", "exports", '../id', 'event', 'itemcontainer', 'tests/testcontentcommunicator', 'tests/testkernaussagecommunicator', 'tests/testdiscussioncommunicator', 'tests/testratingcommunicator', '../konsenskistemodel', '../kernaussagemodel'], function(require, exports, newId, Events, ItemContainer, TestContentCommunicator, TestKaCommunicator, TestDiscussionCommunicator, TestRatingCommunicator, KonsenskisteModel, KernaussageModel) {
     var Main = (function () {
         function Main() {
             this.received = new Events.EventImpl();
@@ -37,21 +37,34 @@ define(["require", "exports", '../id', 'event', 'itemcontainer', 'tests/testcont
             return out;
         };
 
-        Main.prototype.createAndAppendKa = function (kokiId, ka) {
+        Main.prototype.createAndAppendKa = function (kokiId, kaData) {
             try  {
                 var koki = this.testItems.get(kokiId);
             } catch (e) {
-                this.kernaussageAppendingError.raise({ konsenskisteId: kokiId, message: "createAndAppendKa: kokiId[" + kokiId + "] not found" });
+                this.kernaussageAppendingError.raise({
+                    konsenskisteId: kokiId,
+                    message: "createAndAppendKa: kokiId[" + kokiId + "] not found"
+                });
                 return;
             }
+            var ka = new KernaussageModel.Model();
+            ka.general().title(kaData.title);
+            ka.general().text(kaData.text);
             ka.id(newId());
             this.kernaussage.setTestKa(ka);
             koki.childKas.push(ka);
-            this.kernaussageAppended.raise({ konsenskisteId: kokiId, kernaussage: ka });
+            this.kernaussageAppended.raise({
+                konsenskisteId: kokiId,
+                kernaussageId: ka.id(),
+                kernaussageData: kaData
+            });
         };
 
-        Main.prototype.create = function (koki, parentTopicId, then) {
+        Main.prototype.create = function (kokiData, parentTopicId, then) {
+            var koki = new KonsenskisteModel.Model();
             koki.id(newId());
+            koki.general().title(kokiData.title);
+            koki.general().text(kokiData.text);
             this.testItems.set(koki.id(), koki);
             then(koki.id());
         };

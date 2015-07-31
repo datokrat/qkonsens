@@ -20,7 +20,7 @@ import KonsenskisteModel = require('konsenskistemodel');
 import Topic = require('topic');
 import Commands = require('command');
 import KElementCommands = require('kelementcommands');
-import WindowViewModel = require('windowviewmodel');
+import WindowViewModel = require('windowviewmodel'); //TODO Rename
 
 export class Controller {
 	constructor(private model: mdl.Model, private viewModel: vm.ViewModel, private communicator: Communicator.Main, commandControl?: Commands.CommandControl) {
@@ -34,6 +34,51 @@ export class Controller {
 		this.initTopicLogic();
 		this.initAccount();
 		this.initStateLogic();
+	}
+	
+	private initCommandControl(parent: Commands.CommandControl) {
+		this.commandProcessor.parent = parent && parent.commandProcessor;
+		this.commandProcessor.chain.append(cmd => {
+			if(cmd instanceof CreateNewKokiCommand) {
+				var createKokiCommand = <CreateNewKokiCommand>cmd;
+				var topicId: number = !createKokiCommand.parentTopic.id.root && createKokiCommand.parentTopic.id.id;
+				this.communicator.konsenskiste.create(createKokiCommand.data, topicId, id => createKokiCommand.then(id));
+				return true;
+			}
+			if(cmd instanceof OpenNewKokiWindowCommand) {
+				var openNewKokiWindowCommand = <OpenNewKokiWindowCommand>cmd;
+				this.newKkWinController.setParentTopic(openNewKokiWindowCommand.topic);
+				this.viewModel.left.win(this.newKkWin);
+				return true;
+			}
+			if(cmd instanceof OpenDiscussionWindowCommand) {
+				var openDiscussionWindowCommand = <OpenDiscussionWindowCommand>cmd;
+				this.discussionWin.discussable((<OpenDiscussionWindowCommand>cmd).discussableViewModel);
+				this.viewModel.left.win(this.discussionWin);
+				return true;
+			}
+			if(cmd instanceof KElementCommands.OpenEditKElementWindowCommand) {
+				var editKElementWindowCommand = <KElementCommands.OpenEditKElementWindowCommand>cmd;
+				this.editKElementWinController.setModel(editKElementWindowCommand.model);
+				this.viewModel.left.win(this.editKElementWin);
+				return true;
+			}
+			if(cmd instanceof KElementCommands.UpdateGeneralContentCommand) {
+				var updateGeneralContentCommand = <KElementCommands.UpdateGeneralContentCommand>cmd;
+				this.communicator.konsenskiste.content.updateGeneral(updateGeneralContentCommand.content, { then: () => {
+					updateGeneralContentCommand.callbacks.then();
+				}});
+				return true;
+			}
+			if(cmd instanceof KElementCommands.UpdateContextCommand) {
+				var updateContextCommand = <KElementCommands.UpdateContextCommand>cmd;
+				this.communicator.konsenskiste.content.updateContext(updateContextCommand.content, { then: () => {
+					updateContextCommand.callbacks.then();
+				}, error: () => {}});
+				return true;
+			}
+			return false;
+		});
 	}
 	
 	private initWindows() {
@@ -80,14 +125,6 @@ export class Controller {
 		this.stateLogic.initialize();
 	}
 	
-	public dispose() {
-		this.newKkWinController.dispose();
-		this.stateLogic.dispose();
-		this.kokiLogic.dispose();
-		this.topicLogic.dispose();
-		this.subscriptions.forEach(s => s.dispose());
-	}
-	
 	private initAccount() {
 		this.initializeListOfAvailableAccounts();
 		
@@ -123,49 +160,12 @@ export class Controller {
 		if(this.viewModel.userName() != this.model.account().userName) this.viewModel.userName(this.model.account().userName);
 	}
 	
-	private initCommandControl(parent: Commands.CommandControl) {
-		this.commandProcessor.parent = parent && parent.commandProcessor;
-		this.commandProcessor.chain.append(cmd => {
-			if(cmd instanceof CreateNewKokiCommand) {
-				var createKokiCommand = <CreateNewKokiCommand>cmd;
-				var topicId: number = !createKokiCommand.parentTopic.id.root && createKokiCommand.parentTopic.id.id;
-				this.communicator.konsenskiste.create(createKokiCommand.model, topicId, id => createKokiCommand.then(id));
-				return true;
-			}
-			if(cmd instanceof OpenNewKokiWindowCommand) {
-				var openNewKokiWindowCommand = <OpenNewKokiWindowCommand>cmd;
-				this.newKkWinController.setParentTopic(openNewKokiWindowCommand.topic);
-				this.viewModel.left.win(this.newKkWin);
-				return true;
-			}
-			if(cmd instanceof OpenDiscussionWindowCommand) {
-				var openDiscussionWindowCommand = <OpenDiscussionWindowCommand>cmd;
-				this.discussionWin.discussable((<OpenDiscussionWindowCommand>cmd).discussableViewModel);
-				this.viewModel.left.win(this.discussionWin);
-				return true;
-			}
-			if(cmd instanceof KElementCommands.OpenEditKElementWindowCommand) {
-				var editKElementWindowCommand = <KElementCommands.OpenEditKElementWindowCommand>cmd;
-				this.editKElementWinController.setModel(editKElementWindowCommand.model);
-				this.viewModel.left.win(this.editKElementWin);
-				return true;
-			}
-			if(cmd instanceof KElementCommands.UpdateGeneralContentCommand) {
-				var updateGeneralContentCommand = <KElementCommands.UpdateGeneralContentCommand>cmd;
-				this.communicator.konsenskiste.content.updateGeneral(updateGeneralContentCommand.content, { then: () => {
-					updateGeneralContentCommand.callbacks.then();
-				}});
-				return true;
-			}
-			if(cmd instanceof KElementCommands.UpdateContextCommand) {
-				var updateContextCommand = <KElementCommands.UpdateContextCommand>cmd;
-				this.communicator.konsenskiste.content.updateContext(updateContextCommand.content, { then: () => {
-					updateContextCommand.callbacks.then();
-				}, error: () => {}});
-				return true;
-			}
-			return false;
-		});
+	public dispose() {
+		this.newKkWinController.dispose();
+		this.stateLogic.dispose();
+		this.kokiLogic.dispose();
+		this.topicLogic.dispose();
+		this.subscriptions.forEach(s => s.dispose());
 	}
 	
 	public commandProcessor = new Commands.CommandProcessor();
@@ -186,7 +186,7 @@ export class Controller {
 }
 
 export class CreateNewKokiCommand extends Commands.Command {
-	constructor(public model: KonsenskisteModel.Model, public parentTopic: Topic.Model, public then: (id: number) => void) { super() }
+	constructor(public data: { title: string; text: string; }, public parentTopic: Topic.Model, public then: (id: number) => void) { super() }
 }
 
 export class OpenNewKokiWindowCommand extends Commands.Command {

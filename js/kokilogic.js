@@ -27,8 +27,6 @@ define(["require", "exports", 'command', 'memory', 'controller', 'windows/konsen
                     return _this.onSelectAndLoadKokiCommandReceived(cmd);
                 if (cmd instanceof SetKokiCommand)
                     return _this.onSetKokiCommandReceived(cmd);
-                if (cmd instanceof CreateNewKokiCommand)
-                    return _this.onCreateNewKokiCommandReceived(cmd);
                 if (cmd instanceof MainController.HandleChangedAccountCommand)
                     return _this.onHandleChangedAccountCommandReceived(cmd);
                 if (cmd instanceof StateLogic.ChangeKokiStateCommand)
@@ -62,17 +60,12 @@ define(["require", "exports", 'command', 'memory', 'controller', 'windows/konsen
         };
 
         Controller.prototype.onSelectAndLoadKokiCommandReceived = function (cmd) {
-            this.selectAndLoadKoki(cmd.model.id());
+            this.selectAndLoadKoki(cmd.id);
             return true;
         };
 
         Controller.prototype.onSetKokiCommandReceived = function (cmd) {
             this.setKoki(cmd.model);
-            return true;
-        };
-
-        Controller.prototype.onCreateNewKokiCommandReceived = function (cmd) {
-            this.resources.konsenskisteCommunicator.create(cmd.model, cmd.parentTopicId, cmd.then);
             return true;
         };
 
@@ -124,9 +117,9 @@ define(["require", "exports", 'command', 'memory', 'controller', 'windows/konsen
 
     var SelectAndLoadKokiCommand = (function (_super) {
         __extends(SelectAndLoadKokiCommand, _super);
-        function SelectAndLoadKokiCommand(model) {
+        function SelectAndLoadKokiCommand(id) {
             _super.call(this);
-            this.model = model;
+            this.id = id;
         }
         return SelectAndLoadKokiCommand;
     })(Commands.Command);
@@ -141,18 +134,6 @@ define(["require", "exports", 'command', 'memory', 'controller', 'windows/konsen
         return SetKokiCommand;
     })(Commands.Command);
     exports.SetKokiCommand = SetKokiCommand;
-
-    var CreateNewKokiCommand = (function (_super) {
-        __extends(CreateNewKokiCommand, _super);
-        function CreateNewKokiCommand(model, parentTopicId, then) {
-            _super.call(this);
-            this.model = model;
-            this.parentTopicId = parentTopicId;
-            this.then = then;
-        }
-        return CreateNewKokiCommand;
-    })(Commands.Command);
-    exports.CreateNewKokiCommand = CreateNewKokiCommand;
 
     var HandleChangedKokiWinStateCommand = (function (_super) {
         __extends(HandleChangedKokiWinStateCommand, _super);

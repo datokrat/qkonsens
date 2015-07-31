@@ -17,7 +17,7 @@ define(["require", "exports", 'factories/konsenskistecontroller', '../konsenskis
                     var typedState = state;
                     var koki = new kokiMdl.Model();
                     koki.id(typedState.kokiId);
-                    _this.args.commandProcessor.processCommand(new KokiLogic.SelectAndLoadKokiCommand(koki));
+                    _this.args.commandProcessor.processCommand(new KokiLogic.SelectAndLoadKokiCommand(koki.id()));
                 }
             };
             this.window.state.subscribe(function (state) {

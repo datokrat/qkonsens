@@ -9,9 +9,7 @@ export interface Model {
 
 export class ModelImpl implements Model {
 	topicNavigation: topicNavigation.Model = new topicNavigation.ModelImpl;
-	
 	konsenskiste = ko.observable<konsenskiste.Model>();
-	
 	account = ko.observable<Account>(new Account);
 }
 

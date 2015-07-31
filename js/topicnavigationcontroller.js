@@ -151,7 +151,7 @@ define(["require", "exports", 'controller', 'kokilogic', 'topicnavigationviewmod
                 return model.general().title() ? model.general().title() : model.general().text();
             });
             this.viewModel.click = function () {
-                commandControl && commandControl.commandProcessor.processCommand(new KokiLogic.SelectAndLoadKokiCommand(model));
+                commandControl && commandControl.commandProcessor.processCommand(new KokiLogic.SelectAndLoadKokiCommand(model.id()));
             };
         }
         KokiItemViewModelController.prototype.dispose = function () {

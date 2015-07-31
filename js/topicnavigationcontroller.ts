@@ -164,7 +164,7 @@ export class KokiItemViewModelController {
 	constructor(model: KonsenskisteModel.Model, private viewModel: ViewModel.KokiItem, commandControl?: Commands.CommandControl) {
 		this.viewModel.caption = ko.computed(() => model.general().title() ? model.general().title() : model.general().text());
 		this.viewModel.click = () => {
-			commandControl && commandControl.commandProcessor.processCommand(new KokiLogic.SelectAndLoadKokiCommand(model));
+			commandControl && commandControl.commandProcessor.processCommand(new KokiLogic.SelectAndLoadKokiCommand(model.id()));
 		};
 	}
 	

@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'factories/kernaussagemodel', 'synchronizers/kokisynchronizers', 'kelement'], function(require, exports, KernaussageFactory, KokiSync, KElement) {
+define(["require", "exports", 'kernaussagemodel', 'factories/kernaussagemodel', 'synchronizers/kokisynchronizers', 'kelement'], function(require, exports, KernaussageModel, KernaussageFactory, KokiSync, KElement) {
     var ControllerImpl = (function (_super) {
         __extends(ControllerImpl, _super);
         function ControllerImpl(model, viewModel, args) {
@@ -16,8 +16,14 @@ define(["require", "exports", 'factories/kernaussagemodel', 'synchronizers/kokis
                     _this.model.set(args.konsenskiste);
             };
             this.onKaAppended = function (args) {
-                if (_this.model.id() == args.konsenskisteId)
-                    _this.model.childKas.push(args.kernaussage);
+                if (_this.model.id() == args.konsenskisteId) {
+                    var ka = new KernaussageModel.Model();
+                    ka.id(args.kernaussageId);
+                    ka.general().title(args.kernaussageData.title);
+                    ka.general().text(args.kernaussageData.text);
+                    ka.context().text(args.kernaussageData.context);
+                    _this.model.childKas.push(ka);
+                }
             };
             this.modelSubscriptions = [];
             this.communicatorSubscriptions = [];
@@ -56,13 +62,19 @@ define(["require", "exports", 'factories/kernaussagemodel', 'synchronizers/kokis
                 var ka = kaFactory.create(_this.viewModel.newKaText(), _this.viewModel.newKaTitle());
                 if (_this.viewModel.newKaContext())
                     ka.context().text(_this.viewModel.newKaContext());
+
+                var kaData = {
+                    title: ka.general().title(),
+                    text: ka.general().text(),
+                    context: ka.context().text()
+                };
                 _this.communicator.kernaussageAppended.subscribeUntil(function (args) {
-                    if (args.konsenskisteId == _this.model.id() && args.kernaussage == ka) {
+                    if (args.konsenskisteId == _this.model.id() && args.kernaussageData == kaData) {
                         _this.viewModel.newKaFormVisible(false);
                         return true;
                     }
                 });
-                _this.communicator.createAndAppendKa(_this.model.id(), ka);
+                _this.communicator.createAndAppendKa(_this.model.id(), kaData);
             };
 
             this.kaSynchronizer = new KokiSync.KaSynchronizer({ communicator: this.communicator.kernaussage, commandProcessor: this.args.commandProcessor });

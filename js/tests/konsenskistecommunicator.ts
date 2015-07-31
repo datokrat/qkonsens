@@ -126,11 +126,7 @@ class TestClass extends unit.TestClass {
 	
 	createKoki(async, r) {
 		async();
-		var koki = new KonsenskisteModel.Model;
-		koki.general().text('Text');
-		koki.general().title('Title');
-		koki.context().text('Klärtext');
-		this.com.create(koki, null, id => {
+		this.com.create({ text: 'Text', title: 'Title' }, null, id => {
 			r();
 		});
 	}

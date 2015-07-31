@@ -12,7 +12,7 @@ define(["require", "exports", 'event', 'common', 'discocontext', 'contentcommuni
             this.kernaussage = new KernaussageCommunicator.Main({ content: this.content });
             this.rating = new RatingCommunicatorImpl.Main();
         }
-        Main.prototype.createAndAppendKa = function (kokiId, ka) {
+        Main.prototype.createAndAppendKa = function (kokiId, kaData) {
             var _this = this;
             var onError = function (message) {
                 _this.kernaussageAppendingError.raise({ konsenskisteId: kokiId, message: message.toString() });
@@ -26,7 +26,7 @@ define(["require", "exports", 'event', 'common', 'discocontext', 'contentcommuni
             var cxtReference = new Disco.Ontology.PostReference();
             Common.Callbacks.batch([
                 function (r) {
-                    content = _this.createContent(ka.general(), function () {
+                    content = _this.createContent(kaData, function () {
                         return r();
                     }, function (err) {
                         return onError(err);
@@ -46,10 +46,10 @@ define(["require", "exports", 'event', 'common', 'discocontext', 'contentcommuni
                         return onError(err);
                     });
                 },
-                ka.context() && ka.context().text() ? (function (r) {
+                kaData.context ? (function (r) {
                     return Common.Callbacks.batch([
                         function (r) {
-                            cxtContent.Text = ka.context().text();
+                            cxtContent.Text = kaData.context;
                             cxtContent.CultureId = '2';
                             discoContext.Content.add(cxtContent);
                             discoContext.saveChanges().then(function () {
@@ -87,8 +87,11 @@ define(["require", "exports", 'event', 'common', 'discocontext', 'contentcommuni
                 if (err)
                     onError(err);
                 else {
-                    ka.id(parseInt(post.Id));
-                    _this.kernaussageAppended.raise({ konsenskisteId: kokiId, kernaussage: ka });
+                    _this.kernaussageAppended.raise({
+                        konsenskisteId: kokiId,
+                        kernaussageId: parseInt(post.Id),
+                        kernaussageData: kaData
+                    });
                 }
             });
         };
@@ -120,14 +123,14 @@ define(["require", "exports", 'event', 'common', 'discocontext', 'contentcommuni
             return out;
         };
 
-        Main.prototype.create = function (koki, parentTopicId, then) {
+        Main.prototype.create = function (kokiData, parentTopicId, then) {
             var _this = this;
             var content;
             var post;
             var topicReference;
             Common.Callbacks.batch([
                 function (r) {
-                    content = _this.createContent(koki.general(), function () {
+                    content = _this.createContent(kokiData, function () {
                         return r();
                     }, function (err) {
                         throw err;
@@ -166,8 +169,8 @@ define(["require", "exports", 'event', 'common', 'discocontext', 'contentcommuni
 
         Main.prototype.createContent = function (content, then, fail) {
             var discoContent = new Disco.Ontology.Content();
-            discoContent.Title = content.title();
-            discoContent.Text = content.text();
+            discoContent.Title = content.title;
+            discoContent.Text = content.text;
             discoContent.CultureId = '2';
 
             discoContext.Content.add(discoContent);

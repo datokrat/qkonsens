@@ -19,6 +19,7 @@ import Discussion = require('../discussion');
 import KElementCommands = require('../kelementcommands');
 
 import Communicator = require('../communicator')
+import KonsenskisteCommunicator = require('../konsenskistecommunicator');
 import TestCommunicator = require('tests/testcommunicator')
 import Topic = require('../topic');
 
@@ -129,11 +130,11 @@ export class Tests extends unit.TestClass {
 	
 	processCreateNewKokiCommand() {
 		var counter = new common.Counter();
-		this.cxt.communicator.konsenskiste.create = (koki: KonsenskisteModel.Model, parentTopicId: number, then: (id: number) => void) => {
+		this.cxt.communicator.konsenskiste.create = (koki: KonsenskisteCommunicator.KonsenskisteData, parentTopicId: number, then: (id: number) => void) => {
 			counter.inc('communicator.create');
 			then(2);
 		};
-		this.cxt.controller.commandProcessor.processCommand(new ctr.CreateNewKokiCommand(new KonsenskisteModel.Model(), new Topic.Model, (id: number) => {
+		this.cxt.controller.commandProcessor.processCommand(new ctr.CreateNewKokiCommand({ text: "", title: "" }, new Topic.Model, (id: number) => {
 			test.assert(v => v.val(id) == 2);
 			counter.inc('then');
 		}));

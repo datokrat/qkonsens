@@ -25,13 +25,9 @@ export class Controller {
 		window.text = ko.observable<string>();
 		
 		window.clickSubmit = () => {
-			var koki = new KonsenskisteModel.Model();
-			koki.general().title(window.title());
-			koki.general().text(window.text());
-			commandProcessor.processCommand(new MainController.CreateNewKokiCommand(koki, this.parentTopic(), id => {
-				koki.id(id);
-				commandProcessor.processCommand(new KokiLogic.SelectAndLoadKokiCommand(koki));
-			}));
+			commandProcessor.processCommand(new MainController.CreateNewKokiCommand(
+			{ title: window.title(), text: window.text() }, this.parentTopic(), 
+				id => commandProcessor.processCommand(new KokiLogic.SelectAndLoadKokiCommand(id)) ));
 		};
 	}
 	

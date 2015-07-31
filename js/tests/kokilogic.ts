@@ -37,7 +37,7 @@ export class Tests extends unit.TestClass {
 		};
 		var kokiLogic = new KokiLogic.Controller(resources);
 		
-		kokiLogic.commandProcessor.processCommand(new KokiLogic.SelectAndLoadKokiCommand(new KonsenskisteModel.Model));
+		kokiLogic.commandProcessor.processCommand(new KokiLogic.SelectAndLoadKokiCommand(0));
 		
 		test.assert(v => v.val(this.counter.get('query')) == 1);
 	}
@@ -56,6 +56,7 @@ export class Tests extends unit.TestClass {
 		test.assert(v => v.val(this.counter.get('setKonsenskisteModel')) == 1);
 	}
 	
+	/*TODO Move CreateNewKokiCommand from controller.ts!!!
 	processCreateNewKokiCommand() {
 		var resources = ResourceInitializer.createResources();
 		resources.konsenskisteCommunicator.create = (koki, topicId, then) => {
@@ -69,7 +70,7 @@ export class Tests extends unit.TestClass {
 		
 		test.assert(v => v.val(this.counter.get('communicator.create')) == 1);
 		test.assert(v => v.val(this.counter.get('then')) == 1);
-	}
+	}*/
 	
 	processHandleChangedAccountCommand() {
 		var resources = ResourceInitializer.createResources();

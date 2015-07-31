@@ -5,6 +5,7 @@ import Commands = require('command');
 
 import mdl = require('konsenskistemodel')
 import vm = require('konsenskisteviewmodel')
+import KernaussageModel = require('kernaussagemodel');
 import ViewModelContext = require('viewmodelcontext')
 
 import kernaussageVm = require('kernaussageviewmodel')
@@ -65,13 +66,19 @@ export class ControllerImpl extends KElement.Controller<mdl.Model, vm.ViewModel,
 			var kaFactory = new KernaussageFactory.Factory();
 			var ka = kaFactory.create(this.viewModel.newKaText(), this.viewModel.newKaTitle());
 			if(this.viewModel.newKaContext()) ka.context().text(this.viewModel.newKaContext());
+			
+			var kaData = { 
+				title: ka.general().title(),
+				text: ka.general().text(),
+				context: ka.context().text() 
+			};
 			this.communicator.kernaussageAppended.subscribeUntil(args => {
-				if(args.konsenskisteId == this.model.id() && args.kernaussage == ka) {
+				if(args.konsenskisteId == this.model.id() && args.kernaussageData == kaData) {
 					this.viewModel.newKaFormVisible(false);
 					return true;
 				}
 			});
-			this.communicator.createAndAppendKa(this.model.id(), ka);
+			this.communicator.createAndAppendKa(this.model.id(), kaData);
 		}
 		
 		this.kaSynchronizer = new KokiSync.KaSynchronizer({ communicator: this.communicator.kernaussage, commandProcessor: this.args.commandProcessor });
@@ -93,8 +100,14 @@ export class ControllerImpl extends KElement.Controller<mdl.Model, vm.ViewModel,
 	}
 	
 	private onKaAppended = (args: KokiCommunicator.KaAppendedArgs) => {
-		if(this.model.id() == args.konsenskisteId)
-			this.model.childKas.push(args.kernaussage);
+		if(this.model.id() == args.konsenskisteId) {
+			var ka = new KernaussageModel.Model();
+			ka.id(args.kernaussageId);
+			ka.general().title(args.kernaussageData.title);
+			ka.general().text(args.kernaussageData.text);
+			ka.context().text(args.kernaussageData.context);
+			this.model.childKas.push(ka);
+		}
 	}
 	
 	public dispose() {

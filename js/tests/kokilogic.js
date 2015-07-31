@@ -32,7 +32,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../fra
             };
             var kokiLogic = new KokiLogic.Controller(resources);
 
-            kokiLogic.commandProcessor.processCommand(new KokiLogic.SelectAndLoadKokiCommand(new KonsenskisteModel.Model));
+            kokiLogic.commandProcessor.processCommand(new KokiLogic.SelectAndLoadKokiCommand(0));
 
             test.assert(function (v) {
                 return v.val(_this.counter.get('query')) == 1;
@@ -58,27 +58,21 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../fra
             });
         };
 
-        Tests.prototype.processCreateNewKokiCommand = function () {
-            var _this = this;
-            var resources = ResourceInitializer.createResources();
-            resources.konsenskisteCommunicator.create = function (koki, topicId, then) {
-                _this.counter.inc('communicator.create');
-                then(3);
-            };
-            var kokiLogic = new KokiLogic.Controller(resources);
-
-            kokiLogic.commandProcessor.processCommand(new KokiLogic.CreateNewKokiCommand(new KonsenskisteModel.Model, 3, function () {
-                return _this.counter.inc('then');
-            }));
-
-            test.assert(function (v) {
-                return v.val(_this.counter.get('communicator.create')) == 1;
-            });
-            test.assert(function (v) {
-                return v.val(_this.counter.get('then')) == 1;
-            });
-        };
-
+        /*TODO Move CreateNewKokiCommand from controller.ts!!!
+        processCreateNewKokiCommand() {
+        var resources = ResourceInitializer.createResources();
+        resources.konsenskisteCommunicator.create = (koki, topicId, then) => {
+        this.counter.inc('communicator.create');
+        then(3);
+        }
+        var kokiLogic = new KokiLogic.Controller(resources);
+        
+        kokiLogic.commandProcessor.processCommand(new KokiLogic.CreateNewKokiCommand(new KonsenskisteModel.Model, 3,
+        () => this.counter.inc('then')));
+        
+        test.assert(v => v.val(this.counter.get('communicator.create')) == 1);
+        test.assert(v => v.val(this.counter.get('then')) == 1);
+        }*/
         Tests.prototype.processHandleChangedAccountCommand = function () {
             var _this = this;
             var resources = ResourceInitializer.createResources();

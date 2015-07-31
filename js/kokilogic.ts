@@ -28,8 +28,7 @@ export class Controller {
 		this.commandProcessor = new Commands.CommandProcessor();
 		this.commandProcessor.chain.append(cmd => {
 			if(cmd instanceof SelectAndLoadKokiCommand) return this.onSelectAndLoadKokiCommandReceived(<SelectAndLoadKokiCommand>cmd);
-			if(cmd instanceof SetKokiCommand) return this.onSetKokiCommandReceived(<SelectAndLoadKokiCommand>cmd);
-			if(cmd instanceof CreateNewKokiCommand) return this.onCreateNewKokiCommandReceived(<CreateNewKokiCommand>cmd);
+			if(cmd instanceof SetKokiCommand) return this.onSetKokiCommandReceived(<SetKokiCommand>cmd);
 			if(cmd instanceof MainController.HandleChangedAccountCommand) return this.onHandleChangedAccountCommandReceived(<MainController.HandleChangedAccountCommand>cmd);
 			if(cmd instanceof StateLogic.ChangeKokiStateCommand) return this.onChangeKokiStateCommandReceived(<StateLogic.ChangeKokiStateCommand>cmd);
 		});
@@ -58,17 +57,12 @@ export class Controller {
 	}
 	
 	private onSelectAndLoadKokiCommandReceived(cmd: SelectAndLoadKokiCommand): boolean {
-		this.selectAndLoadKoki(cmd.model.id());
+		this.selectAndLoadKoki(cmd.id);
 		return true;
 	}
 	
 	private onSetKokiCommandReceived(cmd: SetKokiCommand): boolean {
 		this.setKoki(cmd.model);
-		return true;
-	}
-	
-	private onCreateNewKokiCommandReceived(cmd: CreateNewKokiCommand): boolean {
-		this.resources.konsenskisteCommunicator.create(cmd.model, cmd.parentTopicId, cmd.then);
 		return true;
 	}
 	
@@ -135,15 +129,11 @@ export interface KonsenskisteWinControllerFactory {
 }
 
 export class SelectAndLoadKokiCommand extends Commands.Command {
-	constructor(public model: KonsenskisteModel.Model) { super() }
+	constructor(public id: number) { super() }
 }
 
 export class SetKokiCommand extends Commands.Command {
 	constructor(public model: KonsenskisteModel.Model) { super() }
-}
-
-export class CreateNewKokiCommand extends Commands.Command {
-	constructor(public model: KonsenskisteModel.Model, public parentTopicId: number, public then: (id: number) => void) { super() }
 }
 
 export class HandleChangedKokiWinStateCommand extends Commands.Command {

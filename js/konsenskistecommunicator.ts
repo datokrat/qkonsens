@@ -17,8 +17,22 @@ export interface Main {
 	kernaussageAppended: Events.Event<KaAppendedArgs>;
 	kernaussageAppendingError: Events.Event<KaAppendingErrorArgs>;
 	query(id: number, out?: KonsenskisteModel.Model): KonsenskisteModel.Model;
-	createAndAppendKa(kokiId: number, ka: KernaussageModel.Model);
-	create(koki: KonsenskisteModel.Model, parentTopicId: number, then: (id: number) => void);
+	createAndAppendKa(kokiId: number, kaData: KernaussageData);
+	create(koki: KonsenskisteData, parentTopicId: number, then: (id: number) => void);
+}
+
+export interface ContentData {
+	title?: string; text: string;
+}
+
+export interface ContextData {
+	context: string;
+}
+
+export interface KonsenskisteData extends ContentData {
+}
+
+export interface KernaussageData extends ContentData, ContextData {
 }
 
 export interface ReceivedArgs {
@@ -34,7 +48,8 @@ export interface ReceiptErrorArgs {
 
 export interface KaAppendedArgs {
 	konsenskisteId: number;
-	kernaussage: KernaussageModel.Model;
+	kernaussageId: number;
+	kernaussageData: KernaussageData;
 }
 
 export interface KaAppendingErrorArgs {

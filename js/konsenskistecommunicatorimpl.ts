@@ -36,7 +36,7 @@ export class Main implements IKonsenskisteCommunicator.Main {
 		this.rating = new RatingCommunicatorImpl.Main();
 	}
 	
-	public createAndAppendKa(kokiId: number, ka: KernaussageModel.Model) {
+	public createAndAppendKa(kokiId: number, kaData: IKonsenskisteCommunicator.KernaussageData) {
 		var onError = (message: any) => {
 			this.kernaussageAppendingError.raise({ konsenskisteId: kokiId, message: message.toString() });
 		};
@@ -49,7 +49,7 @@ export class Main implements IKonsenskisteCommunicator.Main {
 		var cxtReference = new Disco.Ontology.PostReference();
 		Common.Callbacks.batch([
 			r => {
-				content = this.createContent(ka.general(), () => r(), err => onError(err));
+				content = this.createContent(kaData, () => r(), err => onError(err));
 			},
 			r => {
 				post = this.createPost({ typeId: '6', contentId: content.Id }, () => r(), err => onError(err));
@@ -58,10 +58,10 @@ export class Main implements IKonsenskisteCommunicator.Main {
 				reference = this.createPostReference({ typeId: '11', referrerId: post.Id, referreeId: kokiId.toString() }, 
 					() => r(), err => onError(err));
 			},
-			ka.context() && ka.context().text() ?
+			kaData.context ?
 			(r => Common.Callbacks.batch([
 				r => {
-					cxtContent.Text = ka.context().text();
+					cxtContent.Text = kaData.context;
 					cxtContent.CultureId = '2';
 					discoContext.Content.add(cxtContent);
 					discoContext.saveChanges().then(() => r()).fail(error => onError(error));
@@ -84,8 +84,11 @@ export class Main implements IKonsenskisteCommunicator.Main {
 			if(err)
 				onError(err);
 			else {
-				ka.id(parseInt(post.Id));
-				this.kernaussageAppended.raise({ konsenskisteId: kokiId, kernaussage: ka });
+				this.kernaussageAppended.raise({
+					konsenskisteId: kokiId,
+					kernaussageId: parseInt(post.Id),
+					kernaussageData: kaData 
+				});
 			}
 		});
 	}
@@ -114,13 +117,13 @@ export class Main implements IKonsenskisteCommunicator.Main {
 		return out;
 	}
 	
-	public create(koki: KonsenskisteModel.Model, parentTopicId: number,  then: (id: number) => void) {
+	public create(kokiData: IKonsenskisteCommunicator.KonsenskisteData, parentTopicId: number,  then: (id: number) => void) {
 		var content: Disco.Ontology.Content;
 		var post: Disco.Ontology.Post;
 		var topicReference: Disco.Ontology.PostReference;
 		Common.Callbacks.batch([
 			r => {
-				content = this.createContent(koki.general(), () => r(), err => { throw err });
+				content = this.createContent(kokiData, () => r(), err => { throw err });
 			},
 			r => {
 				post = this.createPost({ typeId: '2', contentId: content.Id }, () => r(), err => { throw err });
@@ -160,10 +163,10 @@ export class Main implements IKonsenskisteCommunicator.Main {
 		.toArray();
 	}
 	
-	private createContent(content: ContentModel.General, then: (id: number) => void, fail: (err) => void): Disco.Ontology.Content {
+	private createContent(content: IKonsenskisteCommunicator.ContentData, then: (id: number) => void, fail: (err) => void): Disco.Ontology.Content {
 		var discoContent = new Disco.Ontology.Content();
-		discoContent.Title = content.title();
-		discoContent.Text = content.text();
+		discoContent.Title = content.title
+		discoContent.Text = content.text;
 		discoContent.CultureId = '2';
 		
 		discoContext.Content.add(discoContent);

@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenskistemodel', 'factories/kernaussagemodel', '../kernaussagemodel', '../konsenskisteviewmodel', '../konsenskistecontroller', '../contentmodel', '../rating', '../comment', 'tests/testkonsenskistecommunicator', '../event'], function(require, exports, unit, test, kkModelFty, kaModelFty, KernaussageModel, vm, ctr, ContentModel, Rating, Comment, KokiCommunicator, Event) {
+define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenskistemodel', 'factories/kernaussagemodel', '../konsenskisteviewmodel', '../konsenskistecontroller', '../contentmodel', '../rating', '../comment', 'tests/testkonsenskistecommunicator', '../event'], function(require, exports, unit, test, kkModelFty, kaModelFty, vm, ctr, ContentModel, Rating, Comment, KokiCommunicator, Event) {
     var Tests = (function (_super) {
         __extends(Tests, _super);
         function Tests() {
@@ -163,6 +163,20 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenski
             });
         };
 
+        Tests.prototype.onKaAppended = function () {
+            var model = this.kkModelFactory.create('Basisdemokratie');
+            model.id(2);
+            var viewModel = new vm.ViewModel();
+            var communicator = new KokiCommunicator.Main();
+            var controller = new ctr.ControllerImpl(model, viewModel, { communicator: communicator, commandProcessor: null });
+            controller.communicator.kernaussageAppended.raise({
+                konsenskisteId: 2, kernaussageId: 3, kernaussageData: { title: 'Title', text: 'Text', context: 'Context' }
+            });
+            test.assert(function () {
+                return model.childKas.get(0) && model.childKas.get(0).id() == 3;
+            });
+        };
+
         Tests.prototype.appendKaViaCommunicator = function () {
             var eventCtr = 0;
             var model = this.kkModelFactory.create('Basisdemokratie');
@@ -178,8 +192,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenski
                 return ++eventCtr;
             });
 
-            var kernaussage = new KernaussageModel.Model();
-            communicator.createAndAppendKa(model.id(), kernaussage);
+            communicator.createAndAppendKa(model.id(), { title: "", text: "", context: "" });
 
             test.assert(function () {
                 return eventCtr == 1;
@@ -203,8 +216,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', 'factories/konsenski
                 return ++successCtr;
             });
 
-            var kernaussage = new KernaussageModel.Model();
-            communicator.createAndAppendKa(model.id(), kernaussage);
+            communicator.createAndAppendKa(model.id(), { title: "", text: "", context: "" });
 
             test.assert(function () {
                 return successCtr == 0;

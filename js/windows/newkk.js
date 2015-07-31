@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", '../frame', '../controller', '../kokilogic', '../konsenskistemodel'], function(require, exports, frame, MainController, KokiLogic, KonsenskisteModel) {
+define(["require", "exports", '../frame', '../controller', '../kokilogic'], function(require, exports, frame, MainController, KokiLogic) {
     var Win = (function (_super) {
         __extends(Win, _super);
         function Win() {
@@ -27,12 +27,8 @@ define(["require", "exports", '../frame', '../controller', '../kokilogic', '../k
             window.text = ko.observable();
 
             window.clickSubmit = function () {
-                var koki = new KonsenskisteModel.Model();
-                koki.general().title(window.title());
-                koki.general().text(window.text());
-                commandProcessor.processCommand(new MainController.CreateNewKokiCommand(koki, _this.parentTopic(), function (id) {
-                    koki.id(id);
-                    commandProcessor.processCommand(new KokiLogic.SelectAndLoadKokiCommand(koki));
+                commandProcessor.processCommand(new MainController.CreateNewKokiCommand({ title: window.title(), text: window.text() }, _this.parentTopic(), function (id) {
+                    return commandProcessor.processCommand(new KokiLogic.SelectAndLoadKokiCommand(id));
                 }));
             };
         }

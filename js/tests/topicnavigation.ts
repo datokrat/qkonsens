@@ -121,7 +121,7 @@ export class Tests extends unit.TestClass {
 			counter.inc('command');
 			test.assert(() => cmd instanceof KokiLogic.SelectAndLoadKokiCommand);
 			var castCmd = <KokiLogic.SelectAndLoadKokiCommand>cmd;
-			test.assert(() => castCmd.model.id() == 3);
+			test.assert(() => castCmd.id == 3);
 			return true;
 		});
 		
@@ -141,17 +141,15 @@ export class Tests extends unit.TestClass {
 			counter.inc('command');
 			test.assert(() => cmd instanceof KokiLogic.SelectAndLoadKokiCommand);
 			var castCmd = <KokiLogic.SelectAndLoadKokiCommand>cmd;
-			test.assert(() => castCmd.model.id() == 3);
+			test.assert(() => castCmd.id == 3);
 			return true;
 		});
 		
 		var model = new mdl.ModelImpl();
 		var viewModel = new vm.ViewModel();
 		var controller = new ctr.ModelViewModelController(model, viewModel, commandProcessor);
-		var kokiModel = new KonsenskisteModel.Model(); kokiModel.id(3);
-		var kokiViewModel = new vm.KokiItem();
 		
-		var cmd = new KokiLogic.SelectAndLoadKokiCommand(kokiModel);
+		var cmd = new KokiLogic.SelectAndLoadKokiCommand(3);
 		controller.kokiCommandControl.commandProcessor.processCommand(cmd);
 		
 		test.assert(() => counter.get('command') == 1);

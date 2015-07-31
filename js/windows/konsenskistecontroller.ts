@@ -35,7 +35,7 @@ export class ControllerImpl implements Controller {
 			if(state) {
 				var typedState = <State>state;
 				var koki = new kokiMdl.Model(); koki.id(typedState.kokiId);
-				this.args.commandProcessor.processCommand(new KokiLogic.SelectAndLoadKokiCommand(koki));
+				this.args.commandProcessor.processCommand(new KokiLogic.SelectAndLoadKokiCommand(koki.id()));
 			}
 		}
 		this.window.state.subscribe(state => this.args.commandProcessor.floodCommand
