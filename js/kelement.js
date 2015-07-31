@@ -1,4 +1,4 @@
-define(["require", "exports", 'contentmodel', 'rating', 'discussion', 'environs', 'command', 'kelementcommands', 'synchronizers/ksynchronizers'], function(require, exports, ContentModel, Rating, Discussion, Environs, Commands, KElementCommands, KSync) {
+define(["require", "exports", 'contentmodel', 'rating', 'discussion', 'command', 'kelementcommands', 'synchronizers/ksynchronizers'], function(require, exports, ContentModel, Rating, Discussion, Commands, KElementCommands, KSync) {
     var Model = (function () {
         function Model() {
             this.id = ko.observable();
@@ -20,7 +20,6 @@ define(["require", "exports", 'contentmodel', 'rating', 'discussion', 'environs'
 
     var ViewModel = (function () {
         function ViewModel() {
-            this.environs = ko.observable(new Environs.ViewModel());
         }
         return ViewModel;
     })();
@@ -38,6 +37,7 @@ define(["require", "exports", 'contentmodel', 'rating', 'discussion', 'environs'
             this.communicator = communicator;
 
             this.initDiscussion();
+            this.initEnvirons();
             this.initGeneralContent();
             this.initContext();
             this.initRating();
@@ -69,6 +69,9 @@ define(["require", "exports", 'contentmodel', 'rating', 'discussion', 'environs'
             this.viewModel.discussion = ko.observable();
             this.discussionSynchronizer = new KSync.DiscussionSynchronizer({ communicator: this.communicator.discussion, commandProcessor: this.parentCommandProcessor });
             this.discussionSynchronizer.setDiscussableModel(this.model).setDiscussableViewModel(this.viewModel).setViewModelObservable(this.viewModel.discussion).setModelObservable(this.model.discussion);
+        };
+
+        Controller.prototype.initEnvirons = function () {
         };
 
         Controller.prototype.initGeneralContent = function () {

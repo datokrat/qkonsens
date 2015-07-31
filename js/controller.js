@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'model', 'topicnavigationmodel', 'frame', 'windows/none', 'windows/newkk', 'windows/intro', 'windows/editkelement', 'statelogic', 'topiclogic', 'kokilogic', 'windows/discussion', 'communicator', 'command', 'kelementcommands', 'windowviewmodel'], function(require, exports, mdl, TopicNavigationModel, frame, noneWin, NewKkWin, IntroWin, EditKElementWin, StateLogic, TopicLogic, KokiLogic, DiscussionWindow, Communicator, Commands, KElementCommands, WindowViewModel) {
+define(["require", "exports", 'model', 'topicnavigationmodel', 'frame', 'windows/none', 'windows/newkk', 'windows/intro', 'windows/editkelement', 'statelogic', 'topiclogic', 'kokilogic', 'windows/discussion', 'windows/environs', 'communicator', 'command', 'kelementcommands', 'windowviewmodel'], function(require, exports, mdl, TopicNavigationModel, frame, noneWin, NewKkWin, IntroWin, EditKElementWin, StateLogic, TopicLogic, KokiLogic, DiscussionWindow, EnvironsWindows, Communicator, Commands, KElementCommands, WindowViewModel) {
     var Controller = (function () {
         function Controller(model, viewModel, communicator, commandControl) {
             this.model = model;
@@ -46,6 +46,10 @@ define(["require", "exports", 'model', 'topicnavigationmodel', 'frame', 'windows
                     var openDiscussionWindowCommand = cmd;
                     _this.discussionWin.discussable(cmd.discussableViewModel);
                     _this.viewModel.left.win(_this.discussionWin);
+                    return true;
+                }
+                if (cmd instanceof OpenEnvironsWindowCommand) {
+                    _this.viewModel.left.win(new EnvironsWindows.Win());
                     return true;
                 }
                 if (cmd instanceof KElementCommands.OpenEditKElementWindowCommand) {
@@ -211,4 +215,13 @@ define(["require", "exports", 'model', 'topicnavigationmodel', 'frame', 'windows
         return OpenDiscussionWindowCommand;
     })(Commands.Command);
     exports.OpenDiscussionWindowCommand = OpenDiscussionWindowCommand;
+
+    var OpenEnvironsWindowCommand = (function (_super) {
+        __extends(OpenEnvironsWindowCommand, _super);
+        function OpenEnvironsWindowCommand() {
+            _super.call(this);
+        }
+        return OpenEnvironsWindowCommand;
+    })(Commands.Command);
+    exports.OpenEnvironsWindowCommand = OpenEnvironsWindowCommand;
 });

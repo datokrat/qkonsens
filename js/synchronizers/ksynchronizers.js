@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'synchronizers/childsynchronizer', 'factories/constructorbased', '../contentviewmodel', '../contentcontroller', '../rating', '../discussion'], function(require, exports, Base, Factories, ContentViewModel, ContentController, Rating, Discussion) {
+define(["require", "exports", 'synchronizers/childsynchronizer', 'factories/constructorbased', '../contentviewmodel', '../contentcontroller', '../rating', '../discussion', '../environs'], function(require, exports, Base, Factories, ContentViewModel, ContentController, Rating, Discussion, Environs) {
     var GeneralContentSynchronizer = (function (_super) {
         __extends(GeneralContentSynchronizer, _super);
         function GeneralContentSynchronizer(communicator) {
@@ -108,6 +108,23 @@ define(["require", "exports", 'synchronizers/childsynchronizer', 'factories/cons
         return DiscussionSynchronizer;
     })(Base.ChildSynchronizer);
     exports.DiscussionSynchronizer = DiscussionSynchronizer;
+
+    var EnvironsSynchronizer = (function (_super) {
+        __extends(EnvironsSynchronizer, _super);
+        function EnvironsSynchronizer(args) {
+            _super.call(this);
+            this.setViewModelFactory(new Factories.Factory(Environs.ViewModel));
+        }
+        return EnvironsSynchronizer;
+    })(Base.ChildSynchronizer);
+    exports.EnvironsSynchronizer = EnvironsSynchronizer;
+
+    var EnvironsControllerFactory = (function () {
+        function EnvironsControllerFactory(args) {
+            this.args = args;
+        }
+        return EnvironsControllerFactory;
+    })();
 
     var DiscussionControllerFactory = (function () {
         function DiscussionControllerFactory(args) {
