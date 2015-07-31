@@ -10,6 +10,7 @@ import DiscussionCommunicator = require('../discussioncommunicator')
 import ViewModelContext = require('../viewmodelcontext')
 import RatingCommunicator = require('../ratingcommunicator')
 import Commands = require('../command');
+import Environs = require('../environs');
 
 export class GeneralContentSynchronizer 
 	extends Base.ChildSynchronizer<ContentModel.General, ContentViewModel.General, ContentController.General>
@@ -117,6 +118,22 @@ export class DiscussionSynchronizer
 	}
 	
 	private controllerFty: DiscussionControllerFactory;
+}
+
+export class EnvironsSynchronizer
+	extends Base.ChildSynchronizer<Environs.Model, Environs.ViewModel, Environs.Controller> {
+	
+	constructor(args: Environs.ControllerArgs) {
+		super();
+		this.setViewModelFactory(new Factories.Factory(Environs.ViewModel));
+	}
+}
+
+class EnvironsControllerFactory {
+	constructor(private args: Environs.ControllerArgs) {
+	}
+	
+	
 }
 
 class DiscussionControllerFactory {

@@ -14,6 +14,7 @@ import TopicLogic = require('topiclogic');
 import KokiLogic = require('kokilogic');
 
 import DiscussionWindow = require('windows/discussion')
+import EnvironsWindows = require('windows/environs');
 import Discussion = require('discussion');
 import Communicator = require('communicator')
 import KonsenskisteModel = require('konsenskistemodel');
@@ -55,6 +56,10 @@ export class Controller {
 				var openDiscussionWindowCommand = <OpenDiscussionWindowCommand>cmd;
 				this.discussionWin.discussable((<OpenDiscussionWindowCommand>cmd).discussableViewModel);
 				this.viewModel.left.win(this.discussionWin);
+				return true;
+			}
+			if(cmd instanceof OpenEnvironsWindowCommand) {
+				this.viewModel.left.win(new EnvironsWindows.Win());
 				return true;
 			}
 			if(cmd instanceof KElementCommands.OpenEditKElementWindowCommand) {
@@ -199,4 +204,8 @@ export class HandleChangedAccountCommand extends Commands.Command {
 
 export class OpenDiscussionWindowCommand extends Commands.Command {
 	constructor(public discussableViewModel: Discussion.DiscussableViewModel) { super() }
+}
+
+export class OpenEnvironsWindowCommand extends Commands.Command {
+	constructor() { super() }
 }

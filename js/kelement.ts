@@ -6,6 +6,7 @@ import ContentModel = require('contentmodel');
 import ContentViewModel = require('contentviewmodel');
 import Rating = require('rating');
 import Discussion = require('discussion');
+import Environs = require('environs');
 import Commands = require('command');
 import KElementCommands = require('kelementcommands');
 
@@ -36,6 +37,7 @@ export class ViewModel {
 	public context: Obs.Observable<ContentViewModel.Context>;
 	public rating: Obs.Observable<Rating.ViewModel>;
 	public discussion: Obs.Observable<Discussion.ViewModel>;
+	public environs: Obs.Observable<Environs.ViewModel>;
 	
 	public editClick: () => void;
 }
@@ -70,6 +72,7 @@ export class Controller<Mdl extends Model, Vm extends ViewModel, Com extends Com
 		this.communicator = communicator;
 		
 		this.initDiscussion();
+		this.initEnvirons();
 		this.initGeneralContent();
 		this.initContext();
 		this.initRating();
@@ -105,6 +108,9 @@ export class Controller<Mdl extends Model, Vm extends ViewModel, Com extends Com
 			.setDiscussableViewModel(this.viewModel)
 			.setViewModelObservable(this.viewModel.discussion)
 			.setModelObservable(this.model.discussion);
+	}
+	
+	private initEnvirons() {
 	}
 	
 	private initGeneralContent() {

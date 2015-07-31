@@ -1,4 +1,4 @@
-define(["require", "exports", 'contentmodel', 'rating', 'discussion', 'command', 'kelementcommands', 'synchronizers/ksynchronizers'], function(require, exports, ContentModel, Rating, Discussion, Commands, KElementCommands, KSync) {
+define(["require", "exports", 'contentmodel', 'rating', 'discussion', 'environs', 'command', 'kelementcommands', 'synchronizers/ksynchronizers'], function(require, exports, ContentModel, Rating, Discussion, Environs, Commands, KElementCommands, KSync) {
     var Model = (function () {
         function Model() {
             this.id = ko.observable();
@@ -20,6 +20,7 @@ define(["require", "exports", 'contentmodel', 'rating', 'discussion', 'command',
 
     var ViewModel = (function () {
         function ViewModel() {
+            this.environs = ko.observable(new Environs.ViewModel());
         }
         return ViewModel;
     })();

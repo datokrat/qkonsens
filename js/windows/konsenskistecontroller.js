@@ -44,14 +44,8 @@ define(["require", "exports", 'factories/konsenskistecontroller', '../konsenskis
                 this.konsenskisteController.dispose();
         };
 
-        /*public setContext(cxt: ViewModelContext) {
-        this.cxt = cxt;
-        this.konsenskisteController.setViewModelContext(cxt);
-        return this;
-        }*/
         ControllerImpl.prototype.setKonsenskisteModel = function (konsenskisteModel) {
             this.initKonsenskiste(konsenskisteModel);
-            //this.setContext(this.cxt);
         };
 
         ControllerImpl.prototype.dispose = function () {
