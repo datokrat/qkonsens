@@ -1,4 +1,4 @@
-define(["require", "exports", 'contentmodel', 'rating', 'discussion', 'command', 'kelementcommands', 'synchronizers/ksynchronizers'], function(require, exports, ContentModel, Rating, Discussion, Commands, KElementCommands, KSync) {
+define(["require", "exports", 'contentmodel', 'rating', 'discussion', 'environs', 'command', 'kelementcommands', 'synchronizers/ksynchronizers'], function(require, exports, ContentModel, Rating, Discussion, Environs, Commands, KElementCommands, KSync) {
     var Model = (function () {
         function Model() {
             this.id = ko.observable();
@@ -6,6 +6,7 @@ define(["require", "exports", 'contentmodel', 'rating', 'discussion', 'command',
             this.context = ko.observable(new ContentModel.Context);
             this.rating = ko.observable(new Rating.Model);
             this.discussion = ko.observable(new Discussion.Model);
+            this.environs = ko.observable(new Environs.Model);
         }
         Model.prototype.set = function (model) {
             this.id(model.id());
@@ -63,6 +64,7 @@ define(["require", "exports", 'contentmodel', 'rating', 'discussion', 'command',
             this.contextSynchronizer.dispose();
             this.ratingSynchronizer.dispose();
             this.discussionSynchronizer.dispose();
+            this.environsSynchronizer.dispose();
         };
 
         Controller.prototype.initDiscussion = function () {
@@ -72,6 +74,8 @@ define(["require", "exports", 'contentmodel', 'rating', 'discussion', 'command',
         };
 
         Controller.prototype.initEnvirons = function () {
+            this.viewModel.environs = ko.observable();
+            this.environsSynchronizer = new KSync.EnvironsSynchronizer({ commandProcessor: this.parentCommandProcessor }).setViewModelObservable(this.viewModel.environs).setModelObservable(this.model.environs);
         };
 
         Controller.prototype.initGeneralContent = function () {

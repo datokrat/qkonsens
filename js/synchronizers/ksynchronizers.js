@@ -114,6 +114,7 @@ define(["require", "exports", 'synchronizers/childsynchronizer', 'factories/cons
         function EnvironsSynchronizer(args) {
             _super.call(this);
             this.setViewModelFactory(new Factories.Factory(Environs.ViewModel));
+            this.setControllerFactory(new EnvironsControllerFactory(args));
         }
         return EnvironsSynchronizer;
     })(Base.ChildSynchronizer);
@@ -123,6 +124,9 @@ define(["require", "exports", 'synchronizers/childsynchronizer', 'factories/cons
         function EnvironsControllerFactory(args) {
             this.args = args;
         }
+        EnvironsControllerFactory.prototype.create = function (model, viewModel) {
+            return new Environs.Controller(model, viewModel, this.args);
+        };
         return EnvironsControllerFactory;
     })();
 

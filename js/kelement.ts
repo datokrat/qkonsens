@@ -22,6 +22,7 @@ export class Model {
 	public context: Obs.Observable<ContentModel.Context> = ko.observable<ContentModel.Context>( new ContentModel.Context );
 	public rating: Obs.Observable<Rating.Model> = ko.observable<Rating.Model>( new Rating.Model );
 	public discussion: Obs.Observable<Discussion.Model> = ko.observable<Discussion.Model>( new Discussion.Model );
+	public environs: Obs.Observable<Environs.Model> = ko.observable<Environs.Model>( new Environs.Model );
 	
 	public set(model: Model) {
 		this.id(model.id());
@@ -98,6 +99,7 @@ export class Controller<Mdl extends Model, Vm extends ViewModel, Com extends Com
 		this.contextSynchronizer.dispose();
 		this.ratingSynchronizer.dispose();
 		this.discussionSynchronizer.dispose();
+		this.environsSynchronizer.dispose();
 	}
 	
 	private initDiscussion() {
@@ -111,6 +113,10 @@ export class Controller<Mdl extends Model, Vm extends ViewModel, Com extends Com
 	}
 	
 	private initEnvirons() {
+		this.viewModel.environs = ko.observable<Environs.ViewModel>();
+		this.environsSynchronizer = new KSync.EnvironsSynchronizer({ commandProcessor: this.parentCommandProcessor })
+			.setViewModelObservable(this.viewModel.environs)
+			.setModelObservable(this.model.environs);
 	}
 	
 	private initGeneralContent() {
@@ -157,4 +163,5 @@ export class Controller<Mdl extends Model, Vm extends ViewModel, Com extends Com
 	public contextSynchronizer: KSync.ContextSynchronizer;
 	public ratingSynchronizer: KSync.RatingSynchronizer;
 	public discussionSynchronizer: KSync.DiscussionSynchronizer;
+	public environsSynchronizer: KSync.EnvironsSynchronizer;
 }

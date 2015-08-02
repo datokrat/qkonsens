@@ -126,6 +126,7 @@ export class EnvironsSynchronizer
 	constructor(args: Environs.ControllerArgs) {
 		super();
 		this.setViewModelFactory(new Factories.Factory(Environs.ViewModel));
+		this.setControllerFactory(new EnvironsControllerFactory(args));
 	}
 }
 
@@ -133,7 +134,9 @@ class EnvironsControllerFactory {
 	constructor(private args: Environs.ControllerArgs) {
 	}
 	
-	
+	public create(model: Environs.Model, viewModel: Environs.ViewModel) {
+		return new Environs.Controller(model, viewModel, this.args);
+	}
 }
 
 class DiscussionControllerFactory {
