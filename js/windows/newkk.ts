@@ -27,7 +27,7 @@ export class Controller {
 		window.clickSubmit = () => {
 			commandProcessor.processCommand(new MainController.CreateNewKokiCommand(
 				{ title: window.title(), text: window.text() }, 
-				this.parentTopic(), 
+				this.parentTopic().id, 
 				id => commandProcessor.processCommand(new KokiLogic.SelectAndLoadKokiCommand(id))
 			));
 		};

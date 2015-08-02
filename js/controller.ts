@@ -42,7 +42,7 @@ export class Controller {
 		this.commandProcessor.chain.append(cmd => {
 			if(cmd instanceof CreateNewKokiCommand) {
 				var createKokiCommand = <CreateNewKokiCommand>cmd;
-				var topicId: number = !createKokiCommand.parentTopic.id.root && createKokiCommand.parentTopic.id.id;
+				var topicId: number = !createKokiCommand.parentTopicId.root && createKokiCommand.parentTopicId.id;
 				this.communicator.konsenskiste.create(createKokiCommand.data, topicId, id => createKokiCommand.then(id));
 				return true;
 			}
@@ -191,7 +191,7 @@ export class Controller {
 }
 
 export class CreateNewKokiCommand extends Commands.Command {
-	constructor(public data: { title: string; text: string; }, public parentTopic: Topic.Model, public then: (id: number) => void) { super() }
+	constructor(public data: { title: string; text: string; }, public parentTopicId: Topic.TopicIdentifier, public then: (id: number) => void) { super() }
 }
 
 export class OpenNewKokiWindowCommand extends Commands.Command {

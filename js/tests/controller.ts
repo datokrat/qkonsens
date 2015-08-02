@@ -134,7 +134,7 @@ export class Tests extends unit.TestClass {
 			counter.inc('communicator.create');
 			then(2);
 		};
-		this.cxt.controller.commandProcessor.processCommand(new ctr.CreateNewKokiCommand({ text: "", title: "" }, new Topic.Model, (id: number) => {
+		this.cxt.controller.commandProcessor.processCommand(new ctr.CreateNewKokiCommand({ text: "", title: "" }, { id: 1 }, (id: number) => {
 			test.assert(v => v.val(id) == 2);
 			counter.inc('then');
 		}));

@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../model', '../viewmodel', '../controller', '../konsenskistemodel', '../topic', 'windows/konsenskiste', 'windows/newkk', 'windows/editkelement', 'windows/discussion', '../konsenskistemodel', '../contentmodel', '../discussion', '../kelementcommands', '../communicator', 'tests/testcommunicator', '../topic', '../kokilogic'], function(require, exports, unit, test, common, mdl, vm, ctr, koki, tpc, kokiWin, NewKkWin, EditKElementWin, DiscussionWin, KonsenskisteModel, ContentModel, Discussion, KElementCommands, Communicator, TestCommunicator, Topic, KokiLogic) {
+define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../model', '../viewmodel', '../controller', '../konsenskistemodel', '../topic', 'windows/konsenskiste', 'windows/newkk', 'windows/editkelement', 'windows/discussion', '../konsenskistemodel', '../contentmodel', '../discussion', '../kelementcommands', '../communicator', 'tests/testcommunicator', '../kokilogic'], function(require, exports, unit, test, common, mdl, vm, ctr, koki, tpc, kokiWin, NewKkWin, EditKElementWin, DiscussionWin, KonsenskisteModel, ContentModel, Discussion, KElementCommands, Communicator, TestCommunicator, KokiLogic) {
     var Tests = (function (_super) {
         __extends(Tests, _super);
         function Tests() {
@@ -148,7 +148,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../mod
                 counter.inc('communicator.create');
                 then(2);
             };
-            this.cxt.controller.commandProcessor.processCommand(new ctr.CreateNewKokiCommand({ text: "", title: "" }, new Topic.Model, function (id) {
+            this.cxt.controller.commandProcessor.processCommand(new ctr.CreateNewKokiCommand({ text: "", title: "" }, { id: 1 }, function (id) {
                 test.assert(function (v) {
                     return v.val(id) == 2;
                 });

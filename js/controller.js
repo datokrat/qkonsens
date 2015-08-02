@@ -30,7 +30,7 @@ define(["require", "exports", 'model', 'topicnavigationmodel', 'frame', 'windows
             this.commandProcessor.chain.append(function (cmd) {
                 if (cmd instanceof CreateNewKokiCommand) {
                     var createKokiCommand = cmd;
-                    var topicId = !createKokiCommand.parentTopic.id.root && createKokiCommand.parentTopic.id.id;
+                    var topicId = !createKokiCommand.parentTopicId.root && createKokiCommand.parentTopicId.id;
                     _this.communicator.konsenskiste.create(createKokiCommand.data, topicId, function (id) {
                         return createKokiCommand.then(id);
                     });
@@ -174,10 +174,10 @@ define(["require", "exports", 'model', 'topicnavigationmodel', 'frame', 'windows
 
     var CreateNewKokiCommand = (function (_super) {
         __extends(CreateNewKokiCommand, _super);
-        function CreateNewKokiCommand(data, parentTopic, then) {
+        function CreateNewKokiCommand(data, parentTopicId, then) {
             _super.call(this);
             this.data = data;
-            this.parentTopic = parentTopic;
+            this.parentTopicId = parentTopicId;
             this.then = then;
         }
         return CreateNewKokiCommand;

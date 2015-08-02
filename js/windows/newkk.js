@@ -27,7 +27,7 @@ define(["require", "exports", '../frame', '../controller', '../kokilogic'], func
             window.text = ko.observable();
 
             window.clickSubmit = function () {
-                commandProcessor.processCommand(new MainController.CreateNewKokiCommand({ title: window.title(), text: window.text() }, _this.parentTopic(), function (id) {
+                commandProcessor.processCommand(new MainController.CreateNewKokiCommand({ title: window.title(), text: window.text() }, _this.parentTopic().id, function (id) {
                     return commandProcessor.processCommand(new KokiLogic.SelectAndLoadKokiCommand(id));
                 }));
             };
