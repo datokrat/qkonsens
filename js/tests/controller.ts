@@ -100,29 +100,34 @@ export class Tests extends unit.TestClass {
 			return true;
 		});
 		var controller = new ctr.Controller(model, viewModel, communicator);
-		communicator.commandProcessor.chain.insertAtBeginning(cmd => {
-			test.assert(v => v.val((<Communicator.LoginCommand>cmd).userName) == 'TheUnnamed');
+		controller.commandProcessor.chain.insertAtBeginning(cmd => {
+			if(cmd instanceof Communicator.LoginCommand)
+				test.assert(v => v.val((<Communicator.LoginCommand>cmd).userName) == 'TheUnnamed');
+			else if(cmd instanceof ctr.HandleChangedAccountCommand)
+				counter.inc('account changed');
 			return false;
 		});
 		
 		test.assert(v => v.val(counter.get('login command')) == 1);
+		test.assert(v => v.val(counter.get('account changed')) == 0);
 		
 		model.account(new mdl.Account({ userName: 'TheUnnamed' }));
 		
 		test.assert(v => v.val(counter.get('login command')) == 2);
+		test.assert(v => v.val(counter.get('account changed')) == 1);
 	}
 	
 	updateViewModelAfterChangingAccount() {
 		this.cxt.model.account(new mdl.Account({ userName: 'TheUnnamed' }));
 		
-		test.assert(v => this.cxt.viewModel.userName() == 'TheUnnamed');
+		test.assert(v => this.cxt.viewModel.account.userName() == 'TheUnnamed');
 	}
 	
 	updateAccountModelAfterChangingAccountViewModel() {
 		var counter = new common.Counter();
 		this.cxt.model.account.subscribe(() => counter.inc('account changed'));
 		
-		this.cxt.viewModel.userName('TheUnnamed');
+		this.cxt.viewModel.account.userName('TheUnnamed');
 		
 		test.assert(v => v.val(this.cxt.model.account().userName) == 'TheUnnamed');
 		test.assert(v => v.val(counter.get('account changed')) == 1);
@@ -165,7 +170,7 @@ export class Tests extends unit.TestClass {
 	}
 	
 	isNotAdminPerDefault() {
-		test.assert(v => this.cxt.viewModel.isAdmin() == false);
+		test.assert(v => this.cxt.viewModel.account.isAdmin() == false);
 	}
 	
 	handleUpdateGeneralContentCommand() {

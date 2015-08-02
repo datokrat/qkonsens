@@ -41,7 +41,9 @@ export class Controller {
 		});
 		
 		this.disposableContainer.append(
-			this.resources.commandProcessor.chain.append(cmd => this.commandProcessor.chain.run(cmd))
+			this.resources.commandProcessor.chain.append((cmd, mode) => {
+				return this.commandProcessor.chain.runOrFlood(cmd, mode);
+			})
 		);
 	}
 	

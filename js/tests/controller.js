@@ -98,21 +98,30 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../mod
                 return true;
             });
             var controller = new ctr.Controller(model, viewModel, communicator);
-            communicator.commandProcessor.chain.insertAtBeginning(function (cmd) {
-                test.assert(function (v) {
-                    return v.val(cmd.userName) == 'TheUnnamed';
-                });
+            controller.commandProcessor.chain.insertAtBeginning(function (cmd) {
+                if (cmd instanceof Communicator.LoginCommand)
+                    test.assert(function (v) {
+                        return v.val(cmd.userName) == 'TheUnnamed';
+                    });
+                else if (cmd instanceof ctr.HandleChangedAccountCommand)
+                    counter.inc('account changed');
                 return false;
             });
 
             test.assert(function (v) {
                 return v.val(counter.get('login command')) == 1;
             });
+            test.assert(function (v) {
+                return v.val(counter.get('account changed')) == 0;
+            });
 
             model.account(new mdl.Account({ userName: 'TheUnnamed' }));
 
             test.assert(function (v) {
                 return v.val(counter.get('login command')) == 2;
+            });
+            test.assert(function (v) {
+                return v.val(counter.get('account changed')) == 1;
             });
         };
 
@@ -121,7 +130,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../mod
             this.cxt.model.account(new mdl.Account({ userName: 'TheUnnamed' }));
 
             test.assert(function (v) {
-                return _this.cxt.viewModel.userName() == 'TheUnnamed';
+                return _this.cxt.viewModel.account.userName() == 'TheUnnamed';
             });
         };
 
@@ -132,7 +141,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../mod
                 return counter.inc('account changed');
             });
 
-            this.cxt.viewModel.userName('TheUnnamed');
+            this.cxt.viewModel.account.userName('TheUnnamed');
 
             test.assert(function (v) {
                 return v.val(_this.cxt.model.account().userName) == 'TheUnnamed';
@@ -199,7 +208,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../mod
         Tests.prototype.isNotAdminPerDefault = function () {
             var _this = this;
             test.assert(function (v) {
-                return _this.cxt.viewModel.isAdmin() == false;
+                return _this.cxt.viewModel.account.isAdmin() == false;
             });
         };
 

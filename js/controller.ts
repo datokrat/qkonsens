@@ -12,28 +12,29 @@ import EditKElementWin = require('windows/editkelement');
 import StateLogic = require('statelogic');
 import TopicLogic = require('topiclogic');
 import KokiLogic = require('kokilogic');
+import AccountLogic = require('accountlogic');
 
 import DiscussionWindow = require('windows/discussion')
 import EnvironsWindows = require('windows/environs');
 import Discussion = require('discussion');
 import Communicator = require('communicator')
-import KonsenskisteModel = require('konsenskistemodel');
 import Topic = require('topic');
 import Commands = require('command');
 import KElementCommands = require('kelementcommands');
 import WindowViewModel = require('windowviewmodel'); //TODO Rename
 
 export class Controller {
-	constructor(private model: mdl.Model, private viewModel: vm.ViewModel, private communicator: Communicator.Main, commandControl?: Commands.CommandControl) {
+	constructor(private model: mdl.Model, private viewModel: vm.ViewModel, private communicator: Communicator.Main) {
+		
 		//var topicNavigationController = new topicNavigationCtr.Controller(model.topicNavigation, viewModel., { communicator: communicator.topic });
-		this.initCommandControl(commandControl);
+		this.initCommandControl(communicator);
 		
 		this.initWindows();
 		this.initWindowViewModel();
 		
 		this.initKokiLogic();
 		this.initTopicLogic();
-		this.initAccount();
+		this.initAccountLogic();
 		this.initStateLogic();
 	}
 	
@@ -130,39 +131,9 @@ export class Controller {
 		this.stateLogic.initialize();
 	}
 	
-	private initAccount() {
-		this.initializeListOfAvailableAccounts();
-		
-		this.viewModel.isAdmin = ko.observable<boolean>(false);
-		this.model.account.subscribe(account => {
-			this.updateAccountViewModel();
-			this.login();
-			this.commandProcessor.floodCommand(new HandleChangedAccountCommand());
-		});
-		
-		this.viewModel.userName = ko.observable<string>();
-		this.viewModel.userName.subscribe(userName => {
-			if(this.model.account().userName != userName)
-				this.model.account(new mdl.Account({ userName: userName }));
-		});
-		
-		this.updateAccountViewModel();
-		this.login();
-	}
-	
-	private initializeListOfAvailableAccounts() {
-		this.viewModel.availableAccounts = ko.observableArray<string>(['anonymous']);
-		this.communicator.commandProcessor.processCommand(new Communicator.GetAllUsersCommand(users => {
-			this.viewModel.availableAccounts(users);
-		}));
-	}
-	
-	private login() {
-		this.communicator.commandProcessor.processCommand(new Communicator.LoginCommand(this.model.account().userName));
-	}
-	
-	private updateAccountViewModel() {
-		if(this.viewModel.userName() != this.model.account().userName) this.viewModel.userName(this.model.account().userName);
+	private initAccountLogic() {
+		this.viewModel.account = new vm.Account();
+		this.accountLogic = new AccountLogic.Controller(this.model.account, this.viewModel.account, this.commandProcessor);
 	}
 	
 	public dispose() {
@@ -186,6 +157,7 @@ export class Controller {
 	private stateLogic: StateLogic.Controller;
 	private kokiLogic: KokiLogic.Controller;
 	private topicLogic: TopicLogic.Controller;
+	private accountLogic: AccountLogic.Controller;
 	
 	private subscriptions: Evt.Subscription[] = [];
 }

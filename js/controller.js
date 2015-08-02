@@ -4,9 +4,9 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'model', 'topicnavigationmodel', 'frame', 'windows/none', 'windows/newkk', 'windows/intro', 'windows/editkelement', 'statelogic', 'topiclogic', 'kokilogic', 'windows/discussion', 'windows/environs', 'communicator', 'command', 'kelementcommands', 'windowviewmodel'], function(require, exports, mdl, TopicNavigationModel, frame, noneWin, NewKkWin, IntroWin, EditKElementWin, StateLogic, TopicLogic, KokiLogic, DiscussionWindow, EnvironsWindows, Communicator, Commands, KElementCommands, WindowViewModel) {
+define(["require", "exports", 'viewmodel', 'topicnavigationmodel', 'frame', 'windows/none', 'windows/newkk', 'windows/intro', 'windows/editkelement', 'statelogic', 'topiclogic', 'kokilogic', 'accountlogic', 'windows/discussion', 'windows/environs', 'command', 'kelementcommands', 'windowviewmodel'], function(require, exports, vm, TopicNavigationModel, frame, noneWin, NewKkWin, IntroWin, EditKElementWin, StateLogic, TopicLogic, KokiLogic, AccountLogic, DiscussionWindow, EnvironsWindows, Commands, KElementCommands, WindowViewModel) {
     var Controller = (function () {
-        function Controller(model, viewModel, communicator, commandControl) {
+        function Controller(model, viewModel, communicator) {
             this.model = model;
             this.viewModel = viewModel;
             this.communicator = communicator;
@@ -14,14 +14,14 @@ define(["require", "exports", 'model', 'topicnavigationmodel', 'frame', 'windows
             this.discussionWin = new DiscussionWindow.Win();
             this.subscriptions = [];
             //var topicNavigationController = new topicNavigationCtr.Controller(model.topicNavigation, viewModel., { communicator: communicator.topic });
-            this.initCommandControl(commandControl);
+            this.initCommandControl(communicator);
 
             this.initWindows();
             this.initWindowViewModel();
 
             this.initKokiLogic();
             this.initTopicLogic();
-            this.initAccount();
+            this.initAccountLogic();
             this.initStateLogic();
         }
         Controller.prototype.initCommandControl = function (parent) {
@@ -121,42 +121,9 @@ define(["require", "exports", 'model', 'topicnavigationmodel', 'frame', 'windows
             this.stateLogic.initialize();
         };
 
-        Controller.prototype.initAccount = function () {
-            var _this = this;
-            this.initializeListOfAvailableAccounts();
-
-            this.viewModel.isAdmin = ko.observable(false);
-            this.model.account.subscribe(function (account) {
-                _this.updateAccountViewModel();
-                _this.login();
-                _this.commandProcessor.floodCommand(new HandleChangedAccountCommand());
-            });
-
-            this.viewModel.userName = ko.observable();
-            this.viewModel.userName.subscribe(function (userName) {
-                if (_this.model.account().userName != userName)
-                    _this.model.account(new mdl.Account({ userName: userName }));
-            });
-
-            this.updateAccountViewModel();
-            this.login();
-        };
-
-        Controller.prototype.initializeListOfAvailableAccounts = function () {
-            var _this = this;
-            this.viewModel.availableAccounts = ko.observableArray(['anonymous']);
-            this.communicator.commandProcessor.processCommand(new Communicator.GetAllUsersCommand(function (users) {
-                _this.viewModel.availableAccounts(users);
-            }));
-        };
-
-        Controller.prototype.login = function () {
-            this.communicator.commandProcessor.processCommand(new Communicator.LoginCommand(this.model.account().userName));
-        };
-
-        Controller.prototype.updateAccountViewModel = function () {
-            if (this.viewModel.userName() != this.model.account().userName)
-                this.viewModel.userName(this.model.account().userName);
+        Controller.prototype.initAccountLogic = function () {
+            this.viewModel.account = new vm.Account();
+            this.accountLogic = new AccountLogic.Controller(this.model.account, this.viewModel.account, this.commandProcessor);
         };
 
         Controller.prototype.dispose = function () {

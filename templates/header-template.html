@@ -1,5 +1,5 @@
 <span class="logo-q">q</span><span class="logo-consense">Konsens</span> <i>Proof-of-Concept</i>
-<span id="usermgt">
+<span id="usermgt" data-bind="with: account">
 	<input type="checkbox" id="modmode" data-bind="checked: isAdmin" /><label for="modmode">Moderationsmodus</label> |
 	<!--label for="username">Username: </label><input id="username" type="text" data-bind="value: userName" /-->
 	<select data-bind="options: availableAccounts, value: userName"></select>

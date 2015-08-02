@@ -9,6 +9,10 @@ export class ViewModel {
 	public right: frame.WinContainer;
 	public center: frame.WinContainer;
 	
+	public account: Account;
+}
+
+export class Account { 
 	public userName: Obs.Observable<string>;
 	public isAdmin: Obs.Observable<boolean>;
 	public availableAccounts: Obs.ObservableArray<string>;

@@ -40,8 +40,8 @@ define(["require", "exports", 'command', 'memory', 'controller', 'windows/konsen
                     return _this.onHandleChangedKokiWinStateCommandReceived(cmd);
             });
 
-            this.disposableContainer.append(this.resources.commandProcessor.chain.append(function (cmd) {
-                return _this.commandProcessor.chain.run(cmd);
+            this.disposableContainer.append(this.resources.commandProcessor.chain.append(function (cmd, mode) {
+                return _this.commandProcessor.chain.runOrFlood(cmd, mode);
             }));
         };
 

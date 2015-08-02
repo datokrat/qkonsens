@@ -5,4 +5,11 @@ define(["require", "exports"], function(require, exports) {
         return ViewModel;
     })();
     exports.ViewModel = ViewModel;
+
+    var Account = (function () {
+        function Account() {
+        }
+        return Account;
+    })();
+    exports.Account = Account;
 });

@@ -6,20 +6,35 @@ define(["require", "exports"], function(require, exports) {
     })();
     exports.Command = Command;
 
+    (function (ChainMode) {
+        ChainMode[ChainMode["Run"] = 0] = "Run";
+        ChainMode[ChainMode["Flood"] = 1] = "Flood";
+    })(exports.ChainMode || (exports.ChainMode = {}));
+    var ChainMode = exports.ChainMode;
+
     var Chain = (function () {
         function Chain() {
             this.middleware = [];
         }
         Chain.prototype.run = function (args) {
             for (var i = 0; i < this.middleware.length; ++i)
-                if (this.middleware[i](args))
+                if (this.middleware[i](args, 0 /* Run */))
                     return true;
             return false;
         };
 
         Chain.prototype.flood = function (args) {
             for (var i = 0; i < this.middleware.length; ++i)
-                this.middleware[i](args);
+                this.middleware[i](args, 1 /* Flood */);
+        };
+
+        Chain.prototype.runOrFlood = function (args, mode) {
+            if (mode == 0 /* Run */)
+                return this.run(args);
+            else {
+                this.flood(args);
+                return false;
+            }
         };
 
         Chain.prototype.insertAtBeginning = function (mw) {
