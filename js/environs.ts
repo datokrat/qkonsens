@@ -11,7 +11,6 @@ export class ViewModel {
 export class Controller {
 	constructor(private model: Model, private viewModel: ViewModel, private controllerArgs: ControllerArgs) {
 		viewModel.environsClick = () => {
-			alert('Jetzt sollte das Fenster erscheinen');
 			controllerArgs.commandProcessor.processCommand(new MainController.OpenEnvironsWindowCommand());
 		};
 	}

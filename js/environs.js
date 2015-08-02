@@ -19,7 +19,6 @@ define(["require", "exports", 'controller'], function(require, exports, MainCont
             this.viewModel = viewModel;
             this.controllerArgs = controllerArgs;
             viewModel.environsClick = function () {
-                alert('Jetzt sollte das Fenster erscheinen');
                 controllerArgs.commandProcessor.processCommand(new MainController.OpenEnvironsWindowCommand());
             };
         }
