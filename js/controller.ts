@@ -78,8 +78,8 @@ export class Controller {
 			}
 			if(cmd instanceof KElementCommands.OpenEditKElementWindowCommand) {
 				var editKElementWindowCommand = <KElementCommands.OpenEditKElementWindowCommand>cmd;
-				this.editKElementWinController.setModel(editKElementWindowCommand.model);
-				this.viewModel.left.win(this.editKElementWin);
+				this.editKElementWindow.model.setKElementModel(editKElementWindowCommand.model);
+				this.viewModel.left.win(this.editKElementWindow.frame);
 				return true;
 			}
 			if(cmd instanceof KElementCommands.UpdateGeneralContentCommand) {
@@ -102,14 +102,12 @@ export class Controller {
 	
 	private initWindows() {
 		this.newKkWindow = NewKkWin.Main.CreateEmpty(this.commandProcessor);
-		this.editKElementWin = new EditKElementWin.Win();
+		this.editKElementWindow = EditKElementWin.Main.CreateEmpty(this.commandProcessor);
 		this.introWin = new IntroWin.Win();
 		
 		this.viewModel.left = new frame.WinContainer( this.introWin );
 		this.viewModel.right = new frame.WinContainer( new noneWin.Win() );
 		this.viewModel.center = new frame.WinContainer( new noneWin.Win() );
-		
-		this.editKElementWinController = new EditKElementWin.Controller(this.editKElementWin, this.commandProcessor);
 	}
 	
 	private initWindowViewModel() {
@@ -150,6 +148,7 @@ export class Controller {
 	
 	public dispose() {
 		this.newKkWindow.dispose();
+		this.editKElementWindow.dispose();
 		this.stateLogic.dispose();
 		this.kokiLogic.dispose();
 		this.topicLogic.dispose();
@@ -164,8 +163,9 @@ export class Controller {
 	//private newKkWinController: NewKkWin.Controller;
 	private introWin: IntroWin.Win;
 	private newKkWindow: NewKkWin.Main;
-	private editKElementWin: EditKElementWin.Win;
-	private editKElementWinController: EditKElementWin.Controller;
+	private editKElementWindow: EditKElementWin.Main;
+	//private editKElementWin: EditKElementWin.Win;
+	//private editKElementWinController: EditKElementWin.Controller;
 	
 	private stateLogic: StateLogic.Controller;
 	private kokiLogic: KokiLogic.Controller;

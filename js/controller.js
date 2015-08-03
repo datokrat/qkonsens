@@ -68,8 +68,8 @@ define(["require", "exports", 'topicnavigationmodel', 'frame', 'windows/none', '
                 }
                 if (cmd instanceof KElementCommands.OpenEditKElementWindowCommand) {
                     var editKElementWindowCommand = cmd;
-                    _this.editKElementWinController.setModel(editKElementWindowCommand.model);
-                    _this.viewModel.left.win(_this.editKElementWin);
+                    _this.editKElementWindow.model.setKElementModel(editKElementWindowCommand.model);
+                    _this.viewModel.left.win(_this.editKElementWindow.frame);
                     return true;
                 }
                 if (cmd instanceof KElementCommands.UpdateGeneralContentCommand) {
@@ -93,14 +93,12 @@ define(["require", "exports", 'topicnavigationmodel', 'frame', 'windows/none', '
 
         Controller.prototype.initWindows = function () {
             this.newKkWindow = NewKkWin.Main.CreateEmpty(this.commandProcessor);
-            this.editKElementWin = new EditKElementWin.Win();
+            this.editKElementWindow = EditKElementWin.Main.CreateEmpty(this.commandProcessor);
             this.introWin = new IntroWin.Win();
 
             this.viewModel.left = new frame.WinContainer(this.introWin);
             this.viewModel.right = new frame.WinContainer(new noneWin.Win());
             this.viewModel.center = new frame.WinContainer(new noneWin.Win());
-
-            this.editKElementWinController = new EditKElementWin.Controller(this.editKElementWin, this.commandProcessor);
         };
 
         Controller.prototype.initWindowViewModel = function () {
@@ -141,6 +139,7 @@ define(["require", "exports", 'topicnavigationmodel', 'frame', 'windows/none', '
 
         Controller.prototype.dispose = function () {
             this.newKkWindow.dispose();
+            this.editKElementWindow.dispose();
             this.stateLogic.dispose();
             this.kokiLogic.dispose();
             this.topicLogic.dispose();

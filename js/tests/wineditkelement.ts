@@ -10,10 +10,9 @@ import KonsenskisteModel = require('../konsenskistemodel');
 export class Tests extends unit.TestClass {
 	emitUpdateGeneralContentCommand() {
 		var counter = new Common.Counter();
-		var win = new EditKElementWin.Win();
 		var commandProcessor = new Commands.CommandProcessor();
-		var controller = new EditKElementWin.Controller(win, commandProcessor);
-		controller.setModel(new KonsenskisteModel.Model);
+		var win = EditKElementWin.Main.CreateEmpty(commandProcessor);
+		win.model.setKElementModel(new KonsenskisteModel.Model);
 		
 		commandProcessor.chain.insertAtBeginning(cmd => {
 			if(cmd instanceof KElementCommands.UpdateGeneralContentCommand) {
@@ -23,17 +22,16 @@ export class Tests extends unit.TestClass {
 			return false;
 		});
 		
-		win.submitGeneralContent();
+		win.frame.submitGeneralContent();
 		
 		test.assert(v => v.val(counter.get('cmd')) == 1);
 	}
 	
 	emitUpdateContextCommand() {
 		var counter = new Common.Counter();
-		var win = new EditKElementWin.Win();
 		var commandProcessor = new Commands.CommandProcessor();
-		var controller = new EditKElementWin.Controller(win, commandProcessor);
-		controller.setModel(new KonsenskisteModel.Model);
+		var win = EditKElementWin.Main.CreateEmpty(commandProcessor);
+		win.model.setKElementModel(new KonsenskisteModel.Model);
 		
 		commandProcessor.chain.insertAtBeginning(cmd => {
 			if(cmd instanceof KElementCommands.UpdateContextCommand) {
@@ -43,7 +41,7 @@ export class Tests extends unit.TestClass {
 			return false;
 		});
 		
-		win.submitContext();
+		win.frame.submitContext();
 		
 		test.assert(v => v.val(counter.get('cmd')) == 1);
 	}

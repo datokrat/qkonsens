@@ -12,10 +12,9 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../com
         }
         Tests.prototype.emitUpdateGeneralContentCommand = function () {
             var counter = new Common.Counter();
-            var win = new EditKElementWin.Win();
             var commandProcessor = new Commands.CommandProcessor();
-            var controller = new EditKElementWin.Controller(win, commandProcessor);
-            controller.setModel(new KonsenskisteModel.Model);
+            var win = EditKElementWin.Main.CreateEmpty(commandProcessor);
+            win.model.setKElementModel(new KonsenskisteModel.Model);
 
             commandProcessor.chain.insertAtBeginning(function (cmd) {
                 if (cmd instanceof KElementCommands.UpdateGeneralContentCommand) {
@@ -25,7 +24,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../com
                 return false;
             });
 
-            win.submitGeneralContent();
+            win.frame.submitGeneralContent();
 
             test.assert(function (v) {
                 return v.val(counter.get('cmd')) == 1;
@@ -34,10 +33,9 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../com
 
         Tests.prototype.emitUpdateContextCommand = function () {
             var counter = new Common.Counter();
-            var win = new EditKElementWin.Win();
             var commandProcessor = new Commands.CommandProcessor();
-            var controller = new EditKElementWin.Controller(win, commandProcessor);
-            controller.setModel(new KonsenskisteModel.Model);
+            var win = EditKElementWin.Main.CreateEmpty(commandProcessor);
+            win.model.setKElementModel(new KonsenskisteModel.Model);
 
             commandProcessor.chain.insertAtBeginning(function (cmd) {
                 if (cmd instanceof KElementCommands.UpdateContextCommand) {
@@ -47,7 +45,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../com
                 return false;
             });
 
-            win.submitContext();
+            win.frame.submitContext();
 
             test.assert(function (v) {
                 return v.val(counter.get('cmd')) == 1;

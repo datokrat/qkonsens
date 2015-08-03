@@ -5,55 +5,130 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 define(["require", "exports", '../frame', '../kelementcommands', '../contentmodel'], function(require, exports, frame, KElementCommands, ContentModel) {
+    var Main = (function () {
+        function Main() {
+        }
+        Main.CreateEmpty = function (commandProcessor) {
+            var ret = new Main;
+            ret.data = new Data;
+            ret.model = new Model(ret.data, commandProcessor);
+            ret.frame = new Win(ret.model, ret.data);
+            return ret;
+        };
+
+        Main.prototype.dispose = function () {
+            this.model.dispose();
+        };
+        return Main;
+    })();
+    exports.Main = Main;
+
     var Win = (function (_super) {
         __extends(Win, _super);
-        function Win() {
+        function Win(model, data) {
+            var _this = this;
             _super.call(this, 'editkelement-win-template', null);
+            this.model = model;
+            this.submitGeneralContent = function () {
+                return _this.model.submitGeneralContent();
+            };
+            this.submitContext = function () {
+                return _this.model.submitContext();
+            };
+            this.title = data.title;
+            this.text = data.text;
+            this.context = data.context;
         }
         return Win;
     })(frame.Win);
     exports.Win = Win;
 
-    var Controller = (function () {
-        function Controller(win, parentCommandProcessor) {
-            var _this = this;
-            this.win = win;
-            this.parentCommandProcessor = parentCommandProcessor;
-            this.win.title = ko.observable();
-            this.win.text = ko.observable();
-            this.win.context = ko.observable();
-
-            this.win.submitGeneralContent = function () {
-                var newContent = new ContentModel.General();
-                newContent.set(_this.kElement.general());
-                newContent.title(_this.win.title());
-                newContent.text(_this.win.text());
-
-                var cmd = new KElementCommands.UpdateGeneralContentCommand(newContent, { then: function () {
-                        _this.kElement.general().title(_this.win.title());
-                        _this.kElement.general().text(_this.win.text());
-                    } });
-                _this.parentCommandProcessor.processCommand(cmd);
-            };
-
-            this.win.submitContext = function () {
-                var newContext = new ContentModel.Context();
-                newContext.set(_this.kElement.context());
-                newContext.text(_this.win.context());
-
-                var cmd = new KElementCommands.UpdateContextCommand(newContext, { then: function () {
-                        _this.kElement.context().text(_this.win.context());
-                    } });
-                _this.parentCommandProcessor.processCommand(cmd);
-            };
+    var Model = (function () {
+        function Model(data, commandProcessor) {
+            this.data = data;
+            this.commandProcessor = commandProcessor;
         }
-        Controller.prototype.setModel = function (kElement) {
+        Model.prototype.setKElementModel = function (kElement) {
             this.kElement = kElement;
-            this.win.title(kElement.general().title());
-            this.win.text(kElement.general().text());
-            this.win.context(kElement.context().text());
+
+            this.data.title(kElement.general().title());
+            this.data.text(kElement.general().text());
+            this.data.context(kElement.context().text());
         };
-        return Controller;
+
+        Model.prototype.submitGeneralContent = function () {
+            var _this = this;
+            var newContent = new ContentModel.General();
+            newContent.set(this.kElement.general());
+            newContent.title(this.data.title());
+            newContent.text(this.data.text());
+
+            var cmd = new KElementCommands.UpdateGeneralContentCommand(newContent, { then: function () {
+                    _this.kElement.general().title(_this.data.title());
+                    _this.kElement.general().text(_this.data.text());
+                } });
+            this.commandProcessor.processCommand(cmd);
+        };
+
+        Model.prototype.submitContext = function () {
+            var _this = this;
+            var newContext = new ContentModel.Context();
+            newContext.set(this.kElement.context());
+            newContext.text(this.data.context());
+
+            var cmd = new KElementCommands.UpdateContextCommand(newContext, { then: function () {
+                    _this.kElement.context().text(_this.data.context()); //Is it possible to generalize this procedure of updating?
+                } });
+            this.commandProcessor.processCommand(cmd);
+        };
+
+        Model.prototype.dispose = function () {
+        };
+        return Model;
     })();
-    exports.Controller = Controller;
+    exports.Model = Model;
+
+    var Data = (function () {
+        function Data() {
+            this.title = ko.observable();
+            this.text = ko.observable();
+            this.context = ko.observable();
+        }
+        return Data;
+    })();
+    exports.Data = Data;
 });
+/*export class Controller {
+constructor(private win: Win, private parentCommandProcessor: Commands.CommandProcessor) {
+this.win.title = ko.observable<string>();
+this.win.text = ko.observable<string>();
+this.win.context = ko.observable<string>();
+this.win.submitGeneralContent = () => {
+var newContent = new ContentModel.General();
+newContent.set(this.kElement.general());
+newContent.title(this.win.title());
+newContent.text(this.win.text());
+var cmd = new KElementCommands.UpdateGeneralContentCommand(newContent, { then: () => {
+this.kElement.general().title(this.win.title());
+this.kElement.general().text(this.win.text());
+} });
+this.parentCommandProcessor.processCommand(cmd);
+};
+this.win.submitContext = () => {
+var newContext = new ContentModel.Context();
+newContext.set(this.kElement.context());
+newContext.text(this.win.context());
+var cmd = new KElementCommands.UpdateContextCommand(newContext, { then: () => {
+this.kElement.context().text(this.win.context());
+} });
+this.parentCommandProcessor.processCommand(cmd);
+};
+}
+public setModel(kElement: KElement.Model) {
+this.kElement = kElement;
+this.win.title(kElement.general().title());
+this.win.text(kElement.general().text());
+this.win.context(kElement.context().text());
+}
+private kElement: KElement.Model;
+}*/
