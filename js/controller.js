@@ -5,6 +5,20 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 define(["require", "exports", 'topicnavigationmodel', 'frame', 'windows/none', 'windows/newkk', 'windows/intro', 'windows/editkelement', 'statelogic', 'topiclogic', 'kokilogic', 'accountlogic', 'account', 'windows/discussion', 'windows/environs', 'command', 'kelementcommands', 'windowviewmodel'], function(require, exports, TopicNavigationModel, frame, noneWin, NewKkWin, IntroWin, EditKElementWin, StateLogic, TopicLogic, KokiLogic, AccountLogic, Account, DiscussionWindow, EnvironsWindows, Commands, KElementCommands, WindowViewModel) {
+    var WindowLogic = (function () {
+        function WindowLogic(windowViewModel, commandProcessor) {
+            this.windowViewModel = windowViewModel;
+            this.commandProcessor = commandProcessor;
+        }
+        WindowLogic.prototype.initCommandProcessor = function () {
+            /*this.commandProcessor.chain.append(cmd => {
+            
+            });*/
+        };
+        return WindowLogic;
+    })();
+    exports.WindowLogic = WindowLogic;
+
     var Controller = (function () {
         function Controller(model, viewModel, communicator) {
             this.model = model;
@@ -38,8 +52,8 @@ define(["require", "exports", 'topicnavigationmodel', 'frame', 'windows/none', '
                 }
                 if (cmd instanceof OpenNewKokiWindowCommand) {
                     var openNewKokiWindowCommand = cmd;
-                    _this.newKkWinController.setParentTopic(openNewKokiWindowCommand.topic);
-                    _this.viewModel.left.win(_this.newKkWin);
+                    _this.newKkWindow.model.setParentTopic(openNewKokiWindowCommand.topic);
+                    _this.viewModel.left.win(_this.newKkWindow.frame);
                     return true;
                 }
                 if (cmd instanceof OpenDiscussionWindowCommand) {
@@ -78,7 +92,7 @@ define(["require", "exports", 'topicnavigationmodel', 'frame', 'windows/none', '
         };
 
         Controller.prototype.initWindows = function () {
-            this.newKkWin = new NewKkWin.Win();
+            this.newKkWindow = NewKkWin.Main.CreateEmpty(this.commandProcessor);
             this.editKElementWin = new EditKElementWin.Win();
             this.introWin = new IntroWin.Win();
 
@@ -86,7 +100,6 @@ define(["require", "exports", 'topicnavigationmodel', 'frame', 'windows/none', '
             this.viewModel.right = new frame.WinContainer(new noneWin.Win());
             this.viewModel.center = new frame.WinContainer(new noneWin.Win());
 
-            this.newKkWinController = new NewKkWin.Controller(this.newKkWin, this.commandProcessor);
             this.editKElementWinController = new EditKElementWin.Controller(this.editKElementWin, this.commandProcessor);
         };
 
@@ -127,7 +140,7 @@ define(["require", "exports", 'topicnavigationmodel', 'frame', 'windows/none', '
         };
 
         Controller.prototype.dispose = function () {
-            this.newKkWinController.dispose();
+            this.newKkWindow.dispose();
             this.stateLogic.dispose();
             this.kokiLogic.dispose();
             this.topicLogic.dispose();

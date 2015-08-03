@@ -24,6 +24,18 @@ import Commands = require('command');
 import KElementCommands = require('kelementcommands');
 import WindowViewModel = require('windowviewmodel'); //TODO Rename
 
+export class WindowLogic {
+	constructor(private windowViewModel: WindowViewModel.Main, private commandProcessor: Commands.CommandProcessor) {
+		
+	}
+	
+	public initCommandProcessor() {
+		/*this.commandProcessor.chain.append(cmd => {
+			
+		});*/
+	}
+}
+
 export class Controller {
 	constructor(private model: mdl.Model, private viewModel: vm.ViewModel, private communicator: Communicator.Main) {
 		
@@ -50,8 +62,8 @@ export class Controller {
 			}
 			if(cmd instanceof OpenNewKokiWindowCommand) {
 				var openNewKokiWindowCommand = <OpenNewKokiWindowCommand>cmd;
-				this.newKkWinController.setParentTopic(openNewKokiWindowCommand.topic);
-				this.viewModel.left.win(this.newKkWin);
+				this.newKkWindow.model.setParentTopic(openNewKokiWindowCommand.topic);
+				this.viewModel.left.win(this.newKkWindow.frame);
 				return true;
 			}
 			if(cmd instanceof OpenDiscussionWindowCommand) {
@@ -89,7 +101,7 @@ export class Controller {
 	}
 	
 	private initWindows() {
-		this.newKkWin = new NewKkWin.Win();
+		this.newKkWindow = NewKkWin.Main.CreateEmpty(this.commandProcessor);
 		this.editKElementWin = new EditKElementWin.Win();
 		this.introWin = new IntroWin.Win();
 		
@@ -97,7 +109,6 @@ export class Controller {
 		this.viewModel.right = new frame.WinContainer( new noneWin.Win() );
 		this.viewModel.center = new frame.WinContainer( new noneWin.Win() );
 		
-		this.newKkWinController = new NewKkWin.Controller(this.newKkWin, this.commandProcessor);
 		this.editKElementWinController = new EditKElementWin.Controller(this.editKElementWin, this.commandProcessor);
 	}
 	
@@ -138,7 +149,7 @@ export class Controller {
 	}
 	
 	public dispose() {
-		this.newKkWinController.dispose();
+		this.newKkWindow.dispose();
 		this.stateLogic.dispose();
 		this.kokiLogic.dispose();
 		this.topicLogic.dispose();
@@ -149,9 +160,10 @@ export class Controller {
 	
 	private windowViewModel: WindowViewModel.Main;
 	private discussionWin = new DiscussionWindow.Win();
-	private newKkWin: NewKkWin.Win;
-	private newKkWinController: NewKkWin.Controller;
+	//private newKkWin: NewKkWin.Win;
+	//private newKkWinController: NewKkWin.Controller;
 	private introWin: IntroWin.Win;
+	private newKkWindow: NewKkWin.Main;
 	private editKElementWin: EditKElementWin.Win;
 	private editKElementWinController: EditKElementWin.Controller;
 	
