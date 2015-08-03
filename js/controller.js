@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'viewmodel', 'topicnavigationmodel', 'frame', 'windows/none', 'windows/newkk', 'windows/intro', 'windows/editkelement', 'statelogic', 'topiclogic', 'kokilogic', 'accountlogic', 'windows/discussion', 'windows/environs', 'command', 'kelementcommands', 'windowviewmodel'], function(require, exports, vm, TopicNavigationModel, frame, noneWin, NewKkWin, IntroWin, EditKElementWin, StateLogic, TopicLogic, KokiLogic, AccountLogic, DiscussionWindow, EnvironsWindows, Commands, KElementCommands, WindowViewModel) {
+define(["require", "exports", 'topicnavigationmodel', 'frame', 'windows/none', 'windows/newkk', 'windows/intro', 'windows/editkelement', 'statelogic', 'topiclogic', 'kokilogic', 'accountlogic', 'account', 'windows/discussion', 'windows/environs', 'command', 'kelementcommands', 'windowviewmodel'], function(require, exports, TopicNavigationModel, frame, noneWin, NewKkWin, IntroWin, EditKElementWin, StateLogic, TopicLogic, KokiLogic, AccountLogic, Account, DiscussionWindow, EnvironsWindows, Commands, KElementCommands, WindowViewModel) {
     var Controller = (function () {
         function Controller(model, viewModel, communicator) {
             this.model = model;
@@ -122,7 +122,7 @@ define(["require", "exports", 'viewmodel', 'topicnavigationmodel', 'frame', 'win
         };
 
         Controller.prototype.initAccountLogic = function () {
-            this.viewModel.account = new vm.Account();
+            this.viewModel.account = new Account.ViewModel();
             this.accountLogic = new AccountLogic.Controller(this.model.account, this.viewModel.account, this.commandProcessor);
         };
 
@@ -160,18 +160,6 @@ define(["require", "exports", 'viewmodel', 'topicnavigationmodel', 'frame', 'win
         return OpenNewKokiWindowCommand;
     })(Commands.Command);
     exports.OpenNewKokiWindowCommand = OpenNewKokiWindowCommand;
-
-    var HandleChangedAccountCommand = (function (_super) {
-        __extends(HandleChangedAccountCommand, _super);
-        function HandleChangedAccountCommand() {
-            _super.apply(this, arguments);
-            this.toString = function () {
-                return 'HandleChangedAccountCommand';
-            };
-        }
-        return HandleChangedAccountCommand;
-    })(Commands.Command);
-    exports.HandleChangedAccountCommand = HandleChangedAccountCommand;
 
     var OpenDiscussionWindowCommand = (function (_super) {
         __extends(OpenDiscussionWindowCommand, _super);

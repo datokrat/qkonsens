@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../model', '../viewmodel', '../controller', '../konsenskistemodel', '../topic', 'windows/konsenskiste', 'windows/newkk', 'windows/editkelement', 'windows/discussion', '../konsenskistemodel', '../contentmodel', '../discussion', '../kelementcommands', '../communicator', 'tests/testcommunicator', '../kokilogic'], function(require, exports, unit, test, common, mdl, vm, ctr, koki, tpc, kokiWin, NewKkWin, EditKElementWin, DiscussionWin, KonsenskisteModel, ContentModel, Discussion, KElementCommands, Communicator, TestCommunicator, KokiLogic) {
+define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../model', '../viewmodel', '../controller', '../konsenskistemodel', '../topic', 'windows/konsenskiste', 'windows/newkk', 'windows/editkelement', 'windows/discussion', '../konsenskistemodel', '../contentmodel', '../discussion', '../kelementcommands', '../communicator', 'tests/testcommunicator', '../account', '../kokilogic', '../accountlogic'], function(require, exports, unit, test, common, mdl, vm, ctr, koki, tpc, kokiWin, NewKkWin, EditKElementWin, DiscussionWin, KonsenskisteModel, ContentModel, Discussion, KElementCommands, Communicator, TestCommunicator, Account, KokiLogic, AccountLogic) {
     var Tests = (function (_super) {
         __extends(Tests, _super);
         function Tests() {
@@ -103,7 +103,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../mod
                     test.assert(function (v) {
                         return v.val(cmd.userName) == 'TheUnnamed';
                     });
-                else if (cmd instanceof ctr.HandleChangedAccountCommand)
+                else if (cmd instanceof AccountLogic.HandleChangedAccountCommand)
                     counter.inc('account changed');
                 return false;
             });
@@ -115,7 +115,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../mod
                 return v.val(counter.get('account changed')) == 0;
             });
 
-            model.account(new mdl.Account({ userName: 'TheUnnamed' }));
+            model.account(new Account.Model({ userName: 'TheUnnamed' }));
 
             test.assert(function (v) {
                 return v.val(counter.get('login command')) == 2;
@@ -127,7 +127,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../mod
 
         Tests.prototype.updateViewModelAfterChangingAccount = function () {
             var _this = this;
-            this.cxt.model.account(new mdl.Account({ userName: 'TheUnnamed' }));
+            this.cxt.model.account(new Account.Model({ userName: 'TheUnnamed' }));
 
             test.assert(function (v) {
                 return _this.cxt.viewModel.account.userName() == 'TheUnnamed';

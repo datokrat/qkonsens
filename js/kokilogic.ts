@@ -11,6 +11,7 @@ import NewKkWin = require('windows/newkk');
 import WindowViewModel = require('windowviewmodel');
 
 import StateLogic = require('statelogic');
+import AccountLogic = require('accountlogic');
 
 export class Controller {
 	constructor(private resources: Resources) {
@@ -29,7 +30,7 @@ export class Controller {
 		this.commandProcessor.chain.append(cmd => {
 			if(cmd instanceof SelectAndLoadKokiCommand) return this.onSelectAndLoadKokiCommandReceived(<SelectAndLoadKokiCommand>cmd);
 			if(cmd instanceof SetKokiCommand) return this.onSetKokiCommandReceived(<SetKokiCommand>cmd);
-			if(cmd instanceof MainController.HandleChangedAccountCommand) return this.onHandleChangedAccountCommandReceived(<MainController.HandleChangedAccountCommand>cmd);
+			if(cmd instanceof AccountLogic.HandleChangedAccountCommand) return this.onHandleChangedAccountCommandReceived(<AccountLogic.HandleChangedAccountCommand>cmd);
 			if(cmd instanceof StateLogic.ChangeKokiStateCommand) return this.onChangeKokiStateCommandReceived(<StateLogic.ChangeKokiStateCommand>cmd);
 		});
 		
@@ -68,7 +69,7 @@ export class Controller {
 		return true;
 	}
 	
-	private onHandleChangedAccountCommandReceived(cmd: MainController.HandleChangedAccountCommand) {
+	private onHandleChangedAccountCommandReceived(cmd: AccountLogic.HandleChangedAccountCommand) {
 		if(this.konsenskisteModel()) {
 			this.selectAndLoadKoki(this.konsenskisteModel().id());
 		}

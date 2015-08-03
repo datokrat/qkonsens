@@ -1,13 +1,11 @@
-import mdl = require('model');
-import vm = require('viewmodel');
-import ctr = require('controller');
 import Communicator = require('communicator');
 import Commands = require('command');
+import Account = require('account');
 
 //TODO - this is not pretty
 
 export class Controller {
-	constructor(private model: KnockoutObservable<mdl.Account>, private viewModel: vm.Account, private commandProcessor: Commands.CommandProcessor) {
+	constructor(private model: KnockoutObservable<Account.Model>, private viewModel: Account.ViewModel, private commandProcessor: Commands.CommandProcessor) {
 		this.viewModel.isAdmin = ko.observable<boolean>(false);
 		
 		this.initializeListOfAvailableAccounts();
@@ -15,13 +13,13 @@ export class Controller {
 		this.model.subscribe(account => {
 			this.updateAccountViewModel(); //order of commands may cause problems! -> not yet logged in but already did sth.
 			this.login();
-			this.commandProcessor.floodCommand(new ctr.HandleChangedAccountCommand());
+			this.commandProcessor.floodCommand(new HandleChangedAccountCommand());
 		});
 		
 		this.viewModel.userName = ko.observable<string>();
 		this.viewModel.userName.subscribe(userName => {
 			if(this.model().userName != userName)
-				this.model(new mdl.Account({ userName: userName }));
+				this.model(new Account.Model({ userName: userName }));
 		});
 		
 		this.updateAccountViewModel();
@@ -48,4 +46,8 @@ export class Controller {
 	public login() {
 		this.loginAs(this.model().userName);
 	}
+}
+
+export class HandleChangedAccountCommand extends Commands.Command {
+	public toString = () => 'HandleChangedAccountCommand';
 }

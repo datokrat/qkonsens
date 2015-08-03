@@ -3,17 +3,12 @@ import frame = require('frame')
 import BrowseWin = require('windows/browse');
 import KonsenskisteWin = require('windows/konsenskiste');
 import Obs = require('observable');
+import Account = require('account');
 
 export class ViewModel {
 	public left: frame.WinContainer;
 	public right: frame.WinContainer;
 	public center: frame.WinContainer;
 	
-	public account: Account;
-}
-
-export class Account { 
-	public userName: Obs.Observable<string>;
-	public isAdmin: Obs.Observable<boolean>;
-	public availableAccounts: Obs.ObservableArray<string>;
+	public account: Account.ViewModel;
 }

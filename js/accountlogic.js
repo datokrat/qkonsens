@@ -1,4 +1,10 @@
-define(["require", "exports", 'model', 'controller', 'communicator'], function(require, exports, mdl, ctr, Communicator) {
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+define(["require", "exports", 'communicator', 'command', 'account'], function(require, exports, Communicator, Commands, Account) {
     //TODO - this is not pretty
     var Controller = (function () {
         function Controller(model, viewModel, commandProcessor) {
@@ -13,13 +19,13 @@ define(["require", "exports", 'model', 'controller', 'communicator'], function(r
             this.model.subscribe(function (account) {
                 _this.updateAccountViewModel(); //order of commands may cause problems! -> not yet logged in but already did sth.
                 _this.login();
-                _this.commandProcessor.floodCommand(new ctr.HandleChangedAccountCommand());
+                _this.commandProcessor.floodCommand(new HandleChangedAccountCommand());
             });
 
             this.viewModel.userName = ko.observable();
             this.viewModel.userName.subscribe(function (userName) {
                 if (_this.model().userName != userName)
-                    _this.model(new mdl.Account({ userName: userName }));
+                    _this.model(new Account.Model({ userName: userName }));
             });
 
             this.updateAccountViewModel();
@@ -49,4 +55,16 @@ define(["require", "exports", 'model', 'controller', 'communicator'], function(r
         return Controller;
     })();
     exports.Controller = Controller;
+
+    var HandleChangedAccountCommand = (function (_super) {
+        __extends(HandleChangedAccountCommand, _super);
+        function HandleChangedAccountCommand() {
+            _super.apply(this, arguments);
+            this.toString = function () {
+                return 'HandleChangedAccountCommand';
+            };
+        }
+        return HandleChangedAccountCommand;
+    })(Commands.Command);
+    exports.HandleChangedAccountCommand = HandleChangedAccountCommand;
 });

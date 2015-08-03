@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../frame', '../command', '../controller', '../konsenskistemodel', 'tests/testkonsenskistecommunicator', 'windows/konsenskiste', '../windowviewmodel', '../kokilogic', '../statelogic'], function(require, exports, unit, test, common, frame, Commands, Controller, KonsenskisteModel, KonsenskisteCommunicator, KonsenskisteWin, WindowViewModel, KokiLogic, StateLogic) {
+define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../frame', '../command', '../konsenskistemodel', 'tests/testkonsenskistecommunicator', 'windows/konsenskiste', '../windowviewmodel', '../kokilogic', '../statelogic', '../accountlogic'], function(require, exports, unit, test, common, frame, Commands, KonsenskisteModel, KonsenskisteCommunicator, KonsenskisteWin, WindowViewModel, KokiLogic, StateLogic, AccountLogic) {
     var Tests = (function (_super) {
         __extends(Tests, _super);
         function Tests() {
@@ -84,7 +84,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../fra
             };
 
             resources.commandProcessor.processCommand(new KokiLogic.SetKokiCommand(new KonsenskisteModel.Model()));
-            resources.commandProcessor.processCommand(new Controller.HandleChangedAccountCommand());
+            resources.commandProcessor.processCommand(new AccountLogic.HandleChangedAccountCommand());
 
             test.assert(function (v) {
                 return v.val(_this.counter.get('query')) == 1;

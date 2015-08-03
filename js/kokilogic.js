@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'command', 'memory', 'controller', 'windows/konsenskiste', 'windows/konsenskistecontroller', 'windowviewmodel', 'statelogic'], function(require, exports, Commands, Memory, MainController, KonsenskisteWin, KonsenskisteWinController, WindowViewModel, StateLogic) {
+define(["require", "exports", 'command', 'memory', 'windows/konsenskiste', 'windows/konsenskistecontroller', 'windowviewmodel', 'statelogic', 'accountlogic'], function(require, exports, Commands, Memory, KonsenskisteWin, KonsenskisteWinController, WindowViewModel, StateLogic, AccountLogic) {
     var Controller = (function () {
         function Controller(resources) {
             this.resources = resources;
@@ -27,7 +27,7 @@ define(["require", "exports", 'command', 'memory', 'controller', 'windows/konsen
                     return _this.onSelectAndLoadKokiCommandReceived(cmd);
                 if (cmd instanceof SetKokiCommand)
                     return _this.onSetKokiCommandReceived(cmd);
-                if (cmd instanceof MainController.HandleChangedAccountCommand)
+                if (cmd instanceof AccountLogic.HandleChangedAccountCommand)
                     return _this.onHandleChangedAccountCommandReceived(cmd);
                 if (cmd instanceof StateLogic.ChangeKokiStateCommand)
                     return _this.onChangeKokiStateCommandReceived(cmd);

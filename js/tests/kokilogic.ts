@@ -15,6 +15,7 @@ import WindowViewModel = require('../windowviewmodel');
 
 import KokiLogic = require('../kokilogic');
 import StateLogic = require('../statelogic');
+import AccountLogic = require('../accountlogic');
 
 export class Tests extends unit.TestClass {
 	setUp() {
@@ -82,7 +83,7 @@ export class Tests extends unit.TestClass {
 		};
 		
 		resources.commandProcessor.processCommand(new KokiLogic.SetKokiCommand(new KonsenskisteModel.Model()));
-		resources.commandProcessor.processCommand(new Controller.HandleChangedAccountCommand());
+		resources.commandProcessor.processCommand(new AccountLogic.HandleChangedAccountCommand());
 		
 		test.assert(v => v.val(this.counter.get('query')) == 1);
 	}

@@ -23,8 +23,10 @@ import KonsenskisteCommunicator = require('../konsenskistecommunicator');
 import TestCommunicator = require('tests/testcommunicator')
 import Topic = require('../topic');
 
+import Account = require('../account');
 import KokiLogic = require('../kokilogic');
 import StateLogic = require('../statelogic');
+import AccountLogic = require('../accountlogic');
 
 export class Tests extends unit.TestClass {
 	private factory = new Factory();
@@ -103,7 +105,7 @@ export class Tests extends unit.TestClass {
 		controller.commandProcessor.chain.insertAtBeginning(cmd => {
 			if(cmd instanceof Communicator.LoginCommand)
 				test.assert(v => v.val((<Communicator.LoginCommand>cmd).userName) == 'TheUnnamed');
-			else if(cmd instanceof ctr.HandleChangedAccountCommand)
+			else if(cmd instanceof AccountLogic.HandleChangedAccountCommand)
 				counter.inc('account changed');
 			return false;
 		});
@@ -111,14 +113,14 @@ export class Tests extends unit.TestClass {
 		test.assert(v => v.val(counter.get('login command')) == 1);
 		test.assert(v => v.val(counter.get('account changed')) == 0);
 		
-		model.account(new mdl.Account({ userName: 'TheUnnamed' }));
+		model.account(new Account.Model({ userName: 'TheUnnamed' }));
 		
 		test.assert(v => v.val(counter.get('login command')) == 2);
 		test.assert(v => v.val(counter.get('account changed')) == 1);
 	}
 	
 	updateViewModelAfterChangingAccount() {
-		this.cxt.model.account(new mdl.Account({ userName: 'TheUnnamed' }));
+		this.cxt.model.account(new Account.Model({ userName: 'TheUnnamed' }));
 		
 		test.assert(v => this.cxt.viewModel.account.userName() == 'TheUnnamed');
 	}

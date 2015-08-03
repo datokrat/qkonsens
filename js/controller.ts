@@ -13,6 +13,7 @@ import StateLogic = require('statelogic');
 import TopicLogic = require('topiclogic');
 import KokiLogic = require('kokilogic');
 import AccountLogic = require('accountlogic');
+import Account = require('account');
 
 import DiscussionWindow = require('windows/discussion')
 import EnvironsWindows = require('windows/environs');
@@ -132,7 +133,7 @@ export class Controller {
 	}
 	
 	private initAccountLogic() {
-		this.viewModel.account = new vm.Account();
+		this.viewModel.account = new Account.ViewModel();
 		this.accountLogic = new AccountLogic.Controller(this.model.account, this.viewModel.account, this.commandProcessor);
 	}
 	
@@ -168,10 +169,6 @@ export class CreateNewKokiCommand extends Commands.Command {
 
 export class OpenNewKokiWindowCommand extends Commands.Command {
 	constructor(public topic: Topic.Model) { super() }
-}
-
-export class HandleChangedAccountCommand extends Commands.Command {
-	public toString = () => 'HandleChangedAccountCommand';
 }
 
 export class OpenDiscussionWindowCommand extends Commands.Command {
