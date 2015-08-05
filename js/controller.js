@@ -4,16 +4,35 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'topicnavigationmodel', 'frame', 'windows/none', 'windows/newkk', 'windows/intro', 'windows/editkelement', 'statelogic', 'topiclogic', 'kokilogic', 'accountlogic', 'account', 'windows/discussion', 'windows/environs', 'command', 'kelementcommands', 'windowviewmodel'], function(require, exports, TopicNavigationModel, frame, noneWin, NewKkWin, IntroWin, EditKElementWin, StateLogic, TopicLogic, KokiLogic, AccountLogic, Account, DiscussionWindow, EnvironsWindows, Commands, KElementCommands, WindowViewModel) {
+define(["require", "exports", 'topicnavigationmodel', 'memory', 'frame', 'windows/none', 'windows/newkk', 'windows/intro', 'windows/editkelement', 'statelogic', 'topiclogic', 'kokilogic', 'accountlogic', 'account', 'windows/discussion', 'windows/environs', 'command', 'kelementcommands', 'windowviewmodel'], function(require, exports, TopicNavigationModel, Memory, frame, noneWin, NewKkWin, IntroWin, EditKElementWin, StateLogic, TopicLogic, KokiLogic, AccountLogic, Account, DiscussionWindow, EnvironsWindows, Commands, KElementCommands, WindowViewModel) {
     var WindowLogic = (function () {
-        function WindowLogic(windowViewModel, commandProcessor) {
+        function WindowLogic(windowViewModel, windows, commandProcessor) {
             this.windowViewModel = windowViewModel;
+            this.windows = windows;
             this.commandProcessor = commandProcessor;
+            this.disposables = new Memory.DisposableContainer();
+            this.initCommandProcessor();
         }
         WindowLogic.prototype.initCommandProcessor = function () {
-            /*this.commandProcessor.chain.append(cmd => {
-            
-            });*/
+            var _this = this;
+            this.disposables.append(this.commandProcessor.chain.append(function (cmd) {
+                if (cmd instanceof OpenNewKokiWindowCommand) {
+                    var openNewKokiWindowCommand = cmd;
+                    _this.windows.newKkWindow.model.setParentTopic(openNewKokiWindowCommand.topic);
+                    _this.windowViewModel.fillFrameWithWindow(1 /* Left */, _this.windows.newKkWindow.frame);
+                    return true;
+                }
+                if (cmd instanceof KElementCommands.OpenEditKElementWindowCommand) {
+                    var editKElementWindowCommand = cmd;
+                    _this.windows.editKElementWindow.model.setKElementModel(editKElementWindowCommand.model);
+                    _this.windowViewModel.fillFrameWithWindow(1 /* Left */, _this.windows.editKElementWindow.frame);
+                    return true;
+                }
+            }));
+        };
+
+        WindowLogic.prototype.dispose = function () {
+            this.disposables.dispose();
         };
         return WindowLogic;
     })();
@@ -33,6 +52,7 @@ define(["require", "exports", 'topicnavigationmodel', 'frame', 'windows/none', '
             this.initWindows();
             this.initWindowViewModel();
 
+            this.initWindowLogic();
             this.initKokiLogic();
             this.initTopicLogic();
             this.initAccountLogic();
@@ -50,12 +70,6 @@ define(["require", "exports", 'topicnavigationmodel', 'frame', 'windows/none', '
                     });
                     return true;
                 }
-                if (cmd instanceof OpenNewKokiWindowCommand) {
-                    var openNewKokiWindowCommand = cmd;
-                    _this.newKkWindow.model.setParentTopic(openNewKokiWindowCommand.topic);
-                    _this.viewModel.left.win(_this.newKkWindow.frame);
-                    return true;
-                }
                 if (cmd instanceof OpenDiscussionWindowCommand) {
                     var openDiscussionWindowCommand = cmd;
                     _this.discussionWin.discussable(cmd.discussableViewModel);
@@ -64,12 +78,6 @@ define(["require", "exports", 'topicnavigationmodel', 'frame', 'windows/none', '
                 }
                 if (cmd instanceof OpenEnvironsWindowCommand) {
                     _this.viewModel.left.win(new EnvironsWindows.Win());
-                    return true;
-                }
-                if (cmd instanceof KElementCommands.OpenEditKElementWindowCommand) {
-                    var editKElementWindowCommand = cmd;
-                    _this.editKElementWindow.model.setKElementModel(editKElementWindowCommand.model);
-                    _this.viewModel.left.win(_this.editKElementWindow.frame);
                     return true;
                 }
                 if (cmd instanceof KElementCommands.UpdateGeneralContentCommand) {
@@ -92,8 +100,7 @@ define(["require", "exports", 'topicnavigationmodel', 'frame', 'windows/none', '
         };
 
         Controller.prototype.initWindows = function () {
-            this.newKkWindow = NewKkWin.Main.CreateEmpty(this.commandProcessor);
-            this.editKElementWindow = EditKElementWin.Main.CreateEmpty(this.commandProcessor);
+            this.windows = new Windows(this.commandProcessor);
             this.introWin = new IntroWin.Win();
 
             this.viewModel.left = new frame.WinContainer(this.introWin);
@@ -103,6 +110,10 @@ define(["require", "exports", 'topicnavigationmodel', 'frame', 'windows/none', '
 
         Controller.prototype.initWindowViewModel = function () {
             this.windowViewModel = new WindowViewModel.Main({ center: this.viewModel.center, left: this.viewModel.left, right: this.viewModel.right });
+        };
+
+        Controller.prototype.initWindowLogic = function () {
+            this.windowLogic = new WindowLogic(this.windowViewModel, this.windows, this.commandProcessor);
         };
 
         Controller.prototype.initKokiLogic = function () {
@@ -138,8 +149,8 @@ define(["require", "exports", 'topicnavigationmodel', 'frame', 'windows/none', '
         };
 
         Controller.prototype.dispose = function () {
-            this.newKkWindow.dispose();
-            this.editKElementWindow.dispose();
+            this.windows.dispose();
+            this.windowLogic.dispose();
             this.stateLogic.dispose();
             this.kokiLogic.dispose();
             this.topicLogic.dispose();
@@ -150,6 +161,19 @@ define(["require", "exports", 'topicnavigationmodel', 'frame', 'windows/none', '
         return Controller;
     })();
     exports.Controller = Controller;
+
+    var Windows = (function () {
+        function Windows(commandProcessor) {
+            this.newKkWindow = NewKkWin.Main.CreateEmpty(commandProcessor);
+            this.editKElementWindow = EditKElementWin.Main.CreateEmpty(commandProcessor);
+        }
+        Windows.prototype.dispose = function () {
+            this.newKkWindow.dispose();
+            this.editKElementWindow.dispose();
+        };
+        return Windows;
+    })();
+    exports.Windows = Windows;
 
     var CreateNewKokiCommand = (function (_super) {
         __extends(CreateNewKokiCommand, _super);
