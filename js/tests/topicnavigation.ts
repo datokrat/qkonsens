@@ -1,7 +1,8 @@
 import unit = require('tests/tsunit');
 import test = require('tests/test');
 import common = require('../common');
-import MainController = require('../controller');
+//import MainController = require('../controller');
+import Windows = require('../windows');
 import KokiLogic = require('../kokilogic');
 import ctr = require('../topicnavigationcontroller')
 import mdl = require('../topicnavigationmodel')
@@ -198,9 +199,9 @@ export class Tests extends unit.TestClass {
 		model.history.push(topic);
 		
 		commandProcessor.chain.append(cmd => {
-			if(cmd instanceof MainController.OpenNewKokiWindowCommand) {
+			if(cmd instanceof Windows.OpenNewKokiWindowCommand) {
 				counter.inc('openNewKokiWindow command');
-				var openNewKokiWindow = <MainController.OpenNewKokiWindowCommand>cmd;
+				var openNewKokiWindow = <Windows.OpenNewKokiWindowCommand>cmd;
 				test.assert(v => v.val(openNewKokiWindow.topic.title()) == 'Parent Topic wr,s');
 				return true;
 			}

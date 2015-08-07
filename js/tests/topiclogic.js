@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../frame', '../command', '../topiclogic', '../topicnavigationmodel', 'tests/testtopiccommunicator', '../windowviewmodel'], function(require, exports, unit, test, common, frame, Commands, TopicLogic, TopicNavigationModel, TopicCommunicator, WindowViewModel) {
+define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../frame', '../command', '../topiclogic', '../topicnavigationmodel', 'tests/testtopiccommunicator', '../windows'], function(require, exports, unit, test, common, frame, Commands, TopicLogic, TopicNavigationModel, TopicCommunicator, Windows) {
     var Tests = (function (_super) {
         __extends(Tests, _super);
         function Tests() {
@@ -39,7 +39,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../fra
         };
 
         ResourceInitializer.createWindowViewModel = function () {
-            return new WindowViewModel.Main({
+            return new Windows.WindowViewModel({
                 center: ResourceInitializer.createWinContainer(),
                 left: ResourceInitializer.createWinContainer(),
                 right: ResourceInitializer.createWinContainer()

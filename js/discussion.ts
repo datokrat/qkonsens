@@ -7,6 +7,7 @@ import Comment = require('comment')
 import CommentSynchronizer = require('synchronizers/comment')
 import ViewModelContext = require('viewmodelcontext')
 import Commands = require('command');
+import Windows = require('windows');
 
 export interface DiscussableModel {
 	id: Obs.Observable<number>;
@@ -154,7 +155,7 @@ export class Controller {
 		if(!this.discussableModel)
 			this.model.error('DiscussionController.discussableModel is not defined');
 
-		this.args.commandProcessor.processCommand(new MainController.OpenDiscussionWindowCommand(this.discussableViewModel));
+		this.args.commandProcessor.processCommand(new Windows.OpenDiscussionWindowCommand(this.discussableViewModel));
 	}
 	
 	private discussableModel: DiscussableModel;

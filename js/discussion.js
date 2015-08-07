@@ -1,4 +1,4 @@
-define(["require", "exports", 'observable', 'controller', 'comment', 'synchronizers/comment'], function(require, exports, Obs, MainController, Comment, CommentSynchronizer) {
+define(["require", "exports", 'observable', 'comment', 'synchronizers/comment', 'windows'], function(require, exports, Obs, Comment, CommentSynchronizer, Windows) {
     var Model = (function () {
         function Model() {
             this.comments = new Obs.ObservableArrayExtender(ko.observableArray());
@@ -47,7 +47,7 @@ define(["require", "exports", 'observable', 'controller', 'comment', 'synchroniz
                 if (!_this.discussableModel)
                     _this.model.error('DiscussionController.discussableModel is not defined');
 
-                _this.args.commandProcessor.processCommand(new MainController.OpenDiscussionWindowCommand(_this.discussableViewModel));
+                _this.args.commandProcessor.processCommand(new Windows.OpenDiscussionWindowCommand(_this.discussableViewModel));
             };
             this.communicatorSubscriptions = [];
             this.viewModel.comments = ko.observableArray();

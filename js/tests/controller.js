@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../model', '../viewmodel', '../controller', '../konsenskistemodel', '../topic', 'windows/konsenskiste', 'windows/newkk', 'windows/editkelement', 'windows/discussion', '../konsenskistemodel', '../contentmodel', '../discussion', '../kelementcommands', '../communicator', 'tests/testcommunicator', '../account', '../kokilogic', '../accountlogic'], function(require, exports, unit, test, common, mdl, vm, ctr, koki, tpc, kokiWin, NewKkWin, EditKElementWin, DiscussionWin, KonsenskisteModel, ContentModel, Discussion, KElementCommands, Communicator, TestCommunicator, Account, KokiLogic, AccountLogic) {
+define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../model', '../viewmodel', '../controller', '../konsenskistemodel', '../topic', 'windows/konsenskiste', 'windows/newkk', 'windows/editkelement', 'windows/discussion', '../konsenskistemodel', '../contentmodel', '../discussion', '../kelementcommands', '../communicator', 'tests/testcommunicator', '../account', '../kokilogic', '../accountlogic', '../windows'], function(require, exports, unit, test, common, mdl, vm, ctr, koki, tpc, kokiWin, NewKkWin, EditKElementWin, DiscussionWin, KonsenskisteModel, ContentModel, Discussion, KElementCommands, Communicator, TestCommunicator, Account, KokiLogic, AccountLogic, Windows) {
     var Tests = (function (_super) {
         __extends(Tests, _super);
         function Tests() {
@@ -175,7 +175,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../mod
             var _this = this;
             var topic = new tpc.Model();
             topic.title('Parent Topic apgr');
-            this.cxt.controller.commandProcessor.processCommand(new ctr.OpenNewKokiWindowCommand(topic));
+            this.cxt.controller.commandProcessor.processCommand(new Windows.OpenNewKokiWindowCommand(topic));
             test.assert(function (v) {
                 return _this.cxt.viewModel.left.win() instanceof NewKkWin.Win;
             });
@@ -189,7 +189,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../mod
             var discussableViewModel = {
                 discussion: ko.observable(new Discussion.ViewModel)
             };
-            this.cxt.controller.commandProcessor.processCommand(new ctr.OpenDiscussionWindowCommand(discussableViewModel));
+            this.cxt.controller.commandProcessor.processCommand(new Windows.OpenDiscussionWindowCommand(discussableViewModel));
             test.assert(function (v) {
                 return _this.cxt.viewModel.left.win() instanceof DiscussionWin.Win;
             });

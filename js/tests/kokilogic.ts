@@ -11,7 +11,7 @@ import KonsenskisteCommunicator = require('tests/testkonsenskistecommunicator');
 
 import KonsenskisteWin = require('windows/konsenskiste');
 import KonsenskisteWinController = require('windows/konsenskistecontroller');
-import WindowViewModel = require('../windowviewmodel');
+import Windows = require('../windows');
 
 import KokiLogic = require('../kokilogic');
 import StateLogic = require('../statelogic');
@@ -26,7 +26,7 @@ export class Tests extends unit.TestClass {
 		var resources = ResourceInitializer.createResources();
 		var kokiLogic = new KokiLogic.Controller(resources);
 		
-		test.assert(v => resources.windowViewModel.getWindowOfFrame(WindowViewModel.Frame.Center) 
+		test.assert(v => resources.windowViewModel.getWindowOfFrame(Windows.Frame.Center) 
 			instanceof KonsenskisteWin.Win);
 	}
 	
@@ -148,8 +148,8 @@ class ResourceInitializer {
 		return ret;
 	}
 	
-	private static createWindowViewModel(): WindowViewModel.Main {
-		return new WindowViewModel.Main({
+	private static createWindowViewModel(): Windows.WindowViewModel {
+		return new Windows.WindowViewModel({
 			center: ResourceInitializer.createWinContainer(),
 			left: ResourceInitializer.createWinContainer(),
 			right: ResourceInitializer.createWinContainer(),

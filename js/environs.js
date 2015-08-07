@@ -1,4 +1,4 @@
-define(["require", "exports", 'controller'], function(require, exports, MainController) {
+define(["require", "exports", 'windows'], function(require, exports, Windows) {
     var Model = (function () {
         function Model() {
         }
@@ -19,7 +19,7 @@ define(["require", "exports", 'controller'], function(require, exports, MainCont
             this.viewModel = viewModel;
             this.controllerArgs = controllerArgs;
             viewModel.environsClick = function () {
-                controllerArgs.commandProcessor.processCommand(new MainController.OpenEnvironsWindowCommand());
+                controllerArgs.commandProcessor.processCommand(new Windows.OpenEnvironsWindowCommand());
             };
         }
         Controller.prototype.dispose = function () {

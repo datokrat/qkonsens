@@ -1,4 +1,4 @@
-define(["require", "exports", 'topic', 'windowviewmodel', 'windows/browse'], function(require, exports, Topic, WindowViewModel, BrowseWin) {
+define(["require", "exports", 'topic', 'windows', 'windows/browse'], function(require, exports, Topic, Windows, BrowseWin) {
     var Controller = (function () {
         function Controller(resources) {
             this.resources = resources;

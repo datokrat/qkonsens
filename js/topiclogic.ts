@@ -3,7 +3,7 @@ import Commands = require('command');
 import TopicNavigationModel = require('topicnavigationmodel');
 import Topic = require('topic');
 
-import WindowViewModel = require('windowviewmodel');
+import Windows = require('windows');
 import BrowseWin = require('windows/browse');
 
 export class Controller {
@@ -30,7 +30,7 @@ export class Controller {
 		this.browseWinController = new BrowseWin.Controller
 			(this.resources.topicNavigationModel, this.browseWin, this.resources.topicCommunicator, this.resources.commandProcessor);
 		
-		this.resources.windowViewModel.fillFrameWithWindow(WindowViewModel.Frame.Right, this.browseWin);
+		this.resources.windowViewModel.fillFrameWithWindow(Windows.Frame.Right, this.browseWin);
 	}
 	
 	private resources: Resources;
@@ -41,6 +41,6 @@ export class Controller {
 export class Resources {
 	public topicNavigationModel: TopicNavigationModel.Model;
 	public topicCommunicator: Topic.Communicator;
-	public windowViewModel: WindowViewModel.Main;
+	public windowViewModel: Windows.WindowViewModel;
 	public commandProcessor: Commands.CommandProcessor;
 }

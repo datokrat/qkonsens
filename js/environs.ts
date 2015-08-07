@@ -1,5 +1,6 @@
 import Command = require('command');
 import MainController = require('controller');
+import Windows = require('windows');
 
 export class Model {
 }
@@ -11,7 +12,7 @@ export class ViewModel {
 export class Controller {
 	constructor(private model: Model, private viewModel: ViewModel, private controllerArgs: ControllerArgs) {
 		viewModel.environsClick = () => {
-			controllerArgs.commandProcessor.processCommand(new MainController.OpenEnvironsWindowCommand());
+			controllerArgs.commandProcessor.processCommand(new Windows.OpenEnvironsWindowCommand());
 		};
 	}
 	

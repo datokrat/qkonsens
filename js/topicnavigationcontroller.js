@@ -1,4 +1,4 @@
-define(["require", "exports", 'controller', 'kokilogic', 'topicnavigationviewmodel', 'topic', 'synchronizers/tsynchronizers', 'command'], function(require, exports, MainController, KokiLogic, ViewModel, Topic, TSync, Commands) {
+define(["require", "exports", 'kokilogic', 'topicnavigationviewmodel', 'topic', 'synchronizers/tsynchronizers', 'command', 'windows'], function(require, exports, KokiLogic, ViewModel, Topic, TSync, Commands, Windows) {
     var Controller = (function () {
         function Controller(model, viewModel, args) {
             this.modelViewModelController = new ModelViewModelController(model, viewModel, args.commandProcessor);
@@ -82,7 +82,7 @@ define(["require", "exports", 'controller', 'kokilogic', 'topicnavigationviewmod
             this.kokisController = new KokisViewModelController(model.kokis, viewModel.kokis, this.kokiCommandControl);
 
             viewModel.clickCreateNewKoki = function () {
-                commandProcessor.processCommand(new MainController.OpenNewKokiWindowCommand(_this.model.selectedTopic()));
+                commandProcessor.processCommand(new Windows.OpenNewKokiWindowCommand(_this.model.selectedTopic()));
             };
         }
         ModelViewModelController.prototype.handleChildTopicCommand = function (cmd) {

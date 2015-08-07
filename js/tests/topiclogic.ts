@@ -8,7 +8,7 @@ import Commands = require('../command');
 import TopicLogic = require('../topiclogic');
 import TopicNavigationModel = require('../topicnavigationmodel');
 import TopicCommunicator = require('tests/testtopiccommunicator');
-import WindowViewModel = require('../windowviewmodel');
+import Windows = require('../windows');
 
 export class Tests extends unit.TestClass {
 	setUp() {
@@ -35,8 +35,8 @@ class ResourceInitializer {
 		return ret;
 	}
 	
-	private static createWindowViewModel(): WindowViewModel.Main {
-		return new WindowViewModel.Main({
+	private static createWindowViewModel(): Windows.WindowViewModel {
+		return new Windows.WindowViewModel({
 			center: ResourceInitializer.createWinContainer(),
 			left: ResourceInitializer.createWinContainer(),
 			right: ResourceInitializer.createWinContainer(),

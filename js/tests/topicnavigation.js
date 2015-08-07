@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../controller', '../kokilogic', '../topicnavigationcontroller', '../topicnavigationmodel', '../topicnavigationviewmodel', '../topic', 'tests/testtopiccommunicator', '../contentmodel', '../konsenskistemodel', '../command'], function(require, exports, unit, test, common, MainController, KokiLogic, ctr, mdl, vm, Topic, TopicCommunicator, ContentModel, KonsenskisteModel, Commands) {
+define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../windows', '../kokilogic', '../topicnavigationcontroller', '../topicnavigationmodel', '../topicnavigationviewmodel', '../topic', 'tests/testtopiccommunicator', '../contentmodel', '../konsenskistemodel', '../command'], function(require, exports, unit, test, common, Windows, KokiLogic, ctr, mdl, vm, Topic, TopicCommunicator, ContentModel, KonsenskisteModel, Commands) {
     var Tests = (function (_super) {
         __extends(Tests, _super);
         function Tests() {
@@ -250,7 +250,7 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', '../common', '../con
             model.history.push(topic);
 
             commandProcessor.chain.append(function (cmd) {
-                if (cmd instanceof MainController.OpenNewKokiWindowCommand) {
+                if (cmd instanceof Windows.OpenNewKokiWindowCommand) {
                     counter.inc('openNewKokiWindow command');
                     var openNewKokiWindow = cmd;
                     test.assert(function (v) {

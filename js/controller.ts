@@ -6,9 +6,6 @@ import Evt = require('event');
 import Memory = require('memory');
 import frame = require('frame')
 import noneWin = require('windows/none')
-import NewKkWin = require('windows/newkk');
-import IntroWin = require('windows/intro');
-import EditKElementWin = require('windows/editkelement');
 
 import StateLogic = require('statelogic');
 import TopicLogic = require('topiclogic');
@@ -16,50 +13,15 @@ import KokiLogic = require('kokilogic');
 import AccountLogic = require('accountlogic');
 import Account = require('account');
 
-import DiscussionWindow = require('windows/discussion')
-import EnvironsWindows = require('windows/environs');
 import Discussion = require('discussion');
 import Communicator = require('communicator')
 import Topic = require('topic');
 import Commands = require('command');
 import KElementCommands = require('kelementcommands');
-import WindowViewModel = require('windowviewmodel'); //TODO Rename
-
-export class WindowLogic {
-	constructor(private windowViewModel: WindowViewModel.Main, private windows: Windows, private commandProcessor: Commands.CommandProcessor) {
-		this.initCommandProcessor();
-	}
-	
-	private initCommandProcessor() {
-		this.disposables.append(
-			this.commandProcessor.chain.append(cmd => {
-				if(cmd instanceof OpenNewKokiWindowCommand) {
-					var openNewKokiWindowCommand = <OpenNewKokiWindowCommand>cmd;
-					this.windows.newKkWindow.model.setParentTopic(openNewKokiWindowCommand.topic);
-					this.windowViewModel.fillFrameWithWindow(WindowViewModel.Frame.Left, this.windows.newKkWindow.frame);
-					return true;
-				}
-				if(cmd instanceof KElementCommands.OpenEditKElementWindowCommand) {
-					var editKElementWindowCommand = <KElementCommands.OpenEditKElementWindowCommand>cmd;
-					this.windows.editKElementWindow.model.setKElementModel(editKElementWindowCommand.model);
-					this.windowViewModel.fillFrameWithWindow(WindowViewModel.Frame.Left, this.windows.editKElementWindow.frame);
-					return true;
-				}
-			})
-		);
-	}
-	
-	public dispose() {
-		this.disposables.dispose();
-	}
-	
-	private disposables = new Memory.DisposableContainer();
-}
+import Windows = require('windows'); //TODO Rename
 
 export class Controller {
 	constructor(private model: mdl.Model, private viewModel: vm.ViewModel, private communicator: Communicator.Main) {
-		
-		//var topicNavigationController = new topicNavigationCtr.Controller(model.topicNavigation, viewModel., { communicator: communicator.topic });
 		this.initCommandControl(communicator);
 		
 		this.initWindows();
@@ -81,16 +43,6 @@ export class Controller {
 				this.communicator.konsenskiste.create(createKokiCommand.data, topicId, id => createKokiCommand.then(id));
 				return true;
 			}
-			if(cmd instanceof OpenDiscussionWindowCommand) {
-				var openDiscussionWindowCommand = <OpenDiscussionWindowCommand>cmd;
-				this.discussionWin.discussable((<OpenDiscussionWindowCommand>cmd).discussableViewModel);
-				this.viewModel.left.win(this.discussionWin);
-				return true;
-			}
-			if(cmd instanceof OpenEnvironsWindowCommand) {
-				this.viewModel.left.win(new EnvironsWindows.Win());
-				return true;
-			}
 			if(cmd instanceof KElementCommands.UpdateGeneralContentCommand) {
 				var updateGeneralContentCommand = <KElementCommands.UpdateGeneralContentCommand>cmd;
 				this.communicator.konsenskiste.content.updateGeneral(updateGeneralContentCommand.content, { then: () => {
@@ -110,20 +62,19 @@ export class Controller {
 	}
 	
 	private initWindows() {
-		this.windows = new Windows(this.commandProcessor);
-		this.introWin = new IntroWin.Win();
+		this.windows = new Windows.Windows(this.commandProcessor);
 		
-		this.viewModel.left = new frame.WinContainer( this.introWin );
+		this.viewModel.left = new frame.WinContainer( this.windows.introFrame );
 		this.viewModel.right = new frame.WinContainer( new noneWin.Win() );
 		this.viewModel.center = new frame.WinContainer( new noneWin.Win() );
 	}
 	
 	private initWindowViewModel() {
-		this.windowViewModel = new WindowViewModel.Main({ center: this.viewModel.center, left: this.viewModel.left, right: this.viewModel.right });
+		this.windowViewModel = new Windows.WindowViewModel({ center: this.viewModel.center, left: this.viewModel.left, right: this.viewModel.right });
 	}
 	
 	private initWindowLogic() {
-		this.windowLogic = new WindowLogic(this.windowViewModel, this.windows, this.commandProcessor);
+		this.windowLogic = new Windows.WindowLogic(this.windowViewModel, this.windows, this.commandProcessor);
 	}
 	
 	private initKokiLogic() {
@@ -169,12 +120,10 @@ export class Controller {
 	
 	public commandProcessor = new Commands.CommandProcessor();
 	
-	private windowViewModel: WindowViewModel.Main;
-	private discussionWin = new DiscussionWindow.Win();
-	private introWin: IntroWin.Win;
-	private windows: Windows;
+	private windowViewModel: Windows.WindowViewModel;
+	private windows: Windows.Windows;
 	
-	private windowLogic: WindowLogic;
+	private windowLogic: Windows.WindowLogic;
 	private stateLogic: StateLogic.Controller;
 	private kokiLogic: KokiLogic.Controller;
 	private topicLogic: TopicLogic.Controller;
@@ -183,33 +132,6 @@ export class Controller {
 	private subscriptions: Evt.Subscription[] = [];
 }
 
-export class Windows {
-	public newKkWindow: NewKkWin.Main;
-	public editKElementWindow: EditKElementWin.Main;
-	
-	constructor(commandProcessor: Commands.CommandProcessor) {
-		this.newKkWindow = NewKkWin.Main.CreateEmpty(commandProcessor);
-		this.editKElementWindow = EditKElementWin.Main.CreateEmpty(commandProcessor);
-	}
-	
-	public dispose() {
-		this.newKkWindow.dispose();
-		this.editKElementWindow.dispose();
-	}
-}
-
 export class CreateNewKokiCommand extends Commands.Command {
 	constructor(public data: { title: string; text: string; }, public parentTopicId: Topic.TopicIdentifier, public then: (id: number) => void) { super() }
-}
-
-export class OpenNewKokiWindowCommand extends Commands.Command {
-	constructor(public topic: Topic.Model) { super() }
-}
-
-export class OpenDiscussionWindowCommand extends Commands.Command {
-	constructor(public discussableViewModel: Discussion.DiscussableViewModel) { super() }
-}
-
-export class OpenEnvironsWindowCommand extends Commands.Command {
-	constructor() { super() }
 }

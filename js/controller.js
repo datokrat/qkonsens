@@ -4,49 +4,14 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'topicnavigationmodel', 'memory', 'frame', 'windows/none', 'windows/newkk', 'windows/intro', 'windows/editkelement', 'statelogic', 'topiclogic', 'kokilogic', 'accountlogic', 'account', 'windows/discussion', 'windows/environs', 'command', 'kelementcommands', 'windowviewmodel'], function(require, exports, TopicNavigationModel, Memory, frame, noneWin, NewKkWin, IntroWin, EditKElementWin, StateLogic, TopicLogic, KokiLogic, AccountLogic, Account, DiscussionWindow, EnvironsWindows, Commands, KElementCommands, WindowViewModel) {
-    var WindowLogic = (function () {
-        function WindowLogic(windowViewModel, windows, commandProcessor) {
-            this.windowViewModel = windowViewModel;
-            this.windows = windows;
-            this.commandProcessor = commandProcessor;
-            this.disposables = new Memory.DisposableContainer();
-            this.initCommandProcessor();
-        }
-        WindowLogic.prototype.initCommandProcessor = function () {
-            var _this = this;
-            this.disposables.append(this.commandProcessor.chain.append(function (cmd) {
-                if (cmd instanceof OpenNewKokiWindowCommand) {
-                    var openNewKokiWindowCommand = cmd;
-                    _this.windows.newKkWindow.model.setParentTopic(openNewKokiWindowCommand.topic);
-                    _this.windowViewModel.fillFrameWithWindow(1 /* Left */, _this.windows.newKkWindow.frame);
-                    return true;
-                }
-                if (cmd instanceof KElementCommands.OpenEditKElementWindowCommand) {
-                    var editKElementWindowCommand = cmd;
-                    _this.windows.editKElementWindow.model.setKElementModel(editKElementWindowCommand.model);
-                    _this.windowViewModel.fillFrameWithWindow(1 /* Left */, _this.windows.editKElementWindow.frame);
-                    return true;
-                }
-            }));
-        };
-
-        WindowLogic.prototype.dispose = function () {
-            this.disposables.dispose();
-        };
-        return WindowLogic;
-    })();
-    exports.WindowLogic = WindowLogic;
-
+define(["require", "exports", 'topicnavigationmodel', 'frame', 'windows/none', 'statelogic', 'topiclogic', 'kokilogic', 'accountlogic', 'account', 'command', 'kelementcommands', 'windows'], function(require, exports, TopicNavigationModel, frame, noneWin, StateLogic, TopicLogic, KokiLogic, AccountLogic, Account, Commands, KElementCommands, Windows) {
     var Controller = (function () {
         function Controller(model, viewModel, communicator) {
             this.model = model;
             this.viewModel = viewModel;
             this.communicator = communicator;
             this.commandProcessor = new Commands.CommandProcessor();
-            this.discussionWin = new DiscussionWindow.Win();
             this.subscriptions = [];
-            //var topicNavigationController = new topicNavigationCtr.Controller(model.topicNavigation, viewModel., { communicator: communicator.topic });
             this.initCommandControl(communicator);
 
             this.initWindows();
@@ -70,16 +35,6 @@ define(["require", "exports", 'topicnavigationmodel', 'memory', 'frame', 'window
                     });
                     return true;
                 }
-                if (cmd instanceof OpenDiscussionWindowCommand) {
-                    var openDiscussionWindowCommand = cmd;
-                    _this.discussionWin.discussable(cmd.discussableViewModel);
-                    _this.viewModel.left.win(_this.discussionWin);
-                    return true;
-                }
-                if (cmd instanceof OpenEnvironsWindowCommand) {
-                    _this.viewModel.left.win(new EnvironsWindows.Win());
-                    return true;
-                }
                 if (cmd instanceof KElementCommands.UpdateGeneralContentCommand) {
                     var updateGeneralContentCommand = cmd;
                     _this.communicator.konsenskiste.content.updateGeneral(updateGeneralContentCommand.content, { then: function () {
@@ -100,20 +55,19 @@ define(["require", "exports", 'topicnavigationmodel', 'memory', 'frame', 'window
         };
 
         Controller.prototype.initWindows = function () {
-            this.windows = new Windows(this.commandProcessor);
-            this.introWin = new IntroWin.Win();
+            this.windows = new Windows.Windows(this.commandProcessor);
 
-            this.viewModel.left = new frame.WinContainer(this.introWin);
+            this.viewModel.left = new frame.WinContainer(this.windows.introFrame);
             this.viewModel.right = new frame.WinContainer(new noneWin.Win());
             this.viewModel.center = new frame.WinContainer(new noneWin.Win());
         };
 
         Controller.prototype.initWindowViewModel = function () {
-            this.windowViewModel = new WindowViewModel.Main({ center: this.viewModel.center, left: this.viewModel.left, right: this.viewModel.right });
+            this.windowViewModel = new Windows.WindowViewModel({ center: this.viewModel.center, left: this.viewModel.left, right: this.viewModel.right });
         };
 
         Controller.prototype.initWindowLogic = function () {
-            this.windowLogic = new WindowLogic(this.windowViewModel, this.windows, this.commandProcessor);
+            this.windowLogic = new Windows.WindowLogic(this.windowViewModel, this.windows, this.commandProcessor);
         };
 
         Controller.prototype.initKokiLogic = function () {
@@ -162,19 +116,6 @@ define(["require", "exports", 'topicnavigationmodel', 'memory', 'frame', 'window
     })();
     exports.Controller = Controller;
 
-    var Windows = (function () {
-        function Windows(commandProcessor) {
-            this.newKkWindow = NewKkWin.Main.CreateEmpty(commandProcessor);
-            this.editKElementWindow = EditKElementWin.Main.CreateEmpty(commandProcessor);
-        }
-        Windows.prototype.dispose = function () {
-            this.newKkWindow.dispose();
-            this.editKElementWindow.dispose();
-        };
-        return Windows;
-    })();
-    exports.Windows = Windows;
-
     var CreateNewKokiCommand = (function (_super) {
         __extends(CreateNewKokiCommand, _super);
         function CreateNewKokiCommand(data, parentTopicId, then) {
@@ -186,33 +127,4 @@ define(["require", "exports", 'topicnavigationmodel', 'memory', 'frame', 'window
         return CreateNewKokiCommand;
     })(Commands.Command);
     exports.CreateNewKokiCommand = CreateNewKokiCommand;
-
-    var OpenNewKokiWindowCommand = (function (_super) {
-        __extends(OpenNewKokiWindowCommand, _super);
-        function OpenNewKokiWindowCommand(topic) {
-            _super.call(this);
-            this.topic = topic;
-        }
-        return OpenNewKokiWindowCommand;
-    })(Commands.Command);
-    exports.OpenNewKokiWindowCommand = OpenNewKokiWindowCommand;
-
-    var OpenDiscussionWindowCommand = (function (_super) {
-        __extends(OpenDiscussionWindowCommand, _super);
-        function OpenDiscussionWindowCommand(discussableViewModel) {
-            _super.call(this);
-            this.discussableViewModel = discussableViewModel;
-        }
-        return OpenDiscussionWindowCommand;
-    })(Commands.Command);
-    exports.OpenDiscussionWindowCommand = OpenDiscussionWindowCommand;
-
-    var OpenEnvironsWindowCommand = (function (_super) {
-        __extends(OpenEnvironsWindowCommand, _super);
-        function OpenEnvironsWindowCommand() {
-            _super.call(this);
-        }
-        return OpenEnvironsWindowCommand;
-    })(Commands.Command);
-    exports.OpenEnvironsWindowCommand = OpenEnvironsWindowCommand;
 });

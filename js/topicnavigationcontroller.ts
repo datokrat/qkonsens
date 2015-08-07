@@ -9,6 +9,7 @@ import TSync = require('synchronizers/tsynchronizers');
 import ArraySync = require('synchronizers/childarraysynchronizer');
 import KonsenskisteModel = require('konsenskistemodel');
 import Commands = require('command');
+import Windows = require('windows');
 
 export class Controller {
 	constructor(model: Model.Model, viewModel: ViewModel.ViewModel, args: ControllerArgs) {
@@ -83,7 +84,7 @@ export class ModelViewModelController {
 		this.kokisController = new KokisViewModelController(model.kokis, viewModel.kokis, this.kokiCommandControl);
 		
 		viewModel.clickCreateNewKoki = () => {
-			commandProcessor.processCommand(new MainController.OpenNewKokiWindowCommand(this.model.selectedTopic()));
+			commandProcessor.processCommand(new Windows.OpenNewKokiWindowCommand(this.model.selectedTopic()));
 		};
 	}
 	

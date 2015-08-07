@@ -8,7 +8,7 @@ import KonsenskisteCommunicator = require('konsenskistecommunicator');
 import KonsenskisteWin = require('windows/konsenskiste');
 import KonsenskisteWinController = require('windows/konsenskistecontroller');
 import NewKkWin = require('windows/newkk');
-import WindowViewModel = require('windowviewmodel');
+import Windows = require('windows');
 
 import StateLogic = require('statelogic');
 import AccountLogic = require('accountlogic');
@@ -56,7 +56,7 @@ export class Controller {
 		this.konsenskisteWin = new KonsenskisteWin.Win();
 		this.konsenskisteWinController = this.createKonsenskisteWinController();
 		
-		this.resources.windowViewModel.fillFrameWithWindow(WindowViewModel.Frame.Center, this.konsenskisteWin);
+		this.resources.windowViewModel.fillFrameWithWindow(Windows.Frame.Center, this.konsenskisteWin);
 	}
 	
 	private onSelectAndLoadKokiCommandReceived(cmd: SelectAndLoadKokiCommand): boolean {
@@ -121,7 +121,7 @@ export class Controller {
 
 export class Resources {
 	public commandProcessor: Commands.CommandProcessor;
-	public windowViewModel: WindowViewModel.Main;
+	public windowViewModel: Windows.WindowViewModel;
 	public konsenskisteCommunicator: KonsenskisteCommunicator.Main;
 	public konsenskisteWinControllerFactory: KonsenskisteWinControllerFactory;
 }

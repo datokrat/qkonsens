@@ -28,6 +28,8 @@ import KokiLogic = require('../kokilogic');
 import StateLogic = require('../statelogic');
 import AccountLogic = require('../accountlogic');
 
+import Windows = require('../windows');
+
 export class Tests extends unit.TestClass {
 	private factory = new Factory();
 	private topicFactory = new TopicFactory();
@@ -152,7 +154,7 @@ export class Tests extends unit.TestClass {
 	processOpenNewKkWindowCommand() {
 		var topic = new tpc.Model();
 		topic.title('Parent Topic apgr');
-		this.cxt.controller.commandProcessor.processCommand(new ctr.OpenNewKokiWindowCommand(topic));
+		this.cxt.controller.commandProcessor.processCommand(new Windows.OpenNewKokiWindowCommand(topic));
 		test.assert(v => this.cxt.viewModel.left.win() instanceof NewKkWin.Win);
 		test.assert(v => (<NewKkWin.Win>this.cxt.viewModel.left.win()).parentName() == 'Parent Topic apgr');
 	}
@@ -161,7 +163,7 @@ export class Tests extends unit.TestClass {
 		var discussableViewModel: Discussion.DiscussableViewModel = {
 			discussion: ko.observable(new Discussion.ViewModel)
 		};
-		this.cxt.controller.commandProcessor.processCommand(new ctr.OpenDiscussionWindowCommand(discussableViewModel));
+		this.cxt.controller.commandProcessor.processCommand(new Windows.OpenDiscussionWindowCommand(discussableViewModel));
 		test.assert(v => this.cxt.viewModel.left.win() instanceof DiscussionWin.Win);
 	}
 	

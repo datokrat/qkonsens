@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'command', 'memory', 'windows/konsenskiste', 'windows/konsenskistecontroller', 'windowviewmodel', 'statelogic', 'accountlogic'], function(require, exports, Commands, Memory, KonsenskisteWin, KonsenskisteWinController, WindowViewModel, StateLogic, AccountLogic) {
+define(["require", "exports", 'command', 'memory', 'windows/konsenskiste', 'windows/konsenskistecontroller', 'windows', 'statelogic', 'accountlogic'], function(require, exports, Commands, Memory, KonsenskisteWin, KonsenskisteWinController, Windows, StateLogic, AccountLogic) {
     var Controller = (function () {
         function Controller(resources) {
             this.resources = resources;
