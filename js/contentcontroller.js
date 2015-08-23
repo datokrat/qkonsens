@@ -1,4 +1,7 @@
 define(["require", "exports", 'event'], function(require, exports, Events) {
+    //import ContextViewModel = require('contextviewmodel')
+    //import ContextModel = require('contextmodel')
+    //import ContextController = require('contextcontroller')
     var General = (function () {
         function General(model, viewModel, communicator) {
             var _this = this;

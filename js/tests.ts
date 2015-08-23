@@ -19,7 +19,7 @@ import synchronizer = require('tests/childarraysynchronizer')
 import commentSynchronizer = require('tests/commentsynchronizer')
 import observable = require('tests/observable')
 import content = require('tests/content')
-import context = require('tests/context')
+//import context = require('tests/context') TODO: reactivate
 import winKoki = require('tests/winkonsenskiste')
 import WinEditKElement = require('tests/wineditkelement');
 import ContentCommunicator = require('tests/contentcommunicator')
@@ -44,7 +44,7 @@ test.addTestClass(new observable.Tests, 'Observable');
 test.addTestClass(new ContentModelTests(), 'ContentModel');
 test.addTestClass(new content.General(), 'General Content');
 test.addTestClass(new content.Context(), 'Context');
-test.addTestClass(new context.Tests(), 'Context');
+//test.addTestClass(new context.Tests(), 'Context'); TODO: reactivate
 test.addTestClass(new Comment.Main(), 'Comment');
 test.addTestClass(new Discussion(), 'Discussion');
 test.addTestClass(new TestRatingCommunicator(), 'TestRatingCommunicator');

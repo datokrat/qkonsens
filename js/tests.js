@@ -1,4 +1,4 @@
-define(["require", "exports", 'tests/tsunit', 'tests/asyncunit', 'tests/locationhash', 'tests/rating', 'tests/comment', 'tests/discussion', 'tests/discussionsynchronizer', 'tests/ratingcommunicator', 'tests/topicnavigationmodel', 'tests/topicnavigation', 'tests/topic', 'tests/winbrowse', 'tests/controller', 'tests/konsenskistemodel', 'tests/kernaussage', 'tests/konsenskistecontroller', 'tests/childarraysynchronizer', 'tests/commentsynchronizer', 'tests/observable', 'tests/content', 'tests/context', 'tests/winkonsenskiste', 'tests/wineditkelement', 'tests/contentcommunicator', 'tests/konsenskistecommunicator', 'tests/contentmodel', 'tests/commands', 'tests/kelement', 'tests/statelogic', 'tests/topiclogic', 'tests/kokilogic'], function(require, exports, unit, asyncunit, LocationHash, Rating, Comment, Discussion, DiscussionSynchronizer, TestRatingCommunicator, topicNavigationModel, topicNavigation, topic, winBrowse, controller, kokiModel, kaModel, kokiController, synchronizer, commentSynchronizer, observable, content, context, winKoki, WinEditKElement, ContentCommunicator, KokiCommunicator, ContentModelTests, CommandTests, KElementTests, StateLogic, TopicLogic, KokiLogic) {
+define(["require", "exports", 'tests/tsunit', 'tests/asyncunit', 'tests/locationhash', 'tests/rating', 'tests/comment', 'tests/discussion', 'tests/discussionsynchronizer', 'tests/ratingcommunicator', 'tests/topicnavigationmodel', 'tests/topicnavigation', 'tests/topic', 'tests/winbrowse', 'tests/controller', 'tests/konsenskistemodel', 'tests/kernaussage', 'tests/konsenskistecontroller', 'tests/childarraysynchronizer', 'tests/commentsynchronizer', 'tests/observable', 'tests/content', 'tests/winkonsenskiste', 'tests/wineditkelement', 'tests/contentcommunicator', 'tests/konsenskistecommunicator', 'tests/contentmodel', 'tests/commands', 'tests/kelement', 'tests/statelogic', 'tests/topiclogic', 'tests/kokilogic'], function(require, exports, unit, asyncunit, LocationHash, Rating, Comment, Discussion, DiscussionSynchronizer, TestRatingCommunicator, topicNavigationModel, topicNavigation, topic, winBrowse, controller, kokiModel, kaModel, kokiController, synchronizer, commentSynchronizer, observable, content, winKoki, WinEditKElement, ContentCommunicator, KokiCommunicator, ContentModelTests, CommandTests, KElementTests, StateLogic, TopicLogic, KokiLogic) {
     var test = new unit.Test();
     var asyncTest = new asyncunit.Test();
 
@@ -11,7 +11,8 @@ define(["require", "exports", 'tests/tsunit', 'tests/asyncunit', 'tests/location
     test.addTestClass(new ContentModelTests(), 'ContentModel');
     test.addTestClass(new content.General(), 'General Content');
     test.addTestClass(new content.Context(), 'Context');
-    test.addTestClass(new context.Tests(), 'Context');
+
+    //test.addTestClass(new context.Tests(), 'Context'); TODO: reactivate
     test.addTestClass(new Comment.Main(), 'Comment');
     test.addTestClass(new Discussion(), 'Discussion');
     test.addTestClass(new TestRatingCommunicator(), 'TestRatingCommunicator');

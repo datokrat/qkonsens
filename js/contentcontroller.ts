@@ -5,9 +5,9 @@ import Model = require('contentmodel')
 import ViewModel = require('contentviewmodel')
 import Communicator = require('contentcommunicator')
 
-import ContextViewModel = require('contextviewmodel')
-import ContextModel = require('contextmodel')
-import ContextController = require('contextcontroller')
+//import ContextViewModel = require('contextviewmodel')
+//import ContextModel = require('contextmodel')
+//import ContextController = require('contextcontroller')
 
 export class General {
 	constructor(model: Model.General, viewModel: ViewModel.General, communicator: Communicator.Main) {

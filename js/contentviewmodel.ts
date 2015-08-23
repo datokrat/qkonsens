@@ -1,7 +1,7 @@
 import Observable = require('observable')
 import Events = require('event')
 
-import Context = require('contextviewmodel')
+//import Context = require('contextviewmodel')
 
 export class General {
 	public title: Observable.Observable<string>;
