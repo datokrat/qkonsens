@@ -13,9 +13,9 @@ interface MockHandle {
 }
 
 class Mocker {
-	public static mock(parentClass: any, name: string, mock: (old: () => any, arguments: IArguments) => any): MockHandle {
+	public static mock(parentClass: any, name: string, mock: (old: () => any, args: IArguments) => any): MockHandle {
 		var old = parentClass.prototype[name];
-		parentClass.prototype[name] = function() { var a = [old]; a = a.concat(arguments); mock.apply(this, a); };
+		parentClass.prototype[name] = function(args) { var a = [old]; a = a.concat(args); mock.apply(this, a); };
 		
 		return { unmock: () => parentClass.prototype[name] = old };
 	}

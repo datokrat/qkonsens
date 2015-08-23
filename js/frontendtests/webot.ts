@@ -1,7 +1,7 @@
 function initFrame() {
 	var frame = top.frames[2];
 	
-	frame.$.fn.simulateClick = function() {
+	frame['$'].fn.simulateClick = function() {
 	    return this.each(function() {
 	        if('createEvent' in document) {
 	            var doc = this.ownerDocument,
@@ -14,7 +14,7 @@ function initFrame() {
 	    });
 	}
 	
-	frame.$.fn.simulateMouseEvent = function(eventName) {
+	frame['$'].fn.simulateMouseEvent = function(eventName) {
 	    return this.each(function() {
 	        if('createEvent' in document) {
 	            var doc = this.ownerDocument,

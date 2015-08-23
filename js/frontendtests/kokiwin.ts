@@ -18,7 +18,7 @@ import TestCommunicator = require('tests/testcommunicator')
 
 declare var x;
 declare var ko;
-ko = top.frames[2].ko;
+ko = top.frames[2]['ko'];
 
 export class Tests {
 	private webot = new webot.Webot();

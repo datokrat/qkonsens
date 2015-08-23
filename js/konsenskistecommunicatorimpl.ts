@@ -47,7 +47,8 @@ export class Main implements IKonsenskisteCommunicator.Main {
 		var cxtContent = new Disco.Ontology.Content();
 		var cxtPost = new Disco.Ontology.Post();
 		var cxtReference = new Disco.Ontology.PostReference();
-		Common.Callbacks.batch([
+		
+		var batch = [
 			r => {
 				content = this.createContent(kaData, () => r(), err => onError(err));
 			},
@@ -80,7 +81,9 @@ export class Main implements IKonsenskisteCommunicator.Main {
 					discoContext.saveChanges().then(() => r()).fail(error => onError(error));
 				}
 			], r)) : r => r()
-		], (err) => {
+		]
+		
+		Common.Callbacks.batch(batch, (err) => {
 			if(err)
 				onError(err);
 			else {
