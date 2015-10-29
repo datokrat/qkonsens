@@ -40,7 +40,7 @@ export class WindowLogic {
 					return true;
 				}
 				if(cmd instanceof OpenEnvironsWindowCommand) {
-					this.windowViewModel.fillFrameWithWindow(Frame.Left, new EnvironsWindow.Win());
+					this.windowViewModel.fillFrameWithWindow(Frame.Left, this.windows.environsWindow);
 					return true;
 				}
 			})
@@ -57,6 +57,7 @@ export class WindowLogic {
 export class Windows {
 	public newKkWindow: NewKkWin.Main;
 	public editKElementWindow: EditKElementWin.Main;
+	public environsWindow: EnvironsWindow.Win;
 	
 	public introFrame = new IntroWin.Win();
 	public discussionFrame = new DiscussionWindow.Win();
@@ -64,6 +65,7 @@ export class Windows {
 	constructor(commandProcessor: Commands.CommandProcessor) {
 		this.newKkWindow = NewKkWin.Main.CreateEmpty(commandProcessor);
 		this.editKElementWindow = EditKElementWin.Main.CreateEmpty(commandProcessor);
+		this.environsWindow = new EnvironsWindow.Win(commandProcessor);
 	}
 	
 	public dispose() {
