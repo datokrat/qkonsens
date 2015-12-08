@@ -1,14 +1,14 @@
-var __extends = this.__extends || function (d, b) {
+var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'kernaussagemodel', 'kelement', 'factories/event', 'observable', 'querystate'], function(require, exports, KernaussageModel, KElement, EventFactory, Obs, QueryState) {
+define(["require", "exports", 'kernaussagemodel', 'kelement', 'factories/event', 'observable', 'querystate'], function (require, exports, KernaussageModel, KElement, EventFactory, Obs, QueryState) {
     var Model = (function (_super) {
         __extends(Model, _super);
         function Model(context) {
-            if (typeof context === "undefined") { context = new ModelContext; }
+            if (context === void 0) { context = new ModelContext; }
             _super.call(this);
             this.childKas = new Obs.ObservableArrayExtender(ko.observableArray());
             this.queryState = ko.observable(new QueryState.QueryState());
@@ -19,7 +19,6 @@ define(["require", "exports", 'kernaussagemodel', 'kelement', 'factories/event',
             this.setChildKas(rhs.childKas.get());
             this.queryState().set(rhs.queryState());
         };
-
         Model.prototype.setChildKas = function (other) {
             this.childKas.set(other.map(function (otherKa) {
                 var ka = new KernaussageModel.Model();
@@ -30,14 +29,12 @@ define(["require", "exports", 'kernaussagemodel', 'kelement', 'factories/event',
         return Model;
     })(KElement.Model);
     exports.Model = Model;
-
     var ChildKaEventArgs = (function () {
         function ChildKaEventArgs() {
         }
         return ChildKaEventArgs;
     })();
     exports.ChildKaEventArgs = ChildKaEventArgs;
-
     var ModelContext = (function () {
         function ModelContext() {
             this.eventFactory = new EventFactory.FactoryImpl();

@@ -3,6 +3,8 @@ import ContentCommunicator = require('contentcommunicator');
 import KernaussageCommunicator = require('kernaussagecommunicator');
 import DiscussionCommunicator = require('discussioncommunicator');
 import RatingCommunicator = require('ratingcommunicator');
+
+import Environs = require('environs');
 import KonsenskisteModel = require('konsenskistemodel');
 import KernaussageModel = require('kernaussagemodel');
 
@@ -11,7 +13,9 @@ export interface Main {
 	kernaussage: KernaussageCommunicator.Main;
 	discussion: DiscussionCommunicator.Base;
 	rating: RatingCommunicator.Base;
-	
+    
+	environs: Environs.Communicator;
+    
 	received: Events.Event<ReceivedArgs>;
 	receiptError: Events.Event<ReceiptErrorArgs>;
 	kernaussageAppended: Events.Event<KaAppendedArgs>;

@@ -1,4 +1,4 @@
-define(["require", "exports", '../kernaussagemodel'], function(require, exports, ka) {
+define(["require", "exports", '../kernaussagemodel'], function (require, exports, ka) {
     var Factory = (function () {
         function Factory() {
         }

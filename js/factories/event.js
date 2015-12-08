@@ -1,4 +1,4 @@
-define(["require", "exports", "../event"], function(require, exports, Event) {
+define(["require", "exports", "../event"], function (require, exports, Event) {
     var FactoryImpl = (function () {
         function FactoryImpl() {
         }

@@ -1,4 +1,4 @@
-define(["require", "exports", 'event', 'rating', 'discocontext', 'disco', 'common'], function(require, exports, Events, Rating, discoContext, disco, common) {
+define(["require", "exports", 'event', 'rating', 'discocontext', 'disco', 'common'], function (require, exports, Events, Rating, discoContext, disco, common) {
     var Main = (function () {
         function Main() {
             this.ratingSubmitted = new Events.EventImpl();
@@ -14,10 +14,10 @@ define(["require", "exports", 'event', 'rating', 'discocontext', 'disco', 'commo
             var onError = function (err) {
                 _this.ratingSubmissionFailed.raise({ ratableId: ratableId, error: err });
             };
-
             if (rating != 'none') {
                 this.submitDiscoRating(ratableId, ScoreParser.fromRatingToDisco(rating), { then: onSuccess, fail: onError });
-            } else {
+            }
+            else {
                 onError(new Error('rating deletion not implemented'));
             }
         };
@@ -29,16 +29,15 @@ define(["require", "exports", 'event', 'rating', 'discocontext', 'disco', 'commo
             var onError = function (err) {
                 //this.ratingSubmissionFailed.raise({ ratableId: ratableId, error: err });
             };
-
             if (rating != 'none') {
                 this.submitDiscoRating(ratableId, ScoreParser.fromLikeRatingToDisco(rating), { then: onSuccess, fail: onError });
-            } else {
+            }
+            else {
                 onError(new Error('rating deletion not implemented'));
             }
         };
-
         Main.prototype.submitDiscoRating = function (ratableId, score, callbacks) {
-            if (typeof callbacks === "undefined") { callbacks = {}; }
+            if (callbacks === void 0) { callbacks = {}; }
             var ratings;
             var discoRating;
             var userName = disco.AuthData().user;
@@ -46,10 +45,8 @@ define(["require", "exports", 'event', 'rating', 'discocontext', 'disco', 'commo
                 function (r) {
                     discoContext.Ratings.filter(function (it) {
                         return it.ModifiedBy.Author.Alias == this.userName && it.PostId == this.ratableId.toString();
-                    }, { userName: userName, ratableId: ratableId }).toArray().then(function (results) {
-                        ratings = results;
-                        r();
-                    });
+                    }, { userName: userName, ratableId: ratableId })
+                        .toArray().then(function (results) { ratings = results; r(); });
                 },
                 function (r) {
                     if (ratings.length == 0) {
@@ -67,20 +64,18 @@ define(["require", "exports", 'event', 'rating', 'discocontext', 'disco', 'commo
                 function (r) {
                     discoRating.Score = score;
                     discoRating.UserId = '12';
-                    discoContext.saveChanges().then(r).fail(function (args) {
-                        return callbacks.fail && callbacks.fail(args);
-                    });
+                    discoContext.saveChanges()
+                        .then(r)
+                        .fail(function (args) { return callbacks.fail && callbacks.fail(args); });
                 }
             ], function () {
                 callbacks.then && callbacks.then();
             });
         };
-        Main.prototype.queryRating = function (ratableId) {
-        };
+        Main.prototype.queryRating = function (ratableId) { };
         return Main;
     })();
     exports.Main = Main;
-
     var Parser = (function () {
         function Parser() {
         }
@@ -98,7 +93,6 @@ define(["require", "exports", 'event', 'rating', 'discocontext', 'disco', 'commo
             });
             return out;
         };
-
         Parser.prototype.parseLikeRating = function (rawRatings, out) {
             var rating = this.parse(rawRatings);
             out = out || new Rating.LikeRatingModel();
@@ -109,7 +103,6 @@ define(["require", "exports", 'event', 'rating', 'discocontext', 'disco', 'commo
         return Parser;
     })();
     exports.Parser = Parser;
-
     var ScoreParser = (function () {
         function ScoreParser() {
         }
@@ -122,7 +115,6 @@ define(["require", "exports", 'event', 'rating', 'discocontext', 'disco', 'commo
         ScoreParser.fromLikeRatingToDisco = function (qkRating) {
             return ScoreParser.fromRatingToDisco(qkRating);
         };
-
         ScoreParser.fromRatingToLikeRating = function (rating) {
             if (rating == 'like' || rating == 'stronglike')
                 return 'like';
@@ -131,14 +123,12 @@ define(["require", "exports", 'event', 'rating', 'discocontext', 'disco', 'commo
             else
                 return rating;
         };
-
         ScoreParser.fromDisco = function (discoRating) {
             if (discoRating != null)
                 return ScoreParser.strings[Math.round(discoRating / 3) + 2];
             else
                 return 'none';
         };
-
         ScoreParser.strings = ['strongdislike', 'dislike', 'neutral', 'like', 'stronglike'];
         return ScoreParser;
     })();

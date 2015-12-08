@@ -1,10 +1,10 @@
-var __extends = this.__extends || function (d, b) {
+var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/asyncunit', 'tests/test', '../common', '../locationhash'], function(require, exports, unit, test, Common, LocationHash) {
+define(["require", "exports", 'tests/asyncunit', 'tests/test', '../common', '../locationhash'], function (require, exports, unit, test, Common, LocationHash) {
     var Tests = (function (_super) {
         __extends(Tests, _super);
         function Tests() {
@@ -17,13 +17,9 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', '../common', '../
                 counter.inc('changed');
                 console.log('ok');
             });
-
             location.hash = Math.random().toString();
-
             setTimeout(cb(function () {
-                test.assert(function (v) {
-                    return v.val(counter.get('changed')) == 1;
-                });
+                test.assert(function (v) { return v.val(counter.get('changed')) == 1; });
                 subscription.dispose();
                 location.hash = '';
                 r();

@@ -1,4 +1,4 @@
-define(["require", "exports", '../event', '../itemcontainer'], function(require, exports, Evt, ItemContainer) {
+define(["require", "exports", '../event', '../itemcontainer'], function (require, exports, Evt, ItemContainer) {
     var Main = (function () {
         function Main() {
             this.childrenReceived = new Evt.EventImpl();
@@ -12,33 +12,28 @@ define(["require", "exports", '../event', '../itemcontainer'], function(require,
             else
                 this.testTopics.set(id.id, children);
         };
-
         Main.prototype.queryChildren = function (id, out) {
-            try  {
+            try {
                 if (id.root)
                     this.childrenReceived.raise({ id: id, children: this.testRootTopic });
                 var children = this.testTopics.get(id.id);
                 this.childrenReceived.raise({ id: id, children: children });
-            } catch (e) {
-                //TODO
+            }
+            catch (e) {
             }
         };
-
         Main.prototype.queryContainedKokis = function (id, out) {
         };
         return Main;
     })();
     exports.Main = Main;
-
     var Stub = (function () {
         function Stub() {
             this.childrenReceived = new Evt.EventImpl();
             this.containedKokisReceived = new Evt.EventImpl();
         }
-        Stub.prototype.queryChildren = function (id) {
-        };
-        Stub.prototype.queryContainedKokis = function (id) {
-        };
+        Stub.prototype.queryChildren = function (id) { };
+        Stub.prototype.queryContainedKokis = function (id) { };
         return Stub;
     })();
     exports.Stub = Stub;

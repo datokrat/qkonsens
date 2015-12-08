@@ -1,4 +1,4 @@
-define(["require", "exports", '../konsenskistecontroller'], function(require, exports, ctr) {
+define(["require", "exports", '../konsenskistecontroller'], function (require, exports, ctr) {
     var Factory = (function () {
         function Factory() {
         }
@@ -11,14 +11,11 @@ define(["require", "exports", '../konsenskistecontroller'], function(require, ex
         return Factory;
     })();
     exports.Factory = Factory;
-
     var NullController = (function () {
         function NullController() {
         }
-        NullController.prototype.dispose = function () {
-        };
-        NullController.prototype.setViewModelContext = function () {
-        };
+        NullController.prototype.dispose = function () { };
+        NullController.prototype.setViewModelContext = function () { };
         return NullController;
     })();
 });

@@ -1,4 +1,4 @@
-define(["require", "exports", 'event', 'common', 'discocontext', 'contentcommunicatorimpl', 'kernaussagecommunicatorimpl', 'discussioncommunicatorimpl', 'ratingcommunicatorimpl', 'konsenskistemodel', 'kernaussagemodel', 'contentmodel'], function (require, exports, Events, Common, discoContext, ContentCommunicator, KernaussageCommunicator, DiscussionCommunicatorImpl, RatingCommunicatorImpl, KonsenskisteModel, KernaussageModel, ContentModel) {
+define(["require", "exports", 'event', 'common', 'discocontext', 'contentcommunicatorimpl', 'kernaussagecommunicatorimpl', 'discussioncommunicatorimpl', 'ratingcommunicatorimpl', 'environs', 'konsenskistemodel', 'kernaussagemodel', 'contentmodel'], function (require, exports, Events, Common, discoContext, ContentCommunicator, KernaussageCommunicator, DiscussionCommunicatorImpl, RatingCommunicatorImpl, Environs, KonsenskisteModel, KernaussageModel, ContentModel) {
     var Main = (function () {
         function Main() {
             this.received = new Events.EventImpl();
@@ -11,6 +11,7 @@ define(["require", "exports", 'event', 'common', 'discocontext', 'contentcommuni
             this.discussion.content = this.content;
             this.kernaussage = new KernaussageCommunicator.Main({ content: this.content });
             this.rating = new RatingCommunicatorImpl.Main();
+            this.environs = new Environs.Communicator();
         }
         Main.prototype.createAndAppendKa = function (kokiId, kaData) {
             var _this = this;

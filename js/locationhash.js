@@ -1,11 +1,9 @@
-define(["require", "exports", 'event'], function(require, exports, Evt) {
+define(["require", "exports", 'event'], function (require, exports, Evt) {
     var changeEventEnabled = true;
     var hashVal = null;
-
     function setHashVal(val) {
         return hashVal = val;
     }
-
     var LocationHash = (function () {
         function LocationHash() {
         }
@@ -13,15 +11,13 @@ define(["require", "exports", 'event'], function(require, exports, Evt) {
             return location.hash;
         };
         LocationHash.set = function (hash, raiseEvent) {
-            if (typeof raiseEvent === "undefined") { raiseEvent = true; }
+            if (raiseEvent === void 0) { raiseEvent = true; }
             location.hash = setHashVal(hash);
         };
         LocationHash.changed = new Evt.EventImpl();
         return LocationHash;
     })();
-
     hashVal = LocationHash.get();
-
     $(function () {
         $(window).hashchange(function () {
             var newHash = LocationHash.get().slice(1);
@@ -31,7 +27,5 @@ define(["require", "exports", 'event'], function(require, exports, Evt) {
             }
         });
     });
-
-    
     return LocationHash;
 });

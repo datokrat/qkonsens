@@ -1,4 +1,4 @@
-define(["require", "exports", 'discocontext'], function(require, exports, discoContext) {
+define(["require", "exports", 'discocontext'], function (require, exports, discoContext) {
     var DiscoHelper = (function () {
         function DiscoHelper() {
         }
@@ -8,19 +8,16 @@ define(["require", "exports", 'discocontext'], function(require, exports, discoC
         return DiscoHelper;
     })();
     exports.DiscoHelper = DiscoHelper;
-
     var PostHelper = (function () {
         function PostHelper() {
         }
         PostHelper.querySingle = function (id) {
-            discoContext.Posts.first(function (it) {
-                return it.Id == this.id;
-            }, { id: id }).fail(HelperOptions.onError);
+            discoContext.Posts.first(function (it) { return it.Id == this.id; }, { id: id })
+                .fail(HelperOptions.onError);
         };
         return PostHelper;
     })();
     exports.PostHelper = PostHelper;
-
     var HelperOptions = (function () {
         function HelperOptions() {
         }

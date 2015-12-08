@@ -1,4 +1,4 @@
-define(["require", "exports", 'communicator', 'konsenskistecommunicatorimpl', 'topiccommunicatorimpl', 'command', 'disco', 'discocontext'], function(require, exports, Communicator, KokiCommunicatorImpl, TopicImpl, Commands, disco, discoContext) {
+define(["require", "exports", 'communicator', 'konsenskistecommunicatorimpl', 'topiccommunicatorimpl', 'command', 'disco', 'discocontext'], function (require, exports, Communicator, KokiCommunicatorImpl, TopicImpl, Commands, disco, discoContext) {
     var CommunicatorImpl = (function () {
         function CommunicatorImpl() {
             this.konsenskiste = new KokiCommunicatorImpl.Main;
@@ -7,9 +7,7 @@ define(["require", "exports", 'communicator', 'konsenskistecommunicatorimpl', 't
             this.commandProcessor.chain.append(function (cmd) {
                 if (cmd instanceof Communicator.LoginCommand) {
                     var typedCmd = cmd;
-                    disco.AuthData = function () {
-                        return ({ user: typedCmd.userName, password: 'password' });
-                    };
+                    disco.AuthData = function () { return ({ user: typedCmd.userName, password: 'password' }); };
                     return true;
                 }
                 return false;
@@ -17,11 +15,7 @@ define(["require", "exports", 'communicator', 'konsenskistecommunicatorimpl', 't
             this.commandProcessor.chain.append(function (cmd) {
                 if (cmd instanceof Communicator.GetAllUsersCommand) {
                     var typedCmd = cmd;
-                    discoContext.Users.toArray().then(function (users) {
-                        return typedCmd.then(users.map(function (u) {
-                            return u.Alias;
-                        }));
-                    });
+                    discoContext.Users.toArray().then(function (users) { return typedCmd.then(users.map(function (u) { return u.Alias; })); });
                     return true;
                 }
                 return false;
@@ -29,7 +23,5 @@ define(["require", "exports", 'communicator', 'konsenskistecommunicatorimpl', 't
         }
         return CommunicatorImpl;
     })();
-
-    
     return CommunicatorImpl;
 });

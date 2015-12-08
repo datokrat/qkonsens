@@ -1,10 +1,10 @@
-var __extends = this.__extends || function (d, b) {
+var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'tests/tsunit', 'tests/test', 'synchronizers/childarraysynchronizer'], function(require, exports, unit, test, synchronizer) {
+define(["require", "exports", 'tests/tsunit', 'tests/test', 'synchronizers/childarraysynchronizer'], function (require, exports, unit, test, synchronizer) {
     var Tests = (function (_super) {
         __extends(Tests, _super);
         function Tests() {
@@ -16,89 +16,57 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', 'synchronizers/child
             var model = new Model();
             var insertionCtr = 0;
             var removalCtr = 0;
-
             sync.setViewModelInsertionHandler(function (viewModel) {
-                test.assert(function () {
-                    return viewModel.mdl == model;
-                });
+                test.assert(function () { return viewModel.mdl == model; });
                 insertionCtr++;
             });
             sync.setViewModelRemovalHandler(function (viewModel) {
-                test.assert(function () {
-                    return viewModel.mdl == model;
-                });
+                test.assert(function () { return viewModel.mdl == model; });
                 removalCtr++;
             });
-
             sync.inserted(model);
-            test.assert(function () {
-                return insertionCtr == 1 && removalCtr == 0;
-            });
+            test.assert(function () { return insertionCtr == 1 && removalCtr == 0; });
             sync.removed(model);
-            test.assert(function () {
-                return insertionCtr == 1 && removalCtr == 1;
-            });
+            test.assert(function () { return insertionCtr == 1 && removalCtr == 1; });
         };
-
         Tests.prototype.testRemovalOfNonExistentModel = function () {
             var sync = this.synchronizerFactory.create();
-            sync.setViewModelInsertionHandler(function (viewModel) {
-                return test.assert(function () {
-                    return !"inserted";
-                });
-            });
-            sync.setViewModelRemovalHandler(function (viewModel) {
-                return test.assert(function () {
-                    return !"removed";
-                });
-            });
-
+            sync.setViewModelInsertionHandler(function (viewModel) { return test.assert(function () { return !"inserted"; }); });
+            sync.setViewModelRemovalHandler(function (viewModel) { return test.assert(function () { return !"removed"; }); });
             var model = new Model();
             sync.removed(model);
-
-            test.assert(function () {
-                return model.vm == null;
-            });
+            test.assert(function () { return model.vm == null; });
         };
-
         Tests.prototype.testDoubleRegistering = function () {
             var sync = this.synchronizerFactory.create();
-            sync.setViewModelInsertionHandler(function () {
-            });
-            sync.setViewModelRemovalHandler(function () {
-            });
+            sync.setViewModelInsertionHandler(function () { });
+            sync.setViewModelRemovalHandler(function () { });
             var model = new Model();
-
             test.assertThrows(function () {
                 sync.inserted(model);
                 sync.inserted(model);
             });
         };
-
         Tests.prototype.testWithoutHandlers = function () {
             var sync = this.synchronizerFactory.create();
             sync.setViewModelInsertionHandler(null);
             sync.setViewModelRemovalHandler(null);
             var model = new Model();
-
             sync.inserted(model);
             sync.removed(model);
         };
-
         Tests.prototype.testManyInsertions = function () {
             var sync = this.synchronizerFactory.create();
             sync.setViewModelInsertionHandler(null);
             sync.setViewModelRemovalHandler(null);
             var model1 = new Model;
             var model2 = new Model;
-
             sync.inserted(model1);
             sync.inserted(model2);
         };
         return Tests;
     })(unit.TestClass);
     exports.Tests = Tests;
-
     var SynchronizerFactory = (function () {
         function SynchronizerFactory() {
         }
@@ -106,31 +74,22 @@ define(["require", "exports", 'tests/tsunit', 'tests/test', 'synchronizers/child
             var sync = new synchronizer.ChildArraySynchronizer();
             var insertionCtr = 0;
             var removalCtr = 0;
-
-            sync.setViewModelFactory({ create: function () {
-                    return new ViewModel();
-                } });
-            sync.setControllerFactory({ create: function (model, viewModel) {
-                    return new Controller(model, viewModel);
-                } });
-
+            sync.setViewModelFactory({ create: function () { return new ViewModel(); } });
+            sync.setControllerFactory({ create: function (model, viewModel) { return new Controller(model, viewModel); } });
             return sync;
         };
         return SynchronizerFactory;
     })();
-
     var Model = (function () {
         function Model() {
         }
         return Model;
     })();
-
     var ViewModel = (function () {
         function ViewModel() {
         }
         return ViewModel;
     })();
-
     var Controller = (function () {
         function Controller(model, viewModel) {
             this.args = arguments;

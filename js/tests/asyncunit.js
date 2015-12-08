@@ -1,20 +1,19 @@
-var __extends = this.__extends || function (d, b) {
+var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'common'], function(require, exports, common) {
+define(["require", "exports", 'common'], function (require, exports, common) {
     var Test = (function () {
         function Test() {
             this.tests = [];
             this.testClass = new TestClass();
         }
         Test.prototype.addTestClass = function (testClass, name) {
-            if (typeof name === "undefined") { name = 'Tests'; }
+            if (name === void 0) { name = 'Tests'; }
             this.tests.push(new TestDefintion(testClass, name));
         };
-
         Test.prototype.isReservedFunctionName = function (functionName) {
             for (var prop in this.testClass) {
                 if (prop === functionName) {
@@ -23,129 +22,128 @@ define(["require", "exports", 'common'], function(require, exports, common) {
             }
             return false;
         };
-
         Test.prototype.run = function (then) {
             var _this = this;
             var testContext = new TestContext();
             var testResult = new TestResult();
-
-            var unitBatch = this.tests.map(function (test) {
-                return function (r) {
-                    var testClass = test.testClass;
-                    var testName = test.name;
-
-                    var functionBatch = common.Obj.props(testClass).map(function (prop) {
-                        return function (r) {
-                            if (!_this.isReservedFunctionName(prop) && typeof testClass[prop] === 'function') {
-                                common.Callbacks.batch([
-                                    function (r) {
-                                        if (typeof testClass['setUp'] === 'function')
-                                            testClass['setUp'](r);
-                                        else
-                                            r();
-                                    },
-                                    function (r) {
-                                        var async = false;
-                                        var ready = false;
-                                        var then = function (err) {
-                                            if (!ready) {
-                                                ready = true;
-                                                if (!err)
-                                                    testResult.passes.push(new TestDescription(testName, prop, 'OK'));
-                                                else {
-                                                    testResult.errors.push(new TestDescription(testName, prop, err.toString()));
-                                                    console.log('asyncunit', err);
-                                                }
-                                                r();
-                                            }
-                                        };
-                                        var cb = function (cb) {
-                                            return function () {
-                                                var args = [];
-                                                for (var _i = 0; _i < (arguments.length - 0); _i++) {
-                                                    args[_i] = arguments[_i + 0];
-                                                }
-                                                try  {
-                                                    return cb.apply(this, arguments);
-                                                } catch (e) {
-                                                    then(e);
-                                                }
-                                            };
-                                        };
-                                        try  {
-                                            testClass[prop](function () {
-                                                return async = true;
-                                            }, then, cb, testContext);
-                                        } catch (e) {
+            var unitBatch = this.tests.map(function (test) { return function (r) {
+                var testClass = test.testClass;
+                var testName = test.name;
+                var functionBatch = common.Obj.props(testClass).map(function (prop) { return function (r) {
+                    if (!_this.isReservedFunctionName(prop) && typeof testClass[prop] === 'function') {
+                        common.Callbacks.batch([
+                            function (r) {
+                                if (typeof testClass['setUp'] === 'function')
+                                    testClass['setUp'](r);
+                                else
+                                    r();
+                            },
+                            function (r) {
+                                var async = false;
+                                var ready = false;
+                                var then = function (err) {
+                                    if (!ready) {
+                                        ready = true;
+                                        if (!err)
+                                            testResult.passes.push(new TestDescription(testName, prop, 'OK'));
+                                        else {
+                                            testResult.errors.push(new TestDescription(testName, prop, err.toString()));
+                                            console.log('asyncunit', err);
+                                        }
+                                        r();
+                                    }
+                                };
+                                var cb = function (cb) {
+                                    return function () {
+                                        var args = [];
+                                        for (var _i = 0; _i < arguments.length; _i++) {
+                                            args[_i - 0] = arguments[_i];
+                                        }
+                                        try {
+                                            return cb.apply(this, arguments);
+                                        }
+                                        catch (e) {
                                             then(e);
                                         }
-
-                                        if (!async)
-                                            then(null);
-                                    },
-                                    function (r) {
-                                        if (typeof testClass['tearDown'] === 'function')
-                                            testClass['tearDown'](r);
-                                        else
-                                            r();
-                                    }
-                                ], function (err) {
-                                    if (err) {
-                                        testResult.errors.push(new TestDescription(testName, prop, err.toString()));
-                                        console.log('asyncunit', err);
-                                    }
+                                    };
+                                };
+                                try {
+                                    testClass[prop](function () { return async = true; }, then, cb, testContext);
+                                }
+                                catch (e) {
+                                    then(e);
+                                }
+                                if (!async)
+                                    then(null);
+                            },
+                            function (r) {
+                                if (typeof testClass['tearDown'] === 'function')
+                                    testClass['tearDown'](r);
+                                else
                                     r();
-                                });
-                            } else
-                                r();
-                        };
-                    });
-                    common.Callbacks.batch(functionBatch, r);
-                };
-            });
-            common.Callbacks.batch(unitBatch, function () {
-                return then(testResult);
-            });
+                            }
+                        ], function (err) {
+                            if (err) {
+                                testResult.errors.push(new TestDescription(testName, prop, err.toString()));
+                                console.log('asyncunit', err);
+                            }
+                            r();
+                        });
+                    }
+                    else
+                        r();
+                }; });
+                common.Callbacks.batch(functionBatch, r);
+            }; });
+            common.Callbacks.batch(unitBatch, function () { return then(testResult); });
             /*for (var i = 0; i < this.tests.length; ++i) {
-            var testClass = this.tests[i].testClass;
-            var testName = this.tests[i].name;
-            for (var prop in testClass) {
-            if (!this.isReservedFunctionName(prop)) {
-            if (typeof testClass[prop] === 'function') {
-            if (typeof testClass['setUp'] === 'function') {
-            testClass['setUp']();
+                var testClass = this.tests[i].testClass;
+                var testName = this.tests[i].name;
+                for (var prop in testClass) {
+                    if (!this.isReservedFunctionName(prop)) {
+                        if (typeof testClass[prop] === 'function') {
+                            if (typeof testClass['setUp'] === 'function') {
+                                testClass['setUp']();
+                            }
+                            try {
+                                testClass[prop](testContext);
+                                testResult.passes.push(new TestDescription(testName, prop, 'OK'));
+                            } catch (err) {
+                                testResult.errors.push(new TestDescription(testName, prop, err.toString()));
+                            }
+                            if (typeof testClass['tearDown'] === 'function') {
+                                testClass['tearDown']();
+                            }
+                        }
+                    }
+                }
             }
-            try {
-            testClass[prop](testContext);
-            testResult.passes.push(new TestDescription(testName, prop, 'OK'));
-            } catch (err) {
-            testResult.errors.push(new TestDescription(testName, prop, err.toString()));
-            }
-            if (typeof testClass['tearDown'] === 'function') {
-            testClass['tearDown']();
-            }
-            }
-            }
-            }
-            }
-            
+   
             return testResult;*/
         };
-
         Test.prototype.showResults = function (target, result) {
-            var template = '<article>' + '<h1>' + this.getTestResult(result) + '</h1>' + '<p>' + this.getTestSummary(result) + '</p>' + '<section id="tsFail">' + '<h2>Errors</h2>' + '<ul class="bad">' + this.getTestResultList(result.errors) + '</ul>' + '</section>' + '<section id="tsOkay">' + '<h2>Passing Tests</h2>' + '<ul class="good">' + this.getTestResultList(result.passes) + '</ul>' + '</section>' + '</article>';
-
+            var template = '<article>' +
+                '<h1>' + this.getTestResult(result) + '</h1>' +
+                '<p>' + this.getTestSummary(result) + '</p>' +
+                '<section id="tsFail">' +
+                '<h2>Errors</h2>' +
+                '<ul class="bad">' + this.getTestResultList(result.errors) + '</ul>' +
+                '</section>' +
+                '<section id="tsOkay">' +
+                '<h2>Passing Tests</h2>' +
+                '<ul class="good">' + this.getTestResultList(result.passes) + '</ul>' +
+                '</section>' +
+                '</article>';
             target.innerHTML = template;
         };
-
         Test.prototype.getTestResult = function (result) {
             return result.errors.length === 0 ? 'Test Passed' : 'Test Failed';
         };
-
         Test.prototype.getTestSummary = function (result) {
-            return 'Total tests: <span id="tsUnitTotalCout">' + (result.passes.length + result.errors.length).toString() + '</span>. ' + 'Passed tests: <span id="tsUnitPassCount" class="good">' + result.passes.length + '</span>. ' + 'Failed tests: <span id="tsUnitFailCount" class="bad">' + result.errors.length + '</span>.';
+            return 'Total tests: <span id="tsUnitTotalCout">' + (result.passes.length + result.errors.length).toString() + '</span>. ' +
+                'Passed tests: <span id="tsUnitPassCount" class="good">' + result.passes.length + '</span>. ' +
+                'Failed tests: <span id="tsUnitFailCount" class="bad">' + result.errors.length + '</span>.';
         };
-
         Test.prototype.getTestResultList = function (testResults) {
             var list = '';
             var group = '';
@@ -156,7 +154,8 @@ define(["require", "exports", 'common'], function(require, exports, common) {
                     group = result.testName;
                     if (isFirst) {
                         isFirst = false;
-                    } else {
+                    }
+                    else {
                         list += '</li></ul>';
                     }
                     list += '<li>' + result.testName + '<ul>';
@@ -165,84 +164,79 @@ define(["require", "exports", 'common'], function(require, exports, common) {
             }
             return list + '</ul>';
         };
-
         Test.prototype.encodeHtmlEntities = function (input) {
             var entitiesToReplace = { '&': '&amp;', '<': '&lt;', '>': '&gt;' };
-            input.replace(/[&<>]/g, function (entity) {
-                return entitiesToReplace[entity] || entity;
-            });
+            input.replace(/[&<>]/g, function (entity) { return entitiesToReplace[entity] || entity; });
             return input;
         };
         return Test;
     })();
     exports.Test = Test;
-
     var TestContext = (function () {
         function TestContext() {
         }
         TestContext.prototype.setUp = function (r) {
             r();
         };
-
         TestContext.prototype.tearDown = function (r) {
             r();
         };
-
         TestContext.prototype.areIdentical = function (a, b) {
             if (a !== b) {
-                throw 'areIdentical failed when given ' + '{' + (typeof a) + '} "' + a + '" and ' + '{' + (typeof b) + '} "' + b + '"';
+                throw 'areIdentical failed when given ' +
+                    '{' + (typeof a) + '} "' + a + '" and ' +
+                    '{' + (typeof b) + '} "' + b + '"';
             }
         };
-
         TestContext.prototype.areNotIdentical = function (a, b) {
             if (a === b) {
-                throw 'areNotIdentical failed when given ' + '{' + (typeof a) + '} "' + a + '" and ' + '{' + (typeof b) + '} "' + b + '"';
+                throw 'areNotIdentical failed when given ' +
+                    '{' + (typeof a) + '} "' + a + '" and ' +
+                    '{' + (typeof b) + '} "' + b + '"';
             }
         };
-
         TestContext.prototype.isTrue = function (a) {
             if (!a) {
-                throw 'isTrue failed when given ' + '{' + (typeof a) + '} "' + a + '"';
+                throw 'isTrue failed when given ' +
+                    '{' + (typeof a) + '} "' + a + '"';
             }
         };
-
         TestContext.prototype.isFalse = function (a) {
             if (a) {
-                throw 'isFalse failed when given ' + '{' + (typeof a) + '} "' + a + '"';
+                throw 'isFalse failed when given ' +
+                    '{' + (typeof a) + '} "' + a + '"';
             }
         };
-
         TestContext.prototype.isTruthy = function (a) {
             if (!a) {
-                throw 'isTrue failed when given ' + '{' + (typeof a) + '} "' + a + '"';
+                throw 'isTrue failed when given ' +
+                    '{' + (typeof a) + '} "' + a + '"';
             }
         };
-
         TestContext.prototype.isFalsey = function (a) {
             if (a) {
-                throw 'isFalse failed when given ' + '{' + (typeof a) + '} "' + a + '"';
+                throw 'isFalse failed when given ' +
+                    '{' + (typeof a) + '} "' + a + '"';
             }
         };
-
         TestContext.prototype.throws = function (a) {
             var isThrown = false;
-            try  {
+            try {
                 a();
-            } catch (ex) {
+            }
+            catch (ex) {
                 isThrown = true;
             }
             if (!isThrown) {
                 throw 'did not throw an error';
             }
         };
-
         TestContext.prototype.fail = function () {
             throw 'fail';
         };
         return TestContext;
     })();
     exports.TestContext = TestContext;
-
     var TestClass = (function (_super) {
         __extends(TestClass, _super);
         function TestClass() {
@@ -251,7 +245,6 @@ define(["require", "exports", 'common'], function(require, exports, common) {
         return TestClass;
     })(TestContext);
     exports.TestClass = TestClass;
-
     var FakeFunction = (function () {
         function FakeFunction(name, delgate) {
             this.name = name;
@@ -260,14 +253,13 @@ define(["require", "exports", 'common'], function(require, exports, common) {
         return FakeFunction;
     })();
     exports.FakeFunction = FakeFunction;
-
     var Fake = (function () {
         function Fake(obj) {
             for (var prop in obj) {
                 if (typeof obj[prop] === 'function') {
-                    this[prop] = function () {
-                    };
-                } else {
+                    this[prop] = function () { };
+                }
+                else {
                     this[prop] = null;
                 }
             }
@@ -275,18 +267,15 @@ define(["require", "exports", 'common'], function(require, exports, common) {
         Fake.prototype.create = function () {
             return this;
         };
-
         Fake.prototype.addFunction = function (name, delegate) {
             this[name] = delegate;
         };
-
         Fake.prototype.addProperty = function (name, value) {
             this[name] = value;
         };
         return Fake;
     })();
     exports.Fake = Fake;
-
     var TestDefintion = (function () {
         function TestDefintion(testClass, name) {
             this.testClass = testClass;
@@ -294,7 +283,6 @@ define(["require", "exports", 'common'], function(require, exports, common) {
         }
         return TestDefintion;
     })();
-
     var TestError = (function () {
         function TestError(name, message) {
             this.name = name;
@@ -302,7 +290,6 @@ define(["require", "exports", 'common'], function(require, exports, common) {
         }
         return TestError;
     })();
-
     var TestDescription = (function () {
         function TestDescription(testName, funcName, message) {
             this.testName = testName;
@@ -312,7 +299,6 @@ define(["require", "exports", 'common'], function(require, exports, common) {
         return TestDescription;
     })();
     exports.TestDescription = TestDescription;
-
     var TestResult = (function () {
         function TestResult() {
             this.passes = [];

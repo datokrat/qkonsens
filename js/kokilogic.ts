@@ -9,6 +9,9 @@ import KonsenskisteWin = require('windows/konsenskiste');
 import KonsenskisteWinController = require('windows/konsenskistecontroller');
 import NewKkWin = require('windows/newkk');
 import Windows = require('windows');
+/* At run-time, the import declaration loads the 'environs' module and produces a reference to its module instance 
+   through which it is possible to reference the exported function */
+import Environs = require('environs');
 
 import StateLogic = require('statelogic');
 import AccountLogic = require('accountlogic');
@@ -32,6 +35,8 @@ export class Controller {
 			if(cmd instanceof SetKokiCommand) return this.onSetKokiCommandReceived(<SetKokiCommand>cmd);
 			if(cmd instanceof AccountLogic.HandleChangedAccountCommand) return this.onHandleChangedAccountCommandReceived(<AccountLogic.HandleChangedAccountCommand>cmd);
 			if(cmd instanceof StateLogic.ChangeKokiStateCommand) return this.onChangeKokiStateCommandReceived(<StateLogic.ChangeKokiStateCommand>cmd);
+            
+            if(cmd instanceof LoadEnvironsCommand) return this.onLoadEnvironsCommandReceived(<LoadEnvironsCommand>cmd);
 		});
 		
 		this.internalCommandProcessor = new Commands.CommandProcessor();
@@ -85,7 +90,10 @@ export class Controller {
 		this.selectAndLoadKoki(cmd.state.kokiId);
 		return true;
 	}
-	
+	private onLoadEnvironsCommandReceived(cmd: LoadEnvironsCommand): boolean {
+        this.resources.konsenskisteCommunicator.environs.loadEnvirons(cmd.kElementID, cmd.success);
+        return true
+        }
 	private selectAndLoadKoki(id: number) {
 		this.setKoki(this.resources.konsenskisteCommunicator.query(id));
 	}
@@ -141,4 +149,8 @@ export class SetKokiCommand extends Commands.Command {
 
 export class HandleChangedKokiWinStateCommand extends Commands.Command {
 	constructor(public state: KonsenskisteWinController.State) { super() }
+    
 }
+export class LoadEnvironsCommand extends Commands.Command {
+    constructor(public kElementID: any, public success: (model: Environs.Model) => void) { super()}
+    }

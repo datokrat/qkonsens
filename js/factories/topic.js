@@ -1,4 +1,4 @@
-define(["require", "exports", '../topic'], function(require, exports, Topic) {
+define(["require", "exports", '../topic'], function (require, exports, Topic) {
     var Main = (function () {
         function Main() {
         }

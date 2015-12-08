@@ -113,6 +113,7 @@ export class Controller<Mdl extends Model, Vm extends ViewModel, Com extends Com
 	}
 	
 	private initEnvirons() {
+        this.model.environs().parentID = this.model.id();
 		this.viewModel.environs = ko.observable<Environs.ViewModel>();
 		this.environsSynchronizer = new KSync.EnvironsSynchronizer({ commandProcessor: this.parentCommandProcessor })
 			.setViewModelObservable(this.viewModel.environs)

@@ -8,12 +8,12 @@ define(["require", "exports", 'frame'], function (require, exports, frame) {
     var Win = (function (_super) {
         __extends(Win, _super);
         function Win(commandProcessor) {
-            var _this = this;
             _super.call(this, 'environs-win-template', null);
             this.commandProcessor = commandProcessor;
             this.submitClick = function () {
-                _this.commandProcessor.processCommand(new KommandoDasEsNochNichtGibt());
+                // this.commandProcessor.processCommand(new KommandoDasEsNochNichtGibt());
             };
+            console.log(this.commandProcessor);
         }
         return Win;
     })(frame.Win);

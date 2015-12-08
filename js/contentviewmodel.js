@@ -1,4 +1,4 @@
-define(["require", "exports"], function(require, exports) {
+define(["require", "exports"], function (require, exports) {
     //import Context = require('contextviewmodel')
     var General = (function () {
         function General() {
@@ -6,7 +6,6 @@ define(["require", "exports"], function(require, exports) {
         return General;
     })();
     exports.General = General;
-
     var Context = (function () {
         function Context() {
         }

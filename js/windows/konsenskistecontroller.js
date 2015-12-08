@@ -1,4 +1,4 @@
-define(["require", "exports", 'factories/konsenskistecontroller', '../konsenskistemodel', '../konsenskisteviewmodel', '../kokilogic'], function(require, exports, KokiControllerFactory, kokiMdl, kokiVm, KokiLogic) {
+define(["require", "exports", 'factories/konsenskistecontroller', '../konsenskistemodel', '../konsenskisteviewmodel', '../kokilogic'], function (require, exports, KokiControllerFactory, kokiMdl, kokiVm, KokiLogic) {
     var ControllerImpl = (function () {
         function ControllerImpl(konsenskisteModel, windowViewModel, args) {
             this.args = args;
@@ -20,39 +20,29 @@ define(["require", "exports", 'factories/konsenskistecontroller', '../konsenskis
                     _this.args.commandProcessor.processCommand(new KokiLogic.SelectAndLoadKokiCommand(koki.id()));
                 }
             };
-            this.window.state.subscribe(function (state) {
-                return _this.args.commandProcessor.floodCommand(new KokiLogic.HandleChangedKokiWinStateCommand(state));
-            });
+            this.window.state.subscribe(function (state) { return _this.args.commandProcessor.floodCommand(new KokiLogic.HandleChangedKokiWinStateCommand(state)); });
         };
-
         ControllerImpl.prototype.initKonsenskiste = function (konsenskisteModel) {
             this.disposeKonsenskiste();
-
             var konsenskisteViewModel = new kokiVm.ViewModel;
             this.konsenskisteModel = konsenskisteModel;
             this.konsenskisteController = this.konsenskisteControllerFactory.create(konsenskisteModel, konsenskisteViewModel, this.args);
-
             this.window.kkView(konsenskisteViewModel);
             if (konsenskisteModel)
                 this.window.state({ kokiId: konsenskisteModel && konsenskisteModel.id() });
             else
                 this.window.state(null);
         };
-
         ControllerImpl.prototype.disposeKonsenskiste = function () {
             if (this.konsenskisteController)
                 this.konsenskisteController.dispose();
         };
-
         ControllerImpl.prototype.setKonsenskisteModel = function (konsenskisteModel) {
             this.initKonsenskiste(konsenskisteModel);
         };
-
         ControllerImpl.prototype.dispose = function () {
             this.konsenskisteController.dispose();
-            this.subscriptions.forEach(function (s) {
-                return s.dispose();
-            });
+            this.subscriptions.forEach(function (s) { return s.dispose(); });
         };
         return ControllerImpl;
     })();

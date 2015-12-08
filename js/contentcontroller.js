@@ -1,4 +1,4 @@
-define(["require", "exports", 'event'], function(require, exports, Events) {
+define(["require", "exports", 'event'], function (require, exports, Events) {
     //import ContextViewModel = require('contextviewmodel')
     //import ContextModel = require('contextmodel')
     //import ContextController = require('contextcontroller')
@@ -15,17 +15,10 @@ define(["require", "exports", 'event'], function(require, exports, Events) {
             this.viewModel = viewModel;
             this.model = model;
             this.communicator = communicator;
-
-            this.viewModel.title = ko.computed(function () {
-                return model.title();
-            });
-            this.viewModel.text = ko.computed(function () {
-                return model.text();
-            });
-
+            this.viewModel.title = ko.computed(function () { return model.title(); });
+            this.viewModel.text = ko.computed(function () { return model.text(); });
             this.communicator.generalContentRetrieved.subscribe(this.onContentRetrieved);
         };
-
         General.prototype.dispose = function () {
             this.viewModel.title.dispose();
             this.viewModel.text.dispose();
@@ -34,7 +27,6 @@ define(["require", "exports", 'event'], function(require, exports, Events) {
         return General;
     })();
     exports.General = General;
-
     var Context = (function () {
         function Context(model, viewModel, communicator) {
             var _this = this;
@@ -44,17 +36,10 @@ define(["require", "exports", 'event'], function(require, exports, Events) {
             };
             this.model = model;
             this.viewModel = viewModel;
-
-            this.viewModel.text = ko.computed(function () {
-                return model.text();
-            });
+            this.viewModel.text = ko.computed(function () { return model.text(); });
             this.viewModel.isVisible = ko.observable(false);
-
             this.viewModel.toggleVisibility = new Events.EventImpl();
-            this.viewModel.toggleVisibility.subscribe(function () {
-                return _this.toggleVisibility();
-            });
-
+            this.viewModel.toggleVisibility.subscribe(function () { return _this.toggleVisibility(); });
             this.communicator = communicator;
             this.communicator.contextRetrieved.subscribe(this.onUpdateRetrieved);
         }
@@ -62,7 +47,6 @@ define(["require", "exports", 'event'], function(require, exports, Events) {
             var isVisible = this.viewModel.isVisible();
             this.viewModel.isVisible(!isVisible);
         };
-
         Context.prototype.dispose = function () {
             this.viewModel.text.dispose();
             this.communicator.contextRetrieved.unsubscribe(this.onUpdateRetrieved);

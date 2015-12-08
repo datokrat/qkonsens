@@ -1,13 +1,11 @@
-define(["require", "exports"], function(require, exports) {
+define(["require", "exports"], function (require, exports) {
     var DisposableBase = (function () {
         function DisposableBase() {
         }
-        DisposableBase.prototype.dispose = function () {
-        };
+        DisposableBase.prototype.dispose = function () { };
         return DisposableBase;
     })();
     exports.DisposableBase = DisposableBase;
-
     var DisposableContainer = (function () {
         function DisposableContainer() {
             this.disposables = [];
@@ -20,11 +18,8 @@ define(["require", "exports"], function(require, exports) {
                 return arg;
             }
         };
-
         DisposableContainer.prototype.dispose = function () {
-            this.disposables.forEach(function (d) {
-                return d.dispose();
-            });
+            this.disposables.forEach(function (d) { return d.dispose(); });
             this.disposables = [];
         };
         return DisposableContainer;

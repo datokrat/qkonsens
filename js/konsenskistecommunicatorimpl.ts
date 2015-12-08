@@ -12,6 +12,9 @@ import RatingCommunicatorImpl = require('ratingcommunicatorimpl')
 import IContentCommunicator = require('contentcommunicator')
 import IKernaussageCommunicator = require('kernaussagecommunicator')
 
+import Environs = require('environs')
+
+
 import KonsenskisteModel = require('konsenskistemodel')
 import KernaussageModel = require('kernaussagemodel')
 import ContentModel = require('contentmodel')
@@ -22,6 +25,9 @@ export class Main implements IKonsenskisteCommunicator.Main {
 	public kernaussage: IKernaussageCommunicator.Main;
 	public discussion: DiscussionCommunicator.Base;
 	public rating: RatingCommunicator.Base;
+    
+    public environs: Environs.Communicator;
+    
 	public received = new Events.EventImpl<IKonsenskisteCommunicator.ReceivedArgs>();
 	public receiptError = new Events.EventImpl<IKonsenskisteCommunicator.ReceiptErrorArgs>();
 	public kernaussageAppended = new Events.EventImpl<IKonsenskisteCommunicator.KaAppendedArgs>();
@@ -34,6 +40,7 @@ export class Main implements IKonsenskisteCommunicator.Main {
 		this.discussion.content = this.content;
 		this.kernaussage = new KernaussageCommunicator.Main({ content: this.content });
 		this.rating = new RatingCommunicatorImpl.Main();
+        this.environs = new Environs.Communicator();
 	}
 	
 	public createAndAppendKa(kokiId: number, kaData: IKonsenskisteCommunicator.KernaussageData) {

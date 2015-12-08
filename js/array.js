@@ -5,7 +5,6 @@ Array.prototype.removeOne = function (el) {
         return true;
     }
 };
-
 Array.prototype.removeOneByPredicate = function (pr) {
     var index = this.indexOf(this.first(pr));
     if (index != -1) {
@@ -13,7 +12,6 @@ Array.prototype.removeOneByPredicate = function (pr) {
         return true;
     }
 };
-
 Array.prototype.where = function (predicate) {
     var ret = [];
     for (var i = 0; i < this.length; ++i) {
@@ -22,14 +20,12 @@ Array.prototype.where = function (predicate) {
     }
     return ret;
 };
-
 Array.prototype.first = function (predicate) {
     for (var i = 0; i < this.length; ++i) {
         if (predicate(this[i]))
             return this[i];
     }
 };
-
 Array.prototype.get = function (index) {
     if (index >= 0)
         return this[index];

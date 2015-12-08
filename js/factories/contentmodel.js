@@ -1,4 +1,4 @@
-define(["require", "exports", '../contentmodel'], function(require, exports, ContentModel) {
+define(["require", "exports", '../contentmodel'], function (require, exports, ContentModel) {
     var Factory = (function () {
         function Factory() {
         }
@@ -8,7 +8,6 @@ define(["require", "exports", '../contentmodel'], function(require, exports, Con
             cnt.text(text);
             return cnt;
         };
-
         Factory.prototype.createContext = function (text) {
             var cxt = new ContentModel.Context();
             cxt.text(text);
@@ -16,7 +15,5 @@ define(["require", "exports", '../contentmodel'], function(require, exports, Con
         };
         return Factory;
     })();
-
-    
     return Factory;
 });

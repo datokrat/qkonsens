@@ -1,4 +1,4 @@
-define(["require", "exports"], function(require, exports) {
+define(["require", "exports"], function (require, exports) {
     var Context = (function () {
         function Context() {
             this.text = ko.observable();
@@ -10,7 +10,6 @@ define(["require", "exports"], function(require, exports) {
         return Context;
     })();
     exports.Context = Context;
-
     var General = (function () {
         function General() {
             this.title = ko.observable();

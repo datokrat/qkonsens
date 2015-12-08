@@ -1,4 +1,4 @@
-define(["require", "exports"], function(require, exports) {
+define(["require", "exports"], function (require, exports) {
     var Main = (function () {
         function Main() {
             this.items = {};
@@ -10,14 +10,12 @@ define(["require", "exports"], function(require, exports) {
             else
                 throw new Error('item does not exist: id = ' + id);
         };
-
         Main.prototype.set = function (id, value) {
             return this.items[id] = value;
         };
         return Main;
     })();
     exports.Main = Main;
-
     var Many = (function () {
         function Many() {
             this.containers = [];
@@ -26,21 +24,19 @@ define(["require", "exports"], function(require, exports) {
             var ret;
             var err = new Error('ItemContainer.Many.get: id[' + id + '] not available');
             this.containers.forEach(function (c) {
-                try  {
+                try {
                     ret = c.get(id);
                     return;
-                } catch (e) {
                 }
+                catch (e) { }
             });
             if (ret)
                 return ret;
             throw err;
         };
-
         Many.prototype.insertContainer = function (container) {
             this.containers.push(container);
         };
-
         Many.prototype.removeContainer = function (container) {
             var index = this.containers.indexOf(container);
             if (index != -1)

@@ -1,4 +1,4 @@
-define(["require", "exports"], function(require, exports) {
+define(["require", "exports"], function (require, exports) {
     var ViewModelContext = (function () {
         function ViewModelContext(left, right, center) {
             this.left = left;
@@ -16,7 +16,5 @@ define(["require", "exports"], function(require, exports) {
         };
         return ViewModelContext;
     })();
-
-    
     return ViewModelContext;
 });

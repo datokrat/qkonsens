@@ -66,6 +66,7 @@ export class Windows {
 		this.newKkWindow = NewKkWin.Main.CreateEmpty(commandProcessor);
 		this.editKElementWindow = EditKElementWin.Main.CreateEmpty(commandProcessor);
 		this.environsWindow = new EnvironsWindow.Win(commandProcessor);
+        console.log(commandProcessor);
 	}
 	
 	public dispose() {

@@ -1,7 +1,7 @@
-define(["require", "exports"], function(require, exports) {
+define(["require", "exports"], function (require, exports) {
     var Model = (function () {
         function Model(args) {
-            if (typeof args === "undefined") { args = { userName: 'anonymous' }; }
+            if (args === void 0) { args = { userName: 'anonymous' }; }
             this.userName = args.userName;
         }
         Model.prototype.eq = function (other) {
@@ -10,7 +10,6 @@ define(["require", "exports"], function(require, exports) {
         return Model;
     })();
     exports.Model = Model;
-
     var ViewModel = (function () {
         function ViewModel() {
         }

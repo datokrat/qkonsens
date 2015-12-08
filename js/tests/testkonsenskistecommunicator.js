@@ -1,4 +1,4 @@
-define(["require", "exports", '../id', 'event', 'itemcontainer', 'tests/testcontentcommunicator', 'tests/testkernaussagecommunicator', 'tests/testdiscussioncommunicator', 'tests/testratingcommunicator', '../konsenskistemodel', '../kernaussagemodel'], function(require, exports, newId, Events, ItemContainer, TestContentCommunicator, TestKaCommunicator, TestDiscussionCommunicator, TestRatingCommunicator, KonsenskisteModel, KernaussageModel) {
+define(["require", "exports", '../id', 'event', 'itemcontainer', 'tests/testcontentcommunicator', 'tests/testkernaussagecommunicator', 'tests/testdiscussioncommunicator', 'tests/testratingcommunicator', '../konsenskistemodel', '../kernaussagemodel'], function (require, exports, newId, Events, ItemContainer, TestContentCommunicator, TestKaCommunicator, TestDiscussionCommunicator, TestRatingCommunicator, KonsenskisteModel, KernaussageModel) {
     var Main = (function () {
         function Main() {
             this.received = new Events.EventImpl();
@@ -15,17 +15,18 @@ define(["require", "exports", '../id', 'event', 'itemcontainer', 'tests/testcont
         Main.prototype.setTestKoki = function (koki) {
             if (typeof koki.id() === 'number') {
                 this.testItems.set(koki.id(), koki);
-            } else
+            }
+            else
                 throw new Error('TestKokiCommunicator.setTestKoki: koki.id is not a number');
         };
-
         Main.prototype.query = function (id, out) {
-            try  {
+            try {
                 out = out || new KonsenskisteModel.Model();
                 out.id(id);
                 out.queryState().loading(true);
                 out.set(this.testItems.get(id));
-            } catch (e) {
+            }
+            catch (e) {
                 out.queryState().error('id[' + id + '] not found');
                 out.queryState().loading(false);
                 this.receiptError.raise({ id: id, message: 'id[' + id + '] not found', konsenskiste: out });
@@ -36,11 +37,11 @@ define(["require", "exports", '../id', 'event', 'itemcontainer', 'tests/testcont
             this.received.raise({ id: id, konsenskiste: out });
             return out;
         };
-
         Main.prototype.createAndAppendKa = function (kokiId, kaData) {
-            try  {
+            try {
                 var koki = this.testItems.get(kokiId);
-            } catch (e) {
+            }
+            catch (e) {
                 this.kernaussageAppendingError.raise({
                     konsenskisteId: kokiId,
                     message: "createAndAppendKa: kokiId[" + kokiId + "] not found"
@@ -59,7 +60,6 @@ define(["require", "exports", '../id', 'event', 'itemcontainer', 'tests/testcont
                 kernaussageData: kaData
             });
         };
-
         Main.prototype.create = function (kokiData, parentTopicId, then) {
             var koki = new KonsenskisteModel.Model();
             koki.id(newId());
@@ -71,7 +71,6 @@ define(["require", "exports", '../id', 'event', 'itemcontainer', 'tests/testcont
         return Main;
     })();
     exports.Main = Main;
-
     var Stub = (function () {
         function Stub() {
             this.content = new TestContentCommunicator();
@@ -83,15 +82,9 @@ define(["require", "exports", '../id', 'event', 'itemcontainer', 'tests/testcont
             this.discussion = new TestDiscussionCommunicator();
             this.rating = new TestRatingCommunicator.Stub();
         }
-        Stub.prototype.query = function (id, out) {
-            throw new Error('not implemented');
-        };
-        Stub.prototype.createAndAppendKa = function (kokiId, ka) {
-            throw new Error('not implemented');
-        };
-        Stub.prototype.create = function (koki, parentTopicId, then) {
-            throw new Error('not implemented');
-        };
+        Stub.prototype.query = function (id, out) { throw new Error('not implemented'); };
+        Stub.prototype.createAndAppendKa = function (kokiId, ka) { throw new Error('not implemented'); };
+        Stub.prototype.create = function (koki, parentTopicId, then) { throw new Error('not implemented'); };
         return Stub;
     })();
     exports.Stub = Stub;

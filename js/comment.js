@@ -1,4 +1,4 @@
-define(["require", "exports", 'synchronizers/ksynchronizers', 'contentmodel', 'rating', 'command'], function(require, exports, KSync, ContentModel, Rating, Commands) {
+define(["require", "exports", 'synchronizers/ksynchronizers', 'contentmodel', 'rating', 'command'], function (require, exports, KSync, ContentModel, Rating, Commands) {
     var Model = (function () {
         function Model() {
             this.content = ko.observable(new ContentModel.General);
@@ -8,7 +8,6 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'contentmodel', 'r
         return Model;
     })();
     exports.Model = Model;
-
     var idCtr = 0;
     var ViewModel = (function () {
         function ViewModel() {
@@ -17,7 +16,6 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'contentmodel', 'r
         return ViewModel;
     })();
     exports.ViewModel = ViewModel;
-
     var Controller = (function () {
         function Controller(model, viewModel, communicator) {
             var _this = this;
@@ -25,18 +23,19 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'contentmodel', 'r
             this.communicator = communicator;
             this.commandProcessor = new Commands.CommandProcessor();
             this.initCommandProcessor();
-
             viewModel.author = model.author;
             viewModel.content = ko.observable();
             viewModel.removeClick = function () {
                 _this.commentableModel && _this.commentableModel.removeComment(model);
             };
-
-            this.contentSynchronizer = new KSync.GeneralContentSynchronizer(communicator.content).setViewModelObservable(viewModel.content).setModelObservable(model.content);
-
+            this.contentSynchronizer = new KSync.GeneralContentSynchronizer(communicator.content)
+                .setViewModelObservable(viewModel.content)
+                .setModelObservable(model.content);
             viewModel.rating = ko.observable();
             this.ratingSynchronizer = new KSync.LikeRatingSynchronizer(this.commandProcessor);
-            this.ratingSynchronizer.setViewModelObservable(viewModel.rating).setModelObservable(model.rating);
+            this.ratingSynchronizer
+                .setViewModelObservable(viewModel.rating)
+                .setModelObservable(model.rating);
         }
         Controller.prototype.initCommandProcessor = function () {
             var _this = this;
@@ -49,11 +48,9 @@ define(["require", "exports", 'synchronizers/ksynchronizers', 'contentmodel', 'r
                 return false;
             });
         };
-
         Controller.prototype.setCommentableModel = function (commentableModel) {
             this.commentableModel = commentableModel;
         };
-
         Controller.prototype.dispose = function () {
             this.contentSynchronizer.dispose();
             this.ratingSynchronizer.dispose();

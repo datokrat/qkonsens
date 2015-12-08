@@ -1,4 +1,4 @@
-define(["require", "exports", 'topicnavigationmodel', 'account'], function(require, exports, topicNavigation, Account) {
+define(["require", "exports", 'topicnavigationmodel', 'account'], function (require, exports, topicNavigation, Account) {
     var ModelImpl = (function () {
         function ModelImpl() {
             this.topicNavigation = new topicNavigation.ModelImpl;

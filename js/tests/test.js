@@ -1,10 +1,10 @@
-var __extends = this.__extends || function (d, b) {
+var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports"], function(require, exports) {
+define(["require", "exports"], function (require, exports) {
     var TestErrorBase = (function () {
         function TestErrorBase() {
         }
@@ -14,7 +14,6 @@ define(["require", "exports"], function(require, exports) {
         return TestErrorBase;
     })();
     exports.TestErrorBase = TestErrorBase;
-
     var TestError = (function (_super) {
         __extends(TestError, _super);
         function TestError(message) {
@@ -27,7 +26,6 @@ define(["require", "exports"], function(require, exports) {
         return TestError;
     })(TestErrorBase);
     exports.TestError = TestError;
-
     function assert(condition) {
         var valueCollector = new ValueCollector();
         if (!condition(valueCollector)) {
@@ -35,7 +33,6 @@ define(["require", "exports"], function(require, exports) {
         }
     }
     exports.assert = assert;
-
     var ValueCollector = (function () {
         function ValueCollector() {
             this.values = [];
@@ -44,7 +41,6 @@ define(["require", "exports"], function(require, exports) {
             this.values.push(value);
             return value;
         };
-
         ValueCollector.prototype.str = function (value) {
             this.values.push(JSON.stringify(value));
             return value;
@@ -52,19 +48,18 @@ define(["require", "exports"], function(require, exports) {
         return ValueCollector;
     })();
     exports.ValueCollector = ValueCollector;
-
     function assertThrows(action) {
         var throwed = false;
-        try  {
+        try {
             action();
-        } catch (e) {
+        }
+        catch (e) {
             throwed = true;
         }
         if (!throwed)
             throw new TestError("assertThrows");
     }
     exports.assertThrows = assertThrows;
-
     function getFnBody(fn) {
         var entire = fn.toString();
         return entire.slice(entire.indexOf(" return ") + 8, entire.lastIndexOf("}"));

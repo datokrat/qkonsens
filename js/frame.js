@@ -1,24 +1,20 @@
-define(["require", "exports", 'common'], function(require, exports, cmn) {
+define(["require", "exports", 'common'], function (require, exports, cmn) {
     var Win = (function () {
         function Win(viewTemplate, view) {
             this.state = ko.observable();
-            this.onEnter = function () {
-            };
-            this.onLeave = function () {
-            };
+            this.onEnter = function () { };
+            this.onLeave = function () { };
             this.viewTemplate = viewTemplate;
             this.view = view;
         }
-        Win.prototype.setState = function (newState) {
-        };
+        Win.prototype.setState = function (newState) { };
         return Win;
     })();
     exports.Win = Win;
-
     var WinContainer = (function () {
         function WinContainer(win) {
             var _this = this;
-            this.history = ko.observableArray();
+            this.history = ko.observableArray(); //Also contains this.win
             this.win = ko.observable();
             this.lastWin = ko.observable(null);
             this.onChangeWinStateCombi = function (newCombi) {
@@ -34,15 +30,10 @@ define(["require", "exports", 'common'], function(require, exports, cmn) {
             //
             this.pushHistory = function (combi) {
                 if (_this.isCombinationPushable(combi)) {
-                    cmn.Coll.koRemoveWhere(_this.history, function (x) {
-                        return cmn.Comp.genericEq(x, combi);
-                    });
+                    cmn.Coll.koRemoveWhere(_this.history, function (x) { return cmn.Comp.genericEq(x, combi); });
                     _this.history.push(combi);
-                } else {
-                    //this.goBack();
-                    /*var upperCombi = this.history()[this.history().length-1];
-                    upperCombi.win.setState(upperCombi.state);
-                    this.win(upperCombi.win);*/
+                }
+                else {
                 }
             };
             //removes the current window and activates the previous
@@ -83,13 +74,11 @@ define(["require", "exports", 'common'], function(require, exports, cmn) {
             });
             this.winStateCombi.subscribe(this.onChangeWinStateCombi);
             this.win.subscribe(this.onChangeWin);
-
             this.win(win);
         }
         return WinContainer;
     })();
     exports.WinContainer = WinContainer;
-
     var WinStateCombi = (function () {
         function WinStateCombi(win, state) {
             this.win = win;

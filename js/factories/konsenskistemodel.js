@@ -1,4 +1,4 @@
-define(["require", "exports", '../konsenskistemodel'], function(require, exports, koki) {
+define(["require", "exports", '../konsenskistemodel'], function (require, exports, koki) {
     var Factory = (function () {
         function Factory() {
         }
@@ -9,7 +9,6 @@ define(["require", "exports", '../konsenskistemodel'], function(require, exports
             konsenskiste.general().title(title);
             return konsenskiste;
         };
-
         Factory.prototype.setEventFactory = function (value) {
             this.eventFactory = value;
             return this;

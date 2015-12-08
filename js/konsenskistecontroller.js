@@ -1,10 +1,10 @@
-var __extends = this.__extends || function (d, b) {
+var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'kernaussagemodel', 'factories/kernaussagemodel', 'synchronizers/kokisynchronizers', 'kelement'], function(require, exports, KernaussageModel, KernaussageFactory, KokiSync, KElement) {
+define(["require", "exports", 'kernaussagemodel', 'factories/kernaussagemodel', 'synchronizers/kokisynchronizers', 'kelement'], function (require, exports, KernaussageModel, KernaussageFactory, KokiSync, KElement) {
     var ControllerImpl = (function (_super) {
         __extends(ControllerImpl, _super);
         function ControllerImpl(model, viewModel, args) {
@@ -34,18 +34,15 @@ define(["require", "exports", 'kernaussagemodel', 'factories/kernaussagemodel', 
             this.initProperties();
             this.initKas();
         };
-
         ControllerImpl.prototype.setViewModelContext = function (cxt) {
             this.cxt = cxt;
             this.discussionSynchronizer.setViewModelContext(cxt);
             this.kaSynchronizer.setViewModelContext(cxt);
             return this;
         };
-
         ControllerImpl.prototype.initProperties = function () {
             this.viewModel.queryState = this.model.queryState;
         };
-
         ControllerImpl.prototype.initKas = function () {
             var _this = this;
             this.viewModel.childKas = ko.observableArray();
@@ -62,7 +59,6 @@ define(["require", "exports", 'kernaussagemodel', 'factories/kernaussagemodel', 
                 var ka = kaFactory.create(_this.viewModel.newKaText(), _this.viewModel.newKaTitle());
                 if (_this.viewModel.newKaContext())
                     ka.context().text(_this.viewModel.newKaContext());
-
                 var kaData = {
                     title: ka.general().title(),
                     text: ka.general().text(),
@@ -76,27 +72,21 @@ define(["require", "exports", 'kernaussagemodel', 'factories/kernaussagemodel', 
                 });
                 _this.communicator.createAndAppendKa(_this.model.id(), kaData);
             };
-
             this.kaSynchronizer = new KokiSync.KaSynchronizer({ communicator: this.communicator.kernaussage, commandProcessor: this.args.commandProcessor });
-            this.kaSynchronizer.setViewModelObservable(this.viewModel.childKas).setModelObservable(this.model.childKas);
+            this.kaSynchronizer
+                .setViewModelObservable(this.viewModel.childKas)
+                .setModelObservable(this.model.childKas);
         };
-
         ControllerImpl.prototype.initCommunicator = function () {
             this.communicatorSubscriptions = ([
                 this.communicator.received.subscribe(this.onKokiReceived),
                 this.communicator.kernaussageAppended.subscribe(this.onKaAppended)
             ]);
         };
-
         ControllerImpl.prototype.dispose = function () {
             KElement.Controller.prototype.dispose.apply(this, arguments);
-
-            this.modelSubscriptions.forEach(function (s) {
-                return s.dispose();
-            });
-            this.communicatorSubscriptions.forEach(function (s) {
-                return s.dispose();
-            });
+            this.modelSubscriptions.forEach(function (s) { return s.dispose(); });
+            this.communicatorSubscriptions.forEach(function (s) { return s.dispose(); });
         };
         return ControllerImpl;
     })(KElement.Controller);
