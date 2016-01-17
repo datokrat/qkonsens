@@ -13,15 +13,31 @@ define(["require", "exports", 'tests/asyncunit', 'tests/test', '../common', '../
         Tests.prototype.change = function (async, r, cb) {
             async();
             var counter = new Common.Counter();
+            LocationHash.reset();
             var subscription = LocationHash.changed.subscribe(function (hash) {
                 counter.inc('changed');
-                console.log('ok');
             });
             location.hash = Math.random().toString();
             setTimeout(cb(function () {
-                test.assert(function (v) { return v.val(counter.get('changed')) == 1; });
                 subscription.dispose();
                 location.hash = '';
+                test.assert(function (v) { return v.val(counter.get('changed')) == 1; });
+                r();
+            }), 500);
+        };
+        Tests.prototype.decodeCorrectly = function (async, r, cb) {
+            async();
+            var counter = new Common.Counter();
+            LocationHash.reset();
+            var subscription = LocationHash.changed.subscribe(function (hash) {
+                counter.inc('changed');
+                test.assert(function (v) { return v.val(hash) == '#"'; });
+            });
+            location.hash = '"';
+            setTimeout(cb(function () {
+                subscription.dispose();
+                location.hash = '';
+                test.assert(function (v) { return v.val(counter.get('changed')) == 1; });
                 r();
             }), 500);
         };

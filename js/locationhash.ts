@@ -10,10 +10,14 @@ function setHashVal(val: string): string {
 class LocationHash {
 	public static changed = new Evt.EventImpl<string>();
 	public static get(): string {
-		return location.hash;
+		return decodeURI(location.hash);
 	}
 	public static set(hash: string, raiseEvent = true) {
 		location.hash = setHashVal(hash);
+	}
+	
+	public static reset(): void {
+		LocationHash.changed = new Evt.EventImpl<string>();
 	}
 }
 

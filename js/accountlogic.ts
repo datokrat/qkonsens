@@ -39,7 +39,6 @@ export class Controller {
 	}
 	
 	public loginAs(userName: string) {
-		console.log('name', userName);
 		this.commandProcessor.processCommand(new Communicator.LoginCommand(userName));
 	}
 	

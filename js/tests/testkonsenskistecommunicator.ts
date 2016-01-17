@@ -15,6 +15,7 @@ import KernaussageModel = require('../kernaussagemodel');
 export class Main implements KokiCommunicator.Main {
 	public content: TestContentCommunicator;
 	public kernaussage: TestKaCommunicator;
+	public environs = null;
 	
 	public received = new Events.EventImpl<KokiCommunicator.ReceivedArgs>();
 	public receiptError = new Events.EventImpl<KokiCommunicator.ReceiptErrorArgs>();
@@ -94,6 +95,7 @@ export class Main implements KokiCommunicator.Main {
 export class Stub implements KokiCommunicator.Main {
 	public content = new TestContentCommunicator();
 	public kernaussage = new TestKaCommunicator();
+	public environs = null;
 	
 	public received = new Events.EventImpl<KokiCommunicator.ReceivedArgs>();
 	public receiptError = new Events.EventImpl<KokiCommunicator.ReceiptErrorArgs>();

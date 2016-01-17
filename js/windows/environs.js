@@ -13,7 +13,6 @@ define(["require", "exports", 'frame'], function (require, exports, frame) {
             this.submitClick = function () {
                 // this.commandProcessor.processCommand(new KommandoDasEsNochNichtGibt());
             };
-            console.log(this.commandProcessor);
         }
         return Win;
     })(frame.Win);

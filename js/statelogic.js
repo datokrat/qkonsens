@@ -16,6 +16,7 @@ define(["require", "exports", 'locationhash', 'memory', 'command', 'kokilogic'],
             this.disposables = new Memory.DisposableContainer();
             this.disposables.append(this.resources.commandProcessor.chain.append(function (cmd) {
                 if (cmd instanceof KokiLogic.HandleChangedKokiWinStateCommand) {
+                    console.log('handleChangedState', cmd);
                     var changedKokiWinState = cmd;
                     LocationHash.set(JSON.stringify(changedKokiWinState.state));
                     return true;
@@ -27,11 +28,15 @@ define(["require", "exports", 'locationhash', 'memory', 'command', 'kokilogic'],
             this.onHashChangedManually(LocationHash.get());
         };
         Controller.prototype.onHashChangedManually = function (hashString) {
+            console.log('onChangedManually', hashString);
             var jsonString = hashString.substring(1);
             try {
                 this.state = JSON.parse(jsonString);
+                console.log('okilidokily');
             }
-            catch (e) { }
+            catch (e) {
+                console.error('could not parse location hash [' + jsonString + '] as JSON: ', e);
+            }
             this.resources.commandProcessor.processCommand(new ChangeKokiStateCommand(this.state));
         };
         Controller.prototype.dispose = function () {

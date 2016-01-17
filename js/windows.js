@@ -53,7 +53,6 @@ define(["require", "exports", 'command', 'memory', 'windows/newkk', 'windows/int
             this.newKkWindow = NewKkWin.Main.CreateEmpty(commandProcessor);
             this.editKElementWindow = EditKElementWin.Main.CreateEmpty(commandProcessor);
             this.environsWindow = new EnvironsWindow.Win(commandProcessor);
-            console.log(commandProcessor);
         }
         Windows.prototype.dispose = function () {
             this.newKkWindow.dispose();

@@ -11,6 +11,7 @@ export class Controller {
 		
 		this.disposables.append(this.resources.commandProcessor.chain.append(cmd => {
 			if(cmd instanceof KokiLogic.HandleChangedKokiWinStateCommand) {
+				console.log('handleChangedState', cmd);
 				var changedKokiWinState = <KokiLogic.HandleChangedKokiWinStateCommand>cmd;
 				LocationHash.set(JSON.stringify(changedKokiWinState.state));
 				return true;
@@ -24,10 +25,11 @@ export class Controller {
 	}
 	
 	public onHashChangedManually(hashString: string) {
+		console.log('onChangedManually', hashString);
 		var jsonString = hashString.substring(1);
 		
-		try { this.state = JSON.parse(jsonString); }
-		catch(e) { }
+		try { this.state = JSON.parse(jsonString); console.log('okilidokily') }
+		catch(e) { console.error('could not parse location hash [' + jsonString + '] as JSON: ', e) }
 
 		this.resources.commandProcessor.processCommand(new ChangeKokiStateCommand(this.state));
 	}

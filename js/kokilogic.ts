@@ -95,6 +95,7 @@ export class Controller {
         return true
         }
 	private selectAndLoadKoki(id: number) {
+		console.log('selectAndLoadKoki', id);
 		this.setKoki(this.resources.konsenskisteCommunicator.query(id));
 	}
 	

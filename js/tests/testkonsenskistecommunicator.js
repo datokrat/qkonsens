@@ -1,6 +1,7 @@
 define(["require", "exports", '../id', 'event', 'itemcontainer', 'tests/testcontentcommunicator', 'tests/testkernaussagecommunicator', 'tests/testdiscussioncommunicator', 'tests/testratingcommunicator', '../konsenskistemodel', '../kernaussagemodel'], function (require, exports, newId, Events, ItemContainer, TestContentCommunicator, TestKaCommunicator, TestDiscussionCommunicator, TestRatingCommunicator, KonsenskisteModel, KernaussageModel) {
     var Main = (function () {
         function Main() {
+            this.environs = null;
             this.received = new Events.EventImpl();
             this.receiptError = new Events.EventImpl();
             this.kernaussageAppended = new Events.EventImpl();
@@ -75,6 +76,7 @@ define(["require", "exports", '../id', 'event', 'itemcontainer', 'tests/testcont
         function Stub() {
             this.content = new TestContentCommunicator();
             this.kernaussage = new TestKaCommunicator();
+            this.environs = null;
             this.received = new Events.EventImpl();
             this.receiptError = new Events.EventImpl();
             this.kernaussageAppended = new Events.EventImpl();

@@ -8,11 +8,14 @@ define(["require", "exports", 'event'], function (require, exports, Evt) {
         function LocationHash() {
         }
         LocationHash.get = function () {
-            return location.hash;
+            return decodeURI(location.hash);
         };
         LocationHash.set = function (hash, raiseEvent) {
             if (raiseEvent === void 0) { raiseEvent = true; }
             location.hash = setHashVal(hash);
+        };
+        LocationHash.reset = function () {
+            LocationHash.changed = new Evt.EventImpl();
         };
         LocationHash.changed = new Evt.EventImpl();
         return LocationHash;

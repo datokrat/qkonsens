@@ -39,7 +39,6 @@ define(["require", "exports", 'communicator', 'command', 'account'], function (r
                 this.viewModel.userName(this.model().userName);
         };
         Controller.prototype.loginAs = function (userName) {
-            console.log('name', userName);
             this.commandProcessor.processCommand(new Communicator.LoginCommand(userName));
         };
         Controller.prototype.login = function () {

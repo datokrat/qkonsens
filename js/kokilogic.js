@@ -79,6 +79,7 @@ define(["require", "exports", 'command', 'memory', 'windows/konsenskiste', 'wind
             return true;
         };
         Controller.prototype.selectAndLoadKoki = function (id) {
+            console.log('selectAndLoadKoki', id);
             this.setKoki(this.resources.konsenskisteCommunicator.query(id));
         };
         Controller.prototype.setKoki = function (koki) {
