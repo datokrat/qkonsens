@@ -10,7 +10,7 @@ define(["require", "exports", 'topic', 'windows', 'windows/browse'], function (r
         };
         Controller.prototype.initTopicNavigation = function () {
             var rootTopic = new Topic.Model();
-            rootTopic.id = { root: true, id: undefined };
+            rootTopic.id = { root: false, id: 575 };
             rootTopic.text('[root]');
             this.resources.topicNavigationModel.history.push(rootTopic);
         };

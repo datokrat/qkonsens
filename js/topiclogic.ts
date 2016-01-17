@@ -6,6 +6,8 @@ import Topic = require('topic');
 import Windows = require('windows');
 import BrowseWin = require('windows/browse');
 
+import Config = require('config');
+
 export class Controller {
 	constructor(resources: Resources) {
 		this.resources = resources;
@@ -20,7 +22,7 @@ export class Controller {
 	
 	private initTopicNavigation() {
 		var rootTopic = new Topic.Model();
-		rootTopic.id = { root: true, id: undefined };
+		rootTopic.id = { root: false, id: 575 };
 		rootTopic.text('[root]');
 		this.resources.topicNavigationModel.history.push(rootTopic);
 	}

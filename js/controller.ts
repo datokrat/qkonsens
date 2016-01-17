@@ -88,7 +88,7 @@ export class Controller {
 	
 	private initTopicLogic() {
 		var topicLogicResources = new TopicLogic.Resources();
-		topicLogicResources.topicNavigationModel = new TopicNavigationModel.ModelImpl(); //this.model.topicNavigation;
+		topicLogicResources.topicNavigationModel = new TopicNavigationModel.ModelImpl();
 		topicLogicResources.topicCommunicator = this.communicator.topic;
 		topicLogicResources.windowViewModel = this.windowViewModel;
 		topicLogicResources.commandProcessor = this.commandProcessor;
